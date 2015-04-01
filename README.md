@@ -1,21 +1,11 @@
-STRUCT
-======
+# STRUCT.js
 
-A nice little serialization scheme for ES6.
-Note that this code probably doesn't compile
-with Tracuer yet (need to strip out my in-house
-compiler's type annotations).
+STRUCT.js is a [https://developers.google.com/protocol-buffers/docs/overview](ProtoBuf-like) 
+serialization system for JavaScript.
+It's designed with JavaScript in mind, and supports direct serialization/deserialization
+of objects (unlike ProtoBuf or JSON, which build intermediary objects).
 
-=Requirements=
-Python >= 3.1
-PyPLY ( http://www.dabeaz.com/ply/ )
+## Example
 
-=Compiling=
-If you are brave, and wish to try compiling with the included
-in-house ES6->ES5 compiler, simply download and install
-Python3 and PLY, open a shell, then do this:
 
-  python js_build.py
 
-ES5.1 code will be built and deposited in a new folder, build/.
-A concatenated file will also be generated, build/STRUCT.js.
