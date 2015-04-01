@@ -1,7 +1,93 @@
 <!DOCTYPE html>
 <html>
 <head><title>Test</title>
-    <script data-main="src/test" src="src/require.js"></script>
+<!--    <script data-main="src/test" src="src/require.js"></script>-->
+<script data-main="src/test" src="nstructjs-build.js"></script>
+<script language="javascript">
+    var TestClass1 = function() {
+      this.a = 0;
+      this.b = "test";
+      this.c = [0, 1, 2, 3, 4, 5];
+      this.d = new nstructjs.util.set(["a", "b", "c", "d", "e", "f", "g"]);
+      this.e = 5120;
+    }
+    TestClass1.prototype = {
+      constructor: TestClass1,
+      toString: function() {
+        return JSON.stringify(this, undefined, 1);
+      }
+    };
+    
+    TestClass1.fromSTRUCT = function fromSTRUCT(reader) {
+      var ret = new TestClass1();
+      reader(ret);
+      
+      return ret;
+    }
+    
+    TestClass1.STRUCT = [
+      "test.TestClass1 {",
+      "  a : int;",
+      "  b : string;",
+      "  c : array(int);",
+      "  d : iter(static_string[1]);",
+      "  e : short;",
+      "}"
+    ].join("\n");
+  
+    var TestClass2 = function() {
+      this.class1 = new TestClass1();
+      this.a = ["a", "b", "c", "d", "e", "f", "g"];
+      this.b = ["a", "b", "c", "d", "e", "f", "g"];
+    }
+    TestClass2.prototype = {
+      constructor: TestClass2,
+      toString: function() {
+        return JSON.stringify(this, undefined, 1);
+      }
+    };
+    
+    TestClass2.fromSTRUCT = function fromSTRUCT(reader) {
+      var ret = new TestClass1();
+      reader(ret);
+      
+      return ret;
+    };
+    
+  TestClass2.STRUCT = [
+    "test.TestClass2 {",
+    "  class1 : test.TestClass1;",
+    "  a      : array(e, int) | e.charCodeAt(0);",   //convert to integer array
+    "  b      : string        | obj.b.join(', ');", //concatenate array to string
+    "}"
+  ].join("\n");
+  
+  nstructjs.manager.add_class(TestClass1);
+  nstructjs.manager.add_class(TestClass2);
+  
+  var test_struct = function test_struct() {
+    var data = [];
+    
+    var tst1 = new TestClass1();
+    var tst2 = new TestClass2();
+    
+    //console.log(""+tst2);
+    nstructjs.manager.write_object(data, tst1);
+    data = new DataView(new Uint8Array(data).buffer);
+    
+    var tst1_read = nstructjs.manager.read_object(data, TestClass1);
+    console.log(""+tst1_read);
+    
+    data = [];
+    nstructjs.manager.write_object(data, tst2);
+    data = new DataView(new Uint8Array(data).buffer);
+    
+    var tst2_read = nstructjs.manager.read_object(data, TestClass2);
+    console.log(""+tst2_read);
+  }
+  
+  test_struct();
+</script>
 </head>
 <body>
 </body>

@@ -1,10 +1,9 @@
-var _struct_parser = undefined;
 define([
   "struct_parseutil", "struct_util"
 ], function(struct_parseutil, struct_util) {
   "use strict";
   
-  var exports = _struct_parser = {};
+  var exports = {};
   
   //the discontinuous id's are to make sure
   //the version I originally wrote (which had a few application-specific types)
@@ -209,7 +208,6 @@ define([
       var st={}
       
       st.name = p.expect("ID", "struct name");
-      console.log("st.name", st.name)
       
       st.fields = [];
       st.id = -1;

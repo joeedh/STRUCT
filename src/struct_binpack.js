@@ -1,8 +1,7 @@
-var _struct_binpack = undefined;
 define([
   "struct_typesystem", "struct_util"
 ], function(struct_typesystem, struct_util) {
-  var exports = _struct_binpack = {};
+  var exports = {};
   
   var Class = struct_typesystem.Class;
   

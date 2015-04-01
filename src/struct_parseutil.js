@@ -1,5 +1,3 @@
-var _struct_parseutil = undefined;
-
 /*
 The lexical scanner in this module was inspired by PyPLY
 
@@ -14,7 +12,7 @@ define([
   
   var Class = struct_typesystem.Class;
   
-  var exports = _struct_parseutil = {};
+  var exports = {};
   exports.token = Class([
     function constructor(type, val, lexpos, lineno, lexer, parser) {
       this.type = type;

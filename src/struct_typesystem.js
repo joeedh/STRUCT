@@ -1,10 +1,8 @@
-var _util = undefined;
-
-//zebra-style class system
-define(["polyfill"], function(polyfill) {
+//zebra-style class system, see zebkit.org
+define(function() {
   "use strict";
   
-  var exports = _util = {};
+  var exports = {};
   
   function ClassGetter(func) {
     this.func = func;
@@ -26,8 +24,6 @@ define(["polyfill"], function(polyfill) {
       var m = methods[i];
       
       if (m instanceof StaticMethod) {
-        console.log("found static", m.func.name);
-        
         cls[m.func.name] = m.func;
       }
     }

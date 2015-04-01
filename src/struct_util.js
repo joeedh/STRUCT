@@ -1,11 +1,11 @@
-var _struct_util = undefined;
 define([
   "struct_typesystem"
 ], function(struct_typesystem) {
   "use strict";
   
   var Class = struct_typesystem.Class;
-  var exports = _struct_util = {};
+  
+  var exports = {};
   var _o_basic_types = {"String" : 0, "Number" : 0, "Array" : 0, "Function" : 0};
   
   function is_obj_lit(obj) {
