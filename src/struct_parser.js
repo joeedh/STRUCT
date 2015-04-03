@@ -34,7 +34,7 @@ define([
     "short": StructEnum.T_SHORT
   };
   
-  var StructTypeMap={};
+  var StructTypeMap = exports.StructTypeMap = {};
   
   for (var k in StructTypes) {
     StructTypeMap[StructTypes[k]] = k;

@@ -499,7 +499,7 @@ define([
       var stt=this.structs[cls.structName];
       
       if (uctx==undefined) {
-        uctx = new struct_binpack.unpack_ctx();
+        uctx = new struct_binpack.unpack_context();
         packer_debug("\n\n=Begin reading=");
       }
       var thestruct=this;

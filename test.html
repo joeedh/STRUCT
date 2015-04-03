@@ -79,10 +79,19 @@
     console.log(""+tst1_read);
     
     data = [];
+    var scripts = nstructjs.write_scripts()
+    nstructjs.binpack.pack_string(data, scripts);
+    
     nstructjs.manager.write_object(data, tst2);
     data = new DataView(new Uint8Array(data).buffer);
     
-    var tst2_read = nstructjs.manager.read_object(data, TestClass2);
+    var uctx = new nstructjs.binpack.unpack_context();
+    var scripts = nstructjs.binpack.unpack_string(data, uctx);
+    
+    var load_manager = new nstructjs.STRUCT();
+    load_manager.parse_structs(scripts);
+    
+    var tst2_read = load_manager.read_object(data, TestClass2, uctx);
     console.log(""+tst2_read);
   }
   

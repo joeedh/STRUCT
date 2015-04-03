@@ -2,9 +2,12 @@ define([
   "struct_util", "struct_binpack", "struct_parseutil", "struct_typesystem", "struct_parser"
 ], function(struct_util, struct_binpack, struct_parseutil, struct_typesystem, struct_parser) {
   "use strict";
-  
-  var Class = struct_typesystem.Class;
+
   var exports = {};
+  
+  var StructTypeMap = struct_parser.StructTypeMap;
+  var StructTypes = struct_parser.StructTypes;
+  var Class = struct_typesystem.Class;
   
   exports.binpack = struct_binpack;
   exports.util = struct_util;
@@ -16,7 +19,7 @@ define([
   var StructEnum = struct_parser.StructEnum;
   
   var _static_envcode_null="";
-  var debug_struct=1;
+  var debug_struct=0;
   var packdebug_tablevel=0;
   
   function gen_tabstr(tot) {
@@ -256,6 +259,8 @@ define([
     //defined_classes is an array of class constructors
     //with STRUCT scripts
     function parse_structs(buf, defined_classes) {
+      console.log(buf);
+      
       if (defined_classes == undefined) {
         defined_classes = [];
         for (var k in exports.manager.struct_cls) {
@@ -268,9 +273,12 @@ define([
       for (var i=0; i<defined_classes.length; i++) {
         var cls = defined_classes[i];
         
-        if (cls.structName == undefined) {
-          var stt=struct_parse.parse(cls.STRUCT);
+        if (cls.structName == undefined && cls.STRUCT != undefined) {
+          var stt=struct_parse.parse(cls.STRUCT.trim());
           cls.structName = stt.name;
+        } else if (cls.structName == undefined && cls.name != "Object") {
+          console.log("Warning, bad class in registered class list", cls.name, cls);
+          continue;
         }
         
         clsmap[cls.structName] = defined_classes[i];
@@ -280,6 +288,7 @@ define([
       
       while (!struct_parse.at_end()) {
         var stt=struct_parse.parse(undefined, false);
+        
         if (!(stt.name in clsmap)) {
             if (!(stt.name in this.null_natives))
               console.log("WARNING: struct "+stt.name+" is missing from class list.");
@@ -312,7 +321,7 @@ define([
         }
         
         var tok=struct_parse.peek();
-        while (tok!=undefined&&tok.value=="\n") {
+        while (tok!=undefined&&(tok.value=="\n" || tok.value=="\r" || tok.value=="\t" || tok.value==" ")) {
           tok = struct_parse.peek();
         }
       }
@@ -414,9 +423,9 @@ define([
       var fields=stt.fields;
       for (var i=0; i<fields.length; i++) {
           var f=fields[i];
-          s+=tab+f.name+" : "+fmt_type(f.type);
+          s += tab + f.name+" : "+fmt_type(f.type);
           if (!no_helper_js&&f.get!=undefined) {
-              s+=" | "+f.get.trim();
+              s += " | "+f.get.trim();
           }
           s+=";\n";
       }
@@ -511,7 +520,7 @@ define([
       var stt=this.structs[cls.structName];
       
       if (uctx==undefined) {
-        uctx = new struct_binpack.unpack_ctx();
+        uctx = new struct_binpack.unpack_context();
         packer_debug("\n\n=Begin reading=");
       }
       var thestruct=this;

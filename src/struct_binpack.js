@@ -8,7 +8,7 @@ define([
   var temp_dataview = new DataView(new ArrayBuffer(16));
   var uint8_view = new Uint8Array(temp_dataview.buffer);
 
-  var unpack_ctx = exports.unpack_ctx = Class([
+  var unpack_context = exports.unpack_context = Class([
     function constructor() {
       this.i = 0;
     }
