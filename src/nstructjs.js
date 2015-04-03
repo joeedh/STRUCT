@@ -6,6 +6,7 @@ define([
   var Class = struct_typesystem.Class;
   var exports = {};
   
+  exports.binpack = struct_binpack;
   exports.util = struct_util;
   exports.typesystem = struct_typesystem;
   exports.parseutil = struct_parseutil;
@@ -255,6 +256,13 @@ define([
     //defined_classes is an array of class constructors
     //with STRUCT scripts
     function parse_structs(buf, defined_classes) {
+      if (defined_classes == undefined) {
+        defined_classes = [];
+        for (var k in exports.manager.struct_cls) {
+          defined_classes.push(exports.manager.struct_cls[k]);
+        }
+      }
+      
       var clsmap={}
       
       for (var i=0; i<defined_classes.length; i++) {
