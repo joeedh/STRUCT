@@ -1,7 +1,7 @@
 {
   "name": "STRUCT",
   "author": "Joseph Eagar",
-  "version": "0.5.0",
+  "version": "0.5.7",
   "description": "ProtoBuf-like serialization system optimized for JS",
   "repository": "git://github.com/joeedh/STRUCT.git",
   "dependencies": {
