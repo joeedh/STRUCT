@@ -5,7 +5,9 @@ serialization system for JavaScript.
 It's designed with JavaScript in mind, and supports direct serialization/deserialization
 of objects (unlike ProtoBuf or JSON, which build intermediary objects).
 
-## Example
+## Documentation
+
+See [the wiki](https://github.com/joeedh/STRUCT/wiki/Intro-and-Examples) for more information.
 
 
 
