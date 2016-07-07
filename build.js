@@ -1,12 +1,12 @@
 ({
     baseUrl: "./src",
     name: "../node_modules/almond/almond",
-    include: "nstructjs",
-    out: "nstructjs-build.js",
+    include: "structjs",
+    out: "build/structjs.js",
     wrap: {
       startFile: 'start.frag',
       endFile:   'end.frag'
     },
-    insertRequire: ["nstructjs"],
+    insertRequire: ["structjs"],
     optimize: "none"
 })

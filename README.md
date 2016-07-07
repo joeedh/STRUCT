@@ -9,5 +9,7 @@ of objects (unlike ProtoBuf or JSON, which build intermediary objects).
 
 See [the wiki](https://github.com/joeedh/STRUCT/wiki/Intro-and-Examples) for more information.
 
+## Build
 
+    r.js -o build.js
 

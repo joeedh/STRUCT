@@ -18,6 +18,12 @@ define([
     array.push(val);
   }
   
+  var pack_bytes = exports.pack_bytes = function(array, bytes) {
+    for (var i=0; i<bytes.length; i++) {
+      array.push(bytes[i]);
+    }
+  }
+  
   var pack_int = exports.pack_int = function(array, val) {
     temp_dataview.setInt32(array, val);
     

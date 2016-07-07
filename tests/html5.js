@@ -1,12 +1,9 @@
-var _test = undefined;
-console.log("main!");
-
 require([
-  "struct_typesystem", "struct_util", "struct_binpack", "nstructjs"
-], function(struct_typesystem, struct_util, struct_binpack, nstructjs) {
+  "struct_typesystem", "struct_util", "struct_binpack", "structjs"
+], function(struct_typesystem, struct_util, struct_binpack, structjs) {
   console.log("initialized!", struct_typesystem, struct_binpack);
   
-  var exports = _test = {};
+  var exports = {};
   var Class = struct_typesystem.Class;
   
   var TestClass1 = Class([
@@ -62,9 +59,9 @@ require([
     "}"
   ].join("\n");
   
-  nstructjs.manager.add_class(struct_util.IDGen);
-  nstructjs.manager.add_class(TestClass1);
-  nstructjs.manager.add_class(TestClass2);
+  structjs.manager.add_class(struct_util.IDGen);
+  structjs.manager.add_class(TestClass1);
+  structjs.manager.add_class(TestClass2);
   
   var test_struct = exports.test_struct = function test_struct() {
     var data = [];
@@ -73,17 +70,17 @@ require([
     var tst2 = new TestClass2();
     
     //console.log(""+tst2);
-    nstructjs.manager.write_object(data, tst1);
+    structjs.manager.write_object(data, tst1);
     data = new DataView(new Uint8Array(data).buffer);
     
-    var tst1_read = nstructjs.manager.read_object(data, TestClass1);
+    var tst1_read = structjs.manager.read_object(data, TestClass1);
     console.log(""+tst1_read);
     
     data = [];
-    nstructjs.manager.write_object(data, tst2);
+    structjs.manager.write_object(data, tst2);
     data = new DataView(new Uint8Array(data).buffer);
     
-    var tst2_read = nstructjs.manager.read_object(data, TestClass2);
+    var tst2_read = structjs.manager.read_object(data, TestClass2);
     console.log(""+tst2_read);
   }
   

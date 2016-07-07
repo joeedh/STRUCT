@@ -5,7 +5,7 @@
   "description": "ProtoBuf-like serialization system optimized for JS",
   "repository": "git://github.com/joeedh/STRUCT.git",
   "dependencies": {
-    "requirejs": "^2.1.17",
-    "almond": "^0.3.1"
+    "almond": "^0.3.1",
+    "requirejs": "^2.1.17"
   }
 }

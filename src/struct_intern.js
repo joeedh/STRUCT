@@ -9,12 +9,6 @@ define([
   var StructTypes = struct_parser.StructTypes;
   var Class = struct_typesystem.Class;
   
-  exports.binpack = struct_binpack;
-  exports.util = struct_util;
-  exports.typesystem = struct_typesystem;
-  exports.parseutil = struct_parseutil;
-  exports.parser = struct_parser;
-  
   var struct_parse = struct_parser.struct_parse;
   var StructEnum = struct_parser.StructEnum;
   
@@ -257,9 +251,22 @@ define([
     },
     
     //defined_classes is an array of class constructors
-    //with STRUCT scripts
+    //with STRUCT scripts, *OR* another STRUCT instance
+    //
+    //defaults to structjs.manager
     function parse_structs(buf, defined_classes) {
-      console.log(buf);
+      if (defined_classes === undefined) {
+        defined_classes = exports.manager;
+      }
+      
+      if (defined_classes instanceof STRUCT) {
+        var struct2 = defined_classes;
+        defined_classes = [];
+        
+        for (var k in struct2.struct_cls) {
+          defined_classes.push(struct2.struct_cls[k]);
+        }
+      }
       
       if (defined_classes == undefined) {
         defined_classes = [];
@@ -327,10 +334,36 @@ define([
       }
     },
 
-    function add_class(cls) {
+    function add_class(cls, structName) {
       var stt=struct_parse.parse(cls.STRUCT);
       
-      cls.structName = stt.name;
+      if (cls.fromSTRUCT === undefined) {
+        //create default fromSTRUCT
+        cls.fromSTRUCT = function fromSTRUCT(reader) {
+          var ret = new cls();
+          
+          reader(ret);
+          ret.onLoadSTRUCT();
+          
+          return ret;
+        }
+        
+        //make default onLoadSTRUCT
+        if (cls.prototype.onLoadSTRUCT == undefined) {
+          cls.prototype.onLoadSTRUCT = function onLoadSTRUCT(reader) {
+          }
+        }
+      }
+      
+      if (structName !== undefined) {
+        stt.name = cls.structName = structName;
+      } else if (cls.structName === undefined) {
+        cls.structName = stt.name;
+      } else if (cls.structName !== undefined) {
+        stt.name = cls.structName;
+      } else {
+        throw new Error("Missing structName parameter");
+      }
       
       if (stt.id==-1)
         stt.id = this.idgen.gen_id();
@@ -516,8 +549,20 @@ define([
       this.write_struct(data, obj, stt);
     },
 
-    function read_object(data, cls, uctx) {
-      var stt=this.structs[cls.structName];
+    function read_object(data, cls_or_struct_id, uctx) {
+      var cls, stt;
+      
+      if (typeof cls_or_struct_id == "number") {
+        cls = this.struct_cls[this.struct_ids[cls_or_struct_id].name];
+      } else {
+        cls = cls_or_struct_id;
+      }
+      
+      if (cls === undefined) {
+        throw new Error("bad cls_or_struct_id " + cls_or_struct_id);
+      }
+      
+      stt=this.structs[cls.structName];
       
       if (uctx==undefined) {
         uctx = new struct_binpack.unpack_context();
@@ -649,7 +694,11 @@ define([
   //main struct script manager
   var manager = exports.manager = new STRUCT();
   
-  var write_scripts = exports.write_scripts = function write_scripts() {
+  //manager defaults to structjs.manager
+  var write_scripts = exports.write_scripts = function write_scripts(manager) {
+    if (manager === undefined)
+      manager = exports.manager;
+    
     var buf="";
     
     manager.forEach(function(stt) {
