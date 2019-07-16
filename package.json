@@ -2,7 +2,7 @@
   "name": "STRUCT",
   "author": "Joseph Eagar",
   "version": "0.5.8",
-  "main": "build/nstructjs.js",
+  "main": "nstructjs.js",
   "description": "ProtoBuf-like serialization system optimized for JS",
   "repository": "git://github.com/joeedh/STRUCT.git",
   "dependencies": {
