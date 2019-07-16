@@ -6,9 +6,20 @@
         //the closure below.
         define([], factory);
     } else {
-        //Browser globals case. Just assign the
-        //result to a property on the global.
+      function getGlobal() {
+        return this;
+      }
+      
+      //Browser globals case. Just assign the
+      //result to a property on the global.
+      
+      if (typeof window === "object") {
         window.nstructjs = factory();
+      } else if (typeof self === "object") { //browser worker
+        self.nstructjs = factory();
+      } else if (typeof module === "object") { //node.js
+        module.exports = factory();
+      }
     }
 }(this, function () {
     //almond, and your modules will be inlined here
