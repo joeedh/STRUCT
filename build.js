@@ -2,7 +2,7 @@
     baseUrl: "./src",
     name: "../node_modules/almond/almond",
     include: "structjs",
-    out: "build/structjs.js",
+    out: "build/nstructjs.js",
     wrap: {
       startFile: 'start.frag',
       endFile:   'end.frag'

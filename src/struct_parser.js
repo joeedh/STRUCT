@@ -178,10 +178,21 @@ define([
       }
     }
     
+    function p_ID_or_num(p) {
+      let t = p.peeknext();
+
+      if (t.type == "NUM") {
+        p.next();
+        return t.value;
+      } else {
+        return p.expect("ID", "struct field name");
+      }
+    }
+    
     function p_Field(p) {
       var field={}
       
-      field.name = p.expect("ID", "struct field name");
+      field.name = p_ID_or_num(p);
       p.expect("COLON");
       
       field.type = p_Type(p);

@@ -92,9 +92,9 @@ define([
     
     //make sure inheritance is correct
     if (val.constructor.structName!=type.data && (val instanceof cls)) {
-        if (DEBUG.Struct) {
-            console.log(val.constructor.structName+" inherits from "+cls.structName);
-        }
+        //if (DEBUG.Struct) {
+        //    console.log(val.constructor.structName+" inherits from "+cls.structName);
+        //}
         stt = thestruct.get_struct(val.constructor.structName);
     } else if (val.constructor.structName==type.data) {
         stt = thestruct.get_struct(type.data);
@@ -335,7 +335,13 @@ define([
     },
 
     function add_class(cls, structName) {
+      if (!cls.STRUCT) {
+        throw new Error("class " + cls.name + " has no STRUCT script");
+      }
+      
       var stt=struct_parse.parse(cls.STRUCT);
+      
+      cls.structName = stt.name;
       
       if (cls.fromSTRUCT === undefined) {
         //create default fromSTRUCT
@@ -393,9 +399,13 @@ define([
       return this.struct_cls[name];
     },
 
-    Class.static_method(function inherit(child, parent) {
+    Class.static_method(function inherit(child, parent, structName=child.name) {
+      if (!parent.STRUCT) {
+        return structName+"{\n";
+      }
+      
       var stt=struct_parse.parse(parent.STRUCT);
-      var code=child.structName+"{\n";
+      var code=structName+"{\n";
       code+=STRUCT.fmt_struct(stt, true);
       return code;
     }),
@@ -552,6 +562,10 @@ define([
     function read_object(data, cls_or_struct_id, uctx) {
       var cls, stt;
       
+      if (data instanceof Array) {
+        data = new DataView(new Uint8Array(data).buffer);
+      }
+      
       if (typeof cls_or_struct_id == "number") {
         cls = this.struct_cls[this.struct_ids[cls_or_struct_id].name];
       } else {
@@ -632,8 +646,8 @@ define([
           
           var cls2=thestruct.get_struct_id(id);
           
-          packer_debug("struct name: "+cls2.structName);
-          cls2 = thestruct.struct_cls[cls2.structName];
+          packer_debug("struct name: "+cls2.name);
+          cls2 = thestruct.struct_cls[cls2.name];
           
           var ret=thestruct.read_object(data, cls2, uctx);
           

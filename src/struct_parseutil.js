@@ -112,6 +112,14 @@ define([
       this.peeked_tokens.push(tok);
       return tok;
     },
+    
+    function peeknext() {
+      if (this.peeked_tokens.length > 0) {
+        return this.peeked_tokens[0];
+      }
+      
+      return this.peek();
+    },
     function at_end() {
       return this.lexpos>=this.lexdata.length&&this.peeked_tokens.length==0;
     },
@@ -228,6 +236,12 @@ define([
     },
     function peek() {
       var tok=this.lexer.peek();
+      if (tok!=undefined)
+        tok.parser = this;
+      return tok;
+    },
+    function peeknext() {
+      var tok=this.lexer.peeknext();
       if (tok!=undefined)
         tok.parser = this;
       return tok;
