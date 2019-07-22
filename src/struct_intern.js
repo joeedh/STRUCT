@@ -770,8 +770,15 @@ define([
         console.warn("Warning: class " + cls.name + " is using deprecated fromSTRUCT interface; use newSTRUCT/loadSTRUCT instead");
         return cls.fromSTRUCT(load);
       } else { //default case, make new instance and then call load() on it
-        let obj = new cls();
+        let obj;
+        if (cls.newSTRUCT !== undefined) {
+          obj = cls.newSTRUCT();
+        } else {
+          obj = new cls();
+        }
+        
         load(obj);
+        
         return obj;
       }
     }
