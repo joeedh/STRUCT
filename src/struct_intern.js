@@ -243,7 +243,8 @@ define([
     cls.prototype.loadSTRUCT = function (reader) {
       reader(this);
     }
-    cls.prototype.newSTRUCT = function() {
+    
+    cls.newSTRUCT = function() {
       return new this();
     }
     
