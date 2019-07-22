@@ -5,6 +5,31 @@ define([
 
   var exports = {};
   
+  /*
+  
+  class SomeClass {
+    static newSTRUCT() {
+      //returns a new, empty instance of SomeClass
+    }
+    
+    loadSTRUCT(reader) {
+      reader(this); //reads data into this instance
+    }
+    
+    //the old api, that both creates and reads
+    static fromSTRUCT(reader) {
+      let ret = new SomeClass();
+      reader(ret);
+      return ret;
+    }
+  }
+  SomeClass.STRUCT = `
+  SomeClass {
+  }
+  `
+  nstructjs.manager.add_class(SomeClass);
+  
+  */
   var StructTypeMap = struct_parser.StructTypeMap;
   var StructTypes = struct_parser.StructTypes;
   var Class = struct_typesystem.Class;
@@ -202,8 +227,29 @@ define([
   
   function do_pack(data, val, obj, thestruct, field, type) {
     pack_callbacks[field.type.type](data, val, obj, thestruct, field, type);
+  
   }
   
+  function define_empty_class(name) {
+    var cls = function() {
+    };
+    
+    cls.prototype = Object.create(Object.prototype);
+    cls.constructor = cls.prototype.constructor = cls;
+    
+    cls.STRUCT = name+" {\n  }\n";
+    cls.structName = name;
+    
+    cls.prototype.loadSTRUCT = function (reader) {
+      reader(this);
+    }
+    cls.prototype.newSTRUCT = function() {
+      return new this();
+    }
+    
+    return cls;
+  }
+      
   var STRUCT=exports.STRUCT = Class([
     function constructor() {
       this.idgen = new struct_util.IDGen();
@@ -216,14 +262,7 @@ define([
       this.null_natives = {}
     
       function define_null_native(name, cls) {
-        var obj={name: name, prototype: Object.create(Object.prototype)}
-        obj.constructor = obj;
-        obj.STRUCT = name+" {\n  }\n";
-        obj.fromSTRUCT = function(reader) {
-          var ob={}
-          reader(ob);
-          return ob;
-        }
+        var obj = define_empty_class(name);
         
         var stt=struct_parse.parse(obj.STRUCT);
         
@@ -300,19 +339,12 @@ define([
             if (!(stt.name in this.null_natives))
               console.log("WARNING: struct "+stt.name+" is missing from class list.");
 
-              var dummy=Object.create(Object.prototype);
-            dummy.prototype = Object.create(Object.prototype);
+            var dummy = define_empty_class(stt.name);
             
             dummy.STRUCT = STRUCT.fmt_struct(stt);
-            dummy.fromSTRUCT = function(reader) {
-              var obj={}
-              reader(obj);
-              return obj;
-            };
-            
             dummy.structName = stt.name;
+            
             dummy.prototype.structName = dummy.name;
-            dummy.prototype.constructor = dummy;
             
             this.struct_cls[dummy.structName] = dummy;
             this.struct_cls[dummy.structName] = stt;
@@ -343,21 +375,10 @@ define([
       
       cls.structName = stt.name;
       
-      if (cls.fromSTRUCT === undefined) {
-        //create default fromSTRUCT
-        cls.fromSTRUCT = function fromSTRUCT(reader) {
-          var ret = new cls();
-          
-          reader(ret);
-          ret.onLoadSTRUCT();
-          
-          return ret;
-        }
-        
-        //make default onLoadSTRUCT
-        if (cls.prototype.onLoadSTRUCT == undefined) {
-          cls.prototype.onLoadSTRUCT = function onLoadSTRUCT(reader) {
-          }
+      //create default newSTRUCT
+      if (cls.newSTRUCT === undefined) {
+        cls.newSTRUCT = function() {
+          return new this();
         }
       }
       
@@ -409,7 +430,31 @@ define([
       code+=STRUCT.fmt_struct(stt, true);
       return code;
     }),
-
+    
+    /** invoke loadSTRUCT methods on parent objects.  note that 
+      reader() is only called once.  it is called however.*/
+    Class.static_method(function Super(obj, reader) {
+      reader(obj);
+      
+      function reader2(obj) {
+      }
+      
+      let cls = obj.constructor;
+      let bad = cls === undefined || cls.prototype === undefined || cls.prototype.__proto__ === undefined;
+      
+      if (bad) {
+        return;
+      }
+      
+      let parent = cls.prototype.__proto__.constructor;
+      bad = bad || parent === undefined;
+      
+      if (!bad && parent.prototype.loadSTRUCT && parent.prototype.loadSTRUCT !== obj.loadSTRUCT) { //parent.prototype.hasOwnProperty("loadSTRUCT")) {
+        parent.prototype.loadSTRUCT.call(obj, reader2);
+      }
+    }),
+    
+    /** deprecated.  used with old fromSTRUCT interface. */
     Class.static_method(function chain_fromSTRUCT(cls, reader) {
       var proto=cls.prototype;
       var parent=cls.prototype.prototype.constructor;
@@ -692,7 +737,14 @@ define([
         return unpack_funcs[type.type](type);
       }
       
+      let was_run = false;
       function load(obj) {
+        if (was_run) {
+          return;
+        }
+        
+        was_run = true;
+        
         var fields=stt.fields;
         var flen=fields.length;
         for (var i=0; i<flen; i++) {
@@ -701,7 +753,26 @@ define([
             obj[f.name] = val;
         }
       }
-      return cls.fromSTRUCT(load);
+      
+      if (cls.prototype.loadSTRUCT !== undefined) {
+        let obj;
+        
+        if (cls.newSTRUCT !== undefined) {
+          obj = cls.newSTRUCT();
+        } else {
+          obj = new cls();
+        }
+        
+        obj.loadSTRUCT(load);
+        return obj;
+      } else if (cls.fromSTRUCT !== undefined) {
+        console.warn("Warning: class " + cls.name + " is using deprecated fromSTRUCT interface; use newSTRUCT/loadSTRUCT instead");
+        return cls.fromSTRUCT(load);
+      } else { //default case, make new instance and then call load() on it
+        let obj = new cls();
+        load(obj);
+        return obj;
+      }
     }
   ]);
   

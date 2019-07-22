@@ -1,4 +1,4 @@
-var structjs = require('../build/structjs').structjs;
+var structjs = require('../build/nstructjs');
 var filehelper = structjs.filehelper;
 var fs = require('fs');
 
@@ -86,7 +86,9 @@ class Canvas {
     return p;
   }
   
-  onLoadSTRUCT() {
+  loadSTRUCT(reader) {
+    reader(this);
+    
     this.idmap = {};
     
     for (var p of this.points) {
@@ -156,6 +158,10 @@ function test_main() {
   
   var passed = json1.length == json2.length;
   passed = passed && JSON.stringify(writer.version) == JSON.stringify(reader.version);
+  
+  if (!passed) {
+    console.log(json2);
+  }
   
   console.log(passed ? "PASSED" : "FAILED")
 }
