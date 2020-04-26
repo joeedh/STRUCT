@@ -223,6 +223,14 @@ define([
     packer_debug("short "+val);
     
     struct_binpack.pack_short(data, Math.floor(val));
+  }, function pack_byte(data, val) {
+    packer_debug("byte "+val);
+    
+    struct_binpack.pack_byte(data, Math.floor(val));
+  }, function pack_bool(data, val) {
+    packer_debug("bool "+val);
+    
+    struct_binpack.pack_byte(data, !!val);
   }];
   
   function do_pack(data, val, obj, thestruct, field, type) {
@@ -731,7 +739,19 @@ define([
           packer_debug("-short "+ret);
           
           return ret;
-        }
+        }, function t_byte(type) {
+          var ret=struct_binpack.unpack_byte(data, uctx);
+          
+          packer_debug("-byte "+ret);
+          
+          return ret;
+        }, function t_bool(type) {
+          var ret=struct_binpack.unpack_byte(data, uctx);
+          
+          packer_debug("-bool "+ret);
+          
+          return !!ret;
+        }          
       ];
       
       function unpack_field(type) {

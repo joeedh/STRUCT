@@ -18,7 +18,9 @@ define([
     T_TSTRUCT : 10,
     T_ARRAY   : 11,
     T_ITER    : 12,
-    T_SHORT   : 13
+    T_SHORT   : 13,
+    T_BYTE    : 14,
+    T_BOOL    : 15
   };
   
   var StructTypes = exports.StructTypes = {
@@ -31,7 +33,9 @@ define([
     "abstract": StructEnum.T_TSTRUCT, 
     "array": StructEnum.T_ARRAY, 
     "iter": StructEnum.T_ITER,
-    "short": StructEnum.T_SHORT
+    "short": StructEnum.T_SHORT,
+    "byte": StructEnum.T_BYTE,
+    "bool": StructEnum.T_BOOL
   };
   
   var StructTypeMap = exports.StructTypeMap = {};
@@ -50,12 +54,12 @@ define([
   
   function StructParser() {
     var basic_types=new struct_util.set([
-      "int", "float", "double", "string", "short"
+      "int", "float", "double", "string", "short", "byte", "bool"
     ]);
     
     var reserved_tokens=new struct_util.set([
       "int", "float", "double", "string", "static_string", "array", 
-      "iter", "abstract", "short"
+      "iter", "abstract", "short", "byte", "bool"
     ]);
   
     function tk(name, re, func) {
