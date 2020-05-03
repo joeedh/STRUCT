@@ -17,6 +17,13 @@ define([
     exports[k] = struct_intern[k];
   }
   
+  exports.register = function register(cls, name) {
+    return exports.manager.register(cls, name);
+  }
+  exports.inherit = function() {
+    return exports.STRUCT.inherit(...arguments);
+  }
+  
   //export other modules
   exports.binpack = struct_binpack;
   exports.util = struct_util;

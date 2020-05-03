@@ -375,6 +375,10 @@ define([
       }
     },
 
+    function register(cls, structName) {
+      return this.add_class(cls, structName);
+    },
+    
     function add_class(cls, structName) {
       if (!cls.STRUCT) {
         throw new Error("class " + cls.name + " has no STRUCT script");
