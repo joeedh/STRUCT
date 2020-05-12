@@ -24,6 +24,8 @@ define([
     return exports.STRUCT.inherit(...arguments);
   }
   
+  exports.setDebugMode = struct_intern.setDebugMode;
+  
   //export other modules
   exports.binpack = struct_binpack;
   exports.util = struct_util;
