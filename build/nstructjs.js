@@ -1,4 +1,13 @@
+var _nGlobal;
 (function (root, factory) {
+    //detect node
+    
+    if (typeof window === "undefined" && typeof global != "undefined") {
+      _nGlobal = global;
+    } else {
+      _nGlobal = window;
+    }
+    
     if (typeof define === 'function' && define.amd) {
         //Allow using this built library as an AMD module
         //in another project. That other project will only
@@ -689,17 +698,39 @@ define('struct_util',[
   var exports = {};
   var _o_basic_types = {"String" : 0, "Number" : 0, "Array" : 0, "Function" : 0};
   
-  function is_obj_lit(obj) {
-    if (obj.constructor.name in _o_basic_types)
-      return false;
-      
-    if (obj.constructor.name == "Object")
-      return true;
-    if (obj.prototype == undefined)
-      return true;
+  function isNodeJS() {
+    ret = typeof process !== "undefined";
+    ret = ret && process.release;
+    ret = ret && process.release.name === "node";
+    ret = ret && process.version;
     
-    return false;
+    return !!ret;
   }
+
+  let is_obj_lit = exports.is_obj_lit = function is_obj_lit(obj) {
+    if (typeof obj !== "object") {
+      return false;
+    }
+    
+    let good =  obj.__proto__ && obj.__proto__.constructor && obj.__proto__.constructor === Object;
+    
+    if (good) {
+      return true;
+    }
+    
+    let bad = typeof obj !== "object";
+    bad = bad || obj.constructor.name in _o_basic_types;
+    bad = bad || obj instanceof String;
+    bad = bad || obj instanceof Number;
+    bad = bad || obj instanceof Boolean;
+    bad = bad || obj instanceof Function;
+    bad = bad || obj instanceof Array;
+    bad = bad || obj instanceof Set;
+    bad = bad || (obj.__proto__.constructor && obj.__proto__.constructor !== Object);
+    
+    return !bad;
+  }
+  _nGlobal.is_obj_lit = is_obj_lit;
   
   function set_getkey(obj) {
     if (typeof obj == "number" || typeof obj == "boolean")
@@ -710,6 +741,93 @@ define('struct_util',[
       return obj.__keystr__();
   }
   
+  exports.get_callstack = function get_callstack(err) {
+    var callstack = [];
+    var isCallstackPopulated = false;
+
+    var err_was_undefined = err == undefined;
+
+    if (err == undefined) {
+      try {
+        _idontexist.idontexist+=0; //doesn't exist- that's the point
+      } catch(err1) {
+        err = err1;
+      }
+    }
+
+    if (err != undefined) {
+      if (err.stack) { //Firefox
+        var lines = err.stack.split('\n');
+        var len=lines.length;
+        for (var i=0; i<len; i++) {
+          if (1) {
+            lines[i] = lines[i].replace(/@http\:\/\/.*\//, "|")
+            var l = lines[i].split("|")
+            lines[i] = l[1] + ": " + l[0]
+            lines[i] = lines[i].trim()
+            callstack.push(lines[i]);
+          }
+        }
+
+        //Remove call to printStackTrace()
+        if (err_was_undefined) {
+          //callstack.shift();
+        }
+        isCallstackPopulated = true;
+      }
+      else if (window.opera && e.message) { //Opera
+        var lines = err.message.split('\n');
+        var len=lines.length;
+        for (var i=0; i<len; i++) {
+          if (lines[i].match(/^\s*[A-Za-z0-9\-_\$]+\(/)) {
+            var entry = lines[i];
+            //Append next line also since it has the file info
+            if (lines[i+1]) {
+              entry += ' at ' + lines[i+1];
+              i++;
+            }
+            callstack.push(entry);
+          }
+        }
+        //Remove call to printStackTrace()
+        if (err_was_undefined) {
+          callstack.shift();
+        }
+        isCallstackPopulated = true;
+      }
+     }
+
+      var limit = 24;
+      if (!isCallstackPopulated) { //IE and Safari
+        var currentFunction = arguments.callee.caller;
+        var i = 0;
+        while (currentFunction && i < 24) {
+          var fn = currentFunction.toString();
+          var fname = fn.substring(fn.indexOf("function") + 8, fn.indexOf('')) || 'anonymous';
+          callstack.push(fname);
+          currentFunction = currentFunction.caller;
+
+          i++;
+        }
+      }
+
+    return callstack;
+  }
+
+  exports.print_stack = function print_stack(err) {
+    try {
+      var cs = exports.get_callstack(err);
+    } catch (err2) {
+      console.log("Could not fetch call stack.");
+      return;
+    }
+
+    console.log("Callstack:");
+    for (var i=0; i<cs.length; i++) {
+      console.log(cs[i]);
+    }
+  }
+
   var set = exports.set = Class([
     function constructor(input) {
       this.items = [];
@@ -811,7 +929,7 @@ define('struct_binpack',[
 ], function(struct_typesystem, struct_util) {
   var exports = {};
   
-  window.STRUCT_ENDIAN = true; //little endian
+  exports.STRUCT_ENDIAN = true; //little endian
   
   var Class = struct_typesystem.Class;
   
@@ -835,7 +953,7 @@ define('struct_binpack',[
   }
   
   var pack_int = exports.pack_int = function(array, val) {
-    temp_dataview.setInt32(0, val, STRUCT_ENDIAN);
+    temp_dataview.setInt32(0, val, exports.STRUCT_ENDIAN);
     
     array.push(uint8_view[0]);
     array.push(uint8_view[1]);
@@ -844,7 +962,7 @@ define('struct_binpack',[
   }
   
   exports.pack_float = function(array, val) {
-    temp_dataview.setFloat32(0, val, STRUCT_ENDIAN);
+    temp_dataview.setFloat32(0, val, exports.STRUCT_ENDIAN);
     
     array.push(uint8_view[0]);
     array.push(uint8_view[1]);
@@ -853,7 +971,7 @@ define('struct_binpack',[
   }
   
   exports.pack_double = function(array, val) {
-    temp_dataview.setFloat64(0, val, STRUCT_ENDIAN);
+    temp_dataview.setFloat64(0, val, exports.STRUCT_ENDIAN);
     
     array.push(uint8_view[0]);
     array.push(uint8_view[1]);
@@ -866,7 +984,7 @@ define('struct_binpack',[
   }
   
   exports.pack_short = function(array, val) {
-    temp_dataview.setInt16(0, val, STRUCT_ENDIAN);
+    temp_dataview.setInt16(0, val, exports.STRUCT_ENDIAN);
     
     array.push(uint8_view[0]);
     array.push(uint8_view[1]);
@@ -1010,22 +1128,22 @@ define('struct_binpack',[
   
   var unpack_int = exports.unpack_int = function(dview, uctx) {
     uctx.i += 4;
-    return dview.getInt32(uctx.i-4, STRUCT_ENDIAN);
+    return dview.getInt32(uctx.i-4, exports.STRUCT_ENDIAN);
   }
   
   exports.unpack_float = function(dview, uctx) {
     uctx.i += 4;
-    return dview.getFloat32(uctx.i-4, STRUCT_ENDIAN);
+    return dview.getFloat32(uctx.i-4, exports.STRUCT_ENDIAN);
   }
   
   exports.unpack_double = function(dview, uctx) {
     uctx.i += 8;
-    return dview.getFloat64(uctx.i-8, STRUCT_ENDIAN);
+    return dview.getFloat64(uctx.i-8, exports.STRUCT_ENDIAN);
   }
   
   exports.unpack_short = function(dview, uctx) {
     uctx.i += 2;
-    return dview.getInt16(uctx.i-2, STRUCT_ENDIAN);
+    return dview.getInt16(uctx.i-2, exports.STRUCT_ENDIAN);
   }
 
   var _static_arr_us = new Array(32);
@@ -1550,31 +1668,45 @@ define('struct_parser',[
       return new struct_parseutil.tokdef(name, re, func);
     }
     
-    var tokens=[tk("ID", /[a-zA-Z_]+[a-zA-Z0-9_\.]*/, function(t) {
-      if (reserved_tokens.has(t.value)) {
-          t.type = t.value.toUpperCase();
-      }
-      return t;
-    }), tk("OPEN", /\{/), tk("EQUALS", /=/), tk("CLOSE", /}/), tk("COLON", /:/), tk("SOPEN", /\[/), tk("SCLOSE", /\]/), tk("JSCRIPT", /\|/, function(t) {
-      var js="";
-      var lexer=t.lexer;
-      while (lexer.lexpos<lexer.lexdata.length) {
-        var c=lexer.lexdata[lexer.lexpos];
-        if (c=="\n")
-          break;
-        js+=c;
-        lexer.lexpos++;
-      }
-      if (js.endsWith(";")) {
-          js = js.slice(0, js.length-1);
-          lexer.lexpos--;
-      }
-      t.value = js;
-      return t;
-    }), tk("LPARAM", /\(/), tk("RPARAM", /\)/), tk("COMMA", /,/), tk("NUM", /[0-9]+/), tk("SEMI", /;/), tk("NEWLINE", /\n/, function(t) {
-      t.lexer.lineno+=1;
-    }), tk("SPACE", / |\t/, function(t) {
-    })
+    var tokens=[
+      tk("ID", /[a-zA-Z_]+[a-zA-Z0-9_\.]*/, function(t) {
+        if (reserved_tokens.has(t.value)) {
+            t.type = t.value.toUpperCase();
+        }
+        return t;
+      }), tk("OPEN", /\{/), 
+      tk("EQUALS", /=/), 
+      tk("CLOSE", /}/), 
+      tk("COLON", /:/), 
+      tk("SOPEN", /\[/), 
+      tk("SCLOSE", /\]/), 
+      tk("JSCRIPT", /\|/, function(t) {
+        var js="";
+        var lexer=t.lexer;
+        while (lexer.lexpos<lexer.lexdata.length) {
+          var c=lexer.lexdata[lexer.lexpos];
+          if (c=="\n")
+            break;
+          js+=c;
+          lexer.lexpos++;
+        }
+        if (js.endsWith(";")) {
+            js = js.slice(0, js.length-1);
+            lexer.lexpos--;
+        }
+        t.value = js.trim();
+        return t;
+      }), 
+      tk("LPARAM", /\(/), 
+      tk("RPARAM", /\)/), 
+      tk("COMMA", /,/), 
+      tk("NUM", /[0-9]+/), 
+      tk("SEMI", /;/), 
+      tk("NEWLINE", /\n/, function(t) {
+        t.lexer.lineno+=1;
+      }),
+      tk("SPACE", / |\t/, function(t) {
+      })
     ];
     
     reserved_tokens.forEach(function(rt) {
@@ -1748,6 +1880,13 @@ define('struct_intern',[
   "use strict";
 
   var exports = {};
+  
+  /**csa**/
+  exports.csa = class csa {
+    constructor() {
+      console.log("yay");
+    }
+  };
   
   /*
   
@@ -2336,15 +2475,19 @@ define('struct_intern',[
       else 
         fullcode = code;
       var func;
+      
+      //fullcode = fullcode.replace(/\bthis\b/, "obj");
+      
       if (!(fullcode in this.compiled_code)) {
           var code2="func = function(obj, env) { "+envcode+"return "+code+"}";
           try {
             eval(code2);
           }
           catch (err) {
+              struct_util.print_stack(err);
+
               console.log(code2);
               console.log(" ");
-              print_stack(err);
               throw err;
           }
           this.compiled_code[fullcode] = func;
@@ -2353,13 +2496,14 @@ define('struct_intern',[
         func = this.compiled_code[fullcode];
       }
       try {
-        return func(obj, env);
+        return func.call(obj, env);
       }
       catch (err) {
+          struct_util.print_stack(err);
+
           var code2="func = function(obj, env) { "+envcode+"return "+code+"}";
           console.log(code2);
           console.log(" ");
-          print_stack(err);
           throw err;
       }
     },
@@ -2401,7 +2545,12 @@ define('struct_intern',[
       var cls=obj.constructor.structName;
       var stt=this.get_struct(cls);
       
+      if (data === undefined) {
+        data = [];
+      }
+      
       this.write_struct(data, obj, stt);
+      return data;
     },
 
     function read_object(data, cls_or_struct_id, uctx) {
@@ -2600,14 +2749,14 @@ define('struct_intern',[
   var manager = exports.manager = new STRUCT();
   
   //manager defaults to structjs.manager
-  var write_scripts = exports.write_scripts = function write_scripts(manager) {
+  var write_scripts = exports.write_scripts = function write_scripts(manager, include_code=false) {
     if (manager === undefined)
       manager = exports.manager;
     
     var buf="";
     
     manager.forEach(function(stt) {
-      buf+=STRUCT.fmt_struct(stt, false, true)+"\n";
+      buf+=STRUCT.fmt_struct(stt, false, !include_code)+"\n";
     });
     
     var buf2=buf;
@@ -2865,6 +3014,15 @@ define('structjs',[
   "use strict";
 
   var exports = {};
+  
+  Object.defineProperty(exports, "STRUCT_ENDIAN", {
+    get : function() {
+      return struct_binpack.STRUCT_ENDIAN;
+    },
+    set : function(val) {
+      struct_binpack.STRUCT_ENDIAN = val;
+    }
+  });
   
   var StructTypeMap = struct_parser.StructTypeMap;
   var StructTypes = struct_parser.StructTypes;

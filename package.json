@@ -6,7 +6,16 @@
   "description": "ProtoBuf-like serialization system optimized for JS",
   "repository": "git://github.com/joeedh/STRUCT.git",
   "dependencies": {
+    "acorn": "^7.0.0",
+    "acorn-walk": "^7.1.1",
     "almond": "^0.3.1",
     "requirejs": "^2.1.17"
+  },
+  "devDependencies": {
+    "@babel/parser": "^7.9.6",
+    "@babel/traverse": "^7.9.6",
+    "babel": "^6.23.0",
+    "esdoc": "^1.1.0",
+    "esdoc-standard-plugin": "^1.0.0"
   }
 }

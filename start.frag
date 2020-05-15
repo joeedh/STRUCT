@@ -1,4 +1,13 @@
+var _nGlobal;
 (function (root, factory) {
+    //detect node
+    
+    if (typeof window === "undefined" && typeof global != "undefined") {
+      _nGlobal = global;
+    } else {
+      _nGlobal = window;
+    }
+    
     if (typeof define === 'function' && define.amd) {
         //Allow using this built library as an AMD module
         //in another project. That other project will only
