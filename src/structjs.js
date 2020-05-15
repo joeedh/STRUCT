@@ -23,6 +23,10 @@ Object.defineProperty(exports, "STRUCT_ENDIAN", {
   }
 });
 
+for (let k in struct_intern) {
+  exports[k] = struct_intern[k];
+}
+
 var StructTypeMap = struct_parser.StructTypeMap;
 var StructTypes = struct_parser.StructTypes;
 var Class = struct_typesystem.Class;
