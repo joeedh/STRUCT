@@ -627,7 +627,7 @@ var STRUCT = exports.STRUCT = class STRUCT {
       func = this.compiled_code[fullcode];
     }
     try {
-      return func.call(obj, env);
+      return func.call(obj, obj, env);
     }
     catch (err) {
       struct_util.print_stack(err);
