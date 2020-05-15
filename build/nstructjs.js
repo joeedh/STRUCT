@@ -12,11 +12,13 @@
 'use strict';
 
 "use strict";
+
 //zebra-style class system, see zebkit.org
 
 function ClassGetter(func) {
   this.func = func;
 }
+
 function ClassSetter(func) {
   this.func = func;
 }
@@ -30,24 +32,23 @@ var StaticMethod = function StaticMethod(func) {
 };
 
 //parent is optional
-var handle_statics = function(cls, methods, parent) {
-  for (var i=0; i<methods.length; i++) {
+var handle_statics = function (cls, methods, parent) {
+  for (var i = 0; i < methods.length; i++) {
     var m = methods[i];
-    
+
     if (m instanceof StaticMethod) {
       cls[m.func.name] = m.func;
     }
   }
-  
+
   //inherit from parent too.
   //only inherit static methods added to parent with this module, though
   if (parent != undefined) {
     for (var k in parent) {
       var v = parent[k];
-      
-      if ((typeof v == "object"|| typeof v == "function")
-           && "_is_static_method" in v && !(k in cls)) 
-      {
+
+      if ((typeof v == "object" || typeof v == "function")
+        && "_is_static_method" in v && !(k in cls)) {
         cls[k] = v;
       }
     }
@@ -57,54 +58,54 @@ var handle_statics = function(cls, methods, parent) {
 var Class = _module_exports_.Class = function Class(methods) {
   var construct = undefined;
   var parent = undefined;
-  
+
   if (arguments.length > 1) {
     //a parent was passed in
-    
+
     parent = methods;
     methods = arguments[1];
   }
-  
-  for (var i=0; i<methods.length; i++) {
+
+  for (var i = 0; i < methods.length; i++) {
     var f = methods[i];
-    
+
     if (f.name == "constructor") {
       construct = f;
       break;
     }
   }
-  
+
   if (construct == undefined) {
     console.trace("Warning, constructor was not defined", methods);
-    
+
     if (parent != undefined) {
-      construct = function() {
+      construct = function () {
         parent.apply(this, arguments);
       };
     } else {
-      construct = function() {
+      construct = function () {
       };
     }
   }
-  
+
   if (parent != undefined) {
     construct.prototype = Object.create(parent.prototype);
   }
-  
+
   construct.prototype.__prototypeid__ = prototype_idgen++;
-  construct.__keystr__ = function() {
+  construct.__keystr__ = function () {
     return this.prototype.__prototypeid__;
   };
-  
+
   construct.__parent__ = parent;
   construct.__statics__ = [];
-  
+
   var getters = {};
   var setters = {};
   var getset = {};
-  
+
   //handle getters/setters
-  for (var i=0; i<methods.length; i++) {
+  for (var i = 0; i < methods.length; i++) {
     var f = methods[i];
     if (f instanceof ClassSetter) {
       setters[f.func.name] = f.func;
@@ -114,45 +115,45 @@ var Class = _module_exports_.Class = function Class(methods) {
       getset[f.func.name] = 1;
     }
   }
-  
+
   for (var k in getset) {
     var def = {
-      enumerable   : true,
-      configurable : true,
-      get : getters[k],
-      set : setters[k]
+      enumerable: true,
+      configurable: true,
+      get: getters[k],
+      set: setters[k]
     };
-    
+
     Object.defineProperty(construct.prototype, k, def);
   }
-  
+
   handle_statics(construct, methods, parent);
-  
+
   if (parent != undefined)
     construct.__parent__ = parent;
-  
-  for (var i=0; i<methods.length; i++) {
+
+  for (var i = 0; i < methods.length; i++) {
     var f = methods[i];
-    
+
     if (f instanceof StaticMethod || f instanceof ClassGetter || f instanceof ClassSetter)
       continue;
 
     construct.prototype[f.name] = f;
   }
-  
+
   return construct;
 };
 
-Class.getter = function(func) {
+Class.getter = function (func) {
   return new ClassGetter(func);
 };
-Class.setter = function(func) {
+Class.setter = function (func) {
   return new ClassSetter(func);
 };
 
-Class.static_method = function(func) {
+Class.static_method = function (func) {
   func._is_static_method = true;
-  
+
   return new StaticMethod(func);
 };
 
@@ -163,79 +164,77 @@ var set$1 = _module_exports_.set = Class([
     this.items = [];
     this.keys = {};
     this.freelist = [];
-    
+
     this.length = 0;
-    
+
     if (input != undefined) {
-      input.forEach(function(item) {
+      input.forEach(function (item) {
         this.add(item);
       }, this);
     }
   },
-  
+
   function add(item) {
     var key = item.__keystr__();
-    
+
     if (key in this.keys) return;
-    
+
     if (this.freelist.length > 0) {
       var i = this.freelist.pop();
-      
+
       this.keys[key] = i;
       items[i] = i;
     } else {
       var i = this.items.length;
-      
+
       this.keys[key] = i;
       this.items.push(item);
     }
-    
+
     this.length++;
   },
-  
+
   function remove(item) {
     var key = item.__keystr__();
-    
+
     if (!(key in this.keys)) {
       console.trace("Warning, item", item, "is not in set");
       return;
     }
-    
+
     var i = this.keys[key];
     this.freelist.push(i);
     this.items[i] = EmptySlot;
-    
+
     delete this.items[i];
     this.length--;
   },
-  
+
   function has(item) {
     return item.__keystr__() in this.keys;
   },
-  
+
   function forEach(func, thisvar) {
-    for (var i=0; i<this.items.length; i++) {
+    for (var i = 0; i < this.items.length; i++) {
       var item = this.items[i];
-      
-      if (item === EmptySlot) 
+
+      if (item === EmptySlot)
         continue;
-        
+
       thisvar != undefined ? func.call(thisvar, time) : func(item);
     }
   }
 ]);
 
 var Class$1 = _module_exports_.Class;
-console.log(_module_exports_);
-
-var _o_basic_types = {"String" : 0, "Number" : 0, "Array" : 0, "Function" : 0};
+var _o_basic_types = {"String": 0, "Number": 0, "Array": 0, "Function": 0};
 
 function isNodeJS() {
   ret = typeof process !== "undefined";
   ret = ret && process.release;
   ret = ret && process.release.name === "node";
   ret = ret && process.version;
-  
+
   return !!ret;
 }
 
@@ -245,12 +244,12 @@ let is_obj_lit = _module_exports_$1.is_obj_lit = function is_obj_lit(obj) {
     return false;
   }
   
-  let good =  obj.__proto__ && obj.__proto__.constructor && obj.__proto__.constructor === Object;
-  
+  let good = obj.__proto__ && obj.__proto__.constructor && obj.__proto__.constructor === Object;
+
   if (good) {
     return true;
   }
-  
+
   let bad = typeof obj !== "object";
   bad = bad || obj.constructor.name in _o_basic_types;
   bad = bad || obj instanceof String;
@@ -260,14 +259,14 @@ let is_obj_lit = _module_exports_$1.is_obj_lit = function is_obj_lit(obj) {
   bad = bad || obj instanceof Array;
   bad = bad || obj instanceof Set;
   bad = bad || (obj.__proto__.constructor && obj.__proto__.constructor !== Object);
-  
+
   return !bad;
 };
 _nGlobal.is_obj_lit = is_obj_lit;
 
 function set_getkey(obj) {
   if (typeof obj == "number" || typeof obj == "boolean")
-    return ""+obj;
+    return "" + obj;
   else if (typeof obj == "string")
     return obj;
   else
@@ -282,8 +281,8 @@ _module_exports_$1.get_callstack = function get_callstack(err) {
 
   if (err == undefined) {
     try {
-      _idontexist.idontexist+=0; //doesn't exist- that's the point
-    } catch(err1) {
+      _idontexist.idontexist += 0; //doesn't exist- that's the point
+    } catch (err1) {
       err = err1;
     }
   }
@@ -291,8 +290,8 @@ _module_exports_$1.get_callstack = function get_callstack(err) {
   if (err != undefined) {
     if (err.stack) { //Firefox
       var lines = err.stack.split('\n');
-      var len=lines.length;
-      for (var i=0; i<len; i++) {
+      var len = lines.length;
+      for (var i = 0; i < len; i++) {
         if (1) {
           lines[i] = lines[i].replace(/@http\:\/\/.*\//, "|");
           var l = lines[i].split("|");
@@ -310,13 +309,13 @@ _module_exports_$1.get_callstack = function get_callstack(err) {
     }
     else if (window.opera && e.message) { //Opera
       var lines = err.message.split('\n');
-      var len=lines.length;
-      for (var i=0; i<len; i++) {
+      var len = lines.length;
+      for (var i = 0; i < len; i++) {
         if (lines[i].match(/^\s*[A-Za-z0-9\-_\$]+\(/)) {
           var entry = lines[i];
           //Append next line also since it has the file info
-          if (lines[i+1]) {
-            entry += ' at ' + lines[i+1];
+          if (lines[i + 1]) {
+            entry += ' at ' + lines[i + 1];
             i++;
           }
           callstack.push(entry);
@@ -328,21 +327,21 @@ _module_exports_$1.get_callstack = function get_callstack(err) {
       }
       isCallstackPopulated = true;
     }
-   }
+  }
 
-    var limit = 24;
-    if (!isCallstackPopulated) { //IE and Safari
-      var currentFunction = arguments.callee.caller;
-      var i = 0;
-      while (currentFunction && i < 24) {
-        var fn = currentFunction.toString();
-        var fname = fn.substring(fn.indexOf("function") + 8, fn.indexOf('')) || 'anonymous';
-        callstack.push(fname);
-        currentFunction = currentFunction.caller;
+  var limit = 24;
+  if (!isCallstackPopulated) { //IE and Safari
+    var currentFunction = arguments.callee.caller;
+    var i = 0;
+    while (currentFunction && i < 24) {
+      var fn = currentFunction.toString();
+      var fname = fn.substring(fn.indexOf("function") + 8, fn.indexOf('')) || 'anonymous';
+      callstack.push(fname);
+      currentFunction = currentFunction.caller;
 
-        i++;
-      }
+      i++;
     }
+  }
 
   return callstack;
 };
@@ -356,7 +355,7 @@ _module_exports_$1.print_stack = function print_stack(err) {
   }
 
   console.log("Callstack:");
-  for (var i=0; i<cs.length; i++) {
+  for (var i = 0; i < cs.length; i++) {
     console.log(cs[i]);
   }
 };
@@ -366,37 +365,37 @@ var set$2 = _module_exports_$1.set = Class$1([
     this.items = [];
     this.keys = {};
     this.freelist = [];
-    
+
     this.length = 0;
-    
+
     if (input != undefined && input instanceof Array) {
-      for (var i=0; i<input.length; i++) {
+      for (var i = 0; i < input.length; i++) {
         this.add(input[i]);
       }
     } else if (input != undefined && input.forEach != undefined) {
-      input.forEach(function(item) {
+      input.forEach(function (item) {
         this.add(input[i]);
       }, this);
     }
-},
-function add(obj) {
+  },
+  function add(obj) {
     var key = set_getkey(obj);
     if (key in this.keys) return;
-    
+
     if (this.freelist.length > 0) {
-        var i = this.freelist.pop();
-        this.keys[key] = i;
-        this.items[i] = obj;
+      var i = this.freelist.pop();
+      this.keys[key] = i;
+      this.items[i] = obj;
     } else {
       this.keys[key] = this.items.length;
       this.items.push(obj);
     }
-    
+
     this.length++;
   },
   function remove(obj, raise_error) {
     var key = set_getkey(obj);
-    
+
     if (!(keystr in this.keys)) {
       if (raise_error)
         throw new Error("Object not in set");
@@ -404,26 +403,26 @@ function add(obj) {
         console.trace("Object not in set", obj);
       return;
     }
-    
+
     var i = this.keys[keystr];
-    
+
     this.freelist.push(i);
     this.items[i] = undefined;
-    
+
     delete this.keys[keystr];
     this.length--;
   },
-  
+
   function has(obj) {
     return set_getkey(obj) in this.keys;
   },
-  
+
   function forEach(func, thisvar) {
-    for (var i=0; i<this.items.length; i++) {
+    for (var i = 0; i < this.items.length; i++) {
       var item = this.items[i];
-      
+
       if (item == undefined) continue;
-      
+
       if (thisvar != undefined)
         func.call(thisvar, item);
       else
@@ -436,11 +435,11 @@ var IDGen = _module_exports_$1.IDGen = Class$1([
   function constructor() {
     this.cur_id = 1;
   },
-  
+
   function gen_id() {
     return this.cur_id++;
   },
-  
+
   Class$1.static_method(function fromSTRUCT(reader) {
     var ret = new IDGen();
     reader(ret);
@@ -468,37 +467,37 @@ var unpack_context = _module_exports_$2.unpack_context = Class$2([
   }
 ]);
 
-var pack_byte = _module_exports_$2.pack_byte = function(array, val) {
+var pack_byte = _module_exports_$2.pack_byte = function (array, val) {
   array.push(val);
 };
 
-var pack_bytes = _module_exports_$2.pack_bytes = function(array, bytes) {
-  for (var i=0; i<bytes.length; i++) {
+var pack_bytes = _module_exports_$2.pack_bytes = function (array, bytes) {
+  for (var i = 0; i < bytes.length; i++) {
     array.push(bytes[i]);
   }
 };
 
-var pack_int = _module_exports_$2.pack_int = function(array, val) {
+var pack_int = _module_exports_$2.pack_int = function (array, val) {
   temp_dataview.setInt32(0, val, _module_exports_$2.STRUCT_ENDIAN);
-  
+
   array.push(uint8_view[0]);
   array.push(uint8_view[1]);
   array.push(uint8_view[2]);
   array.push(uint8_view[3]);
 };
 
-_module_exports_$2.pack_float = function(array, val) {
+_module_exports_$2.pack_float = function (array, val) {
   temp_dataview.setFloat32(0, val, _module_exports_$2.STRUCT_ENDIAN);
-  
+
   array.push(uint8_view[0]);
   array.push(uint8_view[1]);
   array.push(uint8_view[2]);
   array.push(uint8_view[3]);
 };
 
-_module_exports_$2.pack_double = function(array, val) {
+_module_exports_$2.pack_double = function (array, val) {
   temp_dataview.setFloat64(0, val, _module_exports_$2.STRUCT_ENDIAN);
-  
+
   array.push(uint8_view[0]);
   array.push(uint8_view[1]);
   array.push(uint8_view[2]);
@@ -509,24 +508,24 @@ _module_exports_$2.pack_double = function(array, val) {
   array.push(uint8_view[7]);
 };
 
-_module_exports_$2.pack_short = function(array, val) {
+_module_exports_$2.pack_short = function (array, val) {
   temp_dataview.setInt16(0, val, _module_exports_$2.STRUCT_ENDIAN);
-  
+
   array.push(uint8_view[0]);
   array.push(uint8_view[1]);
 };
 
 var encode_utf8 = _module_exports_$2.encode_utf8 = function encode_utf8(arr, str) {
-  for (var i=0; i<str.length; i++) {
+  for (var i = 0; i < str.length; i++) {
     var c = str.charCodeAt(i);
-    
+
     while (c != 0) {
       var uc = c & 127;
-      c = c>>7;
-      
+      c = c >> 7;
+
       if (c != 0)
         uc |= 128;
-      
+
       arr.push(uc);
     }
   }
@@ -535,88 +534,85 @@ var encode_utf8 = _module_exports_$2.encode_utf8 = function encode_utf8(arr, str
 var decode_utf8 = _module_exports_$2.decode_utf8 = function decode_utf8(arr) {
   var str = "";
   var i = 0;
-  
+
   while (i < arr.length) {
     var c = arr[i];
     var sum = c & 127;
     var j = 0;
     var lasti = i;
-    
+
     while (i < arr.length && (c & 128)) {
       j += 7;
       i++;
       c = arr[i];
-      
-      c = (c&127)<<j;
+
+      c = (c & 127) << j;
       sum |= c;
     }
-    
+
     if (sum == 0) break;
-    
+
     str += String.fromCharCode(sum);
     i++;
   }
-  
+
   return str;
 };
 
-var test_utf8 = _module_exports_$2.test_utf8 = function test_utf8()
-{
+var test_utf8 = _module_exports_$2.test_utf8 = function test_utf8() {
   var s = "a" + String.fromCharCode(8800) + "b";
   var arr = [];
-  
+
   encode_utf8(arr, s);
   var s2 = decode_utf8(arr);
-  
+
   if (s != s2) {
     throw new Error("UTF-8 encoding/decoding test failed");
   }
-  
+
   return true;
 };
 
-function truncate_utf8(arr, maxlen)
-{
+function truncate_utf8(arr, maxlen) {
   var len = Math.min(arr.length, maxlen);
-  
+
   var last_codepoint = 0;
   var last2 = 0;
-  
+
   var incode = false;
   var i = 0;
   var code = 0;
   while (i < len) {
     incode = arr[i] & 128;
-    
+
     if (!incode) {
-      last2 = last_codepoint+1;
-      last_codepoint = i+1;
+      last2 = last_codepoint + 1;
+      last_codepoint = i + 1;
     }
-    
+
     i++;
   }
-  
+
   if (last_codepoint < maxlen)
     arr.length = last_codepoint;
   else
     arr.length = last2;
-    
+
   return arr;
 }
 
 var _static_sbuf_ss = new Array(2048);
-var pack_static_string = _module_exports_$2.pack_static_string = function pack_static_string(data, str, length)
-{
+var pack_static_string = _module_exports_$2.pack_static_string = function pack_static_string(data, str, length) {
   if (length == undefined)
-   throw new Error("'length' paremter is not optional for pack_static_string()");
-  
+    throw new Error("'length' paremter is not optional for pack_static_string()");
+
   var arr = length < 2048 ? _static_sbuf_ss : new Array();
   arr.length = 0;
-  
+
   encode_utf8(arr, str);
   truncate_utf8(arr, length);
-  
-  for (var i=0; i<length; i++) {
+
+  for (var i = 0; i < length; i++) {
     if (i >= arr.length) {
       data.push(0);
     } else {
@@ -628,89 +624,87 @@ var pack_static_string = _module_exports_$2.pack_static_string = function pack_s
 var _static_sbuf = new Array(32);
 
 /*strings are packed as 32-bit unicode codepoints*/
-var pack_string = _module_exports_$2.pack_string = function pack_string(data, str)
-{
+var pack_string = _module_exports_$2.pack_string = function pack_string(data, str) {
   _static_sbuf.length = 0;
   encode_utf8(_static_sbuf, str);
-  
+
   pack_int(data, _static_sbuf.length);
-  
-  for (var i=0; i<_static_sbuf.length; i++) {
+
+  for (var i = 0; i < _static_sbuf.length; i++) {
     data.push(_static_sbuf[i]);
   }
 };
 
-var unpack_bytes = _module_exports_$2.unpack_bytes = function unpack_bytes(dview, uctx, len)
-{
-  var ret = new DataView(dview.buffer.slice(uctx.i, uctx.i+len));
+var unpack_bytes = _module_exports_$2.unpack_bytes = function unpack_bytes(dview, uctx, len) {
+  var ret = new DataView(dview.buffer.slice(uctx.i, uctx.i + len));
   uctx.i += len;
-  
+
   return ret;
 };
 
-var unpack_byte = _module_exports_$2.unpack_byte = function(dview, uctx) {
+var unpack_byte = _module_exports_$2.unpack_byte = function (dview, uctx) {
   return dview.getUint8(uctx.i++);
 };
 
-var unpack_int = _module_exports_$2.unpack_int = function(dview, uctx) {
+var unpack_int = _module_exports_$2.unpack_int = function (dview, uctx) {
   uctx.i += 4;
-  return dview.getInt32(uctx.i-4, _module_exports_$2.STRUCT_ENDIAN);
+  return dview.getInt32(uctx.i - 4, _module_exports_$2.STRUCT_ENDIAN);
 };
 
-_module_exports_$2.unpack_float = function(dview, uctx) {
+_module_exports_$2.unpack_float = function (dview, uctx) {
   uctx.i += 4;
-  return dview.getFloat32(uctx.i-4, _module_exports_$2.STRUCT_ENDIAN);
+  return dview.getFloat32(uctx.i - 4, _module_exports_$2.STRUCT_ENDIAN);
 };
 
-_module_exports_$2.unpack_double = function(dview, uctx) {
+_module_exports_$2.unpack_double = function (dview, uctx) {
   uctx.i += 8;
-  return dview.getFloat64(uctx.i-8, _module_exports_$2.STRUCT_ENDIAN);
+  return dview.getFloat64(uctx.i - 8, _module_exports_$2.STRUCT_ENDIAN);
 };
 
-_module_exports_$2.unpack_short = function(dview, uctx) {
+_module_exports_$2.unpack_short = function (dview, uctx) {
   uctx.i += 2;
-  return dview.getInt16(uctx.i-2, _module_exports_$2.STRUCT_ENDIAN);
+  return dview.getInt16(uctx.i - 2, _module_exports_$2.STRUCT_ENDIAN);
 };
 
 var _static_arr_us = new Array(32);
-_module_exports_$2.unpack_string = function(data, uctx) {
+_module_exports_$2.unpack_string = function (data, uctx) {
   var str = "";
-  
+
   var slen = unpack_int(data, uctx);
   var arr = slen < 2048 ? _static_arr_us : new Array(slen);
-  
+
   arr.length = slen;
-  for (var i=0; i<slen; i++) {
+  for (var i = 0; i < slen; i++) {
     arr[i] = unpack_byte(data, uctx);
   }
-  
+
   return decode_utf8(arr);
 };
 
 var _static_arr_uss = new Array(2048);
 _module_exports_$2.unpack_static_string = function unpack_static_string(data, uctx, length) {
   var str = "";
-  
+
   if (length == undefined)
     throw new Error("'length' cannot be undefined in unpack_static_string()");
-  
+
   var arr = length < 2048 ? _static_arr_uss : new Array(length);
   arr.length = 0;
 
   var done = false;
-  for (var i=0; i<length; i++) {
+  for (var i = 0; i < length; i++) {
     var c = unpack_byte(data, uctx);
-    
+
     if (c == 0) {
       done = true;
     }
-    
+
     if (!done && c != 0) {
       arr.push(c);
       //arr.length++;
     }
   }
-  
+
   truncate_utf8(arr, length);
   return decode_utf8(arr);
 };
@@ -731,12 +725,12 @@ _module_exports_$3.token = class token {
     this.lexer = lexer;
     this.parser = parser;
   }
-  
+
   toString() {
-    if (this.value!=undefined)
-      return "token(type="+this.type+", value='"+this.value+"')";
-    else 
-      return "token(type="+this.type+")";
+    if (this.value != undefined)
+      return "token(type=" + this.type + ", value='" + this.value + "')";
+    else
+      return "token(type=" + this.type + ")";
   }
 };
 
@@ -763,26 +757,26 @@ _module_exports_$3.lexer = class lexer {
     this.lineno = 0;
     this.errfunc = errfunc;
     this.tokints = {};
-    for (var i=0; i<tokdef.length; i++) {
-        this.tokints[tokdef[i].name] = i;
+    for (var i = 0; i < tokdef.length; i++) {
+      this.tokints[tokdef[i].name] = i;
     }
     this.statestack = [["__main__", 0]];
     this.states = {"__main__": [tokdef, errfunc]};
     this.statedata = 0;
   }
-  
+
   add_state(name, tokdef, errfunc) {
-    if (errfunc==undefined) {
-        errfunc = function(lexer) {
-          return true;
-        };
+    if (errfunc == undefined) {
+      errfunc = function (lexer) {
+        return true;
+      };
     }
     this.states[name] = [tokdef, errfunc];
   }
-  
+
   tok_int(name) {
   }
-  
+
   push_state(state, statedata) {
     this.statestack.push([state, statedata]);
     state = this.states[state];
@@ -790,17 +784,17 @@ _module_exports_$3.lexer = class lexer {
     this.tokdef = state[0];
     this.errfunc = state[1];
   }
-  
+
   pop_state() {
-    var item=this.statestack[this.statestack.length-1];
-    var state=this.states[item[0]];
+    var item = this.statestack[this.statestack.length - 1];
+    var state = this.states[item[0]];
     this.tokdef = state[0];
     this.errfunc = state[1];
     this.statedata = item[1];
   }
-  
+
   input(str) {
-    while (this.statestack.length>1) {
+    while (this.statestack.length > 1) {
       this.pop_state();
     }
     this.lexdata = str;
@@ -809,91 +803,91 @@ _module_exports_$3.lexer = class lexer {
     this.tokens = new Array();
     this.peeked_tokens = [];
   }
-  
+
   error() {
     if (this.errfunc != undefined && !this.errfunc(this))
       return;
-      
-    console.log("Syntax error near line "+this.lineno);
 
-    var next=Math.min(this.lexpos+8, this.lexdata.length);
-    console.log("  "+this.lexdata.slice(this.lexpos, next));
+    console.log("Syntax error near line " + this.lineno);
+
+    var next = Math.min(this.lexpos + 8, this.lexdata.length);
+    console.log("  " + this.lexdata.slice(this.lexpos, next));
 
     throw new PUTIL_ParseError("Parse error");
   }
-  
+
   peek() {
-    var tok=this.next(true);
-    if (tok==undefined)
+    var tok = this.next(true);
+    if (tok == undefined)
       return undefined;
     this.peeked_tokens.push(tok);
     return tok;
   }
-  
+
   peeknext() {
     if (this.peeked_tokens.length > 0) {
       return this.peeked_tokens[0];
     }
-    
+
     return this.peek();
   }
-  
+
   at_end() {
-    return this.lexpos>=this.lexdata.length&&this.peeked_tokens.length==0;
+    return this.lexpos >= this.lexdata.length && this.peeked_tokens.length == 0;
   }
-  
+
   //ignore_peek is optional, false
   next(ignore_peek) {
-    if (!ignore_peek && this.peeked_tokens.length>0) {
-        var tok=this.peeked_tokens[0];
-        this.peeked_tokens.shift();
-        return tok;
+    if (!ignore_peek && this.peeked_tokens.length > 0) {
+      var tok = this.peeked_tokens[0];
+      this.peeked_tokens.shift();
+      return tok;
     }
-    
-    if (this.lexpos>=this.lexdata.length)
+
+    if (this.lexpos >= this.lexdata.length)
       return undefined;
-      
-    var ts=this.tokdef;
-    var tlen=ts.length;
-    var lexdata=this.lexdata.slice(this.lexpos, this.lexdata.length);
-    var results=[];
-    
-    for (var i=0; i<tlen; i++) {
-        var t=ts[i];
-        if (t.re==undefined)
-          continue;
-        var res=t.re.exec(lexdata);
-        if (res!=null&&res!=undefined&&res.index==0) {
-            results.push([t, res]);
-        }
+
+    var ts = this.tokdef;
+    var tlen = ts.length;
+    var lexdata = this.lexdata.slice(this.lexpos, this.lexdata.length);
+    var results = [];
+
+    for (var i = 0; i < tlen; i++) {
+      var t = ts[i];
+      if (t.re == undefined)
+        continue;
+      var res = t.re.exec(lexdata);
+      if (res != null && res != undefined && res.index == 0) {
+        results.push([t, res]);
+      }
     }
-    
-    var max_res=0;
-    var theres=undefined;
-    for (var i=0; i<results.length; i++) {
-        var res=results[i];
-        if (res[1][0].length>max_res) {
-            theres = res;
-            max_res = res[1][0].length;
-        }
+
+    var max_res = 0;
+    var theres = undefined;
+    for (var i = 0; i < results.length; i++) {
+      var res = results[i];
+      if (res[1][0].length > max_res) {
+        theres = res;
+        max_res = res[1][0].length;
+      }
     }
-    
-    if (theres==undefined) {
-        this.error();
-        return ;
+
+    if (theres == undefined) {
+      this.error();
+      return;
     }
-    
-    var def=theres[0];
-    var token=new _module_exports_$3.token(def.name, theres[1][0], this.lexpos, this.lineno, this, undefined);
-    this.lexpos+=token.value.length;
-    
+
+    var def = theres[0];
+    var token = new _module_exports_$3.token(def.name, theres[1][0], this.lexpos, this.lineno, this, undefined);
+    this.lexpos += token.value.length;
+
     if (def.func) {
-        token = def.func(token);
-        if (token==undefined) {
-            return this.next();
-        }
+      token = def.func(token);
+      if (token == undefined) {
+        return this.next();
+      }
     }
-    
+
     return token;
   }
 };
@@ -904,220 +898,226 @@ const parser = _module_exports_$3.parser = class parser {
     this.errfunc = errfunc;
     this.start = undefined;
   }
-  
+
   parse(data, err_on_unconsumed) {
-    if (err_on_unconsumed==undefined)
+    if (err_on_unconsumed == undefined)
       err_on_unconsumed = true;
-      
-    if (data!=undefined)
+
+    if (data != undefined)
       this.lexer.input(data);
-      
-    var ret=this.start(this);
-    
+
+    var ret = this.start(this);
+
     if (err_on_unconsumed && !this.lexer.at_end() && this.lexer.next() != undefined) {
-        this.error(undefined, "parser did not consume entire input");
+      this.error(undefined, "parser did not consume entire input");
     }
     return ret;
   }
-    
+
   input(data) {
     this.lexer.input(data);
   }
-  
+
   error(token, msg) {
-    if (msg==undefined)
+    if (msg == undefined)
       msg = "";
-    if (token==undefined)
-      var estr="Parse error at end of input: "+msg;
-    else 
-      estr = "Parse error at line "+(token.lineno+1)+": "+msg;
-    var buf="1| ";
-    var ld=this.lexer.lexdata;
-    var l=1;
-    for (var i=0; i<ld.length; i++) {
-        var c=ld[i];
-        if (c=='\n') {
-            l++;
-            buf+="\n"+l+"| ";
-        }
-        else {
-          buf+=c;
-        }
+    if (token == undefined)
+      var estr = "Parse error at end of input: " + msg;
+    else
+      estr = "Parse error at line " + (token.lineno + 1) + ": " + msg;
+    var buf = "1| ";
+    var ld = this.lexer.lexdata;
+    var l = 1;
+    for (var i = 0; i < ld.length; i++) {
+      var c = ld[i];
+      if (c == '\n') {
+        l++;
+        buf += "\n" + l + "| ";
+      }
+      else {
+        buf += c;
+      }
     }
     console.log("------------------");
     console.log(buf);
     console.log("==================");
     console.log(estr);
-    if (this.errfunc&&!this.errfunc(token)) {
-        return ;
+    if (this.errfunc && !this.errfunc(token)) {
+      return;
     }
     throw new PUTIL_ParseError(estr);
   }
-  
+
   peek() {
-    var tok=this.lexer.peek();
-    if (tok!=undefined)
+    var tok = this.lexer.peek();
+    if (tok != undefined)
       tok.parser = this;
     return tok;
   }
-  
+
   peeknext() {
-    var tok=this.lexer.peeknext();
-    if (tok!=undefined)
+    var tok = this.lexer.peeknext();
+    if (tok != undefined)
       tok.parser = this;
     return tok;
   }
-  
+
   next() {
-    var tok=this.lexer.next();
-    if (tok!=undefined)
+    var tok = this.lexer.next();
+    if (tok != undefined)
       tok.parser = this;
     return tok;
   }
-  
+
   optional(type) {
-    var tok=this.peek();
-    if (tok==undefined)
+    var tok = this.peek();
+    if (tok == undefined)
       return false;
-    if (tok.type==type) {
-        this.next();
-        return true;
+    if (tok.type == type) {
+      this.next();
+      return true;
     }
     return false;
   }
-  
+
   at_end() {
     return this.lexer.at_end();
   }
+
   expect(type, msg) {
-    var tok=this.next();
-    if (msg==undefined)
+    var tok = this.next();
+    if (msg == undefined)
       msg = type;
-    if (tok==undefined||tok.type!=type) {
-        this.error(tok, "Expected "+msg);
+    if (tok == undefined || tok.type != type) {
+      this.error(tok, "Expected " + msg);
     }
     return tok.value;
   }
 };
 
 function test_parser() {
-  var basic_types=new set(["int", "float", "double", "vec2", "vec3", "vec4", "mat4", "string"]);
-  var reserved_tokens=new set(["int", "float", "double", "vec2", "vec3", "vec4", "mat4", "string", "static_string", "array"]);
+  var basic_types = new set(["int", "float", "double", "vec2", "vec3", "vec4", "mat4", "string"]);
+  var reserved_tokens = new set(["int", "float", "double", "vec2", "vec3", "vec4", "mat4", "string", "static_string", "array"]);
+
   function tk(name, re, func) {
     return new _module_exports_$3.tokdef(name, re, func);
   }
-  var tokens=[tk("ID", /[a-zA-Z]+[a-zA-Z0-9_]*/, function(t) {
+
+  var tokens = [tk("ID", /[a-zA-Z]+[a-zA-Z0-9_]*/, function (t) {
     if (reserved_tokens.has(t.value)) {
-        t.type = t.value.toUpperCase();
+      t.type = t.value.toUpperCase();
     }
     return t;
-  }), tk("OPEN", /\{/), tk("CLOSE", /}/), tk("COLON", /:/), tk("JSCRIPT", /\|/, function(t) {
-    var js="";
-    var lexer=t.lexer;
-    while (lexer.lexpos<lexer.lexdata.length) {
-      var c=lexer.lexdata[lexer.lexpos];
-      if (c=="\n")
+  }), tk("OPEN", /\{/), tk("CLOSE", /}/), tk("COLON", /:/), tk("JSCRIPT", /\|/, function (t) {
+    var js = "";
+    var lexer = t.lexer;
+    while (lexer.lexpos < lexer.lexdata.length) {
+      var c = lexer.lexdata[lexer.lexpos];
+      if (c == "\n")
         break;
-      js+=c;
+      js += c;
       lexer.lexpos++;
     }
     if (js.endsWith(";")) {
-        js = js.slice(0, js.length-1);
-        lexer.lexpos--;
+      js = js.slice(0, js.length - 1);
+      lexer.lexpos--;
     }
     t.value = js;
     return t;
-  }), tk("LPARAM", /\(/), tk("RPARAM", /\)/), tk("COMMA", /,/), tk("NUM", /[0-9]/), tk("SEMI", /;/), tk("NEWLINE", /\n/, function(t) {
-    t.lexer.lineno+=1;
-  }), tk("SPACE", / |\t/, function(t) {
+  }), tk("LPARAM", /\(/), tk("RPARAM", /\)/), tk("COMMA", /,/), tk("NUM", /[0-9]/), tk("SEMI", /;/), tk("NEWLINE", /\n/, function (t) {
+    t.lexer.lineno += 1;
+  }), tk("SPACE", / |\t/, function (t) {
   })];
-  var __iter_rt=__get_iter(reserved_tokens);
+  var __iter_rt = __get_iter(reserved_tokens);
   var rt;
   while (1) {
-    var __ival_rt=__iter_rt.next();
+    var __ival_rt = __iter_rt.next();
     if (__ival_rt.done) {
-        break;
+      break;
     }
     rt = __ival_rt.value;
     tokens.push(tk(rt.toUpperCase()));
   }
-  var a="\n  Loop {\n    eid : int;\n    flag : int;\n    index : int;\n    type : int;\n\n    co : vec3;\n    no : vec3;\n    loop : int | eid(loop);\n    edges : array(e, int) | e.eid;\n\n    loops : array(Loop);\n  }\n  ";
+  var a = "\n  Loop {\n    eid : int;\n    flag : int;\n    index : int;\n    type : int;\n\n    co : vec3;\n    no : vec3;\n    loop : int | eid(loop);\n    edges : array(e, int) | e.eid;\n\n    loops : array(Loop);\n  }\n  ";
+
   function errfunc(lexer) {
     return true;
   }
-  var lex=new _module_exports_$3.lexer(tokens, errfunc);
+
+  var lex = new _module_exports_$3.lexer(tokens, errfunc);
   console.log("Testing lexical scanner...");
   lex.input(a);
   var token;
   while (token = lex.next()) {
     console.log(token.toString());
   }
-  var parser=new _module_exports_$3.parser(lex);
+  var parser = new _module_exports_$3.parser(lex);
   parser.input(a);
+
   function p_Array(p) {
     p.expect("ARRAY");
     p.expect("LPARAM");
-    var arraytype=p_Type(p);
-    var itername="";
+    var arraytype = p_Type(p);
+    var itername = "";
     if (p.optional("COMMA")) {
-        itername = arraytype;
-        arraytype = p_Type(p);
+      itername = arraytype;
+      arraytype = p_Type(p);
     }
     p.expect("RPARAM");
     return {type: "array", data: {type: arraytype, iname: itername}}
   }
+
   function p_Type(p) {
-    var tok=p.peek();
-    if (tok.type=="ID") {
-        p.next();
-        return {type: "struct", data: "\""+tok.value+"\""}
+    var tok = p.peek();
+    if (tok.type == "ID") {
+      p.next();
+      return {type: "struct", data: "\"" + tok.value + "\""}
     }
-    else 
-      if (basic_types.has(tok.type.toLowerCase())) {
-        p.next();
-        return {type: tok.type.toLowerCase()}
+    else if (basic_types.has(tok.type.toLowerCase())) {
+      p.next();
+      return {type: tok.type.toLowerCase()}
     }
-    else 
-      if (tok.type=="ARRAY") {
-        return p_Array(p);
+    else if (tok.type == "ARRAY") {
+      return p_Array(p);
     }
     else {
-      p.error(tok, "invalid type "+tok.type);
+      p.error(tok, "invalid type " + tok.type);
     }
   }
+
   function p_Field(p) {
-    var field={};
+    var field = {};
     console.log("-----", p.peek().type);
     field.name = p.expect("ID", "struct field name");
     p.expect("COLON");
     field.type = p_Type(p);
     field.set = undefined;
     field.get = undefined;
-    var tok=p.peek();
-    if (tok.type=="JSCRIPT") {
-        field.get = tok.value;
-        p.next();
+    var tok = p.peek();
+    if (tok.type == "JSCRIPT") {
+      field.get = tok.value;
+      p.next();
     }
     tok = p.peek();
-    if (tok.type=="JSCRIPT") {
-        field.set = tok.value;
-        p.next();
+    if (tok.type == "JSCRIPT") {
+      field.set = tok.value;
+      p.next();
     }
     p.expect("SEMI");
     return field;
   }
+
   function p_Struct(p) {
-    var st={};
+    var st = {};
     st.name = p.expect("ID", "struct name");
     st.fields = [];
     p.expect("OPEN");
     while (1) {
       if (p.at_end()) {
-          p.error(undefined);
+        p.error(undefined);
       }
-      else 
-        if (p.optional("CLOSE")) {
-          break;
+      else if (p.optional("CLOSE")) {
+        break;
       }
       else {
         st.fields.push(p_Field(p));
@@ -1125,7 +1125,8 @@ function test_parser() {
     }
     return st;
   }
-  var ret=p_Struct(parser);
+
+  var ret = p_Struct(parser);
   console.log(JSON.stringify(ret));
 }
 
@@ -1398,14 +1399,6 @@ _module_exports_$4.struct_parse = StructParser();
 
 "use strict";
 
-/**csa**/
-const _module_exports_$5 = {};
-_module_exports_$5.csa = class csa {
-  constructor() {
-    console.log("yay");
-  }
-};
-
 /*
 
 class SomeClass {
@@ -1438,140 +1431,148 @@ var Class$4 = _module_exports_.Class;
 var struct_parse = _module_exports_$4.struct_parse;
 var StructEnum$1 = _module_exports_$4.StructEnum;
 
-var _static_envcode_null="";
-var debug_struct=0;
-var packdebug_tablevel=0;
+var _static_envcode_null = "";
+var debug_struct = 0;
+var packdebug_tablevel = 0;
 
 function gen_tabstr$1(tot) {
   var ret = "";
-  
-  for (var i=0; i<tot; i++) {
+
+  for (var i = 0; i < tot; i++) {
     ret += " ";
   }
-  
+
   return ret;
 }
 
+let packer_debug, packer_debug_start, packer_debug_end;
+
 if (debug_struct) {
-    var packer_debug=function(msg) {
-      if (msg!=undefined) {
-          var t=gen_tabstr$1(packdebug_tablevel);
-          console.log(t+msg);
+  packer_debug = function (msg) {
+    if (msg !== undefined) {
+      var t = gen_tabstr$1(packdebug_tablevel);
+      console.log(t + msg);
+    } else {
+      console.log("Warning: undefined msg");
+    }
+  };
+  packer_debug_start = function (funcname) {
+    packer_debug("Start " + funcname);
+    packdebug_tablevel++;
+  };
+
+  packer_debug_end = function (funcname) {
+    packdebug_tablevel--;
+    packer_debug("Leave " + funcname);
+  };
+}
+else {
+  packer_debug = function () {
+  };
+  packer_debug_start = function () {
+  };
+  packer_debug_end = function () {
+  };
+}
+
+const _module_exports_$5 = {};
+_module_exports_$5.setDebugMode = (t) => {
+  debug_struct = t;
+
+  if (debug_struct) {
+    packer_debug = function (msg) {
+      if (msg != undefined) {
+        var t = gen_tabstr$1(packdebug_tablevel);
+        console.log(t + msg);
       } else {
         console.log("Warning: undefined msg");
       }
     };
-    var packer_debug_start=function(funcname) {
-      packer_debug("Start "+funcname);
+    packer_debug_start = function (funcname) {
+      packer_debug("Start " + funcname);
       packdebug_tablevel++;
     };
-    
-    var packer_debug_end=function(funcname) {
-      packdebug_tablevel--;
-      packer_debug("Leave "+funcname);
-    };
-}
-else {
-  var packer_debug=function() {};
-  var packer_debug_start=function() {};
-  var packer_debug_end=function() {};
-}
 
-_module_exports_$5.setDebugMode = (t) => {
-  debug_struct = t;
-  
-  if (debug_struct) {
-      packer_debug=function(msg) {
-        if (msg!=undefined) {
-            var t=gen_tabstr$1(packdebug_tablevel);
-            console.log(t+msg);
-        } else {
-          console.log("Warning: undefined msg");
-        }
-      };
-      packer_debug_start=function(funcname) {
-        packer_debug("Start "+funcname);
-        packdebug_tablevel++;
-      };
-      
-      packer_debug_end=function(funcname) {
-        packdebug_tablevel--;
-        packer_debug("Leave "+funcname);
-      };
+    packer_debug_end = function (funcname) {
+      packdebug_tablevel--;
+      packer_debug("Leave " + funcname);
+    };
   }
   else {
-    packer_debug=function() {};
-    packer_debug_start=function() {};
-    packer_debug_end=function() {};
+    packer_debug = function () {
+    };
+    packer_debug_start = function () {
+    };
+    packer_debug_end = function () {
+    };
   }
 };
 
-var _ws_env=[[undefined, undefined]];
+var _ws_env = [[undefined, undefined]];
+var pack_callbacks = [
+  function pack_int(data, val) {
+    packer_debug("int " + val);
 
-var pack_callbacks=[
-function pack_int(data, val) {
-  packer_debug("int "+val);
-  
-  _module_exports_$2.pack_int(data, val);
-}, function pack_float(data, val) {
-  packer_debug("float "+val);
-  
-  _module_exports_$2.pack_float(data, val);
-}, function pack_double(data, val) {
-  packer_debug("double "+val);
-  
-  _module_exports_$2.pack_double(data, val);
-}, 0, 0, 0, 0,
-function pack_string(data, val) {
-  if (val==undefined)
-    val = "";
-  packer_debug("string: "+val);
-  packer_debug("int "+val.length);
-  
-  _module_exports_$2.pack_string(data, val);
-}, function pack_static_string(data, val, obj, thestruct, field, type) {
-  if (val==undefined)
-    val = "";
-  packer_debug("static_string: '"+val+"' length="+type.data.maxlength);
-  
-  _module_exports_$2.pack_static_string(data, val, type.data.maxlength);
-}, function pack_struct(data, val, obj, thestruct, field, type) {
-  packer_debug_start("struct "+type.data);
-  
-  thestruct.write_struct(data, val, thestruct.get_struct(type.data));
-  
-  packer_debug_end("struct");
-}, function pack_tstruct(data, val, obj, thestruct, field, type) {
-  var cls=thestruct.get_struct_cls(type.data);
-  var stt=thestruct.get_struct(type.data);
-  
-  //make sure inheritance is correct
-  if (val.constructor.structName!=type.data && (val instanceof cls)) {
+    _module_exports_$2.pack_int(data, val);
+  }, function pack_float(data, val) {
+    packer_debug("float " + val);
+
+    _module_exports_$2.pack_float(data, val);
+  }, function pack_double(data, val) {
+    packer_debug("double " + val);
+
+    _module_exports_$2.pack_double(data, val);
+  }, 0, 0, 0, 0,
+  function pack_string(data, val) {
+    if (val == undefined)
+      val = "";
+    packer_debug("string: " + val);
+    packer_debug("int " + val.length);
+
+    _module_exports_$2.pack_string(data, val);
+  }, function pack_static_string(data, val, obj, thestruct, field, type) {
+    if (val == undefined)
+      val = "";
+    packer_debug("static_string: '" + val + "' length=" + type.data.maxlength);
+
+    _module_exports_$2.pack_static_string(data, val, type.data.maxlength);
+  }, function pack_struct(data, val, obj, thestruct, field, type) {
+    packer_debug_start("struct " + type.data);
+
+    thestruct.write_struct(data, val, thestruct.get_struct(type.data));
+
+    packer_debug_end("struct");
+  }, function pack_tstruct(data, val, obj, thestruct, field, type) {
+    var cls = thestruct.get_struct_cls(type.data);
+    var stt = thestruct.get_struct(type.data);
+
+    //make sure inheritance is correct
+    if (val.constructor.structName != type.data && (val instanceof cls)) {
       //if (DEBUG.Struct) {
       //    console.log(val.constructor.structName+" inherits from "+cls.structName);
       //}
       stt = thestruct.get_struct(val.constructor.structName);
-  } else if (val.constructor.structName==type.data) {
+    } else if (val.constructor.structName == type.data) {
       stt = thestruct.get_struct(type.data);
-  } else {
-    console.trace();
-    throw new Error("Bad struct "+val.constructor.structName+" passed to write_struct");
-  }
-  
-  if (stt.id==0) {
-  }
-  
-  packer_debug_start("tstruct '"+stt.name+"'");
-  packer_debug("int "+stt.id);
-  
-  _module_exports_$2.pack_int(data, stt.id);
-  thestruct.write_struct(data, val, stt);
-  
-  packer_debug_end("tstruct");
-}, function pack_array(data, val, obj, thestruct, field, type) {
-  packer_debug_start("array");
-  
-  if (val==undefined) {
+    } else {
+      console.trace();
+      throw new Error("Bad struct " + val.constructor.structName + " passed to write_struct");
+    }
+
+    if (stt.id == 0) {
+    }
+
+    packer_debug_start("tstruct '" + stt.name + "'");
+    packer_debug("int " + stt.id);
+
+    _module_exports_$2.pack_int(data, stt.id);
+    thestruct.write_struct(data, val, stt);
+
+    packer_debug_end("tstruct");
+  }, function pack_array(data, val, obj, thestruct, field, type) {
+    packer_debug_start("array");
+
+    if (val == undefined) {
       console.trace();
       console.log("Undefined array fed to struct struct packer!");
       console.log("Field: ", field);
@@ -1579,35 +1580,35 @@ function pack_string(data, val) {
       console.log("");
       packer_debug("int 0");
       _module_exports_$2.pack_int(data, 0);
-      return ;
-  }
-  
-  packer_debug("int "+val.length);
-  _module_exports_$2.pack_int(data, val.length);
-  
-  var d=type.data;
-  
-  var itername = d.iname;
-  var type2 = d.type;
-  
-  var env=_ws_env;
-  for (var i=0; i<val.length; i++) {
-      var val2=val[i];
-      if (itername!=""&&itername!=undefined&&field.get) {
-          env[0][0] = itername;
-          env[0][1] = val2;
-          val2 = thestruct._env_call(field.get, obj, env);
+      return;
+    }
+
+    packer_debug("int " + val.length);
+    _module_exports_$2.pack_int(data, val.length);
+
+    var d = type.data;
+
+    var itername = d.iname;
+    var type2 = d.type;
+
+    var env = _ws_env;
+    for (var i = 0; i < val.length; i++) {
+      var val2 = val[i];
+      if (itername != "" && itername != undefined && field.get) {
+        env[0][0] = itername;
+        env[0][1] = val2;
+        val2 = thestruct._env_call(field.get, obj, env);
       }
-      var f2={type: type2, get: undefined, set: undefined};
+      var f2 = {type: type2, get: undefined, set: undefined};
       do_pack(data, val2, obj, thestruct, f2, type2);
-  }
-  packer_debug_end("array");
-}, function pack_iter(data, val, obj, thestruct, field, type) {
-  //this was originally implemented to use ES6 iterators.
-  
-  packer_debug_start("iter");
-  
-  if (val==undefined || val.forEach == undefined) {
+    }
+    packer_debug_end("array");
+  }, function pack_iter(data, val, obj, thestruct, field, type) {
+    //this was originally implemented to use ES6 iterators.
+
+    packer_debug_start("iter");
+
+    if (val == undefined || val.forEach == undefined) {
       console.trace();
       console.log("Undefined iterable list fed to struct struct packer!", val);
       console.log("Field: ", field);
@@ -1615,53 +1616,53 @@ function pack_string(data, val) {
       console.log("");
       packer_debug("int 0");
       _module_exports_$2.pack_int(data, 0);
-      return ;
-  }
-  
-  var len  = 0.0;
-  val.forEach(function(val2) {
-    len++;
-  }, this);
-  
-  packer_debug("int "+len);
-  _module_exports_$2.pack_int(data, len);
-  
-  var d=type.data, itername=d.iname, type2=d.type;
-  var env=_ws_env;
-  
-  var i = 0;
-  val.forEach(function(val2) {
-    if (i >= len) {
-      console.trace("Warning: iterator returned different length of list!", val, i);
       return;
     }
-    
-    if (itername!=""&&itername!=undefined&&field.get) {
+
+    var len = 0.0;
+    val.forEach(function (val2) {
+      len++;
+    }, this);
+
+    packer_debug("int " + len);
+    _module_exports_$2.pack_int(data, len);
+
+    var d = type.data, itername = d.iname, type2 = d.type;
+    var env = _ws_env;
+
+    var i = 0;
+    val.forEach(function (val2) {
+      if (i >= len) {
+        console.trace("Warning: iterator returned different length of list!", val, i);
+        return;
+      }
+
+      if (itername != "" && itername != undefined && field.get) {
         env[0][0] = itername;
         env[0][1] = val2;
         val2 = thestruct._env_call(field.get, obj, env);
-    }
-    
-    var f2={type: type2, get: undefined, set: undefined};
-    do_pack(data, val2, obj, thestruct, f2, type2);
-    
-    i++;
-  }, this);
-  
-  packer_debug_end("iter");
-}, function pack_short(data, val) {
-  packer_debug("short "+val);
-  
-  _module_exports_$2.pack_short(data, Math.floor(val));
-}, function pack_byte(data, val) {
-  packer_debug("byte "+val);
-  
-  _module_exports_$2.pack_byte(data, Math.floor(val));
-}, function pack_bool(data, val) {
-  packer_debug("bool "+val);
-  
-  _module_exports_$2.pack_byte(data, !!val);
-}];
+      }
+
+      var f2 = {type: type2, get: undefined, set: undefined};
+      do_pack(data, val2, obj, thestruct, f2, type2);
+
+      i++;
+    }, this);
+
+    packer_debug_end("iter");
+  }, function pack_short(data, val) {
+    packer_debug("short " + val);
+
+    _module_exports_$2.pack_short(data, Math.floor(val));
+  }, function pack_byte(data, val) {
+    packer_debug("byte " + val);
+
+    _module_exports_$2.pack_byte(data, Math.floor(val));
+  }, function pack_bool(data, val) {
+    packer_debug("bool " + val);
+
+    _module_exports_$2.pack_byte(data, !!val);
+  }];
 
 function do_pack(data, val, obj, thestruct, field, type) {
   pack_callbacks[field.type.type](data, val, obj, thestruct, field, type);
@@ -1669,27 +1670,27 @@ function do_pack(data, val, obj, thestruct, field, type) {
 }
 
 function define_empty_class(name) {
-  var cls = function() {
+  var cls = function () {
   };
-  
+
   cls.prototype = Object.create(Object.prototype);
   cls.constructor = cls.prototype.constructor = cls;
-  
-  cls.STRUCT = name+" {\n  }\n";
+
+  cls.STRUCT = name + " {\n  }\n";
   cls.structName = name;
-  
+
   cls.prototype.loadSTRUCT = function (reader) {
     reader(this);
   };
-  
-  cls.newSTRUCT = function() {
+
+  cls.newSTRUCT = function () {
     return new this();
   };
-  
+
   return cls;
 }
-    
-var STRUCT=_module_exports_$5.STRUCT = class STRUCT {
+
+var STRUCT = _module_exports_$5.STRUCT = class STRUCT {
   constructor() {
     this.idgen = new _module_exports_$1.IDGen();
 
@@ -1699,35 +1700,35 @@ var STRUCT=_module_exports_$5.STRUCT = class STRUCT {
 
     this.compiled_code = {};
     this.null_natives = {};
-  
+
     function define_null_native(name, cls) {
       var obj = define_empty_class(name);
-      
-      var stt=struct_parse.parse(obj.STRUCT);
-      
+
+      var stt = struct_parse.parse(obj.STRUCT);
+
       stt.id = this.idgen.gen_id();
-      
+
       this.structs[name] = stt;
       this.struct_cls[name] = cls;
       this.struct_ids[stt.id] = stt;
-      
+
       this.null_natives[name] = 1;
     }
-    
+
     define_null_native.call(this, "Object", Object);
-  } 
-  
+  }
+
   forEach(func, thisvar) {
     for (var k in this.structs) {
       var stt = this.structs[k];
-      
+
       if (thisvar != undefined)
         func.call(thisvar, stt);
       else
         func(stt);
     }
   }
-  
+
   //defined_classes is an array of class constructors
   //with STRUCT scripts, *OR* another STRUCT instance
   //
@@ -1736,70 +1737,70 @@ var STRUCT=_module_exports_$5.STRUCT = class STRUCT {
     if (defined_classes === undefined) {
       defined_classes = _module_exports_$5.manager;
     }
-    
+
     if (defined_classes instanceof STRUCT) {
       var struct2 = defined_classes;
       defined_classes = [];
-      
+
       for (var k in struct2.struct_cls) {
         defined_classes.push(struct2.struct_cls[k]);
       }
     }
-    
+
     if (defined_classes == undefined) {
       defined_classes = [];
       for (var k in _module_exports_$5.manager.struct_cls) {
         defined_classes.push(_module_exports_$5.manager.struct_cls[k]);
       }
     }
-    
-    var clsmap={};
-    
-    for (var i=0; i<defined_classes.length; i++) {
+
+    var clsmap = {};
+
+    for (var i = 0; i < defined_classes.length; i++) {
       var cls = defined_classes[i];
-      
+
       if (cls.structName == undefined && cls.STRUCT != undefined) {
-        var stt=struct_parse.parse(cls.STRUCT.trim());
+        var stt = struct_parse.parse(cls.STRUCT.trim());
         cls.structName = stt.name;
       } else if (cls.structName == undefined && cls.name != "Object") {
         console.log("Warning, bad class in registered class list", cls.name, cls);
         continue;
       }
-      
+
       clsmap[cls.structName] = defined_classes[i];
     }
-    
-    struct_parse.input(buf);
-    
-    while (!struct_parse.at_end()) {
-      var stt=struct_parse.parse(undefined, false);
-      
-      if (!(stt.name in clsmap)) {
-          if (!(stt.name in this.null_natives))
-            console.log("WARNING: struct "+stt.name+" is missing from class list.");
 
-          var dummy = define_empty_class(stt.name);
-          
-          dummy.STRUCT = STRUCT.fmt_struct(stt);
-          dummy.structName = stt.name;
-          
-          dummy.prototype.structName = dummy.name;
-          
-          this.struct_cls[dummy.structName] = dummy;
-          this.structs[dummy.structName] = stt;
-          
-          if (stt.id!=-1)
-            this.struct_ids[stt.id] = stt;
+    struct_parse.input(buf);
+
+    while (!struct_parse.at_end()) {
+      var stt = struct_parse.parse(undefined, false);
+
+      if (!(stt.name in clsmap)) {
+        if (!(stt.name in this.null_natives))
+          console.log("WARNING: struct " + stt.name + " is missing from class list.");
+
+        var dummy = define_empty_class(stt.name);
+
+        dummy.STRUCT = STRUCT.fmt_struct(stt);
+        dummy.structName = stt.name;
+
+        dummy.prototype.structName = dummy.name;
+
+        this.struct_cls[dummy.structName] = dummy;
+        this.structs[dummy.structName] = stt;
+
+        if (stt.id != -1)
+          this.struct_ids[stt.id] = stt;
       } else {
         this.struct_cls[stt.name] = clsmap[stt.name];
         this.structs[stt.name] = stt;
-        
-        if (stt.id!=-1)
+
+        if (stt.id != -1)
           this.struct_ids[stt.id] = stt;
       }
-      
-      var tok=struct_parse.peek();
-      while (tok!=undefined&&(tok.value=="\n" || tok.value=="\r" || tok.value=="\t" || tok.value==" ")) {
+
+      var tok = struct_parse.peek();
+      while (tok != undefined && (tok.value == "\n" || tok.value == "\r" || tok.value == "\t" || tok.value == " ")) {
         tok = struct_parse.peek();
       }
     }
@@ -1808,23 +1809,23 @@ var STRUCT=_module_exports_$5.STRUCT = class STRUCT {
   register(cls, structName) {
     return this.add_class(cls, structName);
   }
-  
+
   add_class(cls, structName) {
     if (!cls.STRUCT) {
       throw new Error("class " + cls.name + " has no STRUCT script");
     }
-    
-    var stt=struct_parse.parse(cls.STRUCT);
-    
+
+    var stt = struct_parse.parse(cls.STRUCT);
+
     cls.structName = stt.name;
-    
+
     //create default newSTRUCT
     if (cls.newSTRUCT === undefined) {
-      cls.newSTRUCT = function() {
+      cls.newSTRUCT = function () {
         return new this();
       };
     }
-    
+
     if (structName !== undefined) {
       stt.name = cls.structName = structName;
     } else if (cls.structName === undefined) {
@@ -1834,10 +1835,10 @@ var STRUCT=_module_exports_$5.STRUCT = class STRUCT {
     } else {
       throw new Error("Missing structName parameter");
     }
-    
-    if (stt.id==-1)
+
+    if (stt.id == -1)
       stt.id = this.idgen.gen_id();
-      
+
     this.structs[cls.structName] = stt;
     this.struct_cls[cls.structName] = cls;
     this.struct_ids[stt.id] = stt;
@@ -1849,51 +1850,51 @@ var STRUCT=_module_exports_$5.STRUCT = class STRUCT {
 
   get_struct(name) {
     if (!(name in this.structs)) {
-        console.trace();
-        throw new Error("Unknown struct "+name);
+      console.trace();
+      throw new Error("Unknown struct " + name);
     }
     return this.structs[name];
   }
 
   get_struct_cls(name) {
     if (!(name in this.struct_cls)) {
-        console.trace();
-        throw new Error("Unknown struct "+name);
+      console.trace();
+      throw new Error("Unknown struct " + name);
     }
     return this.struct_cls[name];
   }
 
-  static inherit(child, parent, structName=child.name) {
+  static inherit(child, parent, structName = child.name) {
     if (!parent.STRUCT) {
-      return structName+"{\n";
+      return structName + "{\n";
     }
-    
-    var stt=struct_parse.parse(parent.STRUCT);
-    var code=structName+"{\n";
-    code+=STRUCT.fmt_struct(stt, true);
+
+    var stt = struct_parse.parse(parent.STRUCT);
+    var code = structName + "{\n";
+    code += STRUCT.fmt_struct(stt, true);
     return code;
   }
-  
-  /** invoke loadSTRUCT methods on parent objects.  note that 
-    reader() is only called once.  it is called however.*/
+
+  /** invoke loadSTRUCT methods on parent objects.  note that
+   reader() is only called once.  it is called however.*/
   static Super(obj, reader) {
     console.warn("deprecated");
-    
+
     reader(obj);
-    
+
     function reader2(obj) {
     }
-    
+
     let cls = obj.constructor;
     let bad = cls === undefined || cls.prototype === undefined || cls.prototype.__proto__ === undefined;
-    
+
     if (bad) {
       return;
     }
-    
+
     let parent = cls.prototype.__proto__.constructor;
     bad = bad || parent === undefined;
-    
+
     if (!bad && parent.prototype.loadSTRUCT && parent.prototype.loadSTRUCT !== obj.loadSTRUCT) { //parent.prototype.hasOwnProperty("loadSTRUCT")) {
       parent.prototype.loadSTRUCT.call(obj, reader2);
     }
@@ -1902,119 +1903,120 @@ var STRUCT=_module_exports_$5.STRUCT = class STRUCT {
   /** deprecated.  used with old fromSTRUCT interface. */
   static chain_fromSTRUCT(cls, reader) {
     console.warn("Using deprecated (and evil) chain_fromSTRUCT method, eek!");
-    
-    var proto=cls.prototype;
-    var parent=cls.prototype.prototype.constructor;
-    
-    var obj=parent.fromSTRUCT(reader);
+
+    var proto = cls.prototype;
+    var parent = cls.prototype.prototype.constructor;
+
+    var obj = parent.fromSTRUCT(reader);
     let obj2 = new cls();
-    
+
     let keys = Object.keys(obj).concat(Object.getOwnPropertySymbols(obj));
     //var keys=Object.keys(proto);
-    
-    for (var i=0; i<keys.length; i++) {
+
+    for (var i = 0; i < keys.length; i++) {
       let k = keys[i];
-      
+
       try {
         obj2[k] = obj[k];
       } catch (error) {
         console.warn("  failed to set property", k);
       }
-        //var k=keys[i];
-        //if (k=="__proto__")
-         // continue;
-        //obj[k] = proto[k];
+      //var k=keys[i];
+      //if (k=="__proto__")
+      // continue;
+      //obj[k] = proto[k];
     }
-    
+
     /*
     if (proto.toString !== Object.prototype.toString)
       obj2.toString = proto.toString;
     //*/
-    
+
     return obj2;
   }
 
   static formatStruct(stt, internal_only, no_helper_js) {
     return this.fmt_struct(stt, internal_only, no_helper_js);
   }
-  
+
   static fmt_struct(stt, internal_only, no_helper_js) {
-    if (internal_only==undefined)
+    if (internal_only == undefined)
       internal_only = false;
-    if (no_helper_js==undefined)
+    if (no_helper_js == undefined)
       no_helper_js = false;
-      
-    var s="";
+
+    var s = "";
     if (!internal_only) {
-        s+=stt.name;
-        if (stt.id!=-1)
-          s+=" id="+stt.id;
-        s+=" {\n";
+      s += stt.name;
+      if (stt.id != -1)
+        s += " id=" + stt.id;
+      s += " {\n";
     }
-    var tab="  ";
+    var tab = "  ";
+
     function fmt_type(type) {
-      if (type.type==StructEnum$1.T_ARRAY||type.type==StructEnum$1.T_ITER) {
-          if (type.data.iname!=""&&type.data.iname!=undefined) {
-              return "array("+type.data.iname+", "+fmt_type(type.data.type)+")";
-          }
-          else {
-            return "array("+fmt_type(type.data.type)+")";
-          }
-      } else  if (type.type==StructEnum$1.T_STATIC_STRING) {
-          return "static_string["+type.data.maxlength+"]";
-      } else if (type.type==StructEnum$1.T_STRUCT) {
-          return type.data;
-      } else if (type.type==StructEnum$1.T_TSTRUCT) {
-          return "abstract("+type.data+")";
+      if (type.type == StructEnum$1.T_ARRAY || type.type == StructEnum$1.T_ITER) {
+        if (type.data.iname != "" && type.data.iname != undefined) {
+          return "array(" + type.data.iname + ", " + fmt_type(type.data.type) + ")";
+        }
+        else {
+          return "array(" + fmt_type(type.data.type) + ")";
+        }
+      } else if (type.type == StructEnum$1.T_STATIC_STRING) {
+        return "static_string[" + type.data.maxlength + "]";
+      } else if (type.type == StructEnum$1.T_STRUCT) {
+        return type.data;
+      } else if (type.type == StructEnum$1.T_TSTRUCT) {
+        return "abstract(" + type.data + ")";
       } else {
         return StructTypeMap$1[type.type];
       }
     }
-    
-    var fields=stt.fields;
-    for (var i=0; i<fields.length; i++) {
-        var f=fields[i];
-        s += tab + f.name+" : "+fmt_type(f.type);
-        if (!no_helper_js&&f.get!=undefined) {
-            s += " | "+f.get.trim();
-        }
-        s+=";\n";
+
+    var fields = stt.fields;
+    for (var i = 0; i < fields.length; i++) {
+      var f = fields[i];
+      s += tab + f.name + " : " + fmt_type(f.type);
+      if (!no_helper_js && f.get != undefined) {
+        s += " | " + f.get.trim();
+      }
+      s += ";\n";
     }
     if (!internal_only)
-      s+="}";
+      s += "}";
     return s;
   }
 
   _env_call(code, obj, env) {
-    var envcode=_static_envcode_null;
-    if (env!=undefined) {
-        envcode = "";
-        for (var i=0; i<env.length; i++) {
-            envcode = "var "+env[i][0]+" = env["+i.toString()+"][1];\n"+envcode;
-        }
+    var envcode = _static_envcode_null;
+    if (env != undefined) {
+      envcode = "";
+      for (var i = 0; i < env.length; i++) {
+        envcode = "var " + env[i][0] + " = env[" + i.toString() + "][1];\n" + envcode;
+      }
     }
-    var fullcode="";
-    if (envcode!==_static_envcode_null)
-      fullcode = envcode+code;
-    else 
+    var fullcode = "";
+    if (envcode !== _static_envcode_null)
+      fullcode = envcode + code;
+    else
       fullcode = code;
     var func;
-    
-    //fullcode = fullcode.replace(/\bthis\b/, "obj");
-    
-    if (!(fullcode in this.compiled_code)) {
-        var code2="func = function(obj, env) { "+envcode+"return "+code+"}";
-        try {
-          eval(code2);
-        }
-        catch (err) {
-            _module_exports_$1.print_stack(err);
 
-            console.log(code2);
-            console.log(" ");
-            throw err;
-        }
-        this.compiled_code[fullcode] = func;
+    //fullcode = fullcode.replace(/\bthis\b/, "obj");
+
+    if (!(fullcode in this.compiled_code)) {
+      var code2 = "func = function(obj, env) { " + envcode + "return " + code + "}";
+      try {
+        eval(code2);
+      }
+      catch (err) {
+        _module_exports_$1.print_stack(err);
+
+        console.log(code2);
+        console.log(" ");
+        throw err;
+      }
+      this.compiled_code[fullcode] = func;
     }
     else {
       func = this.compiled_code[fullcode];
@@ -2023,232 +2025,233 @@ var STRUCT=_module_exports_$5.STRUCT = class STRUCT {
       return func.call(obj, env);
     }
     catch (err) {
-        _module_exports_$1.print_stack(err);
+      _module_exports_$1.print_stack(err);
 
-        var code2="func = function(obj, env) { "+envcode+"return "+code+"}";
-        console.log(code2);
-        console.log(" ");
-        throw err;
+      var code2 = "func = function(obj, env) { " + envcode + "return " + code + "}";
+      console.log(code2);
+      console.log(" ");
+      throw err;
     }
   }
-  
+
   write_struct(data, obj, stt) {
     function use_helper_js(field) {
-      if (field.type.type==StructEnum$1.T_ARRAY||field.type.type==StructEnum$1.T_ITER) {
-          return field.type.data.iname==undefined||field.type.data.iname=="";
+      if (field.type.type == StructEnum$1.T_ARRAY || field.type.type == StructEnum$1.T_ITER) {
+        return field.type.data.iname == undefined || field.type.data.iname == "";
       }
       return true;
     }
-    
-    var fields=stt.fields;
-    var thestruct=this;
-    for (var i=0; i<fields.length; i++) {
-        var f=fields[i];
-        var t1=f.type;
-        var t2=t1.type;
-        
-        if (use_helper_js(f)) {
-            var val;
-            var type=t2;
-            if (f.get!=undefined) {
-                val = thestruct._env_call(f.get, obj);
-            }
-            else {
-              val = obj[f.name];
-            }
-            do_pack(data, val, obj, thestruct, f, t1);
+
+    var fields = stt.fields;
+    var thestruct = this;
+    for (var i = 0; i < fields.length; i++) {
+      var f = fields[i];
+      var t1 = f.type;
+      var t2 = t1.type;
+
+      if (use_helper_js(f)) {
+        var val;
+        var type = t2;
+        if (f.get != undefined) {
+          val = thestruct._env_call(f.get, obj);
         }
         else {
-          var val=obj[f.name];
-          do_pack(data, val, obj, thestruct, f, t1);
+          val = obj[f.name];
         }
+        do_pack(data, val, obj, thestruct, f, t1);
+      }
+      else {
+        var val = obj[f.name];
+        do_pack(data, val, obj, thestruct, f, t1);
+      }
     }
   }
 
- write_object(data, obj) {
-    var cls=obj.constructor.structName;
-    var stt=this.get_struct(cls);
-    
+  write_object(data, obj) {
+    var cls = obj.constructor.structName;
+    var stt = this.get_struct(cls);
+
     if (data === undefined) {
       data = [];
     }
-    
+
     this.write_struct(data, obj, stt);
     return data;
   }
 
   read_object(data, cls_or_struct_id, uctx) {
     var cls, stt;
-    
+
     if (data instanceof Array) {
       data = new DataView(new Uint8Array(data).buffer);
     }
-    
+
     if (typeof cls_or_struct_id == "number") {
       cls = this.struct_cls[this.struct_ids[cls_or_struct_id].name];
     } else {
       cls = cls_or_struct_id;
     }
-    
+
     if (cls === undefined) {
       throw new Error("bad cls_or_struct_id " + cls_or_struct_id);
     }
-    
-    stt=this.structs[cls.structName];
-    
-    if (uctx==undefined) {
+
+    stt = this.structs[cls.structName];
+
+    if (uctx == undefined) {
       uctx = new _module_exports_$2.unpack_context();
-      
+
       packer_debug("\n\n=Begin reading " + cls.structName + "=");
     }
-    var thestruct=this;
-    
-    var unpack_funcs=[
+    var thestruct = this;
+
+    var unpack_funcs = [
       function t_int(type) { //int
-        var ret=_module_exports_$2.unpack_int(data, uctx);
-        
-        packer_debug("-int " + (debug_struct>1 ? ret : ""));
-        
+        var ret = _module_exports_$2.unpack_int(data, uctx);
+
+        packer_debug("-int " + (debug_struct > 1 ? ret : ""));
+
         return ret;
       }, function t_float(type) {
-        var ret=_module_exports_$2.unpack_float(data, uctx);
-        
-        packer_debug("-float " + (debug_struct>1 ? ret : ""));
-        
+        var ret = _module_exports_$2.unpack_float(data, uctx);
+
+        packer_debug("-float " + (debug_struct > 1 ? ret : ""));
+
         return ret;
       }, function t_double(type) {
-        var ret=_module_exports_$2.unpack_double(data, uctx);
-        
-        packer_debug("-double " + (debug_struct>1 ? ret : ""));
-        
+        var ret = _module_exports_$2.unpack_double(data, uctx);
+
+        packer_debug("-double " + (debug_struct > 1 ? ret : ""));
+
         return ret;
-      }, 0, 0, 0, 0, 
+      }, 0, 0, 0, 0,
       function t_string(type) {
         packer_debug_start("string");
-        
-        var s=_module_exports_$2.unpack_string(data, uctx);
-        
-        packer_debug("data: '"+s+"'");
+
+        var s = _module_exports_$2.unpack_string(data, uctx);
+
+        packer_debug("data: '" + s + "'");
         packer_debug_end("string");
         return s;
       }, function t_static_string(type) {
         packer_debug_start("static_string");
-        
-        var s=_module_exports_$2.unpack_static_string(data, uctx, type.data.maxlength);
-        
-        packer_debug("data: '"+s+"'");
+
+        var s = _module_exports_$2.unpack_static_string(data, uctx, type.data.maxlength);
+
+        packer_debug("data: '" + s + "'");
         packer_debug_end("static_string");
-        
+
         return s;
       }, function t_struct(type) {
-        packer_debug_start("struct "+type.data);
-        
-        var cls2=thestruct.get_struct_cls(type.data);
-        var ret=thestruct.read_object(data, cls2, uctx);
-        
+        packer_debug_start("struct " + type.data);
+
+        var cls2 = thestruct.get_struct_cls(type.data);
+        var ret = thestruct.read_object(data, cls2, uctx);
+
         packer_debug_end("struct");
         return ret;
       }, function t_tstruct(type) {
         packer_debug_start("tstruct");
-        
-        var id=_module_exports_$2.unpack_int(data, uctx);
-        
-        packer_debug("-int "+id);
+
+        var id = _module_exports_$2.unpack_int(data, uctx);
+
+        packer_debug("-int " + id);
         if (!(id in thestruct.struct_ids)) {
-            packer_debug("struct id: "+id);
-            console.trace();
-            console.log(id);
-            console.log(thestruct.struct_ids);
-            packer_debug_end("tstruct");
-            throw new Error("Unknown struct type "+id+".");
+          packer_debug("struct id: " + id);
+          console.trace();
+          console.log(id);
+          console.log(thestruct.struct_ids);
+          packer_debug_end("tstruct");
+          throw new Error("Unknown struct type " + id + ".");
         }
-        
-        var cls2=thestruct.get_struct_id(id);
-        
-        packer_debug("struct name: "+cls2.name);
+
+        var cls2 = thestruct.get_struct_id(id);
+
+        packer_debug("struct name: " + cls2.name);
         cls2 = thestruct.struct_cls[cls2.name];
-        
-        var ret=thestruct.read_object(data, cls2, uctx);
-        
+
+        var ret = thestruct.read_object(data, cls2, uctx);
+
         packer_debug_end("tstruct");
         return ret;
       }, function t_array(type) {
         packer_debug_start("array");
-        
-        var len=_module_exports_$2.unpack_int(data, uctx);
-        packer_debug("-int "+len);
-        
-        var arr=new Array(len);
-        for (var i=0; i<len; i++) {
-            arr[i] = unpack_field(type.data.type);
+
+        var len = _module_exports_$2.unpack_int(data, uctx);
+        packer_debug("-int " + len);
+
+        var arr = new Array(len);
+        for (var i = 0; i < len; i++) {
+          arr[i] = unpack_field(type.data.type);
         }
-        
+
         packer_debug_end("array");
         return arr;
       }, function t_iter(type) {
         packer_debug_start("iter");
-        
-        var len=_module_exports_$2.unpack_int(data, uctx);
-        packer_debug("-int "+len);
-        
-        var arr=new Array(len);
-        for (var i=0; i<len; i++) {
-            arr[i] = unpack_field(type.data.type);
+
+        var len = _module_exports_$2.unpack_int(data, uctx);
+        packer_debug("-int " + len);
+
+        var arr = new Array(len);
+        for (var i = 0; i < len; i++) {
+          arr[i] = unpack_field(type.data.type);
         }
-        
+
         packer_debug_end("iter");
         return arr;
       }, function t_short(type) { //int
-        var ret=_module_exports_$2.unpack_short(data, uctx);
-        
-        packer_debug("-short "+ret);
-        
+        var ret = _module_exports_$2.unpack_short(data, uctx);
+
+        packer_debug("-short " + ret);
+
         return ret;
       }, function t_byte(type) {
-        var ret=_module_exports_$2.unpack_byte(data, uctx);
-        
-        packer_debug("-byte "+ret);
-        
+        var ret = _module_exports_$2.unpack_byte(data, uctx);
+
+        packer_debug("-byte " + ret);
+
         return ret;
       }, function t_bool(type) {
-        var ret=_module_exports_$2.unpack_byte(data, uctx);
-        
-        packer_debug("-bool "+ret);
-        
+        var ret = _module_exports_$2.unpack_byte(data, uctx);
+
+        packer_debug("-bool " + ret);
+
         return !!ret;
-      }          
+      }
     ];
-    
+
     function unpack_field(type) {
       return unpack_funcs[type.type](type);
     }
-    
+
     let was_run = false;
+
     function load(obj) {
       if (was_run) {
         return;
       }
-      
+
       was_run = true;
-      
-      var fields=stt.fields;
-      var flen=fields.length;
-      for (var i=0; i<flen; i++) {
-          var f=fields[i];
-          var val=unpack_field(f.type);
-          obj[f.name] = val;
+
+      var fields = stt.fields;
+      var flen = fields.length;
+      for (var i = 0; i < flen; i++) {
+        var f = fields[i];
+        var val = unpack_field(f.type);
+        obj[f.name] = val;
       }
     }
-    
+
     if (cls.prototype.loadSTRUCT !== undefined) {
       let obj;
-      
+
       if (cls.newSTRUCT !== undefined) {
         obj = cls.newSTRUCT();
       } else {
         obj = new cls();
       }
-      
+
       obj.loadSTRUCT(load);
       return obj;
     } else if (cls.fromSTRUCT !== undefined) {
@@ -2261,9 +2264,9 @@ var STRUCT=_module_exports_$5.STRUCT = class STRUCT {
       } else {
         obj = new cls();
       }
-      
+
       load(obj);
-      
+
       return obj;
     }
   }
@@ -2273,49 +2276,49 @@ var STRUCT=_module_exports_$5.STRUCT = class STRUCT {
 var manager = _module_exports_$5.manager = new STRUCT();
 
 //manager defaults to structjs.manager
-var write_scripts = _module_exports_$5.write_scripts = function write_scripts(manager, include_code=false) {
+var write_scripts = _module_exports_$5.write_scripts = function write_scripts(manager, include_code = false) {
   if (manager === undefined)
     manager = _module_exports_$5.manager;
-  
-  var buf="";
-  
-  manager.forEach(function(stt) {
-    buf+=STRUCT.fmt_struct(stt, false, !include_code)+"\n";
+
+  var buf = "";
+
+  manager.forEach(function (stt) {
+    buf += STRUCT.fmt_struct(stt, false, !include_code) + "\n";
   });
-  
-  var buf2=buf;
+
+  var buf2 = buf;
   buf = "";
-  
-  for (var i=0; i<buf2.length; i++) {
-      var c=buf2[i];
-      if (c=="\n") {
-          buf+="\n";
-          var i2=i;
-          while (i<buf2.length&&(buf2[i]==" "||buf2[i]=="\t"||buf2[i]=="\n")) {
-            i++;
-          }
-          if (i!=i2)
-            i--;
+
+  for (var i = 0; i < buf2.length; i++) {
+    var c = buf2[i];
+    if (c === "\n") {
+      buf += "\n";
+      var i2 = i;
+      while (i < buf2.length && (buf2[i] === " " || buf2[i] === "\t" || buf2[i] === "\n")) {
+        i++;
       }
-      else {
-        buf+=c;
-      }
+      if (i !== i2)
+        i--;
+    }
+    else {
+      buf += c;
+    }
   }
-  
+
   return buf;
 };
 
 "use strict";
 
 if (typeof btoa == "undefined") {
-_nGlobal.btoa = function btoa(str) {
-  var buffer = new Buffer(""+str, 'binary');
-  return buffer.toString('base64');
-};
+  _nGlobal.btoa = function btoa(str) {
+    var buffer = new Buffer("" + str, 'binary');
+    return buffer.toString('base64');
+  };
 
-_nGlobal.atob = function atob(str) {
-  return new Buffer(str, 'base64').toString('binary');
-};
+  _nGlobal.atob = function atob(str) {
+    return new Buffer(str, 'base64').toString('binary');
+  };
 }
 
 var Class$5 = _module_exports_.Class;
@@ -2343,11 +2346,11 @@ var FileParams = _module_exports_$6.FileParams = class FileParams {
     this.magic = "STRT";
     this.ext = ".bin";
     this.blocktypes = ["DATA"];
-    
+
     this.version = {
-      major : 0,
-      minor : 0,
-      micro : 1
+      major: 0,
+      minor: 0,
+      micro: 1
     };
   }
 };
@@ -2362,7 +2365,7 @@ var Block = _module_exports_$6.Block = class Block {
 
 var FileError = _module_exports_$6.FileError = class FileeError extends Error {
 };
-  
+
 var FileHelper = _module_exports_$6.FileHelper = class FileHelper {
   //params can be FileParams instance, or object literal
   //(it will convert to FileParams)
@@ -2371,13 +2374,13 @@ var FileHelper = _module_exports_$6.FileHelper = class FileHelper {
       params = new FileParams();
     } else {
       var fp = new FileParams();
-      
+
       for (var k in params) {
         fp[k] = params[k];
       }
       params = fp;
     }
-    
+
     this.version = params.version;
     this.blocktypes = params.blocktypes;
     this.magic = params.magic;
@@ -2385,73 +2388,73 @@ var FileHelper = _module_exports_$6.FileHelper = class FileHelper {
     this.struct = undefined;
     this.unpack_ctx = undefined;
   }
-  
+
   read(dataview) {
     this.unpack_ctx = new _module_exports_$2.unpack_context();
-    
+
     var magic = _module_exports_$2.unpack_static_string(dataview, this.unpack_ctx, 4);
-    
+
     if (magic !== this.magic) {
       throw new FileError("corrupted file");
     }
-    
+
     this.version = {};
     this.version.major = _module_exports_$2.unpack_short(dataview, this.unpack_ctx);
     this.version.minor = _module_exports_$2.unpack_byte(dataview, this.unpack_ctx);
     this.version.micro = _module_exports_$2.unpack_byte(dataview, this.unpack_ctx);
-    
+
     var struct = this.struct = new structjs.STRUCT();
-    
+
     var scripts = _module_exports_$2.unpack_string(dataview, this.unpack_ctx);
     this.struct.parse_structs(scripts, structjs.manager);
-    
+
     var blocks = [];
     var dviewlen = dataview.buffer.byteLength;
-    
+
     while (this.unpack_ctx.i < dviewlen) {
       //console.log("reading block. . .", this.unpack_ctx.i, dviewlen);
-      
+
       var type = _module_exports_$2.unpack_static_string(dataview, this.unpack_ctx, 4);
       var datalen = _module_exports_$2.unpack_int(dataview, this.unpack_ctx);
       var bstruct = _module_exports_$2.unpack_int(dataview, this.unpack_ctx);
       var bdata;
-      
+
       //console.log(type, datalen, bstruct);
-      
+
       if (bstruct == -2) { //string data, e.g. JSON
         bdata = _module_exports_$2.unpack_static_string(dataview, this.unpack_ctx, datalen);
       } else {
         bdata = _module_exports_$2.unpack_bytes(dataview, this.unpack_ctx, datalen);
         bdata = struct.read_object(bdata, bstruct, new _module_exports_$2.unpack_context());
       }
-      
+
       var block = new Block();
       block.type = type;
-      block.data =  bdata;
-      
+      block.data = bdata;
+
       blocks.push(block);
     }
-    
+
     this.blocks = blocks;
     return blocks;
   }
-  
+
   write(blocks) {
     this.struct = structjs.manager;
     this.blocks = blocks;
-    
+
     var data = [];
-    
+
     _module_exports_$2.pack_static_string(data, this.magic, 4);
     _module_exports_$2.pack_short(data, this.version.major);
     _module_exports_$2.pack_byte(data, this.version.minor & 255);
     _module_exports_$2.pack_byte(data, this.version.micro & 255);
-    
+
     var scripts = structjs.write_scripts();
     _module_exports_$2.pack_string(data, scripts);
-    
+
     var struct = this.struct;
-    
+
     for (var block of blocks) {
       if (typeof block.data == "string") { //string data, e.g. JSON
         _module_exports_$2.pack_static_string(data, block.type, 4);
@@ -2459,53 +2462,53 @@ var FileHelper = _module_exports_$6.FileHelper = class FileHelper {
         _module_exports_$2.pack_int(data, -2); //flag as string data
         _module_exports_$2.pack_static_string(data, block.data, block.data.length);
         continue;
-      } 
-      
+      }
+
       var structName = block.data.constructor.structName;
-      if (structName===undefined || !(structName in struct.structs)) {
+      if (structName === undefined || !(structName in struct.structs)) {
         throw new Error("Non-STRUCTable object " + block.data);
       }
-      
+
       var data2 = [];
       var stt = struct.structs[structName];
-      
+
       struct.write_object(data2, block.data);
-      
+
       _module_exports_$2.pack_static_string(data, block.type, 4);
       _module_exports_$2.pack_int(data, data2.length);
       _module_exports_$2.pack_int(data, stt.id);
-      
+
       _module_exports_$2.pack_bytes(data, data2);
     }
-    
+
     return new DataView(new Uint8Array(data).buffer);
   }
-  
+
   writeBase64(blocks) {
     var dataview = this.write(blocks);
-    
+
     var str = "";
     var bytes = new Uint8Array(dataview.buffer);
-    
-    for (var i=0; i<bytes.length; i++) {
+
+    for (var i = 0; i < bytes.length; i++) {
       str += String.fromCharCode(bytes[i]);
     }
-    
+
     return btoa(str);
   }
-  
+
   makeBlock(type, data) {
     return new Block(type, data);
   }
-  
+
   readBase64(base64) {
     var data = atob(base64);
     var data2 = new Uint8Array(data.length);
-    
-    for (var i=0; i<data.length; i++) {
+
+    for (var i = 0; i < data.length; i++) {
       data2[i] = data.charCodeAt(i);
     }
-    
+
     return this.read(new DataView(data2.buffer));
   }
 };
@@ -2527,10 +2530,10 @@ if (typeof window !== "undefined") {
 
 const _module_exports_$7 = {};
 Object.defineProperty(_module_exports_$7, "STRUCT_ENDIAN", {
-  get : function() {
+  get: function () {
     return _module_exports_$2.STRUCT_ENDIAN;
   },
-  set : function(val) {
+  set: function (val) {
     _module_exports_$2.STRUCT_ENDIAN = val;
   }
 });
@@ -2552,7 +2555,7 @@ for (var k$1 in _module_exports_$5) {
 _module_exports_$7.register = function register(cls, name) {
   return _module_exports_$7.manager.register(cls, name);
 };
-_module_exports_$7.inherit = function() {
+_module_exports_$7.inherit = function () {
   return _module_exports_$7.STRUCT.inherit(...arguments);
 };
 

@@ -21,12 +21,12 @@ exports.token = class token {
     this.lexer = lexer;
     this.parser = parser;
   }
-  
+
   toString() {
-    if (this.value!=undefined)
-      return "token(type="+this.type+", value='"+this.value+"')";
-    else 
-      return "token(type="+this.type+")";
+    if (this.value != undefined)
+      return "token(type=" + this.type + ", value='" + this.value + "')";
+    else
+      return "token(type=" + this.type + ")";
   }
 }
 
@@ -53,26 +53,26 @@ exports.lexer = class lexer {
     this.lineno = 0;
     this.errfunc = errfunc;
     this.tokints = {}
-    for (var i=0; i<tokdef.length; i++) {
-        this.tokints[tokdef[i].name] = i;
+    for (var i = 0; i < tokdef.length; i++) {
+      this.tokints[tokdef[i].name] = i;
     }
     this.statestack = [["__main__", 0]];
     this.states = {"__main__": [tokdef, errfunc]}
     this.statedata = 0;
   }
-  
+
   add_state(name, tokdef, errfunc) {
-    if (errfunc==undefined) {
-        errfunc = function(lexer) {
-          return true;
-        };
+    if (errfunc == undefined) {
+      errfunc = function (lexer) {
+        return true;
+      };
     }
     this.states[name] = [tokdef, errfunc];
   }
-  
+
   tok_int(name) {
   }
-  
+
   push_state(state, statedata) {
     this.statestack.push([state, statedata]);
     state = this.states[state];
@@ -80,17 +80,17 @@ exports.lexer = class lexer {
     this.tokdef = state[0];
     this.errfunc = state[1];
   }
-  
+
   pop_state() {
-    var item=this.statestack[this.statestack.length-1];
-    var state=this.states[item[0]];
+    var item = this.statestack[this.statestack.length - 1];
+    var state = this.states[item[0]];
     this.tokdef = state[0];
     this.errfunc = state[1];
     this.statedata = item[1];
   }
-  
+
   input(str) {
-    while (this.statestack.length>1) {
+    while (this.statestack.length > 1) {
       this.pop_state();
     }
     this.lexdata = str;
@@ -99,91 +99,91 @@ exports.lexer = class lexer {
     this.tokens = new Array();
     this.peeked_tokens = [];
   }
-  
+
   error() {
     if (this.errfunc != undefined && !this.errfunc(this))
       return;
-      
-    console.log("Syntax error near line "+this.lineno);
 
-    var next=Math.min(this.lexpos+8, this.lexdata.length);
-    console.log("  "+this.lexdata.slice(this.lexpos, next));
+    console.log("Syntax error near line " + this.lineno);
+
+    var next = Math.min(this.lexpos + 8, this.lexdata.length);
+    console.log("  " + this.lexdata.slice(this.lexpos, next));
 
     throw new PUTIL_ParseError("Parse error");
   }
-  
+
   peek() {
-    var tok=this.next(true);
-    if (tok==undefined)
+    var tok = this.next(true);
+    if (tok == undefined)
       return undefined;
     this.peeked_tokens.push(tok);
     return tok;
   }
-  
+
   peeknext() {
     if (this.peeked_tokens.length > 0) {
       return this.peeked_tokens[0];
     }
-    
+
     return this.peek();
   }
-  
+
   at_end() {
-    return this.lexpos>=this.lexdata.length&&this.peeked_tokens.length==0;
+    return this.lexpos >= this.lexdata.length && this.peeked_tokens.length == 0;
   }
-  
+
   //ignore_peek is optional, false
   next(ignore_peek) {
-    if (!ignore_peek && this.peeked_tokens.length>0) {
-        var tok=this.peeked_tokens[0];
-        this.peeked_tokens.shift();
-        return tok;
+    if (!ignore_peek && this.peeked_tokens.length > 0) {
+      var tok = this.peeked_tokens[0];
+      this.peeked_tokens.shift();
+      return tok;
     }
-    
-    if (this.lexpos>=this.lexdata.length)
+
+    if (this.lexpos >= this.lexdata.length)
       return undefined;
-      
-    var ts=this.tokdef;
-    var tlen=ts.length;
-    var lexdata=this.lexdata.slice(this.lexpos, this.lexdata.length);
-    var results=[];
-    
-    for (var i=0; i<tlen; i++) {
-        var t=ts[i];
-        if (t.re==undefined)
-          continue;
-        var res=t.re.exec(lexdata);
-        if (res!=null&&res!=undefined&&res.index==0) {
-            results.push([t, res]);
-        }
+
+    var ts = this.tokdef;
+    var tlen = ts.length;
+    var lexdata = this.lexdata.slice(this.lexpos, this.lexdata.length);
+    var results = [];
+
+    for (var i = 0; i < tlen; i++) {
+      var t = ts[i];
+      if (t.re == undefined)
+        continue;
+      var res = t.re.exec(lexdata);
+      if (res != null && res != undefined && res.index == 0) {
+        results.push([t, res]);
+      }
     }
-    
-    var max_res=0;
-    var theres=undefined;
-    for (var i=0; i<results.length; i++) {
-        var res=results[i];
-        if (res[1][0].length>max_res) {
-            theres = res;
-            max_res = res[1][0].length;
-        }
+
+    var max_res = 0;
+    var theres = undefined;
+    for (var i = 0; i < results.length; i++) {
+      var res = results[i];
+      if (res[1][0].length > max_res) {
+        theres = res;
+        max_res = res[1][0].length;
+      }
     }
-    
-    if (theres==undefined) {
-        this.error();
-        return ;
+
+    if (theres == undefined) {
+      this.error();
+      return;
     }
-    
-    var def=theres[0];
-    var token=new exports.token(def.name, theres[1][0], this.lexpos, this.lineno, this, undefined);
-    this.lexpos+=token.value.length;
-    
+
+    var def = theres[0];
+    var token = new exports.token(def.name, theres[1][0], this.lexpos, this.lineno, this, undefined);
+    this.lexpos += token.value.length;
+
     if (def.func) {
-        token = def.func(token);
-        if (token==undefined) {
-            return this.next();
-        }
+      token = def.func(token);
+      if (token == undefined) {
+        return this.next();
+      }
     }
-    
+
     return token;
   }
 }
@@ -194,220 +194,226 @@ const parser = exports.parser = class parser {
     this.errfunc = errfunc;
     this.start = undefined;
   }
-  
+
   parse(data, err_on_unconsumed) {
-    if (err_on_unconsumed==undefined)
+    if (err_on_unconsumed == undefined)
       err_on_unconsumed = true;
-      
-    if (data!=undefined)
+
+    if (data != undefined)
       this.lexer.input(data);
-      
-    var ret=this.start(this);
-    
+
+    var ret = this.start(this);
+
     if (err_on_unconsumed && !this.lexer.at_end() && this.lexer.next() != undefined) {
-        this.error(undefined, "parser did not consume entire input");
+      this.error(undefined, "parser did not consume entire input");
     }
     return ret;
   }
-    
+
   input(data) {
     this.lexer.input(data);
   }
-  
+
   error(token, msg) {
-    if (msg==undefined)
+    if (msg == undefined)
       msg = "";
-    if (token==undefined)
-      var estr="Parse error at end of input: "+msg;
-    else 
-      estr = "Parse error at line "+(token.lineno+1)+": "+msg;
-    var buf="1| ";
-    var ld=this.lexer.lexdata;
-    var l=1;
-    for (var i=0; i<ld.length; i++) {
-        var c=ld[i];
-        if (c=='\n') {
-            l++;
-            buf+="\n"+l+"| ";
-        }
-        else {
-          buf+=c;
-        }
+    if (token == undefined)
+      var estr = "Parse error at end of input: " + msg;
+    else
+      estr = "Parse error at line " + (token.lineno + 1) + ": " + msg;
+    var buf = "1| ";
+    var ld = this.lexer.lexdata;
+    var l = 1;
+    for (var i = 0; i < ld.length; i++) {
+      var c = ld[i];
+      if (c == '\n') {
+        l++;
+        buf += "\n" + l + "| ";
+      }
+      else {
+        buf += c;
+      }
     }
     console.log("------------------");
     console.log(buf);
     console.log("==================");
     console.log(estr);
-    if (this.errfunc&&!this.errfunc(token)) {
-        return ;
+    if (this.errfunc && !this.errfunc(token)) {
+      return;
     }
     throw new PUTIL_ParseError(estr);
   }
-  
+
   peek() {
-    var tok=this.lexer.peek();
-    if (tok!=undefined)
+    var tok = this.lexer.peek();
+    if (tok != undefined)
       tok.parser = this;
     return tok;
   }
-  
+
   peeknext() {
-    var tok=this.lexer.peeknext();
-    if (tok!=undefined)
+    var tok = this.lexer.peeknext();
+    if (tok != undefined)
       tok.parser = this;
     return tok;
   }
-  
+
   next() {
-    var tok=this.lexer.next();
-    if (tok!=undefined)
+    var tok = this.lexer.next();
+    if (tok != undefined)
       tok.parser = this;
     return tok;
   }
-  
+
   optional(type) {
-    var tok=this.peek();
-    if (tok==undefined)
+    var tok = this.peek();
+    if (tok == undefined)
       return false;
-    if (tok.type==type) {
-        this.next();
-        return true;
+    if (tok.type == type) {
+      this.next();
+      return true;
     }
     return false;
   }
-  
+
   at_end() {
     return this.lexer.at_end();
   }
+
   expect(type, msg) {
-    var tok=this.next();
-    if (msg==undefined)
+    var tok = this.next();
+    if (msg == undefined)
       msg = type;
-    if (tok==undefined||tok.type!=type) {
-        this.error(tok, "Expected "+msg);
+    if (tok == undefined || tok.type != type) {
+      this.error(tok, "Expected " + msg);
     }
     return tok.value;
   }
 }
 
 function test_parser() {
-  var basic_types=new set(["int", "float", "double", "vec2", "vec3", "vec4", "mat4", "string"]);
-  var reserved_tokens=new set(["int", "float", "double", "vec2", "vec3", "vec4", "mat4", "string", "static_string", "array"]);
+  var basic_types = new set(["int", "float", "double", "vec2", "vec3", "vec4", "mat4", "string"]);
+  var reserved_tokens = new set(["int", "float", "double", "vec2", "vec3", "vec4", "mat4", "string", "static_string", "array"]);
+
   function tk(name, re, func) {
     return new exports.tokdef(name, re, func);
   }
-  var tokens=[tk("ID", /[a-zA-Z]+[a-zA-Z0-9_]*/, function(t) {
+
+  var tokens = [tk("ID", /[a-zA-Z]+[a-zA-Z0-9_]*/, function (t) {
     if (reserved_tokens.has(t.value)) {
-        t.type = t.value.toUpperCase();
+      t.type = t.value.toUpperCase();
     }
     return t;
-  }), tk("OPEN", /\{/), tk("CLOSE", /}/), tk("COLON", /:/), tk("JSCRIPT", /\|/, function(t) {
-    var js="";
-    var lexer=t.lexer;
-    while (lexer.lexpos<lexer.lexdata.length) {
-      var c=lexer.lexdata[lexer.lexpos];
-      if (c=="\n")
+  }), tk("OPEN", /\{/), tk("CLOSE", /}/), tk("COLON", /:/), tk("JSCRIPT", /\|/, function (t) {
+    var js = "";
+    var lexer = t.lexer;
+    while (lexer.lexpos < lexer.lexdata.length) {
+      var c = lexer.lexdata[lexer.lexpos];
+      if (c == "\n")
         break;
-      js+=c;
+      js += c;
       lexer.lexpos++;
     }
     if (js.endsWith(";")) {
-        js = js.slice(0, js.length-1);
-        lexer.lexpos--;
+      js = js.slice(0, js.length - 1);
+      lexer.lexpos--;
     }
     t.value = js;
     return t;
-  }), tk("LPARAM", /\(/), tk("RPARAM", /\)/), tk("COMMA", /,/), tk("NUM", /[0-9]/), tk("SEMI", /;/), tk("NEWLINE", /\n/, function(t) {
-    t.lexer.lineno+=1;
-  }), tk("SPACE", / |\t/, function(t) {
+  }), tk("LPARAM", /\(/), tk("RPARAM", /\)/), tk("COMMA", /,/), tk("NUM", /[0-9]/), tk("SEMI", /;/), tk("NEWLINE", /\n/, function (t) {
+    t.lexer.lineno += 1;
+  }), tk("SPACE", / |\t/, function (t) {
   })];
-  var __iter_rt=__get_iter(reserved_tokens);
+  var __iter_rt = __get_iter(reserved_tokens);
   var rt;
   while (1) {
-    var __ival_rt=__iter_rt.next();
+    var __ival_rt = __iter_rt.next();
     if (__ival_rt.done) {
-        break;
+      break;
     }
     rt = __ival_rt.value;
     tokens.push(tk(rt.toUpperCase()));
   }
-  var a="\n  Loop {\n    eid : int;\n    flag : int;\n    index : int;\n    type : int;\n\n    co : vec3;\n    no : vec3;\n    loop : int | eid(loop);\n    edges : array(e, int) | e.eid;\n\n    loops : array(Loop);\n  }\n  ";
+  var a = "\n  Loop {\n    eid : int;\n    flag : int;\n    index : int;\n    type : int;\n\n    co : vec3;\n    no : vec3;\n    loop : int | eid(loop);\n    edges : array(e, int) | e.eid;\n\n    loops : array(Loop);\n  }\n  ";
+
   function errfunc(lexer) {
     return true;
   }
-  var lex=new exports.lexer(tokens, errfunc);
+
+  var lex = new exports.lexer(tokens, errfunc);
   console.log("Testing lexical scanner...");
   lex.input(a);
   var token;
   while (token = lex.next()) {
     console.log(token.toString());
   }
-  var parser=new exports.parser(lex);
+  var parser = new exports.parser(lex);
   parser.input(a);
+
   function p_Array(p) {
     p.expect("ARRAY");
     p.expect("LPARAM");
-    var arraytype=p_Type(p);
-    var itername="";
+    var arraytype = p_Type(p);
+    var itername = "";
     if (p.optional("COMMA")) {
-        itername = arraytype;
-        arraytype = p_Type(p);
+      itername = arraytype;
+      arraytype = p_Type(p);
     }
     p.expect("RPARAM");
     return {type: "array", data: {type: arraytype, iname: itername}}
   }
+
   function p_Type(p) {
-    var tok=p.peek();
-    if (tok.type=="ID") {
-        p.next();
-        return {type: "struct", data: "\""+tok.value+"\""}
+    var tok = p.peek();
+    if (tok.type == "ID") {
+      p.next();
+      return {type: "struct", data: "\"" + tok.value + "\""}
     }
-    else 
-      if (basic_types.has(tok.type.toLowerCase())) {
-        p.next();
-        return {type: tok.type.toLowerCase()}
+    else if (basic_types.has(tok.type.toLowerCase())) {
+      p.next();
+      return {type: tok.type.toLowerCase()}
     }
-    else 
-      if (tok.type=="ARRAY") {
-        return p_Array(p);
+    else if (tok.type == "ARRAY") {
+      return p_Array(p);
     }
     else {
-      p.error(tok, "invalid type "+tok.type);
+      p.error(tok, "invalid type " + tok.type);
     }
   }
+
   function p_Field(p) {
-    var field={}
+    var field = {}
     console.log("-----", p.peek().type);
     field.name = p.expect("ID", "struct field name");
     p.expect("COLON");
     field.type = p_Type(p);
     field.set = undefined;
     field.get = undefined;
-    var tok=p.peek();
-    if (tok.type=="JSCRIPT") {
-        field.get = tok.value;
-        p.next();
+    var tok = p.peek();
+    if (tok.type == "JSCRIPT") {
+      field.get = tok.value;
+      p.next();
     }
     tok = p.peek();
-    if (tok.type=="JSCRIPT") {
-        field.set = tok.value;
-        p.next();
+    if (tok.type == "JSCRIPT") {
+      field.set = tok.value;
+      p.next();
     }
     p.expect("SEMI");
     return field;
   }
+
   function p_Struct(p) {
-    var st={}
+    var st = {}
     st.name = p.expect("ID", "struct name");
     st.fields = [];
     p.expect("OPEN");
     while (1) {
       if (p.at_end()) {
-          p.error(undefined);
+        p.error(undefined);
       }
-      else 
-        if (p.optional("CLOSE")) {
-          break;
+      else if (p.optional("CLOSE")) {
+        break;
       }
       else {
         st.fields.push(p_Field(p));
@@ -415,6 +421,7 @@ function test_parser() {
     }
     return st;
   }
-  var ret=p_Struct(parser);
+
+  var ret = p_Struct(parser);
   console.log(JSON.stringify(ret));
 }

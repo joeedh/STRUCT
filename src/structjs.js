@@ -15,10 +15,10 @@ let struct_typesystem = require("./struct_typesystem");
 let struct_parser = require("./struct_parser");
 
 Object.defineProperty(exports, "STRUCT_ENDIAN", {
-  get : function() {
+  get: function () {
     return struct_binpack.STRUCT_ENDIAN;
   },
-  set : function(val) {
+  set: function (val) {
     struct_binpack.STRUCT_ENDIAN = val;
   }
 });
@@ -40,7 +40,7 @@ for (var k in struct_intern) {
 exports.register = function register(cls, name) {
   return exports.manager.register(cls, name);
 }
-exports.inherit = function() {
+exports.inherit = function () {
   return exports.STRUCT.inherit(...arguments);
 }
 

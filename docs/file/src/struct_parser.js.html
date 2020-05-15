@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <base data-ice="baseUrl" href="../../">
+  <title data-ice="title">src/struct_parser.js | nstructjs</title>
+  <link type="text/css" rel="stylesheet" href="css/style.css">
+  <link type="text/css" rel="stylesheet" href="css/prettify-tomorrow.css">
+  <script src="script/prettify/prettify.js"></script>
+  <script src="script/manual.js"></script>
+<meta name="description" content="ProtoBuf-like serialization system optimized for JS"><meta property="twitter:card" content="summary"><meta property="twitter:title" content="nstructjs"><meta property="twitter:description" content="ProtoBuf-like serialization system optimized for JS"></head>
+<body class="layout-container" data-ice="rootContainer">
+
+<header>
+  <a href="./">Home</a>
+  <a href="./manual/index.html" data-ice="manualHeaderLink">Manual</a>
+  <a href="identifiers.html">Reference</a>
+  <a href="source.html">Source</a>
+  
+  <div class="search-box">
+  <span>
+    <img src="./image/search.png">
+    <span class="search-input-edge"></span><input class="search-input"><span class="search-input-edge"></span>
+  </span>
+    <ul class="search-result"></ul>
+  </div>
+</header>
+
+<nav class="navigation" data-ice="nav"><div>
+  <ul>
+    
+  <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/struct_filehelper.js~Block.html">Block</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/struct_filehelper.js~FileError.html">FileError</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/struct_filehelper.js~FileHelper.html">FileHelper</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/struct_filehelper.js~FileParams.html">FileParams</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/struct_intern.js~STRUCT.html">STRUCT</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/struct_intern.js~csa.html">csa</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/struct_parseutil.js~PUTIL_ParseError.html">PUTIL_ParseError</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/struct_parseutil.js~lexer.html">lexer</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/struct_parseutil.js~parser.html">parser</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/struct_parseutil.js~tokdef.html">tokdef</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/struct_parseutil.js~token.html">token</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-decode_utf8">decode_utf8</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-encode_utf8">encode_utf8</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-pack_byte">pack_byte</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-pack_bytes">pack_bytes</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-pack_double">pack_double</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-pack_float">pack_float</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-pack_int">pack_int</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-pack_short">pack_short</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-pack_static_string">pack_static_string</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-pack_string">pack_string</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-test_utf8">test_utf8</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-unpack_byte">unpack_byte</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-unpack_bytes">unpack_bytes</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-unpack_double">unpack_double</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-unpack_float">unpack_float</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-unpack_int">unpack_int</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-unpack_short">unpack_short</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-unpack_static_string">unpack_static_string</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-unpack_string">unpack_string</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-write_scripts">write_scripts</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-Class">Class</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-get_callstack">get_callstack</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-is_obj_lit">is_obj_lit</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-print_stack">print_stack</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-inherit">inherit</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-register">register</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-StructEnum">StructEnum</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-StructTypeMap">StructTypeMap</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-StructTypes">StructTypes</a></span></span></li>
+</ul>
+</div>
+</nav>
+
+<div class="content" data-ice="content"><h1 data-ice="title">src/struct_parser.js</h1>
+<pre class="source-code line-number raw-source-code"><code class="prettyprint linenums" data-ice="content">&quot;use strict&quot;;
+let struct_util = require(&quot;./struct_util&quot;);
+let struct_parseutil = require(&quot;./struct_parseutil&quot;);
+
+//the discontinuous id&apos;s are to make sure
+//the version I originally wrote (which had a few application-specific types)
+//and this one do not become totally incompatible.
+var StructEnum = exports.StructEnum = {
+  T_INT    : 0,
+  T_FLOAT  : 1,
+  T_DOUBLE : 2,
+  T_STRING : 7,
+  T_STATIC_STRING : 8, //fixed-length string
+  T_STRUCT : 9, 
+  T_TSTRUCT : 10,
+  T_ARRAY   : 11,
+  T_ITER    : 12,
+  T_SHORT   : 13,
+  T_BYTE    : 14,
+  T_BOOL    : 15
+};
+
+var StructTypes = exports.StructTypes = {
+  &quot;int&quot;: StructEnum.T_INT, 
+  &quot;float&quot;: StructEnum.T_FLOAT, 
+  &quot;double&quot;: StructEnum.T_DOUBLE, 
+  &quot;string&quot;: StructEnum.T_STRING,
+  &quot;static_string&quot;: StructEnum.T_STATIC_STRING, 
+  &quot;struct&quot;: StructEnum.T_STRUCT, 
+  &quot;abstract&quot;: StructEnum.T_TSTRUCT, 
+  &quot;array&quot;: StructEnum.T_ARRAY, 
+  &quot;iter&quot;: StructEnum.T_ITER,
+  &quot;short&quot;: StructEnum.T_SHORT,
+  &quot;byte&quot;: StructEnum.T_BYTE,
+  &quot;bool&quot;: StructEnum.T_BOOL
+};
+
+var StructTypeMap = exports.StructTypeMap = {};
+
+for (var k in StructTypes) {
+  StructTypeMap[StructTypes[k]] = k;
+}
+
+function gen_tabstr(t) {
+  var s=&quot;&quot;;
+  for (var i=0; i&lt;t; i++) {
+      s+=&quot;  &quot;;
+  }
+  return s;
+}
+
+function StructParser() {
+  var basic_types=new struct_util.set([
+    &quot;int&quot;, &quot;float&quot;, &quot;double&quot;, &quot;string&quot;, &quot;short&quot;, &quot;byte&quot;, &quot;bool&quot;
+  ]);
+  
+  var reserved_tokens=new struct_util.set([
+    &quot;int&quot;, &quot;float&quot;, &quot;double&quot;, &quot;string&quot;, &quot;static_string&quot;, &quot;array&quot;, 
+    &quot;iter&quot;, &quot;abstract&quot;, &quot;short&quot;, &quot;byte&quot;, &quot;bool&quot;
+  ]);
+
+  function tk(name, re, func) {
+    return new struct_parseutil.tokdef(name, re, func);
+  }
+  
+  var tokens=[
+    tk(&quot;ID&quot;, /[a-zA-Z_]+[a-zA-Z0-9_\.]*/, function(t) {
+      if (reserved_tokens.has(t.value)) {
+          t.type = t.value.toUpperCase();
+      }
+      return t;
+    }), tk(&quot;OPEN&quot;, /\{/), 
+    tk(&quot;EQUALS&quot;, /=/), 
+    tk(&quot;CLOSE&quot;, /}/), 
+    tk(&quot;COLON&quot;, /:/), 
+    tk(&quot;SOPEN&quot;, /\[/), 
+    tk(&quot;SCLOSE&quot;, /\]/), 
+    tk(&quot;JSCRIPT&quot;, /\|/, function(t) {
+      var js=&quot;&quot;;
+      var lexer=t.lexer;
+      while (lexer.lexpos&lt;lexer.lexdata.length) {
+        var c=lexer.lexdata[lexer.lexpos];
+        if (c==&quot;\n&quot;)
+          break;
+        js+=c;
+        lexer.lexpos++;
+      }
+      if (js.endsWith(&quot;;&quot;)) {
+          js = js.slice(0, js.length-1);
+          lexer.lexpos--;
+      }
+      t.value = js.trim();
+      return t;
+    }), 
+    tk(&quot;LPARAM&quot;, /\(/), 
+    tk(&quot;RPARAM&quot;, /\)/), 
+    tk(&quot;COMMA&quot;, /,/), 
+    tk(&quot;NUM&quot;, /[0-9]+/), 
+    tk(&quot;SEMI&quot;, /;/), 
+    tk(&quot;NEWLINE&quot;, /\n/, function(t) {
+      t.lexer.lineno+=1;
+    }),
+    tk(&quot;SPACE&quot;, / |\t/, function(t) {
+    })
+  ];
+  
+  reserved_tokens.forEach(function(rt) {
+    tokens.push(tk(rt.toUpperCase()));
+  });
+  
+  function errfunc(lexer) {
+    return true;
+  }
+  
+  var lex=new struct_parseutil.lexer(tokens, errfunc);
+  var parser=new struct_parseutil.parser(lex);
+  
+  function p_Static_String(p) {
+    p.expect(&quot;STATIC_STRING&quot;);
+    p.expect(&quot;SOPEN&quot;);
+    var num=p.expect(&quot;NUM&quot;);
+    p.expect(&quot;SCLOSE&quot;);
+    return {type: StructEnum.T_STATIC_STRING, data: {maxlength: num}}
+  }
+  
+  function p_DataRef(p) {
+    p.expect(&quot;DATAREF&quot;);
+    p.expect(&quot;LPARAM&quot;);
+    var tname=p.expect(&quot;ID&quot;);
+    p.expect(&quot;RPARAM&quot;);
+    return {type: StructEnum.T_DATAREF, data: tname}
+  }
+  
+  function p_Array(p) {
+    p.expect(&quot;ARRAY&quot;);
+    p.expect(&quot;LPARAM&quot;);
+    var arraytype=p_Type(p);
+    
+    var itername=&quot;&quot;;
+    if (p.optional(&quot;COMMA&quot;)) {
+        itername = arraytype.data.replace(/&quot;/g, &quot;&quot;);
+        arraytype = p_Type(p);
+    }
+    
+    p.expect(&quot;RPARAM&quot;);
+    return {type: StructEnum.T_ARRAY, data: {type: arraytype, iname: itername}}
+  }
+  
+  function p_Iter(p) {
+    p.expect(&quot;ITER&quot;);
+    p.expect(&quot;LPARAM&quot;);
+    var arraytype=p_Type(p);
+    var itername=&quot;&quot;;
+    
+    if (p.optional(&quot;COMMA&quot;)) {
+        itername = arraytype.data.replace(/&quot;/g, &quot;&quot;);
+        arraytype = p_Type(p);
+    }
+    
+    p.expect(&quot;RPARAM&quot;);
+    return {type: StructEnum.T_ITER, data: {type: arraytype, iname: itername}}
+  }
+  
+  function p_Abstract(p) {
+    p.expect(&quot;ABSTRACT&quot;);
+    p.expect(&quot;LPARAM&quot;);
+    var type=p.expect(&quot;ID&quot;);
+    p.expect(&quot;RPARAM&quot;);
+    return {type: StructEnum.T_TSTRUCT, data: type}
+  }
+  
+  function p_Type(p) {
+    var tok=p.peek();
+    
+    if (tok.type==&quot;ID&quot;) {
+        p.next();
+        return {type: StructEnum.T_STRUCT, data: tok.value}
+    } else if (basic_types.has(tok.type.toLowerCase())) {
+        p.next();
+        return {type: StructTypes[tok.type.toLowerCase()]}
+    } else if (tok.type==&quot;ARRAY&quot;) {
+        return p_Array(p);
+    } else if (tok.type==&quot;ITER&quot;) {
+        return p_Iter(p);
+    } else if (tok.type==&quot;STATIC_STRING&quot;) {
+        return p_Static_String(p);
+    } else if (tok.type==&quot;ABSTRACT&quot;) {
+        return p_Abstract(p);
+    } else if (tok.type==&quot;DATAREF&quot;) {
+        return p_DataRef(p);
+    } else {
+      p.error(tok, &quot;invalid type &quot;+tok.type);
+    }
+  }
+  
+  function p_ID_or_num(p) {
+    let t = p.peeknext();
+
+    if (t.type == &quot;NUM&quot;) {
+      p.next();
+      return t.value;
+    } else {
+      return p.expect(&quot;ID&quot;, &quot;struct field name&quot;);
+    }
+  }
+  
+  function p_Field(p) {
+    var field={}
+    
+    field.name = p_ID_or_num(p);
+    p.expect(&quot;COLON&quot;);
+    
+    field.type = p_Type(p);
+    field.set = undefined;
+    field.get = undefined;
+    
+    var tok=p.peek();
+    if (tok.type==&quot;JSCRIPT&quot;) {
+        field.get = tok.value;
+        p.next();
+    }
+    
+    tok = p.peek();
+    if (tok.type==&quot;JSCRIPT&quot;) {
+        field.set = tok.value;
+        p.next();
+    }
+    
+    p.expect(&quot;SEMI&quot;);
+    return field;
+  }
+  
+  function p_Struct(p) {
+    var st={}
+    
+    st.name = p.expect(&quot;ID&quot;, &quot;struct name&quot;);
+    
+    st.fields = [];
+    st.id = -1;
+    var tok=p.peek();
+    var id=-1;
+    if (tok.type==&quot;ID&quot;&amp;&amp;tok.value==&quot;id&quot;) {
+        p.next();
+        p.expect(&quot;EQUALS&quot;);
+        st.id = p.expect(&quot;NUM&quot;);
+    }
+    
+    p.expect(&quot;OPEN&quot;);
+    while (1) {
+      if (p.at_end()) {
+          p.error(undefined);
+      }
+      else 
+        if (p.optional(&quot;CLOSE&quot;)) {
+          break;
+      }
+      else {
+        st.fields.push(p_Field(p));
+      }
+    }
+    return st;
+  }
+  parser.start = p_Struct;
+  return parser;
+}
+
+exports.struct_parse = StructParser();
+</code></pre>
+
+</div>
+
+<footer class="footer">
+  Generated by <a href="https://esdoc.org">ESDoc<span data-ice="esdocVersion">(1.1.0)</span><img src="./image/esdoc-logo-mini-black.png"></a>
+</footer>
+
+<script src="script/search_index.js"></script>
+<script src="script/search.js"></script>
+<script src="script/pretty-print.js"></script>
+<script src="script/inherited-summary.js"></script>
+<script src="script/test-summary.js"></script>
+<script src="script/inner-link.js"></script>
+<script src="script/patch-for-local.js"></script>
+</body>
+</html>

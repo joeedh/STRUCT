@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <base data-ice="baseUrl" href="../">
+  <title data-ice="title">Manual | nstructjs</title>
+  <link type="text/css" rel="stylesheet" href="css/style.css">
+  <link type="text/css" rel="stylesheet" href="css/prettify-tomorrow.css">
+  <script src="script/prettify/prettify.js"></script>
+  <script src="script/manual.js"></script>
+<meta name="description" content="ProtoBuf-like serialization system optimized for JS"><meta property="twitter:card" content="summary"><meta property="twitter:title" content="nstructjs"><meta property="twitter:description" content="ProtoBuf-like serialization system optimized for JS"></head>
+<body class="layout-container manual-root manual-index" data-ice="rootContainer">
+
+<header>
+  <a href="./">Home</a>
+  <a href="./manual/index.html" data-ice="manualHeaderLink">Manual</a>
+  <a href="identifiers.html">Reference</a>
+  <a href="source.html">Source</a>
+  
+  <div class="search-box">
+  <span>
+    <img src="./image/search.png">
+    <span class="search-input-edge"></span><input class="search-input"><span class="search-input-edge"></span>
+  </span>
+    <ul class="search-result"></ul>
+  </div>
+</header>
+
+<nav class="navigation" data-ice="nav"><div class="manual-toc-root">
+  
+<div data-ice="manual">
+    <ul class="manual-toc">
+      
+    </ul>
+  </div>
+<div data-ice="manual">
+    <ul class="manual-toc">
+      
+    <li data-ice="manualNav" class="indent-h1" data-link="manual/Intro-and-Examples.html"><a href="manual/Intro-and-Examples.html#introduction" data-ice="link">Introduction</a></li>
+<li data-ice="manualNav" class="indent-h1" data-link="manual/Intro-and-Examples.html"><a href="manual/Intro-and-Examples.html#direct-serialization-of-objects" data-ice="link">Direct serialization of objects</a></li>
+<li data-ice="manualNav" class="indent-h1" data-link="manual/Intro-and-Examples.html"><a href="manual/Intro-and-Examples.html#example" data-ice="link">Example</a></li>
+<li data-ice="manualNav" class="indent-h1" data-link="manual/Intro-and-Examples.html"><a href="manual/Intro-and-Examples.html#arrays" data-ice="link">Arrays</a></li>
+<li data-ice="manualNav" class="indent-h1" data-link="manual/Intro-and-Examples.html"><a href="manual/Intro-and-Examples.html#abstract-classes" data-ice="link">Abstract Classes</a></li>
+</ul>
+  </div>
+<div data-ice="manual">
+    <ul class="manual-toc">
+      
+    <li data-ice="manualNav" class="indent-h1" data-link="manual/Reading-And-Writing.html"><a href="manual/Reading-And-Writing.html" data-ice="link">Handling data structure changes</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/Reading-And-Writing.html"><a href="manual/Reading-And-Writing.html#writing-struct-scripts-with-file-data" data-ice="link">Writing STRUCT scripts with file data</a></li>
+<li data-ice="manualNav" class="indent-h3" data-link="manual/Reading-And-Writing.html"><a href="manual/Reading-And-Writing.html#file-writing-example" data-ice="link">File Writing Example</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/Reading-And-Writing.html"><a href="manual/Reading-And-Writing.html#reading-saved-struct-scripts" data-ice="link">Reading saved STRUCT scripts</a></li>
+</ul>
+  </div>
+<div data-ice="manual">
+    <ul class="manual-toc">
+      
+    <li data-ice="manualNav" class="indent-h1" data-link="manual/Specification.html"><a href="manual/Specification.html#terminology" data-ice="link">Terminology</a></li>
+<li data-ice="manualNav" class="indent-h1" data-link="manual/Specification.html"><a href="manual/Specification.html#grammar" data-ice="link">Grammar</a></li>
+<li data-ice="manualNav" class="indent-h1" data-link="manual/Specification.html"><a href="manual/Specification.html#semantics" data-ice="link">Semantics</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/Specification.html"><a href="manual/Specification.html#endianness" data-ice="link">Endianness</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/Specification.html"><a href="manual/Specification.html#type-definitions" data-ice="link">Type definitions</a></li>
+<li data-ice="manualNav" class="indent-h3" data-link="manual/Specification.html"><a href="manual/Specification.html#int" data-ice="link">int</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/Specification.html"><a href="manual/Specification.html#byte" data-ice="link">byte</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/Specification.html"><a href="manual/Specification.html#bool" data-ice="link">bool</a></li>
+<li data-ice="manualNav" class="indent-h3" data-link="manual/Specification.html"><a href="manual/Specification.html#float" data-ice="link">float</a></li>
+<li data-ice="manualNav" class="indent-h3" data-link="manual/Specification.html"><a href="manual/Specification.html#double" data-ice="link">double</a></li>
+<li data-ice="manualNav" class="indent-h3" data-link="manual/Specification.html"><a href="manual/Specification.html#short" data-ice="link">short</a></li>
+<li data-ice="manualNav" class="indent-h3" data-link="manual/Specification.html"><a href="manual/Specification.html#string" data-ice="link">string</a></li>
+<li data-ice="manualNav" class="indent-h4" data-link="manual/Specification.html"><a href="manual/Specification.html#semantics" data-ice="link">Semantics</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/Specification.html"><a href="manual/Specification.html#static-string" data-ice="link">static_string</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/Specification.html"><a href="manual/Specification.html#object-type" data-ice="link">Object type</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/Specification.html"><a href="manual/Specification.html#abstract-object-type" data-ice="link">Abstract object type</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/Specification.html"><a href="manual/Specification.html#array" data-ice="link">Array</a></li>
+<li data-ice="manualNav" class="indent-h3" data-link="manual/Specification.html"><a href="manual/Specification.html#semantics" data-ice="link">Semantics</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/Specification.html"><a href="manual/Specification.html#iter" data-ice="link">Iter</a></li>
+</ul>
+  </div>
+</div>
+</nav>
+
+<div class="content" data-ice="content"><div class="github-markdown">
+  <div class="manual-user-index" data-ice="manualUserIndex"><p><a href="manual/Intro-and-Examples.html">Intro and Examples</a></p>
+</div>
+
+  
+
+  <div class="manual-cards">
+    
+  <div class="manual-card-wrap" data-ice="cards">
+      <div class="manual-card">
+        <div data-ice="card"><h1>Abstract Classes</h1><p>What if you don&apos;t know the exact class of a property?  In that case, you use the abstract keyword:</p><p><code>&quot;  some_property : abstract(SomeBaseClass);&quot;</code></p><p>This tells STRUCT that some_property may be a subclass of SomeBaseClass.  Since STRUCT is designed to be very compact, objects are normally saved without any sort of type information; the abstract keyword simply tells STRUCT to write a type ID before some_property.</p></div>
+        <a data-ice="link" href="manual/Intro-and-Examples.html#abstract-classes"></a>
+      </div>
+    </div>
+<div class="manual-card-wrap" data-ice="cards">
+      <div class="manual-card">
+        <div data-ice="card"><h1>Handling data structure changes</h1><h2>Writing STRUCT scripts with file data</h2><p>STRUCT has facilities to handle changes in data structures.  The basic idea is to save a copy of the STRUCT scripts used to generate a given file inside that file.  You generate this copy with <code>nstructjs.write_scripts()</code>, which you save before the file contents with nstructjs.binpack.write_string.  Note that <strong>you must use <code>nstructjs.write_scripts()</code>,</strong> or else the abstract keyword will not work.</p><p>To save space, the &apos;abstract&apos; keyword does not store the full type of an object, instead it stores an integer ID reference to that object&apos;s type within the STRUCT system.  These IDs are assigned by a simple incrementer; thus, any changes to the <em>order</em> of STRUCT registrations will change extant IDs.</p><p>This is where <code>nstructjs.write_scripts()</code> comes in: If you look at its output, you&apos;ll see stuff like this:</p><pre><code><code class="source-code prettyprint">mymodule.SomeClass id=1 {
+}</code>
+</code></pre><h3>File Writing Example</h3><p>Here&apos;s a simple example of generating a file with embedded STRUCT scripts:</p><pre><code><code class="source-code prettyprint">var data = [];
+//generate id-enabled struct scripts.  note that helper JS code will be excluded.
+var scripts = nstructjs.write_scripts()
+
+//write utf8 representation of scripts.
+nstructjs.binpack.pack_string(data, scripts);
+
+//write object
+nstructjs.manager.write_object(anObject);</code>
+</code></pre><h2>Reading saved STRUCT scripts</h2><p>Continuing the example above, we need to load a file with the STRUCT scripts saved in that file.  To do so,
+we have to create our own instance of nstructjs.STRUCT (the class of nstructjs.manager):</p><pre><code><code class="source-code prettyprint">var load_manager = new nstructjs.STRUCT();</code>
+</code></pre><p>And then feed it the saved scripts buffer.  Assuming we have the output of the previous example, we have to first get a DataView:</p><p><code>data = new DataView(new Uint8Array(data).buffer);</code></p><p>Then we have to create a &quot;unpack context,&quot; which is basically an ArrayBuffer file pointer:</p><pre><code><code class="source-code prettyprint">//create unpack context
+var uctx = new nstructjs.binpack.unpack_ctx();</code>
+</code></pre><p>Next, we read the scripts definition string:</p><p><code>var scripts = nstructjs.binpack.unpack_string(data, uctx);</code></p><p>And then we feed it to load_manager.</p><p><code>load_manager.parse_structs(scripts);</code></p><p>We can now use load_manager to read the rest of our file:</p><p><code>var anObject2 = load_manager.read_object(data, anObject.constructor, uctx);</code></p></div>
+        <a data-ice="link" href="manual/Reading-And-Writing.html"></a>
+      </div>
+    </div>
+<div class="manual-card-wrap" data-ice="cards">
+      <div class="manual-card">
+        <div data-ice="card"><h1>Semantics</h1><h2>Endianness</h2><p>Data shall be written in network (big) byte order.</p><h2>Type definitions</h2><h3>int</h3><p>The &apos;int&apos; type is defined to be a signed 32-bit integer</p><h2>byte</h2><p>The &apos;byte&apos; type is defined to be an unsigned 8-bit integer.</p><h2>bool</h2><p>The &apos;bool&apos; type is defined to be an unsigned 8-bit integer.
+Is cast to a boolean when read from file.</p><h3>float</h3><p>The &apos;float&apos; type is defined to be a signed 32-bit float</p><h3>double</h3><p>The &apos;double&apos; type is defined to be a signed 64-bit float</p><h3>short</h3><p>The &apos;short&apos; type is defined to be a signed 16-bit signed integer</p><h3>string</h3><p>The string type is defined to be an unsigned array of 8-bit integers, encoded with UTF8.</p><h4>Semantics</h4><p>Strings shall be written in these steps:</p><ol>
+<li>Write size of final, encoded byte array as a signed 32-bit integer.</li>
+<li>Write encoded byte array.</li>
+</ol><h2>static_string</h2><p>The static_string type is a fixed-sized unsigned array of 8-bit integers.  String data that is too long must be truncated to fit within the array; data is too short must be padded with zeros.</p><h2>Object type</h2><p>Object types declared without abstract() are written via their STRUCT definitions.</p><h2>Abstract object type</h2><p>Object types saved with abstract() must save a signed integer ID referencing their struct definition within the STRUCT manager that created them, then write the object as above.</p><h2>Array</h2><p>Arrays may be variable length, of any valid STRUCT type, including abstract types.  </p><h3>Semantics</h3><p>To write an array:</p><ol>
+<li>Write a 32-bit signed integer representing array length</li>
+<li>Write each array item according to STRUCT type rules.</li>
+</ol><h2>Iter</h2><p>The Iter type is written identically to Array, but relaxes the requirement for direct, contiguous arrays for whatever iterator protocol is appropriate for the language (which differs between ES5.1 and ES6).</p></div>
+        <a data-ice="link" href="manual/Specification.html#semantics"></a>
+      </div>
+    </div>
+</div>
+</div>
+</div>
+
+<footer class="footer">
+  Generated by <a href="https://esdoc.org">ESDoc<span data-ice="esdocVersion">(1.1.0)</span><img src="./image/esdoc-logo-mini-black.png"></a>
+</footer>
+
+<script src="script/search_index.js"></script>
+<script src="script/search.js"></script>
+<script src="script/pretty-print.js"></script>
+<script src="script/inherited-summary.js"></script>
+<script src="script/test-summary.js"></script>
+<script src="script/inner-link.js"></script>
+<script src="script/patch-for-local.js"></script>
+</body>
+</html>

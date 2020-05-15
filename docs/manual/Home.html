@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <base data-ice="baseUrl" href="../">
+  <title data-ice="title">Manual | nstructjs</title>
+  <link type="text/css" rel="stylesheet" href="css/style.css">
+  <link type="text/css" rel="stylesheet" href="css/prettify-tomorrow.css">
+  <script src="script/prettify/prettify.js"></script>
+  <script src="script/manual.js"></script>
+<meta name="description" content="ProtoBuf-like serialization system optimized for JS"><meta property="twitter:card" content="summary"><meta property="twitter:title" content="nstructjs"><meta property="twitter:description" content="ProtoBuf-like serialization system optimized for JS"></head>
+<body class="layout-container manual-root" data-ice="rootContainer">
+
+<header>
+  <a href="./">Home</a>
+  <a href="./manual/index.html" data-ice="manualHeaderLink">Manual</a>
+  <a href="identifiers.html">Reference</a>
+  <a href="source.html">Source</a>
+  
+  <div class="search-box">
+  <span>
+    <img src="./image/search.png">
+    <span class="search-input-edge"></span><input class="search-input"><span class="search-input-edge"></span>
+  </span>
+    <ul class="search-result"></ul>
+  </div>
+</header>
+
+<nav class="navigation" data-ice="nav"><div class="manual-toc-root">
+  
+<div data-ice="manual">
+    <ul class="manual-toc">
+      
+    </ul>
+  </div>
+<div data-ice="manual">
+    <ul class="manual-toc">
+      
+    <li data-ice="manualNav" class="indent-h1" data-link="manual/Intro-and-Examples.html"><a href="manual/Intro-and-Examples.html#introduction" data-ice="link">Introduction</a></li>
+<li data-ice="manualNav" class="indent-h1" data-link="manual/Intro-and-Examples.html"><a href="manual/Intro-and-Examples.html#direct-serialization-of-objects" data-ice="link">Direct serialization of objects</a></li>
+<li data-ice="manualNav" class="indent-h1" data-link="manual/Intro-and-Examples.html"><a href="manual/Intro-and-Examples.html#example" data-ice="link">Example</a></li>
+<li data-ice="manualNav" class="indent-h1" data-link="manual/Intro-and-Examples.html"><a href="manual/Intro-and-Examples.html#arrays" data-ice="link">Arrays</a></li>
+<li data-ice="manualNav" class="indent-h1" data-link="manual/Intro-and-Examples.html"><a href="manual/Intro-and-Examples.html#abstract-classes" data-ice="link">Abstract Classes</a></li>
+</ul>
+  </div>
+<div data-ice="manual">
+    <ul class="manual-toc">
+      
+    <li data-ice="manualNav" class="indent-h1" data-link="manual/Reading-And-Writing.html"><a href="manual/Reading-And-Writing.html" data-ice="link">Handling data structure changes</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/Reading-And-Writing.html"><a href="manual/Reading-And-Writing.html#writing-struct-scripts-with-file-data" data-ice="link">Writing STRUCT scripts with file data</a></li>
+<li data-ice="manualNav" class="indent-h3" data-link="manual/Reading-And-Writing.html"><a href="manual/Reading-And-Writing.html#file-writing-example" data-ice="link">File Writing Example</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/Reading-And-Writing.html"><a href="manual/Reading-And-Writing.html#reading-saved-struct-scripts" data-ice="link">Reading saved STRUCT scripts</a></li>
+</ul>
+  </div>
+<div data-ice="manual">
+    <ul class="manual-toc">
+      
+    <li data-ice="manualNav" class="indent-h1" data-link="manual/Specification.html"><a href="manual/Specification.html#terminology" data-ice="link">Terminology</a></li>
+<li data-ice="manualNav" class="indent-h1" data-link="manual/Specification.html"><a href="manual/Specification.html#grammar" data-ice="link">Grammar</a></li>
+<li data-ice="manualNav" class="indent-h1" data-link="manual/Specification.html"><a href="manual/Specification.html#semantics" data-ice="link">Semantics</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/Specification.html"><a href="manual/Specification.html#endianness" data-ice="link">Endianness</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/Specification.html"><a href="manual/Specification.html#type-definitions" data-ice="link">Type definitions</a></li>
+<li data-ice="manualNav" class="indent-h3" data-link="manual/Specification.html"><a href="manual/Specification.html#int" data-ice="link">int</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/Specification.html"><a href="manual/Specification.html#byte" data-ice="link">byte</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/Specification.html"><a href="manual/Specification.html#bool" data-ice="link">bool</a></li>
+<li data-ice="manualNav" class="indent-h3" data-link="manual/Specification.html"><a href="manual/Specification.html#float" data-ice="link">float</a></li>
+<li data-ice="manualNav" class="indent-h3" data-link="manual/Specification.html"><a href="manual/Specification.html#double" data-ice="link">double</a></li>
+<li data-ice="manualNav" class="indent-h3" data-link="manual/Specification.html"><a href="manual/Specification.html#short" data-ice="link">short</a></li>
+<li data-ice="manualNav" class="indent-h3" data-link="manual/Specification.html"><a href="manual/Specification.html#string" data-ice="link">string</a></li>
+<li data-ice="manualNav" class="indent-h4" data-link="manual/Specification.html"><a href="manual/Specification.html#semantics" data-ice="link">Semantics</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/Specification.html"><a href="manual/Specification.html#static-string" data-ice="link">static_string</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/Specification.html"><a href="manual/Specification.html#object-type" data-ice="link">Object type</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/Specification.html"><a href="manual/Specification.html#abstract-object-type" data-ice="link">Abstract object type</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/Specification.html"><a href="manual/Specification.html#array" data-ice="link">Array</a></li>
+<li data-ice="manualNav" class="indent-h3" data-link="manual/Specification.html"><a href="manual/Specification.html#semantics" data-ice="link">Semantics</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/Specification.html"><a href="manual/Specification.html#iter" data-ice="link">Iter</a></li>
+</ul>
+  </div>
+</div>
+</nav>
+
+<div class="content" data-ice="content"><div class="github-markdown" data-ice="content"><p><a href="./manual/manual/Intro-and-Examples.html">Intro and Examples</a></p>
+</div>
+</div>
+
+<footer class="footer">
+  Generated by <a href="https://esdoc.org">ESDoc<span data-ice="esdocVersion">(1.1.0)</span><img src="./image/esdoc-logo-mini-black.png"></a>
+</footer>
+
+<script src="script/search_index.js"></script>
+<script src="script/search.js"></script>
+<script src="script/pretty-print.js"></script>
+<script src="script/inherited-summary.js"></script>
+<script src="script/test-summary.js"></script>
+<script src="script/inner-link.js"></script>
+<script src="script/patch-for-local.js"></script>
+</body>
+</html>

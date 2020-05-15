@@ -1,0 +1,19 @@
+{
+  "source": "./src",
+  "destination": "./docs",
+  "plugins": [
+  {
+    "name": "esdoc-standard-plugin",
+    "lint": {"enable": false},
+    "coverage": {"enable": true},
+    "option": {
+      "manual": {
+        "index": "./wiki/Home.md",
+        "files": [
+          "./wiki/Home.md"
+        ]
+      }
+    }
+  },
+  {"name" : "./nstructjs_esdoc.js"}
+]}

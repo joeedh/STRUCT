@@ -8,8 +8,10 @@ of objects (unlike ProtoBuf or JSON, which build intermediary objects).
 ## Documentation
 
 See [the wiki](https://github.com/joeedh/STRUCT/wiki/Intro-and-Examples) for more information.
+Or [here](Intro-and-Examples) if this was build with ESDoc;
 
 ## Build
 
     r.js -o build.js
+
 

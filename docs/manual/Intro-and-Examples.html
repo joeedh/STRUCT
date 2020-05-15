@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <base data-ice="baseUrl" href="../">
+  <title data-ice="title">Manual | nstructjs</title>
+  <link type="text/css" rel="stylesheet" href="css/style.css">
+  <link type="text/css" rel="stylesheet" href="css/prettify-tomorrow.css">
+  <script src="script/prettify/prettify.js"></script>
+  <script src="script/manual.js"></script>
+<meta name="description" content="ProtoBuf-like serialization system optimized for JS"><meta property="twitter:card" content="summary"><meta property="twitter:title" content="nstructjs"><meta property="twitter:description" content="ProtoBuf-like serialization system optimized for JS"></head>
+<body class="layout-container manual-root" data-ice="rootContainer">
+
+<header>
+  <a href="./">Home</a>
+  <a href="./manual/index.html" data-ice="manualHeaderLink">Manual</a>
+  <a href="identifiers.html">Reference</a>
+  <a href="source.html">Source</a>
+  
+  <div class="search-box">
+  <span>
+    <img src="./image/search.png">
+    <span class="search-input-edge"></span><input class="search-input"><span class="search-input-edge"></span>
+  </span>
+    <ul class="search-result"></ul>
+  </div>
+</header>
+
+<nav class="navigation" data-ice="nav"><div class="manual-toc-root">
+  
+<div data-ice="manual">
+    <ul class="manual-toc">
+      
+    </ul>
+  </div>
+<div data-ice="manual">
+    <ul class="manual-toc">
+      
+    <li data-ice="manualNav" class="indent-h1" data-link="manual/Intro-and-Examples.html"><a href="manual/Intro-and-Examples.html#introduction" data-ice="link">Introduction</a></li>
+<li data-ice="manualNav" class="indent-h1" data-link="manual/Intro-and-Examples.html"><a href="manual/Intro-and-Examples.html#direct-serialization-of-objects" data-ice="link">Direct serialization of objects</a></li>
+<li data-ice="manualNav" class="indent-h1" data-link="manual/Intro-and-Examples.html"><a href="manual/Intro-and-Examples.html#example" data-ice="link">Example</a></li>
+<li data-ice="manualNav" class="indent-h1" data-link="manual/Intro-and-Examples.html"><a href="manual/Intro-and-Examples.html#arrays" data-ice="link">Arrays</a></li>
+<li data-ice="manualNav" class="indent-h1" data-link="manual/Intro-and-Examples.html"><a href="manual/Intro-and-Examples.html#abstract-classes" data-ice="link">Abstract Classes</a></li>
+</ul>
+  </div>
+<div data-ice="manual">
+    <ul class="manual-toc">
+      
+    <li data-ice="manualNav" class="indent-h1" data-link="manual/Reading-And-Writing.html"><a href="manual/Reading-And-Writing.html" data-ice="link">Handling data structure changes</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/Reading-And-Writing.html"><a href="manual/Reading-And-Writing.html#writing-struct-scripts-with-file-data" data-ice="link">Writing STRUCT scripts with file data</a></li>
+<li data-ice="manualNav" class="indent-h3" data-link="manual/Reading-And-Writing.html"><a href="manual/Reading-And-Writing.html#file-writing-example" data-ice="link">File Writing Example</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/Reading-And-Writing.html"><a href="manual/Reading-And-Writing.html#reading-saved-struct-scripts" data-ice="link">Reading saved STRUCT scripts</a></li>
+</ul>
+  </div>
+<div data-ice="manual">
+    <ul class="manual-toc">
+      
+    <li data-ice="manualNav" class="indent-h1" data-link="manual/Specification.html"><a href="manual/Specification.html#terminology" data-ice="link">Terminology</a></li>
+<li data-ice="manualNav" class="indent-h1" data-link="manual/Specification.html"><a href="manual/Specification.html#grammar" data-ice="link">Grammar</a></li>
+<li data-ice="manualNav" class="indent-h1" data-link="manual/Specification.html"><a href="manual/Specification.html#semantics" data-ice="link">Semantics</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/Specification.html"><a href="manual/Specification.html#endianness" data-ice="link">Endianness</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/Specification.html"><a href="manual/Specification.html#type-definitions" data-ice="link">Type definitions</a></li>
+<li data-ice="manualNav" class="indent-h3" data-link="manual/Specification.html"><a href="manual/Specification.html#int" data-ice="link">int</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/Specification.html"><a href="manual/Specification.html#byte" data-ice="link">byte</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/Specification.html"><a href="manual/Specification.html#bool" data-ice="link">bool</a></li>
+<li data-ice="manualNav" class="indent-h3" data-link="manual/Specification.html"><a href="manual/Specification.html#float" data-ice="link">float</a></li>
+<li data-ice="manualNav" class="indent-h3" data-link="manual/Specification.html"><a href="manual/Specification.html#double" data-ice="link">double</a></li>
+<li data-ice="manualNav" class="indent-h3" data-link="manual/Specification.html"><a href="manual/Specification.html#short" data-ice="link">short</a></li>
+<li data-ice="manualNav" class="indent-h3" data-link="manual/Specification.html"><a href="manual/Specification.html#string" data-ice="link">string</a></li>
+<li data-ice="manualNav" class="indent-h4" data-link="manual/Specification.html"><a href="manual/Specification.html#semantics" data-ice="link">Semantics</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/Specification.html"><a href="manual/Specification.html#static-string" data-ice="link">static_string</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/Specification.html"><a href="manual/Specification.html#object-type" data-ice="link">Object type</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/Specification.html"><a href="manual/Specification.html#abstract-object-type" data-ice="link">Abstract object type</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/Specification.html"><a href="manual/Specification.html#array" data-ice="link">Array</a></li>
+<li data-ice="manualNav" class="indent-h3" data-link="manual/Specification.html"><a href="manual/Specification.html#semantics" data-ice="link">Semantics</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/Specification.html"><a href="manual/Specification.html#iter" data-ice="link">Iter</a></li>
+</ul>
+  </div>
+</div>
+</nav>
+
+<div class="content" data-ice="content"><div class="github-markdown" data-ice="content"><h1 id="introduction">Introduction</h1><p><a href="./manual/../class/src/struct_intern.js~STRUCT.html">STRUCT</a> is a ProtoBuf-like binary serialization system for JavaScript.  Developed for production use, it minimizes both storage space and object creation (the source of virtually all performance problems in JS).  The original use case was implementing undo, which required a fast method of writing the application state into a memory file.</p>
+<p>STRUCT differs from ProtoBuf in that it is tied to JS and that it <a href="https://developers.google.com/protocol-buffers/docs/proto#simple">compiles its equivalent to .proto files</a> at runtime.  In fact, these &quot;files&quot; are usually embedded in the JS code.</p>
+<h1 id="direct-serialization-of-objects">Direct serialization of objects</h1><p>Unlike ProtoBuf, STRUCT is designed to serialize and deserialize existing JS object types.  It does not generate object classes for you, it uses the ones you already have.  This avoids a great deal of duplicate object creation, which in large applications can lead to significant performance loss.</p>
+<h1 id="example">Example</h1><p>Here&apos;s a simple example of using STRUCT:</p>
+<pre><code><code class="source-code prettyprint">class SomeClass {
+  constructor(an_object_reference)
+       this.a = 0;
+       this.b = &quot;a string&quot;;
+       this.c = an_object_reference;
+       this.d = new SomeOtherClass();
+       this.e = true;
+       this.f = 1.23432;
+    }
+
+    loadSTRUCT(reader) {
+      reader(this);
+      //if you wanted to include parent class&apos;s loadSTRUCT, 
+      //call super.loadSTRUCT here *after reader has been called*
+
+       //turn integer id back into object reference
+       ret.c = lookup_object_from_uuid(ret.c);
+    }
+}
+
+SomeClass.STRUCT = &apos;
+  mymodule.SomeClass {
+    a : int;
+    b : string;
+    c : int | obj.c.uuid;
+    d : SomeOtherClass;
+    e : bool;
+    f : float;
+  }
+&apos;;
+
+nstructjs.manager.add_class(SomeClass);</code>
+</code></pre><p>Let&apos;s look at the STRUCT script:</p>
+<p><code>&quot;mymodule.SomeClass {&quot;,</code></p>
+<p>This has the name of our class as well as a module prefix (which is optional).  The next three lines are self-explanatory; things get interesting on line four:</p>
+<p><code>&quot;    c : int | obj.c.uuid;&quot;, //store an integer ID for this.c instead of actual object</code></p>
+<p>The code right of | is a &quot;helper script&quot;, a line of JS code that tells STRUCT how to serialize a given object method.  In this case, we want to save the integer UUID of a referenced object (note that &apos;obj&apos; represents the a SomeClass instance&apos;s &apos;this&apos;).  </p>
+<p>We can still save the whole object if we want, so long as it&apos;s constructor is registered with STRUCT):</p>
+<p><code>&quot;    d : SomeOtherClass;&quot;, //store full object</code></p>
+<h1 id="arrays">Arrays</h1><p>If we want to save an array, we can use:</p>
+<p><code>&quot;  some_array : array(SomeType);&quot;</code></p>
+<p>What if we want to transform the items in the array?  STRUCT provides a simple map mechanism for that:</p>
+<p><code>&quot; some_array : array(item, SomeType) | [do something with item];&quot;</code></p>
+<p>The helper JS code will be called once for each item in some_array, rather than once.  If, however, you want the helper code to only be executed once (for the whole array), simply emit the first argument:</p>
+<p><code>&quot;  some_array : array(SomeType) | [do something with obj.some_array];&quot;</code></p>
+<h1 id="abstract-classes">Abstract Classes</h1><p>What if you don&apos;t know the exact class of a property?  In that case, you use the abstract keyword:</p>
+<p><code>&quot;  some_property : abstract(SomeBaseClass);&quot;</code></p>
+<p>This tells STRUCT that some_property may be a subclass of SomeBaseClass.  Since STRUCT is designed to be very compact, objects are normally saved without any sort of type information; the abstract keyword simply tells STRUCT to write a type ID before some_property.</p>
+</div>
+</div>
+
+<footer class="footer">
+  Generated by <a href="https://esdoc.org">ESDoc<span data-ice="esdocVersion">(1.1.0)</span><img src="./image/esdoc-logo-mini-black.png"></a>
+</footer>
+
+<script src="script/search_index.js"></script>
+<script src="script/search.js"></script>
+<script src="script/pretty-print.js"></script>
+<script src="script/inherited-summary.js"></script>
+<script src="script/test-summary.js"></script>
+<script src="script/inner-link.js"></script>
+<script src="script/patch-for-local.js"></script>
+</body>
+</html>

@@ -1,14 +1,14 @@
 "use strict";
 
 if (typeof btoa == "undefined") {
-_nGlobal.btoa = function btoa(str) {
-  var buffer = new Buffer(""+str, 'binary');
-  return buffer.toString('base64');
-}
+  _nGlobal.btoa = function btoa(str) {
+    var buffer = new Buffer("" + str, 'binary');
+    return buffer.toString('base64');
+  }
 
-_nGlobal.atob = function atob(str) {
-  return new Buffer(str, 'base64').toString('binary');
-}
+  _nGlobal.atob = function atob(str) {
+    return new Buffer(str, 'base64').toString('binary');
+  }
 }
 
 let struct_intern = require("./struct_intern.js");
@@ -42,11 +42,11 @@ var FileParams = exports.FileParams = class FileParams {
     this.magic = "STRT";
     this.ext = ".bin";
     this.blocktypes = ["DATA"];
-    
+
     this.version = {
-      major : 0,
-      minor : 0,
-      micro : 1
+      major: 0,
+      minor: 0,
+      micro: 1
     };
   }
 }
@@ -61,7 +61,7 @@ var Block = exports.Block = class Block {
 
 var FileError = exports.FileError = class FileeError extends Error {
 };
-  
+
 var FileHelper = exports.FileHelper = class FileHelper {
   //params can be FileParams instance, or object literal
   //(it will convert to FileParams)
@@ -70,13 +70,13 @@ var FileHelper = exports.FileHelper = class FileHelper {
       params = new FileParams();
     } else {
       var fp = new FileParams();
-      
+
       for (var k in params) {
         fp[k] = params[k];
       }
       params = fp;
     }
-    
+
     this.version = params.version;
     this.blocktypes = params.blocktypes;
     this.magic = params.magic;
@@ -84,73 +84,73 @@ var FileHelper = exports.FileHelper = class FileHelper {
     this.struct = undefined;
     this.unpack_ctx = undefined;
   }
-  
+
   read(dataview) {
     this.unpack_ctx = new struct_binpack.unpack_context();
-    
+
     var magic = struct_binpack.unpack_static_string(dataview, this.unpack_ctx, 4);
-    
+
     if (magic !== this.magic) {
       throw new FileError("corrupted file");
     }
-    
+
     this.version = {};
     this.version.major = struct_binpack.unpack_short(dataview, this.unpack_ctx);
     this.version.minor = struct_binpack.unpack_byte(dataview, this.unpack_ctx);
     this.version.micro = struct_binpack.unpack_byte(dataview, this.unpack_ctx);
-    
+
     var struct = this.struct = new structjs.STRUCT();
-    
+
     var scripts = struct_binpack.unpack_string(dataview, this.unpack_ctx);
     this.struct.parse_structs(scripts, structjs.manager);
-    
+
     var blocks = [];
     var dviewlen = dataview.buffer.byteLength;
-    
+
     while (this.unpack_ctx.i < dviewlen) {
       //console.log("reading block. . .", this.unpack_ctx.i, dviewlen);
-      
+
       var type = struct_binpack.unpack_static_string(dataview, this.unpack_ctx, 4);
       var datalen = struct_binpack.unpack_int(dataview, this.unpack_ctx);
       var bstruct = struct_binpack.unpack_int(dataview, this.unpack_ctx);
       var bdata;
-      
+
       //console.log(type, datalen, bstruct);
-      
+
       if (bstruct == -2) { //string data, e.g. JSON
         bdata = struct_binpack.unpack_static_string(dataview, this.unpack_ctx, datalen);
       } else {
         bdata = struct_binpack.unpack_bytes(dataview, this.unpack_ctx, datalen);
         bdata = struct.read_object(bdata, bstruct, new struct_binpack.unpack_context());
       }
-      
+
       var block = new Block();
       block.type = type;
-      block.data =  bdata;
-      
+      block.data = bdata;
+
       blocks.push(block);
     }
-    
+
     this.blocks = blocks;
     return blocks;
   }
-  
+
   write(blocks) {
     this.struct = structjs.manager;
     this.blocks = blocks;
-    
+
     var data = [];
-    
+
     struct_binpack.pack_static_string(data, this.magic, 4);
     struct_binpack.pack_short(data, this.version.major);
     struct_binpack.pack_byte(data, this.version.minor & 255);
     struct_binpack.pack_byte(data, this.version.micro & 255);
-    
+
     var scripts = structjs.write_scripts();
     struct_binpack.pack_string(data, scripts);
-    
+
     var struct = this.struct;
-    
+
     for (var block of blocks) {
       if (typeof block.data == "string") { //string data, e.g. JSON
         struct_binpack.pack_static_string(data, block.type, 4);
@@ -158,53 +158,53 @@ var FileHelper = exports.FileHelper = class FileHelper {
         struct_binpack.pack_int(data, -2); //flag as string data
         struct_binpack.pack_static_string(data, block.data, block.data.length);
         continue;
-      } 
-      
+      }
+
       var structName = block.data.constructor.structName;
-      if (structName===undefined || !(structName in struct.structs)) {
+      if (structName === undefined || !(structName in struct.structs)) {
         throw new Error("Non-STRUCTable object " + block.data);
       }
-      
+
       var data2 = [];
       var stt = struct.structs[structName];
-      
+
       struct.write_object(data2, block.data);
-      
+
       struct_binpack.pack_static_string(data, block.type, 4);
       struct_binpack.pack_int(data, data2.length);
       struct_binpack.pack_int(data, stt.id);
-      
+
       struct_binpack.pack_bytes(data, data2);
     }
-    
+
     return new DataView(new Uint8Array(data).buffer);
   }
-  
+
   writeBase64(blocks) {
     var dataview = this.write(blocks);
-    
+
     var str = "";
     var bytes = new Uint8Array(dataview.buffer);
-    
-    for (var i=0; i<bytes.length; i++) {
+
+    for (var i = 0; i < bytes.length; i++) {
       str += String.fromCharCode(bytes[i]);
     }
-    
+
     return btoa(str);
   }
-  
+
   makeBlock(type, data) {
     return new Block(type, data);
   }
-  
+
   readBase64(base64) {
     var data = atob(base64);
     var data2 = new Uint8Array(data.length);
-    
-    for (var i=0; i<data.length; i++) {
+
+    for (var i = 0; i < data.length; i++) {
       data2[i] = data.charCodeAt(i);
     }
-    
+
     return this.read(new DataView(data2.buffer));
   }
 };

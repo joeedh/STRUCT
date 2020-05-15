@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <base data-ice="baseUrl" href="../../">
+  <title data-ice="title">src/struct_filehelper.js | nstructjs</title>
+  <link type="text/css" rel="stylesheet" href="css/style.css">
+  <link type="text/css" rel="stylesheet" href="css/prettify-tomorrow.css">
+  <script src="script/prettify/prettify.js"></script>
+  <script src="script/manual.js"></script>
+<meta name="description" content="ProtoBuf-like serialization system optimized for JS"><meta property="twitter:card" content="summary"><meta property="twitter:title" content="nstructjs"><meta property="twitter:description" content="ProtoBuf-like serialization system optimized for JS"></head>
+<body class="layout-container" data-ice="rootContainer">
+
+<header>
+  <a href="./">Home</a>
+  <a href="./manual/index.html" data-ice="manualHeaderLink">Manual</a>
+  <a href="identifiers.html">Reference</a>
+  <a href="source.html">Source</a>
+  
+  <div class="search-box">
+  <span>
+    <img src="./image/search.png">
+    <span class="search-input-edge"></span><input class="search-input"><span class="search-input-edge"></span>
+  </span>
+    <ul class="search-result"></ul>
+  </div>
+</header>
+
+<nav class="navigation" data-ice="nav"><div>
+  <ul>
+    
+  <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/struct_filehelper.js~Block.html">Block</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/struct_filehelper.js~FileError.html">FileError</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/struct_filehelper.js~FileHelper.html">FileHelper</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/struct_filehelper.js~FileParams.html">FileParams</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/struct_intern.js~STRUCT.html">STRUCT</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/struct_intern.js~csa.html">csa</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/struct_parseutil.js~PUTIL_ParseError.html">PUTIL_ParseError</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/struct_parseutil.js~lexer.html">lexer</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/struct_parseutil.js~parser.html">parser</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/struct_parseutil.js~tokdef.html">tokdef</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/struct_parseutil.js~token.html">token</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-decode_utf8">decode_utf8</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-encode_utf8">encode_utf8</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-pack_byte">pack_byte</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-pack_bytes">pack_bytes</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-pack_double">pack_double</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-pack_float">pack_float</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-pack_int">pack_int</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-pack_short">pack_short</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-pack_static_string">pack_static_string</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-pack_string">pack_string</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-test_utf8">test_utf8</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-unpack_byte">unpack_byte</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-unpack_bytes">unpack_bytes</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-unpack_double">unpack_double</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-unpack_float">unpack_float</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-unpack_int">unpack_int</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-unpack_short">unpack_short</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-unpack_static_string">unpack_static_string</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-unpack_string">unpack_string</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-write_scripts">write_scripts</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-Class">Class</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-get_callstack">get_callstack</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-is_obj_lit">is_obj_lit</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-print_stack">print_stack</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-inherit">inherit</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-register">register</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-StructEnum">StructEnum</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-StructTypeMap">StructTypeMap</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-StructTypes">StructTypes</a></span></span></li>
+</ul>
+</div>
+</nav>
+
+<div class="content" data-ice="content"><h1 data-ice="title">src/struct_filehelper.js</h1>
+<pre class="source-code line-number raw-source-code"><code class="prettyprint linenums" data-ice="content">&quot;use strict&quot;;
+
+if (typeof btoa == &quot;undefined&quot;) {
+_nGlobal.btoa = function btoa(str) {
+  var buffer = new Buffer(&quot;&quot;+str, &apos;binary&apos;);
+  return buffer.toString(&apos;base64&apos;);
+}
+
+_nGlobal.atob = function atob(str) {
+  return new Buffer(str, &apos;base64&apos;).toString(&apos;binary&apos;);
+}
+}
+
+let struct_intern = require(&quot;./struct_intern.js&quot;);
+let struct_util = require(&quot;./struct_util.js&quot;);
+let struct_binpack = require(&quot;./struct_binpack.js&quot;);
+let struct_parseutil = require(&quot;./struct_parseutil.js&quot;);
+let struct_typesystem = require(&quot;./struct_typesystem.js&quot;);
+let struct_parser = require(&quot;./struct_parser.js&quot;);
+
+var Class = struct_typesystem.Class;
+
+/*
+file format:
+  magic signature              : 4 bytes
+  file version major           : 2 bytes
+  file version minor           : 1 bytes
+  file version micro           : 1 bytes
+  length of struct scripts     : 4 bytes
+  struct scripts for this file : ...
+  
+  block:
+    magic signature for block              : 4 bytes
+    length of data  (not including header) : 4 bytes
+    id of struct type                      : 4 bytes
+    
+    data                                   : ...
+*/
+
+var FileParams = exports.FileParams = class FileParams {
+  constructor() {
+    this.magic = &quot;STRT&quot;;
+    this.ext = &quot;.bin&quot;;
+    this.blocktypes = [&quot;DATA&quot;];
+    
+    this.version = {
+      major : 0,
+      minor : 0,
+      micro : 1
+    };
+  }
+}
+
+//used to define blocks
+var Block = exports.Block = class Block {
+  constructor(type_magic, data) {
+    this.type = type_magic;
+    this.data = data;
+  }
+};
+
+var FileError = exports.FileError = class FileeError extends Error {
+};
+  
+var FileHelper = exports.FileHelper = class FileHelper {
+  //params can be FileParams instance, or object literal
+  //(it will convert to FileParams)
+  constructor(params) {
+    if (params === undefined) {
+      params = new FileParams();
+    } else {
+      var fp = new FileParams();
+      
+      for (var k in params) {
+        fp[k] = params[k];
+      }
+      params = fp;
+    }
+    
+    this.version = params.version;
+    this.blocktypes = params.blocktypes;
+    this.magic = params.magic;
+    this.ext = params.ext;
+    this.struct = undefined;
+    this.unpack_ctx = undefined;
+  }
+  
+  read(dataview) {
+    this.unpack_ctx = new struct_binpack.unpack_context();
+    
+    var magic = struct_binpack.unpack_static_string(dataview, this.unpack_ctx, 4);
+    
+    if (magic !== this.magic) {
+      throw new FileError(&quot;corrupted file&quot;);
+    }
+    
+    this.version = {};
+    this.version.major = struct_binpack.unpack_short(dataview, this.unpack_ctx);
+    this.version.minor = struct_binpack.unpack_byte(dataview, this.unpack_ctx);
+    this.version.micro = struct_binpack.unpack_byte(dataview, this.unpack_ctx);
+    
+    var struct = this.struct = new structjs.STRUCT();
+    
+    var scripts = struct_binpack.unpack_string(dataview, this.unpack_ctx);
+    this.struct.parse_structs(scripts, structjs.manager);
+    
+    var blocks = [];
+    var dviewlen = dataview.buffer.byteLength;
+    
+    while (this.unpack_ctx.i &lt; dviewlen) {
+      //console.log(&quot;reading block. . .&quot;, this.unpack_ctx.i, dviewlen);
+      
+      var type = struct_binpack.unpack_static_string(dataview, this.unpack_ctx, 4);
+      var datalen = struct_binpack.unpack_int(dataview, this.unpack_ctx);
+      var bstruct = struct_binpack.unpack_int(dataview, this.unpack_ctx);
+      var bdata;
+      
+      //console.log(type, datalen, bstruct);
+      
+      if (bstruct == -2) { //string data, e.g. JSON
+        bdata = struct_binpack.unpack_static_string(dataview, this.unpack_ctx, datalen);
+      } else {
+        bdata = struct_binpack.unpack_bytes(dataview, this.unpack_ctx, datalen);
+        bdata = struct.read_object(bdata, bstruct, new struct_binpack.unpack_context());
+      }
+      
+      var block = new Block();
+      block.type = type;
+      block.data =  bdata;
+      
+      blocks.push(block);
+    }
+    
+    this.blocks = blocks;
+    return blocks;
+  }
+  
+  write(blocks) {
+    this.struct = structjs.manager;
+    this.blocks = blocks;
+    
+    var data = [];
+    
+    struct_binpack.pack_static_string(data, this.magic, 4);
+    struct_binpack.pack_short(data, this.version.major);
+    struct_binpack.pack_byte(data, this.version.minor &amp; 255);
+    struct_binpack.pack_byte(data, this.version.micro &amp; 255);
+    
+    var scripts = structjs.write_scripts();
+    struct_binpack.pack_string(data, scripts);
+    
+    var struct = this.struct;
+    
+    for (var block of blocks) {
+      if (typeof block.data == &quot;string&quot;) { //string data, e.g. JSON
+        struct_binpack.pack_static_string(data, block.type, 4);
+        struct_binpack.pack_int(data, block.data.length);
+        struct_binpack.pack_int(data, -2); //flag as string data
+        struct_binpack.pack_static_string(data, block.data, block.data.length);
+        continue;
+      } 
+      
+      var structName = block.data.constructor.structName;
+      if (structName===undefined || !(structName in struct.structs)) {
+        throw new Error(&quot;Non-STRUCTable object &quot; + block.data);
+      }
+      
+      var data2 = [];
+      var stt = struct.structs[structName];
+      
+      struct.write_object(data2, block.data);
+      
+      struct_binpack.pack_static_string(data, block.type, 4);
+      struct_binpack.pack_int(data, data2.length);
+      struct_binpack.pack_int(data, stt.id);
+      
+      struct_binpack.pack_bytes(data, data2);
+    }
+    
+    return new DataView(new Uint8Array(data).buffer);
+  }
+  
+  writeBase64(blocks) {
+    var dataview = this.write(blocks);
+    
+    var str = &quot;&quot;;
+    var bytes = new Uint8Array(dataview.buffer);
+    
+    for (var i=0; i&lt;bytes.length; i++) {
+      str += String.fromCharCode(bytes[i]);
+    }
+    
+    return btoa(str);
+  }
+  
+  makeBlock(type, data) {
+    return new Block(type, data);
+  }
+  
+  readBase64(base64) {
+    var data = atob(base64);
+    var data2 = new Uint8Array(data.length);
+    
+    for (var i=0; i&lt;data.length; i++) {
+      data2[i] = data.charCodeAt(i);
+    }
+    
+    return this.read(new DataView(data2.buffer));
+  }
+};
+/*
+  //get type data from structjs.manager
+  var classes = {};
+  structjs.manager.forEach(function(stt) {
+    classes[stt] 
+  }, this);
+*/
+</code></pre>
+
+</div>
+
+<footer class="footer">
+  Generated by <a href="https://esdoc.org">ESDoc<span data-ice="esdocVersion">(1.1.0)</span><img src="./image/esdoc-logo-mini-black.png"></a>
+</footer>
+
+<script src="script/search_index.js"></script>
+<script src="script/search.js"></script>
+<script src="script/pretty-print.js"></script>
+<script src="script/inherited-summary.js"></script>
+<script src="script/test-summary.js"></script>
+<script src="script/inner-link.js"></script>
+<script src="script/patch-for-local.js"></script>
+</body>
+</html>

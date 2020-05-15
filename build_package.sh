@@ -1,8 +1,10 @@
 #!/bin/sh
 
-./node_modules/.bin/r.js -o build.js
+bash build.sh
 
 mkdir -p package
+
+cp -r docs_src package/docs
 cp build/nstructjs.js package
 cp package.json package
 cp README.md package
