@@ -60,12 +60,6 @@ window.esdocSearchIndex = [
     "variable"
   ],
   [
-    "nstructjs/src/struct_intern.js~csa",
-    "class/src/struct_intern.js~csa.html",
-    "<span>csa</span> <span class=\"search-result-import-path\">nstructjs/src/struct_intern.js</span>",
-    "class"
-  ],
-  [
     "nstructjs/src/struct_binpack.js~decode_utf8",
     "function/index.html#static-function-decode_utf8",
     "<span>decode_utf8</span> <span class=\"search-result-import-path\">nstructjs/src/struct_binpack.js</span>",
@@ -528,12 +522,6 @@ window.esdocSearchIndex = [
     "file"
   ],
   [
-    "src/require.js",
-    "file/src/require.js.html",
-    "src/require.js",
-    "file"
-  ],
-  [
     "src/struct_binpack.js",
     "file/src/struct_binpack.js.html",
     "src/struct_binpack.js",
@@ -699,12 +687,6 @@ window.esdocSearchIndex = [
     "src/struct_intern.js~struct#write_struct",
     "class/src/struct_intern.js~STRUCT.html#instance-method-write_struct",
     "src/struct_intern.js~STRUCT#write_struct",
-    "method"
-  ],
-  [
-    "src/struct_intern.js~csa#constructor",
-    "class/src/struct_intern.js~csa.html#instance-constructor-constructor",
-    "src/struct_intern.js~csa#constructor",
     "method"
   ],
   [

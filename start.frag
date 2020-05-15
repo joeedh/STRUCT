@@ -7,5 +7,14 @@
     window._nGlobal = window;
   }
   
-  let module = {};
-  let exports = _nGlobal.nstructjs = {};
+  let exports;
+  
+  //nodejs?
+  if (typeof window === "undefined" && typeof global !== "undefined") {
+    console.log("Nodejs!");
+  } else {
+    exports = {};
+    _nGlobal.module = {};
+  }
+  
+  

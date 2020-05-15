@@ -34,7 +34,6 @@
 <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/struct_filehelper.js~FileHelper.html">FileHelper</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/struct_filehelper.js~FileParams.html">FileParams</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/struct_intern.js~STRUCT.html">STRUCT</a></span></span></li>
-<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/struct_intern.js~csa.html">csa</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/struct_parseutil.js~PUTIL_ParseError.html">PUTIL_ParseError</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/struct_parseutil.js~lexer.html">lexer</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/struct_parseutil.js~parser.html">parser</a></span></span></li>
@@ -75,48 +74,48 @@
 
 <div class="content" data-ice="content"><h1 data-ice="title">src/polyfill.js</h1>
 <pre class="source-code line-number raw-source-code"><code class="prettyprint linenums" data-ice="content">if (Array.prototype.pop_i == undefined) {
-  Array.prototype.pop_i = function(idx) {
+  Array.prototype.pop_i = function (idx) {
     if (idx &lt; 0 || idx &gt;= this.length) {
       throw new Error(&quot;Index out of range&quot;);
     }
-    
+
     while (idx &lt; this.length) {
-      this[idx] = this[idx+1];
+      this[idx] = this[idx + 1];
     }
-    
+
     this.length -= 1;
   }
 }
 
 if (Array.prototype.remove == undefined) {
-  Array.prototype.remove = function(item, suppress_error) {
+  Array.prototype.remove = function (item, suppress_error) {
     var i = this.indexOf(item);
-    
+
     if (i &lt; 0) {
       if (suppress_error)
         console.trace(&quot;Warning: item not in array&quot;, item);
       else
         throw new Error(&quot;Error: item not in array &quot; + item);
-      
+
       return;
     }
-    
+
     this.pop_i(i);
   }
 }
 
 if (String.prototype.contains == undefined) {
-  String.prototype.contains = function(substr) {
+  String.prototype.contains = function (substr) {
     return String.search(substr) != null;
   }
 }
 
-String.prototype.__keystr__ = function() {
+String.prototype.__keystr__ = function () {
   return this;
 }
 
-Number.prototype.__keystr__ = Boolean.prototype.__keystr__ = function() {
-  return &quot;&quot;+this;
+Number.prototype.__keystr__ = Boolean.prototype.__keystr__ = function () {
+  return &quot;&quot; + this;
 }
 
 </code></pre>

@@ -111,7 +111,7 @@
     "lines": [
       {
         "lineNumber": 471,
-        "line": "  static inherit(child, parent, structName=child.name) {\r"
+        "line": "  static inherit(child, parent, structName = child.name) {\r"
       }
     ],
     "codeParams": [
@@ -130,11 +130,11 @@
     "lines": [
       {
         "lineNumber": 482,
-        "line": "  /** invoke loadSTRUCT methods on parent objects.  note that \r"
+        "line": "  /** invoke loadSTRUCT methods on parent objects.  note that\r"
       },
       {
         "lineNumber": 483,
-        "line": "    reader() is only called once.  it is called however.*/\r"
+        "line": "   reader() is only called once.  it is called however.*/\r"
       },
       {
         "lineNumber": 484,
@@ -198,7 +198,7 @@
     "filePath": "src/struct_intern.js",
     "lines": [
       {
-        "lineNumber": 593,
+        "lineNumber": 594,
         "line": "  _env_call(code, obj, env) {\r"
       }
     ],
@@ -218,7 +218,7 @@
     "filePath": "src/struct_intern.js",
     "lines": [
       {
-        "lineNumber": 640,
+        "lineNumber": 641,
         "line": "  write_struct(data, obj, stt) {\r"
       }
     ],
@@ -237,8 +237,8 @@
     "filePath": "src/struct_intern.js",
     "lines": [
       {
-        "lineNumber": 673,
-        "line": " write_object(data, obj) {\r"
+        "lineNumber": 674,
+        "line": "  write_object(data, obj) {\r"
       }
     ],
     "codeParams": [
