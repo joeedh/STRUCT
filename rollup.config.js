@@ -1,3 +1,4 @@
+import resolve from '@rollup/plugin-node-resolve';
 //import commonjs from '@rollup/plugin-commonjs';
 import cjs from "rollup-plugin-cjs-es";
 
@@ -11,9 +12,9 @@ export default {
   },
    plugins: [
     cjs({
-      nested: true,
-      exportType : "default"
-    })
+      nested: true
+    }),
+   resolve()
   ]
 };
 

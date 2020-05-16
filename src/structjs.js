@@ -6,6 +6,16 @@ if (typeof window !== "undefined") {
   global._nGlobal = global;
 }
 
+_nGlobal._structEval = eval;
+
+exports.tinyeval = require("../tinyeval/tinyeval.js");
+
+exports.useTinyEval = function() {
+  _nGlobal._structEval = (buf) => {
+    return exports.tinyeval.eval(buf);
+  }
+};
+
 let struct_intern = require("./struct_intern");
 let struct_filehelper = require("./struct_filehelper");
 let struct_util = require("./struct_util");

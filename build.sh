@@ -3,3 +3,7 @@
 cat ./start.frag > build/nstructjs.js
 cat ./build/_nstructjs.js >> build/nstructjs.js
 cat ./end.frag >> build/nstructjs.js
+
+echo "wrote build/nstructjs.js"
+
+./node_modules/.bin/rollup -c acorn_rollup.config.js

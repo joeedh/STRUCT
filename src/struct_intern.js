@@ -5,6 +5,7 @@ let struct_parseutil = require("./struct_parseutil");
 let struct_typesystem = require("./struct_typesystem");
 let struct_parser = require("./struct_parser");
 
+
 /*
 
 class SomeClass {
@@ -612,7 +613,7 @@ var STRUCT = exports.STRUCT = class STRUCT {
     if (!(fullcode in this.compiled_code)) {
       var code2 = "func = function(obj, env) { " + envcode + "return " + code + "}";
       try {
-        eval(code2);
+        func = _structEval(code2);
       }
       catch (err) {
         struct_util.print_stack(err);
@@ -880,7 +881,12 @@ var STRUCT = exports.STRUCT = class STRUCT {
 //main struct script manager
 var manager = exports.manager = new STRUCT();
 
-//manager defaults to structjs.manager
+/**
+ * Write all defined structs out to a string.
+ *
+ * @param manager STRUCT instance, defaults to nstructjs.manager
+ * @param include_code include save code snippets
+ * */
 var write_scripts = exports.write_scripts = function write_scripts(manager, include_code = false) {
   if (manager === undefined)
     manager = exports.manager;

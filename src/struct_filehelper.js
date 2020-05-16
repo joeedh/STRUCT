@@ -1,8 +1,8 @@
 "use strict";
 
-if (typeof btoa == "undefined") {
+if (typeof btoa === "undefined") {
   _nGlobal.btoa = function btoa(str) {
-    var buffer = new Buffer("" + str, 'binary');
+    let buffer = new Buffer("" + str, 'binary');
     return buffer.toString('base64');
   }
 
@@ -11,14 +11,8 @@ if (typeof btoa == "undefined") {
   }
 }
 
-let struct_intern = require("./struct_intern.js");
-let struct_util = require("./struct_util.js");
 let struct_binpack = require("./struct_binpack.js");
-let struct_parseutil = require("./struct_parseutil.js");
-let struct_typesystem = require("./struct_typesystem.js");
-let struct_parser = require("./struct_parser.js");
-
-var Class = struct_typesystem.Class;
+let struct_intern = require("./struct_intern.js");
 
 /*
 file format:
@@ -37,7 +31,56 @@ file format:
     data                                   : ...
 */
 
-var FileParams = exports.FileParams = class FileParams {
+exports.versionToInt = function(v) {
+  v = exports.versionCoerce(v);
+  let mul = 64;
+  return ~~(v.major*mul*mul*mul + v.minor*mul*mul + v.micro*mul);
+}
+
+let ver_pat = /[0-9]+\.[0-9]+\.[0-9]+$/;
+
+exports.versionCoerce = function(v) {
+  if (!v) {
+    throw new Error("empty version: " + v);
+  }
+
+  if (typeof v === "string") {
+    if (!ver_pat.exec(v)) {
+      throw new Error("invalid version string " + v);
+    }
+
+    let ver = v.split(".");
+    return {
+      major : parseInt(ver[0]),
+      minor : parseInt(ver[1]),
+      micro : parseInt(ver[2])
+    }
+  } else if (Array.isArray(v)) {
+    return {
+      major : v[0],
+      minor : v[1],
+      micro : v[2]
+    }
+  } else if (typeof v === "object") {
+    let test = (k) => k in v && typeof v[k] === "number";
+
+    if (!test("major") || !test("minor") || !test("micro")) {
+      throw new Error("invalid version object: " + v);
+    }
+
+    return v;
+  } else {
+    throw new Error("invalid version " + v);
+  }
+};
+
+exports.versionLessThan = function(a, b) {
+  return exports.versionToInt(a) < exports.versionToInt(b);
+};
+
+let versionLessThan = exports.versionLessThan;
+
+let FileParams = exports.FileParams = class FileParams {
   constructor() {
     this.magic = "STRT";
     this.ext = ".bin";
@@ -52,26 +95,26 @@ var FileParams = exports.FileParams = class FileParams {
 }
 
 //used to define blocks
-var Block = exports.Block = class Block {
+let Block = exports.Block = class Block {
   constructor(type_magic, data) {
     this.type = type_magic;
     this.data = data;
   }
 };
 
-var FileError = exports.FileError = class FileeError extends Error {
+let FileError = exports.FileError = class FileeError extends Error {
 };
 
-var FileHelper = exports.FileHelper = class FileHelper {
+let FileHelper = exports.FileHelper = class FileHelper {
   //params can be FileParams instance, or object literal
   //(it will convert to FileParams)
   constructor(params) {
     if (params === undefined) {
       params = new FileParams();
     } else {
-      var fp = new FileParams();
+      let fp = new FileParams();
 
-      for (var k in params) {
+      for (let k in params) {
         fp[k] = params[k];
       }
       params = fp;
@@ -88,7 +131,7 @@ var FileHelper = exports.FileHelper = class FileHelper {
   read(dataview) {
     this.unpack_ctx = new struct_binpack.unpack_context();
 
-    var magic = struct_binpack.unpack_static_string(dataview, this.unpack_ctx, 4);
+    let magic = struct_binpack.unpack_static_string(dataview, this.unpack_ctx, 4);
 
     if (magic !== this.magic) {
       throw new FileError("corrupted file");
@@ -99,21 +142,21 @@ var FileHelper = exports.FileHelper = class FileHelper {
     this.version.minor = struct_binpack.unpack_byte(dataview, this.unpack_ctx);
     this.version.micro = struct_binpack.unpack_byte(dataview, this.unpack_ctx);
 
-    var struct = this.struct = new structjs.STRUCT();
+    let struct = this.struct = new struct_intern.STRUCT();
 
-    var scripts = struct_binpack.unpack_string(dataview, this.unpack_ctx);
-    this.struct.parse_structs(scripts, structjs.manager);
+    let scripts = struct_binpack.unpack_string(dataview, this.unpack_ctx);
+    this.struct.parse_structs(scripts, struct_intern.manager);
 
-    var blocks = [];
-    var dviewlen = dataview.buffer.byteLength;
+    let blocks = [];
+    let dviewlen = dataview.buffer.byteLength;
 
     while (this.unpack_ctx.i < dviewlen) {
       //console.log("reading block. . .", this.unpack_ctx.i, dviewlen);
 
-      var type = struct_binpack.unpack_static_string(dataview, this.unpack_ctx, 4);
-      var datalen = struct_binpack.unpack_int(dataview, this.unpack_ctx);
-      var bstruct = struct_binpack.unpack_int(dataview, this.unpack_ctx);
-      var bdata;
+      let type = struct_binpack.unpack_static_string(dataview, this.unpack_ctx, 4);
+      let datalen = struct_binpack.unpack_int(dataview, this.unpack_ctx);
+      let bstruct = struct_binpack.unpack_int(dataview, this.unpack_ctx);
+      let bdata;
 
       //console.log(type, datalen, bstruct);
 
@@ -124,7 +167,7 @@ var FileHelper = exports.FileHelper = class FileHelper {
         bdata = struct.read_object(bdata, bstruct, new struct_binpack.unpack_context());
       }
 
-      var block = new Block();
+      let block = new Block();
       block.type = type;
       block.data = bdata;
 
@@ -135,24 +178,32 @@ var FileHelper = exports.FileHelper = class FileHelper {
     return blocks;
   }
 
+  doVersions(old) {
+    let blocks = this.blocks;
+
+    if (versionLessThan(old, "0.0.1")) {
+      //do something
+    }
+  }
+
   write(blocks) {
-    this.struct = structjs.manager;
+    this.struct = struct_intern.manager;
     this.blocks = blocks;
 
-    var data = [];
+    let data = [];
 
     struct_binpack.pack_static_string(data, this.magic, 4);
     struct_binpack.pack_short(data, this.version.major);
     struct_binpack.pack_byte(data, this.version.minor & 255);
     struct_binpack.pack_byte(data, this.version.micro & 255);
 
-    var scripts = structjs.write_scripts();
+    let scripts = struct_intern.write_scripts();
     struct_binpack.pack_string(data, scripts);
 
-    var struct = this.struct;
+    let struct = this.struct;
 
-    for (var block of blocks) {
-      if (typeof block.data == "string") { //string data, e.g. JSON
+    for (let block of blocks) {
+      if (typeof block.data === "string") { //string data, e.g. JSON
         struct_binpack.pack_static_string(data, block.type, 4);
         struct_binpack.pack_int(data, block.data.length);
         struct_binpack.pack_int(data, -2); //flag as string data
@@ -160,13 +211,13 @@ var FileHelper = exports.FileHelper = class FileHelper {
         continue;
       }
 
-      var structName = block.data.constructor.structName;
+      let structName = block.data.constructor.structName;
       if (structName === undefined || !(structName in struct.structs)) {
         throw new Error("Non-STRUCTable object " + block.data);
       }
 
-      var data2 = [];
-      var stt = struct.structs[structName];
+      let data2 = [];
+      let stt = struct.structs[structName];
 
       struct.write_object(data2, block.data);
 
@@ -181,12 +232,12 @@ var FileHelper = exports.FileHelper = class FileHelper {
   }
 
   writeBase64(blocks) {
-    var dataview = this.write(blocks);
+    let dataview = this.write(blocks);
 
-    var str = "";
-    var bytes = new Uint8Array(dataview.buffer);
+    let str = "";
+    let bytes = new Uint8Array(dataview.buffer);
 
-    for (var i = 0; i < bytes.length; i++) {
+    for (let i = 0; i < bytes.length; i++) {
       str += String.fromCharCode(bytes[i]);
     }
 
@@ -198,20 +249,13 @@ var FileHelper = exports.FileHelper = class FileHelper {
   }
 
   readBase64(base64) {
-    var data = atob(base64);
-    var data2 = new Uint8Array(data.length);
+    let data = atob(base64);
+    let data2 = new Uint8Array(data.length);
 
-    for (var i = 0; i < data.length; i++) {
+    for (let i = 0; i < data.length; i++) {
       data2[i] = data.charCodeAt(i);
     }
 
     return this.read(new DataView(data2.buffer));
   }
 };
-/*
-  //get type data from structjs.manager
-  var classes = {};
-  structjs.manager.forEach(function(stt) {
-    classes[stt] 
-  }, this);
-*/
