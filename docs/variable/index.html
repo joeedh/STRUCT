@@ -58,6 +58,9 @@
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-unpack_short">unpack_short</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-unpack_static_string">unpack_static_string</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-unpack_string">unpack_string</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-versionCoerce">versionCoerce</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-versionLessThan">versionLessThan</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-versionToInt">versionToInt</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-write_scripts">write_scripts</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-Class">Class</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-get_callstack">get_callstack</a></span></span></li>
@@ -65,6 +68,7 @@
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-print_stack">print_stack</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-inherit">inherit</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-register">register</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-useTinyEval">useTinyEval</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-StructEnum">StructEnum</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-StructTypeMap">StructTypeMap</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-StructTypes">StructTypes</a></span></span></li>
@@ -111,6 +115,7 @@ the version I originally wrote (which had a few application-specific types)<pre>
     T_SHORT         :  13,
     T_BYTE          :  14,
     T_BOOL          :  15,
+    T_ITERKEYS      :  16,
 }
 </pre></pre></p>
 </div>
@@ -185,6 +190,7 @@ the version I originally wrote (which had a few application-specific types)<pre>
     short           :  StructEnum.T_SHORT,
     byte            :  StructEnum.T_BYTE,
     bool            :  StructEnum.T_BOOL,
+    iterkeys        :  StructEnum.T_ITERKEYS,
 }
 </pre></pre></p>
 </div>
@@ -233,6 +239,7 @@ the version I originally wrote (which had a few application-specific types)<pre>
     T_SHORT         :  13,
     T_BYTE          :  14,
     T_BOOL          :  15,
+    T_ITERKEYS      :  16,
 }
 </pre></pre></p>
 </div>
@@ -271,11 +278,11 @@ the version I originally wrote (which had a few application-specific types)<pre>
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/struct_parser.js.html#lineNumber38">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/struct_parser.js.html#lineNumber40">source</a></span></span>
     </span>
   </h3>
 
-  <div data-ice="importPath" class="import-path"><pre class="prettyprint"><code data-ice="importPathCode">import {StructTypeMap} from &apos;<span><a href="file/src/struct_parser.js.html#lineNumber38">nstructjs/src/struct_parser.js</a></span>&apos;</code></pre></div>
+  <div data-ice="importPath" class="import-path"><pre class="prettyprint"><code data-ice="importPathCode">import {StructTypeMap} from &apos;<span><a href="file/src/struct_parser.js.html#lineNumber40">nstructjs/src/struct_parser.js</a></span>&apos;</code></pre></div>
   
   
   <div data-ice="description"><p><pre><pre>StructTypeMap = {
@@ -317,11 +324,11 @@ the version I originally wrote (which had a few application-specific types)<pre>
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/struct_parser.js.html#lineNumber23">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/struct_parser.js.html#lineNumber24">source</a></span></span>
     </span>
   </h3>
 
-  <div data-ice="importPath" class="import-path"><pre class="prettyprint"><code data-ice="importPathCode">import {StructTypes} from &apos;<span><a href="file/src/struct_parser.js.html#lineNumber23">nstructjs/src/struct_parser.js</a></span>&apos;</code></pre></div>
+  <div data-ice="importPath" class="import-path"><pre class="prettyprint"><code data-ice="importPathCode">import {StructTypes} from &apos;<span><a href="file/src/struct_parser.js.html#lineNumber24">nstructjs/src/struct_parser.js</a></span>&apos;</code></pre></div>
   
   
   <div data-ice="description"><p><pre><pre>StructTypes = {
@@ -337,6 +344,7 @@ the version I originally wrote (which had a few application-specific types)<pre>
     short           :  StructEnum.T_SHORT,
     byte            :  StructEnum.T_BYTE,
     bool            :  StructEnum.T_BOOL,
+    iterkeys        :  StructEnum.T_ITERKEYS,
 }
 </pre></pre></p>
 </div>

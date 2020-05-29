@@ -74,6 +74,7 @@
 <li data-ice="manualNav" class="indent-h2" data-link="manual/Specification.html"><a href="manual/Specification.html#array" data-ice="link">Array</a></li>
 <li data-ice="manualNav" class="indent-h3" data-link="manual/Specification.html"><a href="manual/Specification.html#semantics" data-ice="link">Semantics</a></li>
 <li data-ice="manualNav" class="indent-h2" data-link="manual/Specification.html"><a href="manual/Specification.html#iter" data-ice="link">Iter</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/Specification.html"><a href="manual/Specification.html#iterkeys" data-ice="link">IterKeys</a></li>
 </ul>
   </div>
 </div>
@@ -85,7 +86,7 @@
 header =&gt; ID {
           ID &apos;id&apos; = NUMBER {
 
-type=&gt;  int
+type =&gt; int
         float
         bool
         byte
@@ -99,6 +100,7 @@ type=&gt;  int
         array(ITERNAME, TYPE)
         iter(TYPE)
         iter(ITERNAME, TYPE)
+        iterkeys(ITERNAME, TYPE)
 
 field =&gt; ID : TYPE
          ID : TYPE | JSCODE
@@ -131,7 +133,11 @@ Is cast to a boolean when read from file.</p>
 <li>Write each array item according to STRUCT type rules.</li>
 </ol>
 <h2 id="iter">Iter</h2><p>The Iter type is written identically to Array, but relaxes the requirement for direct, contiguous arrays for whatever iterator protocol is appropriate for the language (which differs between ES5.1 and ES6).</p>
-</div>
+<h2 id="iterkeys">IterKeys</h2><p>The IterKeys iterates over an object&apos;s own keys (using a for-in loop).  Like array and iter it takes 
+an optional iter key argument.</p>
+<p>Example:</p>
+<pre><code><code class="source-code prettyprint">object : iterkeys(e, Something) | this.object[e].getSomething();</code>
+</code></pre></div>
 </div>
 
 <footer class="footer">

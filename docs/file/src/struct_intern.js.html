@@ -58,6 +58,9 @@
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-unpack_short">unpack_short</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-unpack_static_string">unpack_static_string</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-unpack_string">unpack_string</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-versionCoerce">versionCoerce</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-versionLessThan">versionLessThan</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-versionToInt">versionToInt</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-write_scripts">write_scripts</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-Class">Class</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-get_callstack">get_callstack</a></span></span></li>
@@ -65,6 +68,7 @@
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-print_stack">print_stack</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-inherit">inherit</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-register">register</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-useTinyEval">useTinyEval</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-StructEnum">StructEnum</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-StructTypeMap">StructTypeMap</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-StructTypes">StructTypes</a></span></span></li>
@@ -79,6 +83,8 @@ let struct_binpack = require(&quot;./struct_binpack&quot;);
 let struct_parseutil = require(&quot;./struct_parseutil&quot;);
 let struct_typesystem = require(&quot;./struct_typesystem&quot;);
 let struct_parser = require(&quot;./struct_parser&quot;);
+
+let warninglvl = 2;
 
 /*
 
@@ -154,6 +160,15 @@ else {
   };
   packer_debug_end = function () {
   };
+}
+
+
+exports.setWarningMode = (t) =&gt; {
+  if (typeof t !== &quot;number&quot; || isNaN(t)) {
+    throw new Error(&quot;Expected a single number (&gt;= 0) argument to setWarningMode&quot;);
+  }
+
+  warninglvl = t;
 }
 
 exports.setDebugMode = (t) =&gt; {
@@ -287,22 +302,29 @@ var pack_callbacks = [
     //this was originally implemented to use ES6 iterators.
 
     packer_debug_start(&quot;iter&quot;);
-
-    if (val == undefined || val.forEach == undefined) {
-      console.trace();
-      console.log(&quot;Undefined iterable list fed to struct struct packer!&quot;, val);
-      console.log(&quot;Field: &quot;, field);
-      console.log(&quot;Type: &quot;, type);
-      console.log(&quot;&quot;);
-      packer_debug(&quot;int 0&quot;);
-      struct_binpack.pack_int(data, 0);
-      return;
+    
+    function forEach(cb, thisvar) {
+      if (val &amp;&amp; val[Symbol.iterator]) {
+        for (let item of val) {
+          cb.call(thisvar, item);
+        }
+      } else if (val &amp;&amp; val.forEach) {
+        val.forEach(function(item) {
+          cb.call(thisvar, item);
+        });
+      } else {
+        console.trace();
+        console.log(&quot;Undefined iterable list fed to struct struct packer!&quot;, val);
+        console.log(&quot;Field: &quot;, field);
+        console.log(&quot;Type: &quot;, type);
+        console.log(&quot;&quot;);
+      }
     }
-
-    var len = 0.0;
-    val.forEach(function (val2) {
+    
+    let len = 0.0;
+    forEach(() =&gt; {
       len++;
-    }, this);
+    });
 
     packer_debug(&quot;int &quot; + len);
     struct_binpack.pack_int(data, len);
@@ -311,9 +333,10 @@ var pack_callbacks = [
     var env = _ws_env;
 
     var i = 0;
-    val.forEach(function (val2) {
+    forEach(function(val2) {
       if (i &gt;= len) {
-        console.trace(&quot;Warning: iterator returned different length of list!&quot;, val, i);
+        if (warninglvl &gt; 0) 
+          console.trace(&quot;Warning: iterator returned different length of list!&quot;, val, i);
         return;
       }
 
@@ -342,6 +365,56 @@ var pack_callbacks = [
     packer_debug(&quot;bool &quot; + val);
 
     struct_binpack.pack_byte(data, !!val);
+  },function pack_iterkeys(data, val, obj, thestruct, field, type) {
+    //this was originally implemented to use ES6 iterators.
+
+    packer_debug_start(&quot;iterkeys&quot;);
+    
+    if ((typeof val !== &quot;object&quot; &amp;&amp; typeof val !== &quot;function&quot;) || val === null) {
+        console.warn(&quot;Bad object fed to iterkeys in struct packer!&quot;, val);
+        console.log(&quot;Field: &quot;, field);
+        console.log(&quot;Type: &quot;, type);
+        console.log(&quot;&quot;);
+        
+        struct_binpack.pack_int(data, 0);
+        
+        packer_debug_end(&quot;iterkeys&quot;);
+        return;
+    }
+    
+    let len = 0.0;
+    for (let k in val) {
+      len++;
+    }
+    
+    packer_debug(&quot;int &quot; + len);
+    struct_binpack.pack_int(data, len);
+
+    var d = type.data, itername = d.iname, type2 = d.type;
+    var env = _ws_env;
+
+    var i = 0;
+    for (let val2 in val) {
+      if (i &gt;= len) {
+        if (warninglvl &gt; 0) 
+          console.warn(&quot;Warning: object keys magically changed on us&quot;, val, i);
+        return;
+      }
+
+      if (itername &amp;&amp; itername.trim().length &gt; 0 &amp;&amp; field.get) {
+        env[0][0] = itername;
+        env[0][1] = val2;
+        val2 = thestruct._env_call(field.get, obj, env);
+      } else {
+        val2 = val[val2]; //fetch value
+      }
+
+      var f2 = {type: type2, get: undefined, set: undefined};
+      do_pack(data, val2, obj, thestruct, f2, type2);
+
+      i++;
+    }
+    packer_debug_end(&quot;iterkeys&quot;);
   }];
 
 function do_pack(data, val, obj, thestruct, field, type) {
@@ -443,7 +516,8 @@ var STRUCT = exports.STRUCT = class STRUCT {
         var stt = struct_parse.parse(cls.STRUCT.trim());
         cls.structName = stt.name;
       } else if (cls.structName == undefined &amp;&amp; cls.name != &quot;Object&quot;) {
-        console.log(&quot;Warning, bad class in registered class list&quot;, cls.name, cls);
+        if (warninglvl &gt; 0) 
+          console.log(&quot;Warning, bad class in registered class list&quot;, cls.name, cls);
         continue;
       }
 
@@ -457,6 +531,7 @@ var STRUCT = exports.STRUCT = class STRUCT {
 
       if (!(stt.name in clsmap)) {
         if (!(stt.name in this.null_natives))
+        if (warninglvl &gt; 0) 
           console.log(&quot;WARNING: struct &quot; + stt.name + &quot; is missing from class list.&quot;);
 
         var dummy = define_empty_class(stt.name);
@@ -491,6 +566,29 @@ var STRUCT = exports.STRUCT = class STRUCT {
   }
 
   add_class(cls, structName) {
+    if (cls.STRUCT) {
+      let bad = false;
+      
+      let p = cls;
+      while (p) {
+        p = p.__proto__;
+        
+        if (p &amp;&amp; p.STRUCT &amp;&amp; p.STRUCT === cls.STRUCT) {
+          bad = true;
+          break;
+        }
+      }
+      
+      if (bad) {
+        console.warn(&quot;Generating STRUCT script for derived class &quot; + cls.name);
+        if (!structName) {
+          structName = cls.name;
+        }
+        
+        cls.STRUCT = STRUCT.inherit(cls, p) + `\n}`;
+      }
+    }
+    
     if (!cls.STRUCT) {
       throw new Error(&quot;class &quot; + cls.name + &quot; has no STRUCT script&quot;);
     }
@@ -558,7 +656,8 @@ var STRUCT = exports.STRUCT = class STRUCT {
   /** invoke loadSTRUCT methods on parent objects.  note that
    reader() is only called once.  it is called however.*/
   static Super(obj, reader) {
-    console.warn(&quot;deprecated&quot;);
+    if (warninglvl &gt; 0) 
+      console.warn(&quot;deprecated&quot;);
 
     reader(obj);
 
@@ -582,7 +681,8 @@ var STRUCT = exports.STRUCT = class STRUCT {
 
   /** deprecated.  used with old fromSTRUCT interface. */
   static chain_fromSTRUCT(cls, reader) {
-    console.warn(&quot;Using deprecated (and evil) chain_fromSTRUCT method, eek!&quot;);
+    if (warninglvl &gt; 0) 
+      console.warn(&quot;Using deprecated (and evil) chain_fromSTRUCT method, eek!&quot;);
 
     var proto = cls.prototype;
     var parent = cls.prototype.prototype.constructor;
@@ -599,7 +699,8 @@ var STRUCT = exports.STRUCT = class STRUCT {
       try {
         obj2[k] = obj[k];
       } catch (error) {
-        console.warn(&quot;  failed to set property&quot;, k);
+        if (warninglvl &gt; 0) 
+          console.warn(&quot;  failed to set property&quot;, k);
       }
       //var k=keys[i];
       //if (k==&quot;__proto__&quot;)
@@ -635,7 +736,7 @@ var STRUCT = exports.STRUCT = class STRUCT {
     var tab = &quot;  &quot;;
 
     function fmt_type(type) {
-      if (type.type == StructEnum.T_ARRAY || type.type == StructEnum.T_ITER) {
+      if (type.type == StructEnum.T_ARRAY || type.type == StructEnum.T_ITER || type.type === StructEnum.T_ITERKEYS) {
         if (type.data.iname != &quot;&quot; &amp;&amp; type.data.iname != undefined) {
           return &quot;array(&quot; + type.data.iname + &quot;, &quot; + fmt_type(type.data.type) + &quot;)&quot;;
         }
@@ -687,7 +788,7 @@ var STRUCT = exports.STRUCT = class STRUCT {
     if (!(fullcode in this.compiled_code)) {
       var code2 = &quot;func = function(obj, env) { &quot; + envcode + &quot;return &quot; + code + &quot;}&quot;;
       try {
-        eval(code2);
+        func = _structEval(code2);
       }
       catch (err) {
         struct_util.print_stack(err);
@@ -702,7 +803,7 @@ var STRUCT = exports.STRUCT = class STRUCT {
       func = this.compiled_code[fullcode];
     }
     try {
-      return func.call(obj, env);
+      return func.call(obj, obj, env);
     }
     catch (err) {
       struct_util.print_stack(err);
@@ -716,7 +817,7 @@ var STRUCT = exports.STRUCT = class STRUCT {
 
   write_struct(data, obj, stt) {
     function use_helper_js(field) {
-      if (field.type.type == StructEnum.T_ARRAY || field.type.type == StructEnum.T_ITER) {
+      if (field.type.type == StructEnum.T_ARRAY || field.type.type == StructEnum.T_ITER || field.type.type == StructEnum.T_ITERKEYS) {
         return field.type.data.iname == undefined || field.type.data.iname == &quot;&quot;;
       }
       return true;
@@ -898,6 +999,19 @@ var STRUCT = exports.STRUCT = class STRUCT {
         packer_debug(&quot;-bool &quot; + ret);
 
         return !!ret;
+      }, function t_iterkeys(type) {
+        packer_debug_start(&quot;iterkeys&quot;);
+
+        var len = struct_binpack.unpack_int(data, uctx);
+        packer_debug(&quot;-int &quot; + len);
+
+        var arr = new Array(len);
+        for (var i = 0; i &lt; len; i++) {
+          arr[i] = unpack_field(type.data.type);
+        }
+
+        packer_debug_end(&quot;iterkeys&quot;);
+        return arr;
       }
     ];
 
@@ -935,7 +1049,8 @@ var STRUCT = exports.STRUCT = class STRUCT {
       obj.loadSTRUCT(load);
       return obj;
     } else if (cls.fromSTRUCT !== undefined) {
-      console.warn(&quot;Warning: class &quot; + cls.name + &quot; is using deprecated fromSTRUCT interface; use newSTRUCT/loadSTRUCT instead&quot;);
+      if (warninglvl &gt; 1) 
+        console.warn(&quot;Warning: class &quot; + cls.name + &quot; is using deprecated fromSTRUCT interface; use newSTRUCT/loadSTRUCT instead&quot;);
       return cls.fromSTRUCT(load);
     } else { //default case, make new instance and then call load() on it
       let obj;
@@ -955,7 +1070,12 @@ var STRUCT = exports.STRUCT = class STRUCT {
 //main struct script manager
 var manager = exports.manager = new STRUCT();
 
-//manager defaults to structjs.manager
+/**
+ * Write all defined structs out to a string.
+ *
+ * @param manager STRUCT instance, defaults to nstructjs.manager
+ * @param include_code include save code snippets
+ * */
 var write_scripts = exports.write_scripts = function write_scripts(manager, include_code = false) {
   if (manager === undefined)
     manager = exports.manager;

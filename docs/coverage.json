@@ -1,7 +1,7 @@
 {
-  "coverage": "48.63%",
-  "expectCount": 183,
-  "actualCount": 89,
+  "coverage": "50.53%",
+  "expectCount": 186,
+  "actualCount": 94,
   "files": {
     "src/polyfill.js": {
       "expectCount": 1,
@@ -11,19 +11,19 @@
       ]
     },
     "src/structjs.js": {
-      "expectCount": 12,
-      "actualCount": 2,
+      "expectCount": 13,
+      "actualCount": 3,
       "undocumentLines": [
-        9,
-        10,
-        11,
         12,
         13,
         14,
         15,
-        30,
-        31,
-        32
+        16,
+        17,
+        18,
+        33,
+        34,
+        35
       ]
     },
     "src/struct_binpack.js": {
@@ -44,20 +44,17 @@
       ]
     },
     "src/struct_filehelper.js": {
-      "expectCount": 19,
-      "actualCount": 12,
+      "expectCount": 20,
+      "actualCount": 16,
       "undocumentLines": [
         14,
         15,
-        16,
-        17,
-        18,
-        19,
-        21
+        40,
+        81
       ]
     },
     "src/struct_intern.js": {
-      "expectCount": 38,
+      "expectCount": 39,
       "actualCount": 19,
       "undocumentLines": [
         2,
@@ -65,20 +62,21 @@
         4,
         5,
         6,
-        33,
-        34,
+        8,
         35,
+        36,
         37,
-        38,
+        39,
         40,
-        41,
         42,
+        43,
         44,
-        116,
-        117,
-        272,
-        277,
-        881
+        46,
+        127,
+        128,
+        341,
+        346,
+        992
       ]
     },
     "src/struct_parser.js": {
@@ -87,8 +85,8 @@
       "undocumentLines": [
         2,
         3,
-        44,
-        52
+        46,
+        54
       ]
     },
     "src/struct_parseutil.js": {

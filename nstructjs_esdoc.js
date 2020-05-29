@@ -30,7 +30,10 @@ function buildPaths() {
   let f = (path) => {
     path = require.resolve(path);
     
-    paths.add(path);
+    let bad = path.search("tinyeval") >= 0
+    if (!bad) {
+      paths.add(path);
+    }
     
     require(path);
     let mod = require.cache[path];
@@ -1067,6 +1070,22 @@ function doManual(p) {
 }
 class Plugin {
   onHandleDocs(ev) {
+    if (1) {
+      let docs = ev.data.docs;
+      for (let i=0; i<docs.length; i++) {
+        let d = docs[i];
+        
+        let bad = (d.longname.search("\.json") >= 0 || d.kind === "packagejson");
+          
+        if (bad) {
+          docs[i] = docs[docs.length-1];
+          docs[docs.length-1] = undefined;
+          docs.length--;
+          i--;
+        }
+      }
+    }
+
     this._docs = ev.data.docs;
     this._option = ev.data.option || {};
 

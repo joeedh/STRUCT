@@ -74,6 +74,7 @@
 <li data-ice="manualNav" class="indent-h2" data-link="manual/Specification.html"><a href="manual/Specification.html#array" data-ice="link">Array</a></li>
 <li data-ice="manualNav" class="indent-h3" data-link="manual/Specification.html"><a href="manual/Specification.html#semantics" data-ice="link">Semantics</a></li>
 <li data-ice="manualNav" class="indent-h2" data-link="manual/Specification.html"><a href="manual/Specification.html#iter" data-ice="link">Iter</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/Specification.html"><a href="manual/Specification.html#iterkeys" data-ice="link">IterKeys</a></li>
 </ul>
   </div>
 </div>
@@ -123,7 +124,9 @@ Is cast to a boolean when read from file.</p><h3>float</h3><p>The &apos;float&ap
 </ol><h2>static_string</h2><p>The static_string type is a fixed-sized unsigned array of 8-bit integers.  String data that is too long must be truncated to fit within the array; data is too short must be padded with zeros.</p><h2>Object type</h2><p>Object types declared without abstract() are written via their STRUCT definitions.</p><h2>Abstract object type</h2><p>Object types saved with abstract() must save a signed integer ID referencing their struct definition within the STRUCT manager that created them, then write the object as above.</p><h2>Array</h2><p>Arrays may be variable length, of any valid STRUCT type, including abstract types.  </p><h3>Semantics</h3><p>To write an array:</p><ol>
 <li>Write a 32-bit signed integer representing array length</li>
 <li>Write each array item according to STRUCT type rules.</li>
-</ol><h2>Iter</h2><p>The Iter type is written identically to Array, but relaxes the requirement for direct, contiguous arrays for whatever iterator protocol is appropriate for the language (which differs between ES5.1 and ES6).</p></div>
+</ol><h2>Iter</h2><p>The Iter type is written identically to Array, but relaxes the requirement for direct, contiguous arrays for whatever iterator protocol is appropriate for the language (which differs between ES5.1 and ES6).</p><h2>IterKeys</h2><p>The IterKeys iterates over an object&apos;s own keys (using a for-in loop).  Like array and iter it takes 
+an optional iter key argument.</p><p>Example:</p><pre><code><code class="source-code prettyprint">object : iterkeys(e, Something) | this.object[e].getSomething();</code>
+</code></pre></div>
         <a data-ice="link" href="manual/Specification.html#semantics"></a>
       </div>
     </div>

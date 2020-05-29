@@ -58,6 +58,9 @@
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-unpack_short">unpack_short</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-unpack_static_string">unpack_static_string</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-unpack_string">unpack_string</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-versionCoerce">versionCoerce</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-versionLessThan">versionLessThan</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-versionToInt">versionToInt</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-write_scripts">write_scripts</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-Class">Class</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-get_callstack">get_callstack</a></span></span></li>
@@ -65,6 +68,7 @@
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-print_stack">print_stack</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-inherit">inherit</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-register">register</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-useTinyEval">useTinyEval</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-StructEnum">StructEnum</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-StructTypeMap">StructTypeMap</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-StructTypes">StructTypes</a></span></span></li>
@@ -80,6 +84,9 @@
 } else {
   global._nGlobal = global;
 }
+
+_nGlobal._structEval = eval;
+
 
 let struct_intern = require(&quot;./struct_intern&quot;);
 let struct_filehelper = require(&quot;./struct_filehelper&quot;);
@@ -112,14 +119,26 @@ for (var k in struct_intern) {
 }
 
 /** Register a class with nstructjs **/
-exports.register = function register(cls, name) {
-  return exports.manager.register(cls, name);
+exports.register = function register(cls, structName) {
+  return exports.manager.register(cls, structName);
 }
-exports.inherit = function () {
+exports.inherit = function (child, parent, structName = child.name) {
   return exports.STRUCT.inherit(...arguments);
 }
 
 exports.setDebugMode = struct_intern.setDebugMode;
+exports.setWarningMode = struct_intern.setWarningMode;
+
+//$BUILD_TINYEVAL_START
+exports.tinyeval = require(&quot;../tinyeval/tinyeval.js&quot;);
+
+exports.useTinyEval = function() {
+  _nGlobal._structEval = (buf) =&gt; {
+    return exports.tinyeval.eval(buf);
+  }
+};
+//$BUILD_TINYEVAL_END
+
 
 //export other modules
 exports.binpack = struct_binpack;

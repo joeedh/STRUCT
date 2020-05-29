@@ -228,10 +228,46 @@ window.esdocSearchIndex = [
     "function"
   ],
   [
+    "nstructjs/src/structjs.js~usetinyeval",
+    "function/index.html#static-function-useTinyEval",
+    "<span>useTinyEval</span> <span class=\"search-result-import-path\">nstructjs/src/structjs.js</span>",
+    "function"
+  ],
+  [
+    "nstructjs/src/struct_filehelper.js~versioncoerce",
+    "function/index.html#static-function-versionCoerce",
+    "<span>versionCoerce</span> <span class=\"search-result-import-path\">nstructjs/src/struct_filehelper.js</span>",
+    "function"
+  ],
+  [
+    "nstructjs/src/struct_filehelper.js~versionlessthan",
+    "function/index.html#static-function-versionLessThan",
+    "<span>versionLessThan</span> <span class=\"search-result-import-path\">nstructjs/src/struct_filehelper.js</span>",
+    "function"
+  ],
+  [
+    "nstructjs/src/struct_filehelper.js~versiontoint",
+    "function/index.html#static-function-versionToInt",
+    "<span>versionToInt</span> <span class=\"search-result-import-path\">nstructjs/src/struct_filehelper.js</span>",
+    "function"
+  ],
+  [
     "nstructjs/src/struct_intern.js~write_scripts",
     "function/index.html#static-function-write_scripts",
     "<span>write_scripts</span> <span class=\"search-result-import-path\">nstructjs/src/struct_intern.js</span>",
     "function"
+  ],
+  [
+    "node_modules/acorn-walk/dist/walk.js",
+    "file/node_modules/acorn-walk/dist/walk.js.html",
+    "node_modules/acorn-walk/dist/walk.js",
+    "file"
+  ],
+  [
+    "node_modules/acorn/dist/acorn.js",
+    "file/node_modules/acorn/dist/acorn.js.html",
+    "node_modules/acorn/dist/acorn.js",
+    "file"
   ],
   [
     "src/.external-ecmascript.js~array",
@@ -543,6 +579,12 @@ window.esdocSearchIndex = [
     "src/struct_filehelper.js~filehelper#constructor",
     "class/src/struct_filehelper.js~FileHelper.html#instance-constructor-constructor",
     "src/struct_filehelper.js~FileHelper#constructor",
+    "method"
+  ],
+  [
+    "src/struct_filehelper.js~filehelper#doversions",
+    "class/src/struct_filehelper.js~FileHelper.html#instance-method-doVersions",
+    "src/struct_filehelper.js~FileHelper#doVersions",
     "method"
   ],
   [
