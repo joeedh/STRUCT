@@ -5,6 +5,7 @@ let struct_parseutil = require("./struct_parseutil");
 let struct_typesystem = require("./struct_typesystem");
 let struct_parser = require("./struct_parser");
 
+let warninglvl = 2;
 
 /*
 
@@ -80,6 +81,15 @@ else {
   };
   packer_debug_end = function () {
   };
+}
+
+
+exports.setWarningMode = (t) => {
+  if (typeof t !== "number" || isNaN(t)) {
+    throw new Error("Expected a single number (>= 0) argument to setWarningMode");
+  }
+
+  warninglvl = t;
 }
 
 exports.setDebugMode = (t) => {
@@ -239,7 +249,8 @@ var pack_callbacks = [
     var i = 0;
     val.forEach(function (val2) {
       if (i >= len) {
-        console.trace("Warning: iterator returned different length of list!", val, i);
+        if (warninglvl > 0) 
+          console.trace("Warning: iterator returned different length of list!", val, i);
         return;
       }
 
@@ -369,7 +380,8 @@ var STRUCT = exports.STRUCT = class STRUCT {
         var stt = struct_parse.parse(cls.STRUCT.trim());
         cls.structName = stt.name;
       } else if (cls.structName == undefined && cls.name != "Object") {
-        console.log("Warning, bad class in registered class list", cls.name, cls);
+        if (warninglvl > 0) 
+          console.log("Warning, bad class in registered class list", cls.name, cls);
         continue;
       }
 
@@ -383,6 +395,7 @@ var STRUCT = exports.STRUCT = class STRUCT {
 
       if (!(stt.name in clsmap)) {
         if (!(stt.name in this.null_natives))
+        if (warninglvl > 0) 
           console.log("WARNING: struct " + stt.name + " is missing from class list.");
 
         var dummy = define_empty_class(stt.name);
@@ -417,6 +430,29 @@ var STRUCT = exports.STRUCT = class STRUCT {
   }
 
   add_class(cls, structName) {
+    if (cls.STRUCT) {
+      let bad = false;
+      
+      let p = cls;
+      while (p) {
+        p = p.__proto__;
+        
+        if (p && p.STRUCT && p.STRUCT === cls.STRUCT) {
+          bad = true;
+          break;
+        }
+      }
+      
+      if (bad) {
+        console.warn("Generating STRUCT script for derived class" + cls.name);
+        if (!structName) {
+          structName = cls.name;
+        }
+        
+        cls.STRUCT = STRUCT.inherit(cls, p) + `\n}`;
+      }
+    }
+    
     if (!cls.STRUCT) {
       throw new Error("class " + cls.name + " has no STRUCT script");
     }
@@ -484,7 +520,8 @@ var STRUCT = exports.STRUCT = class STRUCT {
   /** invoke loadSTRUCT methods on parent objects.  note that
    reader() is only called once.  it is called however.*/
   static Super(obj, reader) {
-    console.warn("deprecated");
+    if (warninglvl > 0) 
+      console.warn("deprecated");
 
     reader(obj);
 
@@ -508,7 +545,8 @@ var STRUCT = exports.STRUCT = class STRUCT {
 
   /** deprecated.  used with old fromSTRUCT interface. */
   static chain_fromSTRUCT(cls, reader) {
-    console.warn("Using deprecated (and evil) chain_fromSTRUCT method, eek!");
+    if (warninglvl > 0) 
+      console.warn("Using deprecated (and evil) chain_fromSTRUCT method, eek!");
 
     var proto = cls.prototype;
     var parent = cls.prototype.prototype.constructor;
@@ -525,7 +563,8 @@ var STRUCT = exports.STRUCT = class STRUCT {
       try {
         obj2[k] = obj[k];
       } catch (error) {
-        console.warn("  failed to set property", k);
+        if (warninglvl > 0) 
+          console.warn("  failed to set property", k);
       }
       //var k=keys[i];
       //if (k=="__proto__")
@@ -861,7 +900,8 @@ var STRUCT = exports.STRUCT = class STRUCT {
       obj.loadSTRUCT(load);
       return obj;
     } else if (cls.fromSTRUCT !== undefined) {
-      console.warn("Warning: class " + cls.name + " is using deprecated fromSTRUCT interface; use newSTRUCT/loadSTRUCT instead");
+      if (warninglvl > 1) 
+        console.warn("Warning: class " + cls.name + " is using deprecated fromSTRUCT interface; use newSTRUCT/loadSTRUCT instead");
       return cls.fromSTRUCT(load);
     } else { //default case, make new instance and then call load() on it
       let obj;

@@ -48,6 +48,7 @@ exports.inherit = function () {
 }
 
 exports.setDebugMode = struct_intern.setDebugMode;
+exports.setWarningMode = struct_intern.setWarningMode;
 
 //$BUILD_TINYEVAL_START
 exports.tinyeval = require("../tinyeval/tinyeval.js");

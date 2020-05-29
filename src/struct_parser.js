@@ -85,7 +85,8 @@ function StructParser() {
         js+=c;
         lexer.lexpos++;
       }
-      if (js.endsWith(";")) {
+      
+      while (js.trim().endsWith(";")) {
           js = js.slice(0, js.length-1);
           lexer.lexpos--;
       }
@@ -214,19 +215,24 @@ function StructParser() {
     field.set = undefined;
     field.get = undefined;
     
+    let check = 0;
+    
     var tok=p.peek();
     if (tok.type=="JSCRIPT") {
         field.get = tok.value;
+        check = 1;
         p.next();
     }
     
     tok = p.peek();
     if (tok.type=="JSCRIPT") {
+        check = 1;
         field.set = tok.value;
         p.next();
     }
     
     p.expect("SEMI");
+    
     return field;
   }
   
