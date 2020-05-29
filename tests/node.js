@@ -2,7 +2,8 @@ global.DEBUG = {
   tinyeval : true
 };
 
-let structjs = require('../build/nstructjs');
+//let structjs = require('../build/nstructjs');
+let structjs = require('../src/structjs');
 let filehelper = structjs.filehelper;
 let fs = require('fs');
 
@@ -30,6 +31,16 @@ class Polygon {
     this.points = [];
     this.flag = 0;
     this.id = -1;
+    this.pointmap = {
+      a : 1,
+      b : 2,
+      c : 5
+    };
+    this.pointmap2 = {
+      a : 1,
+      b : 2,
+      c : 5
+    };
     
     if (points !== undefined) {
       for (let p of points) {
@@ -38,6 +49,12 @@ class Polygon {
     }
   }
   
+  loadSTRUCT(reader) {
+    reader(this);
+    
+    console.log(this.pointmap);
+    console.log(this.pointmap2);
+  }
   toJSON() {
     let points = [];
     
@@ -55,10 +72,12 @@ class Polygon {
 
 Polygon.STRUCT = `
 node.Polygon {
-  id     : int;
-  flag   : int;
-  points : array(e, int) | e.id;
-  active : int | this.points.active !== undefined ? this.points.active : -1;
+  id        : int;
+  flag      : int;
+  pointmap  : iterkeys(e, int) | obj.pointmap[e];
+  pointmap2 : iterkeys(e, string) | e;
+  points    : array(e, int) | e.id;
+  active    : int | this.points.active !== undefined ? this.points.active : -1;
 }`;
 
 structjs.manager.add_class(Polygon, "node.Polygon");

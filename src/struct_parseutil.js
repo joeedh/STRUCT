@@ -40,7 +40,7 @@ exports.tokdef = class tokdef {
 
 var PUTIL_ParseError = exports.PUTIL_ParseError = class PUTIL_ParseError extends Error {
   constructor(msg) {
-    Error.call(this);
+    super();
   }
 }
 

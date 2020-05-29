@@ -11,13 +11,14 @@ var StructEnum = exports.StructEnum = {
   T_DOUBLE : 2,
   T_STRING : 7,
   T_STATIC_STRING : 8, //fixed-length string
-  T_STRUCT : 9, 
-  T_TSTRUCT : 10,
-  T_ARRAY   : 11,
-  T_ITER    : 12,
-  T_SHORT   : 13,
-  T_BYTE    : 14,
-  T_BOOL    : 15
+  T_STRUCT   : 9, 
+  T_TSTRUCT  : 10,
+  T_ARRAY    : 11,
+  T_ITER     : 12,
+  T_SHORT    : 13,
+  T_BYTE     : 14,
+  T_BOOL     : 15,
+  T_ITERKEYS : 16
 };
 
 var StructTypes = exports.StructTypes = {
@@ -32,7 +33,8 @@ var StructTypes = exports.StructTypes = {
   "iter": StructEnum.T_ITER,
   "short": StructEnum.T_SHORT,
   "byte": StructEnum.T_BYTE,
-  "bool": StructEnum.T_BOOL
+  "bool": StructEnum.T_BOOL,
+  "iterkeys" : StructEnum.T_ITERKEYS
 };
 
 var StructTypeMap = exports.StructTypeMap = {};
@@ -56,7 +58,7 @@ function StructParser() {
   
   var reserved_tokens=new struct_util.set([
     "int", "float", "double", "string", "static_string", "array", 
-    "iter", "abstract", "short", "byte", "bool"
+    "iter", "abstract", "short", "byte", "bool", "iterkeys"
   ]);
 
   function tk(name, re, func) {
@@ -162,6 +164,21 @@ function StructParser() {
     return {type: StructEnum.T_ITER, data: {type: arraytype, iname: itername}}
   }
   
+  function p_IterKeys(p) {
+    p.expect("ITERKEYS");
+    p.expect("LPARAM");
+    
+    var arraytype=p_Type(p);
+    var itername="";
+    
+    p.expect("COMMA");
+    itername = arraytype.data.replace(/"/g, "");
+    arraytype = p_Type(p);
+    
+    p.expect("RPARAM");
+    return {type: StructEnum.T_ITERKEYS, data: {type: arraytype, iname: itername}}
+  }
+  
   function p_Abstract(p) {
     p.expect("ABSTRACT");
     p.expect("LPARAM");
@@ -183,6 +200,8 @@ function StructParser() {
         return p_Array(p);
     } else if (tok.type=="ITER") {
         return p_Iter(p);
+    } else if (tok.type=="ITERKEYS") {
+        return p_IterKeys(p);
     } else if (tok.type=="STATIC_STRING") {
         return p_Static_String(p);
     } else if (tok.type=="ABSTRACT") {

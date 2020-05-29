@@ -223,22 +223,29 @@ var pack_callbacks = [
     //this was originally implemented to use ES6 iterators.
 
     packer_debug_start("iter");
-
-    if (val == undefined || val.forEach == undefined) {
-      console.trace();
-      console.log("Undefined iterable list fed to struct struct packer!", val);
-      console.log("Field: ", field);
-      console.log("Type: ", type);
-      console.log("");
-      packer_debug("int 0");
-      struct_binpack.pack_int(data, 0);
-      return;
+    
+    function forEach(cb, thisvar) {
+      if (val && val[Symbol.iterator]) {
+        for (let item of val) {
+          cb.call(thisvar, item);
+        }
+      } else if (val && val.forEach) {
+        val.forEach(function(item) {
+          cb.call(thisvar, item);
+        });
+      } else {
+        console.trace();
+        console.log("Undefined iterable list fed to struct struct packer!", val);
+        console.log("Field: ", field);
+        console.log("Type: ", type);
+        console.log("");
+      }
     }
-
-    var len = 0.0;
-    val.forEach(function (val2) {
+    
+    let len = 0.0;
+    forEach(() => {
       len++;
-    }, this);
+    });
 
     packer_debug("int " + len);
     struct_binpack.pack_int(data, len);
@@ -247,7 +254,7 @@ var pack_callbacks = [
     var env = _ws_env;
 
     var i = 0;
-    val.forEach(function (val2) {
+    forEach(function(val2) {
       if (i >= len) {
         if (warninglvl > 0) 
           console.trace("Warning: iterator returned different length of list!", val, i);
@@ -279,6 +286,55 @@ var pack_callbacks = [
     packer_debug("bool " + val);
 
     struct_binpack.pack_byte(data, !!val);
+  },function pack_iterkeys(data, val, obj, thestruct, field, type) {
+    //this was originally implemented to use ES6 iterators.
+
+    packer_debug_start("iterkeys");
+    
+    if ((typeof val !== "object" && typeof val !== "function") || val === null) {
+        console.warn("Bad object fed to iterkeys in struct packer!", val);
+        console.log("Field: ", field);
+        console.log("Type: ", type);
+        console.log("");
+        
+        struct_binpack.pack_int(data, 0);
+        
+        packer_debug_end("iterkeys");
+        return;
+    }
+    
+    let len = 0.0;
+    for (let k in val) {
+      len++;
+    }
+    
+    packer_debug("int " + len);
+    struct_binpack.pack_int(data, len);
+
+    var d = type.data, itername = d.iname, type2 = d.type;
+    var env = _ws_env;
+
+    var i = 0;
+    for (let val2 in val) {
+      if (i >= len) {
+        if (warninglvl > 0) 
+          console.warn("Warning: object keys magically changed on us", val, i);
+        return;
+      }
+
+      //the parser enforces this, now sure we need the if statement here
+      if (itername != "" && itername != undefined && field.get) {
+        env[0][0] = itername;
+        env[0][1] = val2;
+        val2 = thestruct._env_call(field.get, obj, env);
+      }
+
+      var f2 = {type: type2, get: undefined, set: undefined};
+      do_pack(data, val2, obj, thestruct, f2, type2);
+
+      i++;
+    }
+    packer_debug_end("iterkeys");
   }];
 
 function do_pack(data, val, obj, thestruct, field, type) {
@@ -600,7 +656,7 @@ var STRUCT = exports.STRUCT = class STRUCT {
     var tab = "  ";
 
     function fmt_type(type) {
-      if (type.type == StructEnum.T_ARRAY || type.type == StructEnum.T_ITER) {
+      if (type.type == StructEnum.T_ARRAY || type.type == StructEnum.T_ITER || type.type === StructEnum.T_ITERKEYS) {
         if (type.data.iname != "" && type.data.iname != undefined) {
           return "array(" + type.data.iname + ", " + fmt_type(type.data.type) + ")";
         }
@@ -681,7 +737,7 @@ var STRUCT = exports.STRUCT = class STRUCT {
 
   write_struct(data, obj, stt) {
     function use_helper_js(field) {
-      if (field.type.type == StructEnum.T_ARRAY || field.type.type == StructEnum.T_ITER) {
+      if (field.type.type == StructEnum.T_ARRAY || field.type.type == StructEnum.T_ITER || field.type.type == StructEnum.T_ITERKEYS) {
         return field.type.data.iname == undefined || field.type.data.iname == "";
       }
       return true;
@@ -863,6 +919,19 @@ var STRUCT = exports.STRUCT = class STRUCT {
         packer_debug("-bool " + ret);
 
         return !!ret;
+      }, function t_iterkeys(type) {
+        packer_debug_start("iterkeys");
+
+        var len = struct_binpack.unpack_int(data, uctx);
+        packer_debug("-int " + len);
+
+        var arr = new Array(len);
+        for (var i = 0; i < len; i++) {
+          arr[i] = unpack_field(type.data.type);
+        }
+
+        packer_debug_end("iterkeys");
+        return arr;
       }
     ];
 
