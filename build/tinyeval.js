@@ -5632,16 +5632,23 @@ const _export_eval_ = function(buf, scope={}) {
             }
 
             state.scope["this"] = a;
+            //console.log("---", a);
 
             visit(n.property, state);
             let b = state.stack.pop();
-
+            
             if (nodeIs(b, "Identifier")) {
-                b = b.name;
+                if (n.computed) {
+                  b = state.scope[b.name];
+                } else {
+                  b = b.name;
+                }
             } else if (nodeIs(b, "Literal")) {
                 b = b.value;
             }
 
+            //console.log("+++", b);
+            
             a = a[b];
             state.stack.push(a);
         },
@@ -5669,6 +5676,9 @@ const _export_eval_ = function(buf, scope={}) {
               visit(n.body, state2);
               let ret = state2.stack.pop();
 
+              if (ret && ret.type === "Identifier") {
+                ret = state2.scope[ret.name];
+              }
               //*
               if (_nGlobal.DEBUG && _nGlobal.DEBUG.tinyeval) {
                 var func;
@@ -5874,7 +5884,13 @@ const _export_eval_ = function(buf, scope={}) {
             walkers[k] = walk.base[k];
         }
     }
-
+    
+    /*
+    walk.full(node, (n) => {
+      console.log(n.type);
+    });
+    //*/
+    
     try {
         walk.recursive(node, startstate, walkers);
     } catch (error) {

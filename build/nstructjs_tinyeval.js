@@ -1333,10 +1333,9 @@ function StructParser() {
     var arraytype=p_Type(p);
     var itername="";
     
-    if (p.optional("COMMA")) {
-        itername = arraytype.data.replace(/"/g, "");
-        arraytype = p_Type(p);
-    }
+    p.expect("COMMA");
+    itername = arraytype.data.replace(/"/g, "");
+    arraytype = p_Type(p);
     
     p.expect("RPARAM");
     return {type: StructEnum.T_ITERKEYS, data: {type: arraytype, iname: itername}}
@@ -1778,18 +1777,16 @@ var pack_callbacks = [
     for (let val2 in val) {
       if (i >= len) {
         if (warninglvl > 0) 
-          console.warn("Warning: iterator returned different length of list!", val, i);
+          console.warn("Warning: object keys magically changed on us", val, i);
         return;
       }
 
-      if (itername != "" && itername != undefined && field.get) {
-        console.log(itername, field.get);
-        env.length = 1;
+      if (field.get) {
         env[0][0] = itername;
         env[0][1] = val2;
         val2 = thestruct._env_call(field.get, obj, env);
-      } else { //pack values, not string keys
-        val2 = val[val2];
+      } else {
+        val2 = val[val2]; //fetch value
       }
 
       var f2 = {type: type2, get: undefined, set: undefined};
@@ -2200,7 +2197,7 @@ var STRUCT = _module_exports_$1.STRUCT = class STRUCT {
 
   write_struct(data, obj, stt) {
     function use_helper_js(field) {
-      if (field.type.type == StructEnum$1.T_ARRAY || field.type.type == StructEnum$1.T_ITER) {
+      if (field.type.type == StructEnum$1.T_ARRAY || field.type.type == StructEnum$1.T_ITER || field.type.type == StructEnum$1.T_ITERKEYS) {
         return field.type.data.iname == undefined || field.type.data.iname == "";
       }
       return true;
@@ -8391,16 +8388,23 @@ const _export_eval_ = function(buf, scope={}) {
             }
 
             state.scope["this"] = a;
+            //console.log("---", a);
 
             visit(n.property, state);
             let b = state.stack.pop();
-
+            
             if (nodeIs(b, "Identifier")) {
-                b = b.name;
+                if (n.computed) {
+                  b = state.scope[b.name];
+                } else {
+                  b = b.name;
+                }
             } else if (nodeIs(b, "Literal")) {
                 b = b.value;
             }
 
+            //console.log("+++", b);
+            
             a = a[b];
             state.stack.push(a);
         },
@@ -8428,6 +8432,9 @@ const _export_eval_ = function(buf, scope={}) {
               visit(n.body, state2);
               let ret = state2.stack.pop();
 
+              if (ret && ret.type === "Identifier") {
+                ret = state2.scope[ret.name];
+              }
               //*
               if (_nGlobal.DEBUG && _nGlobal.DEBUG.tinyeval) {
                 var func;
@@ -8633,7 +8640,13 @@ const _export_eval_ = function(buf, scope={}) {
             walkers[k] = walk.base[k];
         }
     }
-
+    
+    /*
+    walk.full(node, (n) => {
+      console.log(n.type);
+    });
+    //*/
+    
     try {
         walk.recursive(node, startstate, walkers);
     } catch (error) {

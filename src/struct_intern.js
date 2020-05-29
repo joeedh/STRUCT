@@ -322,11 +322,12 @@ var pack_callbacks = [
         return;
       }
 
-      //the parser enforces this, now sure we need the if statement here
-      if (itername != "" && itername != undefined && field.get) {
+      if (field.get) {
         env[0][0] = itername;
         env[0][1] = val2;
         val2 = thestruct._env_call(field.get, obj, env);
+      } else {
+        val2 = val[val2]; //fetch value
       }
 
       var f2 = {type: type2, get: undefined, set: undefined};
