@@ -171,9 +171,10 @@ function StructParser() {
     var arraytype=p_Type(p);
     var itername="";
     
-    p.expect("COMMA");
-    itername = arraytype.data.replace(/"/g, "");
-    arraytype = p_Type(p);
+    if (p.optional("COMMA")) {
+        itername = arraytype.data.replace(/"/g, "");
+        arraytype = p_Type(p);
+    }
     
     p.expect("RPARAM");
     return {type: StructEnum.T_ITERKEYS, data: {type: arraytype, iname: itername}}

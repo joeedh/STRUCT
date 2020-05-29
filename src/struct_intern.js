@@ -322,7 +322,7 @@ var pack_callbacks = [
         return;
       }
 
-      if (field.get) {
+      if (itername && itername.trim().length > 0 && field.get) {
         env[0][0] = itername;
         env[0][1] = val2;
         val2 = thestruct._env_call(field.get, obj, env);

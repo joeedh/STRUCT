@@ -75,7 +75,7 @@ node.Polygon {
   id        : int;
   flag      : int;
   pointmap  : iterkeys(e, int);
-  pointmap2 : iterkeys(e, string) | e;
+  pointmap2 : iterkeys(int);
   points    : array(e, int) | e.id;
   active    : int | this.points.active !== undefined ? this.points.active : -1;
 }`;

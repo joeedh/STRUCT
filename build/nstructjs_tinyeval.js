@@ -1333,9 +1333,10 @@ function StructParser() {
     var arraytype=p_Type(p);
     var itername="";
     
-    p.expect("COMMA");
-    itername = arraytype.data.replace(/"/g, "");
-    arraytype = p_Type(p);
+    if (p.optional("COMMA")) {
+        itername = arraytype.data.replace(/"/g, "");
+        arraytype = p_Type(p);
+    }
     
     p.expect("RPARAM");
     return {type: StructEnum.T_ITERKEYS, data: {type: arraytype, iname: itername}}
@@ -1781,7 +1782,7 @@ var pack_callbacks = [
         return;
       }
 
-      if (field.get) {
+      if (itername && itername.trim().length > 0 && field.get) {
         env[0][0] = itername;
         env[0][1] = val2;
         val2 = thestruct._env_call(field.get, obj, env);
