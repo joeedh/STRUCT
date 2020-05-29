@@ -40,10 +40,10 @@ for (var k in struct_intern) {
 }
 
 /** Register a class with nstructjs **/
-exports.register = function register(cls, name) {
-  return exports.manager.register(cls, name);
+exports.register = function register(cls, structName) {
+  return exports.manager.register(cls, structName);
 }
-exports.inherit = function () {
+exports.inherit = function (child, parent, structName = child.name) {
   return exports.STRUCT.inherit(...arguments);
 }
 

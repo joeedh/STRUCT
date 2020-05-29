@@ -444,7 +444,7 @@ var STRUCT = exports.STRUCT = class STRUCT {
       }
       
       if (bad) {
-        console.warn("Generating STRUCT script for derived class" + cls.name);
+        console.warn("Generating STRUCT script for derived class " + cls.name);
         if (!structName) {
           structName = cls.name;
         }
