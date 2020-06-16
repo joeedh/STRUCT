@@ -5554,7 +5554,6 @@ var _require_acorn_walk_ = /*#__PURE__*/Object.freeze({
 const _export_acorn_ = _require_acorn_;
 const _export_walk_ = _require_acorn_walk_;
 
-
 let color = function color(str, c) {
   return "\u001b[" + c + "m" + str + "\u001b[0m";
 };
@@ -5575,8 +5574,19 @@ let formatLines = (buf) => {
     return s;
 };
 
+class ReturnException extends Error {}
+
+
 let cache = {};
 const _export_eval_ = function(buf, scope={}) {
+    /*
+    global.DEBUG = {
+      tinyeval : true
+    }
+    //*/
+    let debug = 0;//_nGlobal.DEBUG && _nGlobal.DEBUG.tinyeval;
+
+
     let acorn = _export_acorn_, walk = _export_walk_;
 
     let stack = [];
@@ -5631,15 +5641,18 @@ const _export_eval_ = function(buf, scope={}) {
                 a = state.scope[a.name];
             }
 
-            state.scope["this"] = a;
+            //let state2 = scopePush(state);
+            let state2 = state;
+            
+            state2.scope["this"] = a;
             //console.log("---", a);
 
             visit(n.property, state);
-            let b = state.stack.pop();
+            let b = state2.stack.pop();
             
             if (nodeIs(b, "Identifier")) {
                 if (n.computed) {
-                  b = state.scope[b.name];
+                  b = state2.scope[b.name];
                 } else {
                   b = b.name;
                 }
@@ -5653,7 +5666,11 @@ const _export_eval_ = function(buf, scope={}) {
             state.stack.push(a);
         },
 
-        FunctionExpression(n, state, visit) {
+        ArrowFunctionExpression(n, state, visit) {
+          this.FunctionExpression(n, state, visit, true);
+        },
+        
+        FunctionExpression(n, state, visit, useLexThis=false) {
             let args = [];
 
             let state2 = scopePush(state);
@@ -5665,29 +5682,60 @@ const _export_eval_ = function(buf, scope={}) {
             }
 
             function func() {
+              if (debug) {
+              //  console.log(arguments, n.type);
+              }
+              
               //state2.scope = Object.assign({}, state2.scope);
               for (let i = 0; i < args.length; i++) {
                 state2.scope[args[i]] = arguments[i];
               }
 
               //console.log("================", this)
-              state2.scope["this"] = this;
-
-              visit(n.body, state2);
+              if (!useLexThis) {
+                state2.scope["this"] = this;
+              }
+              let this2 = !useLexThis ? this : state2.scope["this"];
+              
+              if (debug) {
+                //console.log(state2.scope);
+              }
+              
+              try {
+                visit(n.body, state2);
+              } catch (error) {
+                if (!(error instanceof ReturnException)) {
+                  console.log(error.stack);
+                  console.log(error);
+                  
+                  console.log(state2.scope["this"]);
+                  throw error;
+                }
+              }
+              
               let ret = state2.stack.pop();
 
+              if (debug) {
+                console.log(" RET IN FUNC", ret, state2.stack);
+              }
+              
               if (ret && ret.type === "Identifier") {
                 ret = state2.scope[ret.name];
               }
-              //*
+              
+              /*
               if (_nGlobal.DEBUG && _nGlobal.DEBUG.tinyeval) {
                 var func;
+                buf = buf.replace(/\bthis\b/g, "this2");
+                console.log(buf);
                 func = eval(buf);
-                let ret2 = func.apply(this, arguments);
+                
+                //console.log(this2);
+                let ret2 = func.apply(this2, arguments);
 
-                console.log("result:", ret, "should be", ret2, color(buf, 32));
-                //*/
+                //console.log("result:", ret, "should be", ret2, color(buf, 32));
               }
+              //*/
               return ret;
             };
 
@@ -5708,10 +5756,36 @@ const _export_eval_ = function(buf, scope={}) {
             }
 
             let thisvar = state.scope["this"];
-            stack.push(func.apply(thisvar, args));
+            let ret = func.apply(thisvar, args);
+            
+            if (debug) {
+              console.log("  RET", ret, args);
+            }
+            
+            state.stack.push(ret);            
             //console.log(func, Reflect.ownKeys(state.scope), state.scope["this"], "::")
         },
 
+        ArrayExpression(n, state, visit) {
+          let ret = [];
+          
+          for (let e of n.elements) {
+            visit(e, state);
+            let val = this._getValue(state.stack.pop(), state);
+            
+            ret.push(val);
+          }
+          
+          state.stack.push(ret);
+        },
+        
+        ReturnStatement(n, state, visit) {
+          if (n.argument) {
+            visit(n.argument, state);
+          }
+          
+          throw new ReturnException();
+        },
         Literal(n, state, visit) {
             state.stack.push(n);
         },
@@ -5885,10 +5959,12 @@ const _export_eval_ = function(buf, scope={}) {
         }
     }
     
-    /*
-    walk.full(node, (n) => {
-      console.log(n.type);
-    });
+    //*
+    if (debug) {
+      walk.full(node, (n) => {
+        console.log(n.type);
+      });
+    }
     //*/
     
     try {
@@ -5901,8 +5977,11 @@ const _export_eval_ = function(buf, scope={}) {
     if (stack[0]) {
       stack[0] = walkers._getValue(stack[0], startstate);
     }
-
-    //console.log("final result", stack[0]);
+    
+    if (debug) {
+      console.log("final result", stack[0]);
+    }
+    
     return stack[0];
 };
 

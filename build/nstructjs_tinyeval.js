@@ -1572,6 +1572,7 @@ var struct_parser = /*#__PURE__*/Object.freeze({
   struct_parse: _export_struct_parse_
 });
 
+let _export_StructFieldTypeMap_;
 let warninglvl = 1;
 let debug = 0;
 
@@ -1655,7 +1656,11 @@ const _export_setDebugMode_ = (t) => {
 _export_setDebugMode_(debug);
 
 const _export_StructFieldTypes_ = [];
-const _export_StructFieldTypeMap_ = {};
+let StructFieldTypeMap = _export_StructFieldTypeMap_ = {};
+
+let packNull = function(manager, data, field, type) {
+  StructFieldTypeMap[type.type].packNull(manager, data, field, type);
+};
 
 function unpack_field(manager, data, type, uctx) {
   let name;
@@ -1711,6 +1716,10 @@ let StructFieldType = class StructFieldType {
   }
   
   static unpack(manager, data, type, uctx) {
+  }
+  
+  static packNull(manager, data, field, type) {
+    this.pack(manager, data, 0, 0, field, type);
   }
   
   static format(type) {
@@ -1820,6 +1829,10 @@ class StructStringField extends StructFieldType {
     pack_string$1(data, val);
   }
   
+  static packNull(manager, data, field, type) {
+    this.pack(manager, data, "", 0, field, type);
+  }
+  
   static unpack(manager, data, type, uctx) {
     return unpack_string(data, uctx);
   }   
@@ -1842,6 +1855,10 @@ class StructStaticStringField extends StructFieldType {
     return `static_string[${type.data.maxlength}]`;
   }
  
+  static packNull(manager, data, field, type) {
+    this.pack(manager, data, "", 0, field, type);
+  }
+
   static unpack(manager, data, type, uctx) {
     return unpack_static_string(data, uctx, type.data.maxlength);
   }   
@@ -1860,6 +1877,16 @@ class StructStructField extends StructFieldType {
   
   static format(type) {
     return type.data;
+  }
+  
+  static packNull(manager, data, field, type) {
+    let stt = manager.get_struct(type.data);
+    
+    for (let field2 of stt.fields) {
+      let type2 = field2.type;
+      
+      packNull(manager, data, field2, type2);
+    }
   }
   
   static unpack(manager, data, type, uctx) {
@@ -1894,10 +1921,17 @@ class StructTStructField extends StructFieldType {
 
     packer_debug("int " + stt.id);
 
-    _module_exports_.pack_int(data, stt.id);
+    pack_int$1(data, stt.id);
     manager.write_struct(data, val, stt);
   }
   
+  static packNull(manager, data, field, type) {
+    let stt = manager.get_struct(type.data);
+    
+    pack_int$1(data, stt.id);
+    packNull(manager, data, field, {type : STructEnum.T_STRUCT, data : type.data});
+  }
+
   static format(type) {
     return "abstract(" + type.data + ")";
   }
@@ -1968,6 +2002,10 @@ class StructArrayField extends StructFieldType {
       fakeField.type = type2;
       do_pack(manager, data, val2, obj, fakeField, type2);
     }
+  }
+  
+  static packNull(manager, data, field, type) {
+    pack_int$1(data, 0);
   }
   
   static format(type) {
@@ -2057,6 +2095,10 @@ class StructIterField extends StructFieldType {
     }, this);
   }
   
+  static packNull(manager, data, field, type) {
+    pack_int$1(data, 0);
+  }
+
   static useHelperJS(field) {
     return !field.type.data.iname;
   }
@@ -2186,6 +2228,10 @@ class StructIterKeysField extends StructFieldType {
     }
   }
   
+  static packNull(manager, data, field, type) {
+    pack_int$1(data, 0);
+  }
+  
   static useHelperJS(field) {
     return !field.type.data.iname;
   }
@@ -2251,6 +2297,9 @@ class StructUshortField extends StructFieldType {
 }
 StructFieldType.register(StructUshortField);
 
+//let writeEmpty = exports.writeEmpty = function writeEmpty(stt) {
+//}
+
 class StructStaticArrayField extends StructFieldType {
   static pack(manager, data, val, obj, field, type) {
     if (type.data.size === undefined) {
@@ -2258,6 +2307,11 @@ class StructStaticArrayField extends StructFieldType {
     }
     
     let itername = type.data.iname;
+    
+    if (val === undefined || !val.length) {
+      this.packNull(manager, data, field, type);
+      return;
+    }
     
     for (let i=0; i<type.data.size; i++) {
       let i2 = Math.min(i, Math.min(val.length-1, type.data.size));
@@ -2279,6 +2333,13 @@ class StructStaticArrayField extends StructFieldType {
     return !field.type.data.iname;
   }
   
+  static packNull(manager, data, field, type) {
+    let size = type.data.size;
+    for (let i=0; i<size; i++) {
+      packNull(manager, data, field, type.data.type);
+    }
+  }
+
   static format(type) {
     let type2 = _export_StructFieldTypeMap_[type.data.type.type].format(type.data.type);
     
@@ -2312,7 +2373,7 @@ class StructStaticArrayField extends StructFieldType {
 StructFieldType.register(StructStaticArrayField);
 
 "use strict";
-let StructFieldTypeMap = _export_StructFieldTypeMap_;
+let StructFieldTypeMap$1 = _export_StructFieldTypeMap_;
 
 let warninglvl$1 = 2;
 
@@ -2441,7 +2502,7 @@ _module_exports_$1.setDebugMode = (t) => {
 var _ws_env$1 = [[undefined, undefined]];
 
 function do_pack$1(data, val, obj, thestruct, field, type) {
-  StructFieldTypeMap[field.type.type].pack(manager, data, val, obj, field, type);
+  StructFieldTypeMap$1[field.type.type].pack(manager, data, val, obj, field, type);
 }
 
 function define_empty_class(name) {
@@ -2758,7 +2819,7 @@ var STRUCT = _module_exports_$1.STRUCT = class STRUCT {
     var tab = "  ";
 
     function fmt_type(type) {
-      return StructFieldTypeMap[type.type].format(type);
+      return StructFieldTypeMap$1[type.type].format(type);
       
       if (type.type == StructEnum$2.T_ARRAY || type.type == StructEnum$2.T_ITER || type.type === StructEnum$2.T_ITERKEYS) {
         if (type.data.iname != "" && type.data.iname != undefined) {
@@ -2842,7 +2903,7 @@ var STRUCT = _module_exports_$1.STRUCT = class STRUCT {
   write_struct(data, obj, stt) {
     function use_helper_js(field) {
       let type = field.type.type;
-      let cls = StructFieldTypeMap[type];
+      let cls = StructFieldTypeMap$1[type];
       return cls.useHelperJS(field);
     }
 
@@ -2862,6 +2923,12 @@ var STRUCT = _module_exports_$1.STRUCT = class STRUCT {
         else {
           val = obj[f.name];
         }
+        
+        if (f.name === "points3") {
+          //console.log(obj.points3.map(v => v.id), "bleh");
+        }
+        console.log("\n\n\n", f.get, "Helper JS Ret", val, "\n\n\n");
+        
         do_pack$1(data, val, obj, thestruct, f, t1);
       }
       else {
@@ -2940,7 +3007,7 @@ var STRUCT = _module_exports_$1.STRUCT = class STRUCT {
 
     let this2  = this;
     function unpack_field(type) {
-      return StructFieldTypeMap[type.type].unpack(this2, data, type, uctx);
+      return StructFieldTypeMap$1[type.type].unpack(this2, data, type, uctx);
     }
 
     let was_run = false;
@@ -8854,7 +8921,6 @@ var _require_acorn_walk_ = /*#__PURE__*/Object.freeze({
 const _export_acorn_ = _require_acorn_;
 const _export_walk_ = _require_acorn_walk_;
 
-
 let color = function color(str, c) {
   return "\u001b[" + c + "m" + str + "\u001b[0m";
 };
@@ -8875,8 +8941,19 @@ let formatLines = (buf) => {
     return s;
 };
 
+class ReturnException extends Error {}
+
+
 let cache = {};
 const _export_eval_ = function(buf, scope={}) {
+    /*
+    global.DEBUG = {
+      tinyeval : true
+    }
+    //*/
+    let debug = 0;//_nGlobal.DEBUG && _nGlobal.DEBUG.tinyeval;
+
+
     let acorn = _export_acorn_, walk = _export_walk_;
 
     let stack = [];
@@ -8931,15 +9008,18 @@ const _export_eval_ = function(buf, scope={}) {
                 a = state.scope[a.name];
             }
 
-            state.scope["this"] = a;
+            //let state2 = scopePush(state);
+            let state2 = state;
+            
+            state2.scope["this"] = a;
             //console.log("---", a);
 
             visit(n.property, state);
-            let b = state.stack.pop();
+            let b = state2.stack.pop();
             
             if (nodeIs(b, "Identifier")) {
                 if (n.computed) {
-                  b = state.scope[b.name];
+                  b = state2.scope[b.name];
                 } else {
                   b = b.name;
                 }
@@ -8953,7 +9033,11 @@ const _export_eval_ = function(buf, scope={}) {
             state.stack.push(a);
         },
 
-        FunctionExpression(n, state, visit) {
+        ArrowFunctionExpression(n, state, visit) {
+          this.FunctionExpression(n, state, visit, true);
+        },
+        
+        FunctionExpression(n, state, visit, useLexThis=false) {
             let args = [];
 
             let state2 = scopePush(state);
@@ -8965,29 +9049,60 @@ const _export_eval_ = function(buf, scope={}) {
             }
 
             function func() {
+              if (debug) {
+              //  console.log(arguments, n.type);
+              }
+              
               //state2.scope = Object.assign({}, state2.scope);
               for (let i = 0; i < args.length; i++) {
                 state2.scope[args[i]] = arguments[i];
               }
 
               //console.log("================", this)
-              state2.scope["this"] = this;
-
-              visit(n.body, state2);
+              if (!useLexThis) {
+                state2.scope["this"] = this;
+              }
+              let this2 = !useLexThis ? this : state2.scope["this"];
+              
+              if (debug) {
+                //console.log(state2.scope);
+              }
+              
+              try {
+                visit(n.body, state2);
+              } catch (error) {
+                if (!(error instanceof ReturnException)) {
+                  console.log(error.stack);
+                  console.log(error);
+                  
+                  console.log(state2.scope["this"]);
+                  throw error;
+                }
+              }
+              
               let ret = state2.stack.pop();
 
+              if (debug) {
+                console.log(" RET IN FUNC", ret, state2.stack);
+              }
+              
               if (ret && ret.type === "Identifier") {
                 ret = state2.scope[ret.name];
               }
-              //*
+              
+              /*
               if (_nGlobal.DEBUG && _nGlobal.DEBUG.tinyeval) {
                 var func;
+                buf = buf.replace(/\bthis\b/g, "this2");
+                console.log(buf);
                 func = eval(buf);
-                let ret2 = func.apply(this, arguments);
+                
+                //console.log(this2);
+                let ret2 = func.apply(this2, arguments);
 
-                console.log("result:", ret, "should be", ret2, color(buf, 32));
-                //*/
+                //console.log("result:", ret, "should be", ret2, color(buf, 32));
               }
+              //*/
               return ret;
             };
 
@@ -9008,10 +9123,36 @@ const _export_eval_ = function(buf, scope={}) {
             }
 
             let thisvar = state.scope["this"];
-            stack.push(func.apply(thisvar, args));
+            let ret = func.apply(thisvar, args);
+            
+            if (debug) {
+              console.log("  RET", ret, args);
+            }
+            
+            state.stack.push(ret);            
             //console.log(func, Reflect.ownKeys(state.scope), state.scope["this"], "::")
         },
 
+        ArrayExpression(n, state, visit) {
+          let ret = [];
+          
+          for (let e of n.elements) {
+            visit(e, state);
+            let val = this._getValue(state.stack.pop(), state);
+            
+            ret.push(val);
+          }
+          
+          state.stack.push(ret);
+        },
+        
+        ReturnStatement(n, state, visit) {
+          if (n.argument) {
+            visit(n.argument, state);
+          }
+          
+          throw new ReturnException();
+        },
         Literal(n, state, visit) {
             state.stack.push(n);
         },
@@ -9185,10 +9326,12 @@ const _export_eval_ = function(buf, scope={}) {
         }
     }
     
-    /*
-    walk.full(node, (n) => {
-      console.log(n.type);
-    });
+    //*
+    if (debug) {
+      walk.full(node, (n) => {
+        console.log(n.type);
+      });
+    }
     //*/
     
     try {
@@ -9201,8 +9344,11 @@ const _export_eval_ = function(buf, scope={}) {
     if (stack[0]) {
       stack[0] = walkers._getValue(stack[0], startstate);
     }
-
-    //console.log("final result", stack[0]);
+    
+    if (debug) {
+      console.log("final result", stack[0]);
+    }
+    
     return stack[0];
 };
 
