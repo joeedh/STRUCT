@@ -1,0 +1,800 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <base data-ice="baseUrl" href="../../">
+  <title data-ice="title">src/struct_intern2.js | nstructjs</title>
+  <link type="text/css" rel="stylesheet" href="css/style.css">
+  <link type="text/css" rel="stylesheet" href="css/prettify-tomorrow.css">
+  <script src="script/prettify/prettify.js"></script>
+  <script src="script/manual.js"></script>
+<meta name="description" content="ProtoBuf-like serialization system optimized for JS"><meta property="twitter:card" content="summary"><meta property="twitter:title" content="nstructjs"><meta property="twitter:description" content="ProtoBuf-like serialization system optimized for JS"></head>
+<body class="layout-container" data-ice="rootContainer">
+
+<header>
+  <a href="./">Home</a>
+  <a href="./manual/index.html" data-ice="manualHeaderLink">Manual</a>
+  <a href="identifiers.html">Reference</a>
+  <a href="source.html">Source</a>
+  
+  <div class="search-box">
+  <span>
+    <img src="./image/search.png">
+    <span class="search-input-edge"></span><input class="search-input"><span class="search-input-edge"></span>
+  </span>
+    <ul class="search-result"></ul>
+  </div>
+</header>
+
+<nav class="navigation" data-ice="nav"><div>
+  <ul>
+    
+  <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/struct_filehelper.js~Block.html">Block</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/struct_filehelper.js~FileError.html">FileError</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/struct_filehelper.js~FileHelper.html">FileHelper</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/struct_filehelper.js~FileParams.html">FileParams</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/struct_intern.js~STRUCT.html">STRUCT</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/struct_intern2.js~StructArrayField.html">StructArrayField</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/struct_intern2.js~StructBoolField.html">StructBoolField</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/struct_intern2.js~StructByteField.html">StructByteField</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/struct_intern2.js~StructDoubleField.html">StructDoubleField</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/struct_intern2.js~StructFieldType.html">StructFieldType</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/struct_intern2.js~StructFloatField.html">StructFloatField</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/struct_intern2.js~StructIntField.html">StructIntField</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/struct_intern2.js~StructIterField.html">StructIterField</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/struct_intern2.js~StructIterKeysField.html">StructIterKeysField</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/struct_intern2.js~StructShortField.html">StructShortField</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/struct_intern2.js~StructStaticArrayField.html">StructStaticArrayField</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/struct_intern2.js~StructStaticStringField.html">StructStaticStringField</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/struct_intern2.js~StructStringField.html">StructStringField</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/struct_intern2.js~StructStructField.html">StructStructField</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/struct_intern2.js~StructTStructField.html">StructTStructField</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/struct_intern2.js~StructUintField.html">StructUintField</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/struct_intern2.js~StructUshortField.html">StructUshortField</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/struct_parseutil.js~PUTIL_ParseError.html">PUTIL_ParseError</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/struct_parseutil.js~lexer.html">lexer</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/struct_parseutil.js~parser.html">parser</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/struct_parseutil.js~tokdef.html">tokdef</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/struct_parseutil.js~token.html">token</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/struct_util.js~cachering.html">cachering</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-decode_utf8">decode_utf8</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-encode_utf8">encode_utf8</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-pack_byte">pack_byte</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-pack_bytes">pack_bytes</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-pack_double">pack_double</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-pack_float">pack_float</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-pack_int">pack_int</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-pack_short">pack_short</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-pack_static_string">pack_static_string</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-pack_string">pack_string</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-pack_uint">pack_uint</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-pack_ushort">pack_ushort</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-test_utf8">test_utf8</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-unpack_byte">unpack_byte</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-unpack_bytes">unpack_bytes</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-unpack_double">unpack_double</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-unpack_float">unpack_float</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-unpack_int">unpack_int</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-unpack_short">unpack_short</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-unpack_static_string">unpack_static_string</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-unpack_string">unpack_string</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-unpack_uint">unpack_uint</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-unpack_ushort">unpack_ushort</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-versionCoerce">versionCoerce</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-versionLessThan">versionLessThan</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-versionToInt">versionToInt</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-write_scripts">write_scripts</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-Class">Class</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-get_callstack">get_callstack</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-is_obj_lit">is_obj_lit</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-print_stack">print_stack</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-inherit">inherit</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-readObject">readObject</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-register">register</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-useTinyEval">useTinyEval</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-writeObject">writeObject</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-StructFieldTypeMap">StructFieldTypeMap</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-StructEnum">StructEnum</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-StructTypeMap">StructTypeMap</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-StructTypes">StructTypes</a></span></span></li>
+</ul>
+</div>
+</nav>
+
+<div class="content" data-ice="content"><h1 data-ice="title">src/struct_intern2.js</h1>
+<pre class="source-code line-number raw-source-code"><code class="prettyprint linenums" data-ice="content">let warninglvl = 1;
+let debug = 0;
+
+let struct_util = require(&quot;./struct_util&quot;);
+let struct_binpack = require(&quot;./struct_binpack&quot;);
+let parser = require(&quot;./struct_parser.js&quot;);
+
+let pack_int = struct_binpack.pack_int;
+let pack_uint = struct_binpack.pack_uint;
+let pack_ushort = struct_binpack.pack_ushort;
+
+let pack_float = struct_binpack.pack_float;
+let pack_string = struct_binpack.pack_string;
+let pack_byte = struct_binpack.pack_byte;
+let pack_double = struct_binpack.pack_double;
+let pack_static_string = struct_binpack.pack_static_string;
+let pack_short = struct_binpack.pack_short;
+
+let unpack_int = struct_binpack.unpack_int;
+let unpack_float = struct_binpack.unpack_float;
+let unpack_uint = struct_binpack.unpack_uint;
+let unpack_ushort = struct_binpack.unpack_ushort;
+let unpack_string = struct_binpack.unpack_string;
+let unpack_byte = struct_binpack.unpack_byte;
+let unpack_double = struct_binpack.unpack_double;
+let unpack_static_string = struct_binpack.unpack_static_string;
+let unpack_short = struct_binpack.unpack_short;
+
+var _static_envcode_null = &quot;&quot;;
+
+let packer_debug, packer_debug_start, packer_debug_end;
+
+var packdebug_tablevel = 0;
+
+function gen_tabstr(tot) {
+  var ret = &quot;&quot;;
+
+  for (var i = 0; i &lt; tot; i++) {
+    ret += &quot; &quot;;
+  }
+
+  return ret;
+}
+
+exports.setWarningMode = (t) =&gt; {
+  if (typeof t !== &quot;number&quot; || isNaN(t)) {
+    throw new Error(&quot;Expected a single number (&gt;= 0) argument to setWarningMode&quot;);
+  }
+
+  warninglvl = t;
+}
+
+exports.setDebugMode = (t) =&gt; {
+  debug = t;
+
+  if (debug) {
+    packer_debug = function (msg) {
+      if (msg != undefined) {
+        var t = gen_tabstr(packdebug_tablevel);
+        console.log(t + msg);
+      } else {
+        console.log(&quot;Warning: undefined msg&quot;);
+      }
+    };
+    packer_debug_start = function (funcname) {
+      packer_debug(&quot;Start &quot; + funcname);
+      packdebug_tablevel++;
+    };
+
+    packer_debug_end = function (funcname) {
+      packdebug_tablevel--;
+      packer_debug(&quot;Leave &quot; + funcname);
+    };
+  }
+  else {
+    packer_debug = function () {
+    };
+    packer_debug_start = function () {
+    };
+    packer_debug_end = function () {
+    };
+  }
+}
+
+exports.setDebugMode(debug);
+
+exports.StructFieldTypes = [];
+exports.StructFieldTypeMap = {};
+
+function unpack_field(manager, data, type, uctx) {
+  let name;
+  
+  if (debug) {
+    name = exports.StructFieldTypeMap[type.type].define().name;
+    packer_debug_start(&quot;R start &quot; + name);
+  }
+  
+  let ret = exports.StructFieldTypeMap[type.type].unpack(manager, data, type, uctx);
+  
+  if (debug) {
+    packer_debug_end(&quot;R end &quot; + name);
+  }
+  
+  return ret;
+}
+
+let fakeFields = new struct_util.cachering(() =&gt; {return {type : undefined, get : undefined, set : undefined}}, 256);
+
+function fmt_type(type) {
+  return exports.StructFieldTypeMap[type.type].format(type);
+}
+
+function do_pack(manager, data, val, obj, field, type) {
+  let name;
+  
+  if (debug) {
+    name = exports.StructFieldTypeMap[type.type].define().name;
+    packer_debug_start(&quot;W start &quot; + name);
+  }
+
+  let typeid = type;
+  if (typeof typeid !== &quot;number&quot;) {
+    typeid = typeid.type;
+  }
+  
+  let ret = exports.StructFieldTypeMap[typeid].pack(manager, data, val, obj, field, type);
+  
+  if (debug) {
+    packer_debug_end(&quot;W end &quot; + name);
+  } 
+  
+  return ret;
+}
+
+let StructEnum = parser.StructEnum;
+
+var _ws_env = [[undefined, undefined]];
+
+let StructFieldType = exports.StructFieldType = class StructFieldType {
+  static pack(manager, data, val, obj, field, type) {
+  }
+  
+  static unpack(manager, data, type, uctx) {
+  }
+  
+  static format(type) {
+    return this.define().name;
+  }
+  
+  static define() {return {
+    type : -1,
+    name : &quot;(error)&quot;
+  }}
+  
+  static register(cls) {
+    if (exports.StructFieldTypes.indexOf(cls) &gt;= 0) {
+      throw new Error(&quot;class already registered&quot;);
+    }
+    
+    if (cls.define === StructFieldType.define) {
+      throw new Error(&quot;you forgot to make a define() static method&quot;);
+    }
+    
+    if (cls.define().type === undefined) {
+      throw new Error(&quot;cls.define().type was undefined!&quot;);
+    }
+    
+    if (cls.define().type in exports.StructFieldTypeMap) {
+      throw new Error(&quot;type &quot; + cls.define().type + &quot; is used by another StructFieldType subclass&quot;);
+    }
+    
+    exports.StructFieldTypes.push(cls);
+    exports.StructFieldTypeMap[cls.define().type] = cls;
+  }
+}
+
+class StructIntField extends StructFieldType {
+  static pack(manager, data, val, obj, field, type) {
+    pack_int(data, val);
+  }
+  
+  static unpack(manager, data, type, uctx) {
+    return unpack_int(data, uctx);
+  }   
+  
+  static define() {return {
+    type : StructEnum.T_INT,
+    name : &quot;int&quot;
+  }}
+}
+StructFieldType.register(StructIntField);
+
+class StructFloatField extends StructFieldType {
+  static pack(manager, data, val, obj, field, type) {
+    pack_float(data, val);
+  }
+  
+  static unpack(manager, data, type, uctx) {
+    return unpack_float(data, uctx);
+  }   
+  
+  static define() {return {
+    type : StructEnum.T_FLOAT,
+    name : &quot;float&quot;
+  }}
+}
+StructFieldType.register(StructFloatField);
+
+class StructDoubleField extends StructFieldType {
+  static pack(manager, data, val, obj, field, type) {
+    pack_double(data, val);
+  }
+  
+  static unpack(manager, data, type, uctx) {
+    return unpack_double(data, uctx);
+  }   
+  
+  static define() {return {
+    type : StructEnum.T_DOUBLE,
+    name : &quot;double&quot;
+  }}
+}
+StructFieldType.register(StructDoubleField);
+
+class StructStringField extends StructFieldType {
+  static pack(manager, data, val, obj, field, type) {
+    val = !val ? &quot;&quot; : val;
+    
+    pack_string(data, val);
+  }
+  
+  static unpack(manager, data, type, uctx) {
+    return unpack_string(data, uctx);
+  }   
+  
+  static define() {return {
+    type : StructEnum.T_STRING,
+    name : &quot;string&quot;
+  }}
+}
+StructFieldType.register(StructStringField);
+
+class StructStaticStringField extends StructFieldType {
+  static pack(manager, data, val, obj, field, type) {
+    val = !val ? &quot;&quot; : val;
+    
+    pack_static_string(data, val, type.data.maxlength);
+  }
+  
+  static format(type) {
+    return `static_string[${type.data.maxlength}]`;
+  }
+ 
+  static unpack(manager, data, type, uctx) {
+    return unpack_static_string(data, uctx, type.data.maxlength);
+  }   
+  
+  static define() {return {
+    type : StructEnum.T_STATIC_STRING,
+    name : &quot;static_string&quot;
+  }}
+}
+StructFieldType.register(StructStaticStringField);
+
+class StructStructField extends StructFieldType {
+  static pack(manager, data, val, obj, field, type) {
+    manager.write_struct(data, val, manager.get_struct(type.data));
+  }
+  
+  static format(type) {
+    return type.data;
+  }
+  
+  static unpack(manager, data, type, uctx) {
+    var cls2 = manager.get_struct_cls(type.data);
+    return manager.read_object(data, cls2, uctx);
+  }   
+  
+  static define() {return {
+    type : StructEnum.T_STRUCT,
+    name : &quot;struct&quot;
+  }}
+}
+StructFieldType.register(StructStructField);
+
+class StructTStructField extends StructFieldType {
+  static pack(manager, data, val, obj, field, type) {
+    var cls = manager.get_struct_cls(type.data);
+    var stt = manager.get_struct(type.data);
+
+    //make sure inheritance is correct
+    if (val.constructor.structName != type.data &amp;&amp; (val instanceof cls)) {
+      //if (DEBUG.Struct) {
+      //    console.log(val.constructor.structName+&quot; inherits from &quot;+cls.structName);
+      //}
+      stt = manager.get_struct(val.constructor.structName);
+    } else if (val.constructor.structName == type.data) {
+      stt = manager.get_struct(type.data);
+    } else {
+      console.trace();
+      throw new Error(&quot;Bad struct &quot; + val.constructor.structName + &quot; passed to write_struct&quot;);
+    }
+
+    packer_debug(&quot;int &quot; + stt.id);
+
+    struct_binpack.pack_int(data, stt.id);
+    manager.write_struct(data, val, stt);
+  }
+  
+  static format(type) {
+    return &quot;abstract(&quot; + type.data + &quot;)&quot;;
+  }
+  
+  static unpack(manager, data, type, uctx) {
+    var id = struct_binpack.unpack_int(data, uctx);
+
+    packer_debug(&quot;-int &quot; + id);
+    if (!(id in manager.struct_ids)) {
+      packer_debug(&quot;struct id: &quot; + id);
+      console.trace();
+      console.log(id);
+      console.log(manager.struct_ids);
+      packer_debug_end(&quot;tstruct&quot;);
+      throw new Error(&quot;Unknown struct type &quot; + id + &quot;.&quot;);
+    }
+
+    var cls2 = manager.get_struct_id(id);
+
+    packer_debug(&quot;struct name: &quot; + cls2.name);
+    cls2 = manager.struct_cls[cls2.name];
+
+    let ret =  manager.read_object(data, cls2, uctx);
+    //packer_debug(&quot;ret&quot;, ret);
+
+    return ret;
+  }   
+  
+  static define() {return {
+    type : StructEnum.T_TSTRUCT,
+    name : &quot;tstruct&quot;
+  }}
+}
+StructFieldType.register(StructTStructField);
+
+class StructArrayField extends StructFieldType {
+  static pack(manager, data, val, obj, field, type) {
+    if (val == undefined) {
+      console.trace();
+      console.log(&quot;Undefined array fed to struct struct packer!&quot;);
+      console.log(&quot;Field: &quot;, field);
+      console.log(&quot;Type: &quot;, type);
+      console.log(&quot;&quot;);
+      packer_debug(&quot;int 0&quot;);
+      struct_binpack.pack_int(data, 0);
+      return;
+    }
+
+    packer_debug(&quot;int &quot; + val.length);
+    struct_binpack.pack_int(data, val.length);
+
+    var d = type.data;
+
+    var itername = d.iname;
+    var type2 = d.type;
+
+    var env = _ws_env;
+    for (var i = 0; i &lt; val.length; i++) {
+      var val2 = val[i];
+      if (itername != &quot;&quot; &amp;&amp; itername != undefined &amp;&amp; field.get) {
+        env[0][0] = itername;
+        env[0][1] = val2;
+        val2 = manager._env_call(field.get, obj, env);
+      }
+      
+      //XXX not sure I really need this fakeField stub here. . .
+      let fakeField = fakeFields.next();
+      fakeField.type = type2;
+      do_pack(manager, data, val2, obj, fakeField, type2);
+    }
+  }
+  
+  static format(type) {
+    if (type.data.iname != &quot;&quot; &amp;&amp; type.data.iname != undefined) {
+      return &quot;array(&quot; + type.data.iname + &quot;, &quot; + fmt_type(type.data.type) + &quot;)&quot;;
+    }
+    else {
+      return &quot;array(&quot; + fmt_type(type.data.type) + &quot;)&quot;;
+    }
+  }
+  
+  static unpack(manager, data, type, uctx) {
+    var len = struct_binpack.unpack_int(data, uctx);
+    packer_debug(&quot;-int &quot; + len);
+
+    var arr = new Array(len);
+    for (var i = 0; i &lt; len; i++) {
+      arr[i] = unpack_field(manager, data, type.data.type, uctx);
+    }
+    
+    return arr;
+  }   
+  
+  static define() {return {
+    type : StructEnum.T_ARRAY,
+    name : &quot;array&quot;
+  }}
+}
+StructFieldType.register(StructArrayField);
+
+class StructIterField extends StructFieldType {
+  static pack(manager, data, val, obj, field, type) {
+    //this was originally implemented to use ES6 iterators.
+    function forEach(cb, thisvar) {
+      if (val &amp;&amp; val[Symbol.iterator]) {
+        for (let item of val) {
+          cb.call(thisvar, item);
+        }
+      } else if (val &amp;&amp; val.forEach) {
+        val.forEach(function(item) {
+          cb.call(thisvar, item);
+        });
+      } else {
+        console.trace();
+        console.log(&quot;Undefined iterable list fed to struct struct packer!&quot;, val);
+        console.log(&quot;Field: &quot;, field);
+        console.log(&quot;Type: &quot;, type);
+        console.log(&quot;&quot;);
+      }
+    }
+    
+    let len = 0.0;
+    forEach(() =&gt; {
+      len++;
+    });
+
+    packer_debug(&quot;int &quot; + len);
+    struct_binpack.pack_int(data, len);
+
+    var d = type.data, itername = d.iname, type2 = d.type;
+    var env = _ws_env;
+
+    var i = 0;
+    forEach(function(val2) {
+      if (i &gt;= len) {
+        if (warninglvl &gt; 0) 
+          console.trace(&quot;Warning: iterator returned different length of list!&quot;, val, i);
+        return;
+      }
+
+      if (itername != &quot;&quot; &amp;&amp; itername != undefined &amp;&amp; field.get) {
+        env[0][0] = itername;
+        env[0][1] = val2;
+        val2 = manager._env_call(field.get, obj, env);
+      }
+
+      //XXX not sure I really need this fakeField stub here. . .
+      let fakeField = fakeFields.next();
+      fakeField.type = type2;
+      do_pack(manager, data, val2, obj, fakeField, type2);
+
+      i++;
+    }, this);
+  }
+  
+  static format(type) {
+    if (type.data.iname != &quot;&quot; &amp;&amp; type.data.iname != undefined) {
+      return &quot;iter(&quot; + type.data.iname + &quot;, &quot; + fmt_type(type.data.type) + &quot;)&quot;;
+    }
+    else {
+      return &quot;iter(&quot; + fmt_type(type.data.type) + &quot;)&quot;;
+    }
+  }
+  
+  static unpack(manager, data, type, uctx) {
+    var len = struct_binpack.unpack_int(data, uctx);
+    packer_debug(&quot;-int &quot; + len);
+
+    var arr = new Array(len);
+    for (var i = 0; i &lt; len; i++) {
+      arr[i] = unpack_field(manager, data, type.data.type, uctx);
+    }
+
+    return arr;
+  }   
+  
+  static define() {return {
+    type : StructEnum.T_ITER,
+    name : &quot;iter&quot;
+  }}
+}
+StructFieldType.register(StructIterField);
+
+class StructShortField extends StructFieldType {
+  static pack(manager, data, val, obj, field, type) {
+    pack_short(data, val);
+  }
+  
+  static unpack(manager, data, type, uctx) {
+    return unpack_short(data, uctx);
+  }   
+  
+  static define() {return {
+    type : StructEnum.T_SHORT,
+    name : &quot;short&quot;
+  }}
+}
+StructFieldType.register(StructShortField);
+
+class StructByteField extends StructFieldType {
+  static pack(manager, data, val, obj, field, type) {
+    pack_byte(data, val);
+  }
+  
+  static unpack(manager, data, type, uctx) {
+    return unpack_byte(data, uctx);
+  }   
+  
+  static define() {return {
+    type : StructEnum.T_BYTE,
+    name : &quot;byte&quot;
+  }}
+}
+StructFieldType.register(StructByteField);
+
+class StructBoolField extends StructFieldType {
+  static pack(manager, data, val, obj, field, type) {
+    pack_byte(data, !!val);
+  }
+  
+  static unpack(manager, data, type, uctx) {
+    return !!unpack_byte(data, uctx);
+  }   
+  
+  static define() {return {
+    type : StructEnum.T_BOOL,
+    name : &quot;bool&quot;
+  }}
+}
+StructFieldType.register(StructBoolField);
+
+class StructIterKeysField extends StructFieldType {
+  static pack(manager, data, val, obj, field, type) {
+    //this was originally implemented to use ES6 iterators.
+    if ((typeof val !== &quot;object&quot; &amp;&amp; typeof val !== &quot;function&quot;) || val === null) {
+        console.warn(&quot;Bad object fed to iterkeys in struct packer!&quot;, val);
+        console.log(&quot;Field: &quot;, field);
+        console.log(&quot;Type: &quot;, type);
+        console.log(&quot;&quot;);
+        
+        struct_binpack.pack_int(data, 0);
+        
+        packer_debug_end(&quot;iterkeys&quot;);
+        return;
+    }
+
+    let len = 0.0;
+    for (let k in val) {
+      len++;
+    }
+
+    packer_debug(&quot;int &quot; + len);
+    struct_binpack.pack_int(data, len);
+
+    var d = type.data, itername = d.iname, type2 = d.type;
+    var env = _ws_env;
+
+    var i = 0;
+    for (let val2 in val) {
+      if (i &gt;= len) {
+        if (warninglvl &gt; 0) 
+          console.warn(&quot;Warning: object keys magically changed on us&quot;, val, i);
+        return;
+      }
+
+      if (itername &amp;&amp; itername.trim().length &gt; 0 &amp;&amp; field.get) {
+        env[0][0] = itername;
+        env[0][1] = val2;
+        val2 = manager._env_call(field.get, obj, env);
+      } else {
+        val2 = val[val2]; //fetch value
+      }
+
+      var f2 = {type: type2, get: undefined, set: undefined};
+      do_pack(manager, data, val2, obj, f2, type2);
+
+      i++;
+    }
+  }
+  
+  static format(type) {
+    if (type.data.iname != &quot;&quot; &amp;&amp; type.data.iname != undefined) {
+      return &quot;iterkeys(&quot; + type.data.iname + &quot;, &quot; + fmt_type(type.data.type) + &quot;)&quot;;
+    }
+    else {
+      return &quot;iterkeys(&quot; + fmt_type(type.data.type) + &quot;)&quot;;
+    }
+  }
+  
+  static unpack(manager, data, type, uctx) {
+    var len = unpack_int(data, uctx);
+    packer_debug(&quot;-int &quot; + len);
+
+    var arr = new Array(len);
+    for (var i = 0; i &lt; len; i++) {
+      arr[i] = unpack_field(manager, data, type.data.type, uctx);
+    }
+
+    return arr;
+  }   
+  
+  static define() {return {
+    type : StructEnum.T_ITERKEYS,
+    name : &quot;iterkeys&quot;
+  }}
+}
+StructFieldType.register(StructIterKeysField);
+
+class StructUintField extends StructFieldType {
+  static pack(manager, data, val, obj, field, type) {
+    pack_uint(data, val);
+  }
+  
+  static unpack(manager, data, type, uctx) {
+    return unpack_uint(data, uctx);
+  }   
+  
+  static define() {return {
+    type : StructEnum.T_UINT,
+    name : &quot;uint&quot;
+  }}
+}
+StructFieldType.register(StructUintField);
+
+
+class StructUshortField extends StructFieldType {
+  static pack(manager, data, val, obj, field, type) {
+    pack_ushort(data, val);
+  }
+  
+  static unpack(manager, data, type, uctx) {
+    return unpack_ushort(data, uctx);
+  }   
+  
+  static define() {return {
+    type : StructEnum.T_USHORT,
+    name : &quot;ushort&quot;
+  }}
+}
+StructFieldType.register(StructUshortField);
+
+class StructStaticArrayField extends StructFieldType {
+  static pack(manager, data, val, obj, field, type) {
+    pack_int(data, 1);
+  }
+  
+  static format(type) {
+    let type2 = exports.StructFieldTypeMap[type.data.type.type].format(type.data.type);
+    
+    let ret = `static_array[${type2}, ${type.data.size}`;
+    
+    if (type.data.iname) {
+      ret += `, ${type.data.iname}`;
+    }
+    ret += `]`;
+    
+    return ret;
+  }
+  
+  static unpack(manager, data, type, uctx) {
+    return unpack_int(data, uctx);
+  }   
+  
+  static define() {return {
+    type : StructEnum.T_STATIC_ARRAY,
+    name : &quot;static_array&quot;
+  }}
+}
+StructFieldType.register(StructStaticArrayField);
+
+</code></pre>
+
+</div>
+
+<footer class="footer">
+  Generated by <a href="https://esdoc.org">ESDoc<span data-ice="esdocVersion">(1.1.0)</span><img src="./image/esdoc-logo-mini-black.png"></a>
+</footer>
+
+<script src="script/search_index.js"></script>
+<script src="script/search.js"></script>
+<script src="script/pretty-print.js"></script>
+<script src="script/inherited-summary.js"></script>
+<script src="script/test-summary.js"></script>
+<script src="script/inner-link.js"></script>
+<script src="script/patch-for-local.js"></script>
+</body>
+</html>

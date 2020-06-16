@@ -84,7 +84,7 @@ function parseFile(f, ev) {
   
   let tstbuf = `
   class f {
-    method(a, b/*b param*/,     sssc=10) {
+    static method(a, b/*b param*/,     sssc=10) {
       return c;
     }
     
@@ -124,7 +124,7 @@ function parseFile(f, ev) {
 
 
   function isNode(n) {
-    if (!n || typeof n !== "object")
+    if (!n || typeof n !== "object" || !n.type)
       return false;
     if (n.constructor !== undefined && n.constructor.name === "Node")
       return true;
@@ -142,6 +142,23 @@ function parseFile(f, ev) {
         return;
       }
       
+      let vset = new Set();
+      
+      function visit2(n, state) {
+        if (isNode(n)) {
+          return visit(n, state);
+        }
+        
+        for (let k in n) {
+          let v = n[k];
+          
+          if (typeof v === "object" && v !== null && !vset.has(v)) {
+            vset.add(v);
+            visit2(v, state);
+          }
+        }
+      }
+      
       node1.__gen = this._walkGen;
       
       for (let k in node1) {
@@ -156,12 +173,13 @@ function parseFile(f, ev) {
         }
         
         let isArray = false;
+        
         if (Array.isArray(v)) {//v[0] !== undefined && v.length || Array.isArray(v)) {
           isArray = true;
           
           for (let n of v) {
-            if (isNode(n)) {
-              visit(n, state)
+            if (typeof n === "object" && n !== null) {
+              visit2(n, state);
             }
           }
         }
@@ -171,13 +189,13 @@ function parseFile(f, ev) {
           for (let k in v) {
             let v2 = v[k];
               
-            if (isNode(v2) && v2.__gen !== this._walkGen) {
-              visit(v2, state);
+            if (typeof v2 === "object" && v2 !== null && v2.__gen !== this._walkGen) {
+              visit2(v2, state);
             }
           }
           continue;
         } else {        
-          visit(v, state);
+          visit2(v, state);
         }
       }
     },
@@ -283,7 +301,7 @@ function parseFile(f, ev) {
   });
   
   //console.log(node)
-  ///process.exit()
+  //process.exit()
   /*
   node = acorn.parse(buf, {
      ecmaVersion : 6,
@@ -550,8 +568,8 @@ function parseFile(f, ev) {
   let methods = [];
   let classes = [];
   
-  console.log("WALK METHODS");
-  
+  //process.exit();
+ 
   walk.recursive(node, {}, {
     File(n, state, visit) {
       visit(n.program, state);
@@ -672,6 +690,10 @@ function parseFile(f, ev) {
   let _nvisit = new Set();
   
   function makeDoc(args, node) {
+    if (!node) {
+      throw new Error("node was undefined");
+    }
+    
     if (args.description) {
       args.description = "<pre>" + args.description + "</pre>";
     }
@@ -685,8 +707,10 @@ function parseFile(f, ev) {
       throw new Error("node cannot be undefined");
     }
     
+    ASTNodeContainer._docId = idgen = Math.max(ASTNodeContainer._docId, idgen+1);
+    
     let ret = Object.assign({
-      __docId__ : idgen++,
+      __docId__ : idgen,
       "static" : true
     }, args);
     
@@ -720,7 +744,6 @@ function parseFile(f, ev) {
     }
     
     if (!found) {
-      ASTNodeContainer._docId = idgen;
       ASTNodeContainer.addNode(node);
       ev.data.docs.push(ret);
     }
