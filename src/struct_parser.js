@@ -6,10 +6,10 @@ let struct_parseutil = require("./struct_parseutil");
 //the version I originally wrote (which had a few application-specific types)
 //and this one do not become totally incompatible.
 var StructEnum = exports.StructEnum = {
-  T_INT    : 0,
-  T_FLOAT  : 1,
-  T_DOUBLE : 2,
-  T_STRING : 7,
+  T_INT      : 0,
+  T_FLOAT    : 1,
+  T_DOUBLE   : 2,
+  T_STRING   : 7,
   T_STATIC_STRING : 8, //fixed-length string
   T_STRUCT   : 9, 
   T_TSTRUCT  : 10,
@@ -18,11 +18,16 @@ var StructEnum = exports.StructEnum = {
   T_SHORT    : 13,
   T_BYTE     : 14,
   T_BOOL     : 15,
-  T_ITERKEYS : 16
+  T_ITERKEYS : 16,
+  T_UINT     : 17,
+  T_USHORT   : 18,
+  T_STATIC_ARRAY : 19
 };
 
 var StructTypes = exports.StructTypes = {
   "int": StructEnum.T_INT, 
+  "uint": StructEnum.T_UINT, 
+  "ushort": StructEnum.T_USHORT, 
   "float": StructEnum.T_FLOAT, 
   "double": StructEnum.T_DOUBLE, 
   "string": StructEnum.T_STRING,
@@ -53,12 +58,13 @@ function gen_tabstr(t) {
 
 function StructParser() {
   var basic_types=new struct_util.set([
-    "int", "float", "double", "string", "short", "byte", "bool"
+    "int", "float", "double", "string", "short", "byte", "bool", "uint", "ushort"
   ]);
   
   var reserved_tokens=new struct_util.set([
     "int", "float", "double", "string", "static_string", "array", 
-    "iter", "abstract", "short", "byte", "bool", "iterkeys"
+    "iter", "abstract", "short", "byte", "bool", "iterkeys", "uint", "ushort",
+    "static_array"
   ]);
 
   function tk(name, re, func) {
@@ -71,7 +77,8 @@ function StructParser() {
           t.type = t.value.toUpperCase();
       }
       return t;
-    }), tk("OPEN", /\{/), 
+    }, "identifier"), 
+    tk("OPEN", /\{/), 
     tk("EQUALS", /=/), 
     tk("CLOSE", /}/), 
     tk("COLON", /:/), 
@@ -98,13 +105,13 @@ function StructParser() {
     tk("LPARAM", /\(/), 
     tk("RPARAM", /\)/), 
     tk("COMMA", /,/), 
-    tk("NUM", /[0-9]+/), 
+    tk("NUM", /[0-9]+/, undefined, "number"), 
     tk("SEMI", /;/), 
     tk("NEWLINE", /\n/, function(t) {
       t.lexer.lineno+=1;
-    }),
+    }, "newline"),
     tk("SPACE", / |\t/, function(t) {
-    })
+    }, "whitespace")
   ];
   
   reserved_tokens.forEach(function(rt) {
@@ -164,6 +171,30 @@ function StructParser() {
     return {type: StructEnum.T_ITER, data: {type: arraytype, iname: itername}}
   }
   
+  function p_StaticArray(p) {
+    p.expect("STATIC_ARRAY");
+    p.expect("SOPEN");
+    var arraytype=p_Type(p);
+    var itername="";
+    
+    p.expect("COMMA")
+    var size = p.expect("NUM");
+    
+    if (size < 0 || Math.abs(size - Math.floor(size)) > 0.000001) { 
+      console.log(Math.abs(size - Math.floor(size)));
+      p.error("Expected an integer");
+    }
+    
+    size = Math.floor(size);
+    
+    if (p.optional("COMMA")) {
+        itername = p_Type(p).data;
+    }
+    
+    p.expect("SCLOSE");
+    return {type: StructEnum.T_STATIC_ARRAY, data: {type: arraytype, size: size, iname: itername}}
+  }
+  
   function p_IterKeys(p) {
     p.expect("ITERKEYS");
     p.expect("LPARAM");
@@ -203,6 +234,8 @@ function StructParser() {
         return p_Iter(p);
     } else if (tok.type=="ITERKEYS") {
         return p_IterKeys(p);
+    } else if (tok.type === "STATIC_ARRAY") {
+      return p_StaticArray(p);
     } else if (tok.type=="STATIC_STRING") {
         return p_Static_String(p);
     } else if (tok.type=="ABSTRACT") {

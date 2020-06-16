@@ -3,6 +3,30 @@ let struct_typesystem = require("./struct_typesystem");
 var Class = struct_typesystem.Class;
 var _o_basic_types = {"String": 0, "Number": 0, "Array": 0, "Function": 0};
 
+exports.cachering = class cachering extends Array {
+  constructor(cb, tot) {
+    super();
+    this.length = tot;
+    this.cur = 0;
+    
+    for (let i=0; i<tot; i++) {
+      this[i] = cb();
+    }
+  }
+  
+  next() {
+    let ret = this[this.cur];
+    
+    this.cur = (this.cur + 1) % this.length;
+    
+    return ret;
+  }
+  
+  static fromConstructor(cls, tot) {
+    return new exports.cachering(() => new cls(), tot);
+  }
+}
+
 function isNodeJS() {
   ret = typeof process !== "undefined";
   ret = ret && process.release;

@@ -31,10 +31,27 @@ exports.token = class token {
 }
 
 exports.tokdef = class tokdef {
-  constructor(name, regexpr, func) {
+  constructor(name, regexpr, func, example) {
     this.name = name;
     this.re = regexpr;
     this.func = func;
+    this.example = example;
+    
+    if (example === undefined && regexpr) {
+      let s = "" + regexpr;
+      if (s.startsWith("/") && s.endsWith("/")) {
+        s = s.slice(1, s.length-1);
+      }
+      
+      if (s.startsWith("\\")) {
+        s = s.slice(1, s.length);
+      }
+      s = s.trim();
+      
+      if (s.length === 1) {
+        this.example = s;
+      }
+    }
   }
 }
 
@@ -282,8 +299,17 @@ const parser = exports.parser = class parser {
 
   expect(type, msg) {
     var tok = this.next();
-    if (msg == undefined)
+    
+    if (msg == undefined) {
       msg = type;
+      
+      for (let tk of this.lexer.tokdef) {
+        if (tk.name === type && tk.example) {
+          msg = tk.example;
+        }
+      }
+    }
+    
     if (tok == undefined || tok.type != type) {
       this.error(tok, "Expected " + msg);
     }

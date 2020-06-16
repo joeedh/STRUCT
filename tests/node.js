@@ -14,16 +14,24 @@ class Point {
     this.co = [x, y];
     this.flag = 0;
     this.id = -1;
+    this.sid = 23;
+    this.fid = 3.5;
+    this.did = 1.5
+    this.bid = 255;
   }
 }
 
-Point.STRUCT = [
-"node.Point {",
-"  co   : array(float);",
-"  flag : int | this.flag;",
-"  id   : int;",
-"}"
-].join("\n");
+Point.STRUCT = `
+node.Point {
+  co   : array(float);
+  flag : int | this.flag;
+  id   : int;
+  sid  : short;
+  bid  : byte;
+  fid  : float;
+  did  : double;
+}`;
+
 structjs.manager.add_class(Point, "node.Point");
 
 class Polygon {
@@ -31,6 +39,7 @@ class Polygon {
     this.points = [];
     this.flag = 0;
     this.id = -1;
+    
     this.pointmap = {
       a : 1,
       b : 2,
@@ -42,19 +51,26 @@ class Polygon {
       c : 5
     };
     
+    this.uid = Math.pow(2, 32)-1;
+    this.usid = (1<<16)-1;
+    
     if (points !== undefined) {
       for (let p of points) {
         this.points.push(p);
       }
     }
+    
+    this.points3 = this.points;
   }
   
   loadSTRUCT(reader) {
     reader(this);
     
-    console.log(this.pointmap);
-    console.log(this.pointmap2);
+    //console.log(this.points2);
+    //console.log(this.pointmap);
+    //console.log(this.pointmap2);
   }
+  
   toJSON() {
     let points = [];
     
@@ -63,9 +79,11 @@ class Polygon {
     }
     
     return {
-      points : points,
-      id     : this.id,
-      flag   : this.flag
+      points  : points,
+      points2 : this.points, 
+      id      : this.id,
+      uid     : this.uid,
+      usid    : this.usid
     }
   }
 }
@@ -73,9 +91,14 @@ class Polygon {
 Polygon.STRUCT = `
 node.Polygon {
   id        : int;
+  uid       : uint;
+  usid      : ushort;
   flag      : int;
   pointmap  : iterkeys(e, int);
   pointmap2 : iterkeys(int);
+  points3   : static_array[node.Point, 64];
+  str       : static_string[32] | "asdsa";
+  points2   : iter(node.Point) | this.points;
   points    : array(e, int) | e.id;
   active    : int | this.points.active !== undefined ? this.points.active : -1;
 }`;
@@ -134,7 +157,7 @@ class Canvas {
 Canvas.STRUCT = [
 "node.Canvas {",
 "  idgen    : int;",
-"  points   : array(node.Point);",
+"  points   : array(abstract(node.Point));",
 "  polygons : array(node.Polygon);",
 "}"
 ].join("\n");
@@ -169,6 +192,9 @@ function test_main() {
   let data8 = new Uint8Array(data.buffer);
   
   fs.writeFileSync("node_test.bin", data8);
+
+  console.log(structjs.write_scripts(writer.struct, true));
+  //return;
   
   //read back data
   let reader = new filehelper.FileHelper(params);
@@ -182,7 +208,7 @@ function test_main() {
   passed = passed && JSON.stringify(writer.version) == JSON.stringify(reader.version);
   
   if (!passed) {
-    console.log(json2);
+    console.log(json1, "\n\n\n\n\n\n\n\n\n", json2, json1.length, json2.length);
   }
   
   console.log(passed ? "PASSED" : "FAILED")

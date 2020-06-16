@@ -47,6 +47,20 @@ exports.inherit = function (child, parent, structName = child.name) {
   return exports.STRUCT.inherit(...arguments);
 }
 
+/**
+@param data : DataView
+*/
+exports.readObject = function(data, cls, __uctx=undefined) {
+  return exports.manager.readObject(data, cls, __uctx);
+}
+
+/**
+@param data : Array instance to write bytes to
+*/
+exports.writeObject = function(data, obj) {
+  return exports.manager.writeObject(data.obj);
+}
+
 exports.setDebugMode = struct_intern.setDebugMode;
 exports.setWarningMode = struct_intern.setWarningMode;
 

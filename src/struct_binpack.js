@@ -33,6 +33,22 @@ var pack_int = exports.pack_int = function (array, val) {
   array.push(uint8_view[3]);
 }
 
+var pack_uint = exports.pack_uint = function (array, val) {
+  temp_dataview.setUint32(0, val, exports.STRUCT_ENDIAN);
+
+  array.push(uint8_view[0]);
+  array.push(uint8_view[1]);
+  array.push(uint8_view[2]);
+  array.push(uint8_view[3]);
+}
+
+var pack_ushort = exports.pack_ushort = function (array, val) {
+  temp_dataview.setUint16(0, val, exports.STRUCT_ENDIAN);
+
+  array.push(uint8_view[0]);
+  array.push(uint8_view[1]);
+}
+
 exports.pack_float = function (array, val) {
   temp_dataview.setFloat32(0, val, exports.STRUCT_ENDIAN);
 
@@ -196,6 +212,16 @@ var unpack_byte = exports.unpack_byte = function (dview, uctx) {
 var unpack_int = exports.unpack_int = function (dview, uctx) {
   uctx.i += 4;
   return dview.getInt32(uctx.i - 4, exports.STRUCT_ENDIAN);
+}
+
+var unpack_uint = exports.unpack_uint = function (dview, uctx) {
+  uctx.i += 4;
+  return dview.getUint32(uctx.i - 4, exports.STRUCT_ENDIAN);
+}
+
+var unpack_ushort = exports.unpack_ushort = function (dview, uctx) {
+  uctx.i += 2;
+  return dview.getUint16(uctx.i - 2, exports.STRUCT_ENDIAN);
 }
 
 exports.unpack_float = function (dview, uctx) {
