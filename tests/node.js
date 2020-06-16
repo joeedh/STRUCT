@@ -37,6 +37,7 @@ structjs.manager.add_class(Point, "node.Point");
 class Polygon {
   constructor(points) {
     this.points = [];
+    this.idgen = 0;
     this.flag = 0;
     this.id = -1;
     
@@ -56,11 +57,15 @@ class Polygon {
     
     if (points !== undefined) {
       for (let p of points) {
+        p.id = this.idgen++;
         this.points.push(p);
       }
     }
     
-    this.points3 = this.points;
+    this.points3 = this.points.concat([]);
+    while (this.points3.length < 32) {
+      this.points3.push(this.points3[this.points3.length-1]);
+    }
   }
   
   loadSTRUCT(reader) {
@@ -69,6 +74,17 @@ class Polygon {
     //console.log(this.points2);
     //console.log(this.pointmap);
     //console.log(this.pointmap2);
+  }
+  
+  afterSTRUCT() {
+    let idmap = {};
+    for (let p of this.points) {
+      idmap[p.id] = p;
+    }
+    
+    for (let i=0; i<this.points3.length; i++) {
+      this.points3[i] = idmap[this.points3[i]];
+    }
   }
   
   toJSON() {
@@ -81,6 +97,7 @@ class Polygon {
     return {
       points  : points,
       points2 : this.points, 
+      points3 : this.points3,
       id      : this.id,
       uid     : this.uid,
       usid    : this.usid
@@ -96,7 +113,7 @@ node.Polygon {
   flag      : int;
   pointmap  : iterkeys(e, int);
   pointmap2 : iterkeys(int);
-  points3   : static_array[node.Point, 64];
+  points3   : static_array[short, 32, e] | e.id;
   str       : static_string[32] | "asdsa";
   points2   : iter(node.Point) | this.points;
   points    : array(e, int) | e.id;
@@ -150,6 +167,10 @@ class Canvas {
       for (let i=0; i<p.points.length; i++) {
         p.points[i] = this.idmap[p.points[i]];
       }
+    }
+    
+    for (let p of this.polygons) {
+      p.afterSTRUCT();
     }
   }
 }
@@ -207,6 +228,7 @@ function test_main() {
   let passed = json1.length == json2.length;
   passed = passed && JSON.stringify(writer.version) == JSON.stringify(reader.version);
   
+  console.log(json2.points3);
   if (!passed) {
     console.log(json1, "\n\n\n\n\n\n\n\n\n", json2, json1.length, json2.length);
   }

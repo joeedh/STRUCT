@@ -534,10 +534,9 @@ var STRUCT = exports.STRUCT = class STRUCT {
 
   write_struct(data, obj, stt) {
     function use_helper_js(field) {
-      if (field.type.type == StructEnum.T_ARRAY || field.type.type == StructEnum.T_ITER || field.type.type == StructEnum.T_ITERKEYS) {
-        return field.type.data.iname == undefined || field.type.data.iname == "";
-      }
-      return true;
+      let type = field.type.type;
+      let cls = StructFieldTypeMap[type];
+      return cls.useHelperJS(field);
     }
 
     var fields = stt.fields;

@@ -148,6 +148,13 @@ let StructFieldType = exports.StructFieldType = class StructFieldType {
   }
   
   /**
+  return false to override default
+  helper js for packing
+  */
+  static useHelperJS(field) {
+    return true;
+  }
+  /**
   Define field class info.
   
   Example:
@@ -401,6 +408,10 @@ class StructArrayField extends StructFieldType {
       return "array(" + fmt_type(type.data.type) + ")";
     }
   }
+
+  static useHelperJS(field) {
+    return !field.type.data.iname;
+  }
   
   static unpack(manager, data, type, uctx) {
     var len = struct_binpack.unpack_int(data, uctx);
@@ -474,6 +485,10 @@ class StructIterField extends StructFieldType {
 
       i++;
     }, this);
+  }
+  
+  static useHelperJS(field) {
+    return !field.type.data.iname;
   }
   
   static format(type) {
@@ -601,6 +616,10 @@ class StructIterKeysField extends StructFieldType {
     }
   }
   
+  static useHelperJS(field) {
+    return !field.type.data.iname;
+  }
+
   static format(type) {
     if (type.data.iname != "" && type.data.iname != undefined) {
       return "iterkeys(" + type.data.iname + ", " + fmt_type(type.data.type) + ")";
@@ -664,7 +683,30 @@ StructFieldType.register(StructUshortField);
 
 class StructStaticArrayField extends StructFieldType {
   static pack(manager, data, val, obj, field, type) {
-    pack_int(data, 1);
+    if (type.data.size === undefined) {
+      throw new Error("type.data.size was undefined");
+    }
+    
+    let itername = type.data.iname;
+    
+    for (let i=0; i<type.data.size; i++) {
+      let i2 = Math.min(i, Math.min(val.length-1, type.data.size));
+      let val2 = val[i2];
+      
+      //*
+      if (itername != "" && itername != undefined && field.get) {
+        let env = _ws_env;
+        env[0][0] = itername;
+        env[0][1] = val2;
+        val2 = manager._env_call(field.get, obj, env);
+      }
+      
+      do_pack(manager, data, val2, val, field, type.data.type);
+    }
+  }
+
+  static useHelperJS(field) {
+    return !field.type.data.iname;
   }
   
   static format(type) {
@@ -681,7 +723,15 @@ class StructStaticArrayField extends StructFieldType {
   }
   
   static unpack(manager, data, type, uctx) {
-    return unpack_int(data, uctx);
+    packer_debug("-size: " + type.data.size);
+    
+    let ret = [];
+    
+    for (let i=0; i<type.data.size; i++) {
+      ret.push(unpack_field(manager, data, type.data.type, uctx));
+    }
+    
+    return ret;
   }   
   
   static define() {return {

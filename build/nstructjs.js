@@ -1717,11 +1717,32 @@ let StructFieldType = class StructFieldType {
     return this.define().name;
   }
   
+  /**
+  return false to override default
+  helper js for packing
+  */
+  static useHelperJS(field) {
+    return true;
+  }
+  /**
+  Define field class info.
+  
+  Example:
+  <pre>
+  static define() {return {
+    type : StructEnum.T_INT,
+    name : "int"
+  }}
+  </pre>
+  */
   static define() {return {
     type : -1,
     name : "(error)"
   }}
   
+  /**
+  Register field packer/unpacker class.  Will throw an error if define() method is bad.
+  */
   static register(cls) {
     if (_export_StructFieldTypes_.indexOf(cls) >= 0) {
       throw new Error("class already registered");
@@ -1957,6 +1978,10 @@ class StructArrayField extends StructFieldType {
       return "array(" + fmt_type(type.data.type) + ")";
     }
   }
+
+  static useHelperJS(field) {
+    return !field.type.data.iname;
+  }
   
   static unpack(manager, data, type, uctx) {
     var len = _module_exports_.unpack_int(data, uctx);
@@ -2030,6 +2055,10 @@ class StructIterField extends StructFieldType {
 
       i++;
     }, this);
+  }
+  
+  static useHelperJS(field) {
+    return !field.type.data.iname;
   }
   
   static format(type) {
@@ -2157,6 +2186,10 @@ class StructIterKeysField extends StructFieldType {
     }
   }
   
+  static useHelperJS(field) {
+    return !field.type.data.iname;
+  }
+
   static format(type) {
     if (type.data.iname != "" && type.data.iname != undefined) {
       return "iterkeys(" + type.data.iname + ", " + fmt_type(type.data.type) + ")";
@@ -2220,7 +2253,30 @@ StructFieldType.register(StructUshortField);
 
 class StructStaticArrayField extends StructFieldType {
   static pack(manager, data, val, obj, field, type) {
-    pack_int$1(data, 1);
+    if (type.data.size === undefined) {
+      throw new Error("type.data.size was undefined");
+    }
+    
+    let itername = type.data.iname;
+    
+    for (let i=0; i<type.data.size; i++) {
+      let i2 = Math.min(i, Math.min(val.length-1, type.data.size));
+      let val2 = val[i2];
+      
+      //*
+      if (itername != "" && itername != undefined && field.get) {
+        let env = _ws_env;
+        env[0][0] = itername;
+        env[0][1] = val2;
+        val2 = manager._env_call(field.get, obj, env);
+      }
+      
+      do_pack(manager, data, val2, val, field, type.data.type);
+    }
+  }
+
+  static useHelperJS(field) {
+    return !field.type.data.iname;
   }
   
   static format(type) {
@@ -2237,7 +2293,15 @@ class StructStaticArrayField extends StructFieldType {
   }
   
   static unpack(manager, data, type, uctx) {
-    return unpack_int$1(data, uctx);
+    packer_debug("-size: " + type.data.size);
+    
+    let ret = [];
+    
+    for (let i=0; i<type.data.size; i++) {
+      ret.push(unpack_field(manager, data, type.data.type, uctx));
+    }
+    
+    return ret;
   }   
   
   static define() {return {
@@ -2777,10 +2841,9 @@ var STRUCT = class STRUCT {
 
   write_struct(data, obj, stt) {
     function use_helper_js(field) {
-      if (field.type.type == StructEnum$2.T_ARRAY || field.type.type == StructEnum$2.T_ITER || field.type.type == StructEnum$2.T_ITERKEYS) {
-        return field.type.data.iname == undefined || field.type.data.iname == "";
-      }
-      return true;
+      let type = field.type.type;
+      let cls = StructFieldTypeMap[type];
+      return cls.useHelperJS(field);
     }
 
     var fields = stt.fields;
@@ -2808,6 +2871,10 @@ var STRUCT = class STRUCT {
     }
   }
 
+  /**
+  @param data : array to write data into,
+  @param obj  : structable object
+  */
   write_object(data, obj) {
     var cls = obj.constructor.structName;
     var stt = this.get_struct(cls);
@@ -2819,15 +2886,32 @@ var STRUCT = class STRUCT {
     this.write_struct(data, obj, stt);
     return data;
   }
+
+  /**
+  Read an object from binary data
   
-  readObject() {
-    return this.read_object(...arguments);
+  @param data : DataView or Uint8Array instance
+  @param cls_or_struct_id : Structable class
+  @param uctx : internal parameter
+  @return {cls_or_struct_id} Instance of cls_or_struct_id
+  */
+  readObject(data, cls_or_struct_id, uctx) {
+    return this.read_object(data, cls_or_struct_id, uctx);
   }
   
+  /**
+  @param data array to write data into,
+  @param obj structable object
+  */
   writeObject() {
-    return this.write_object(...arguments);
+    return this.write_object(data, obj);
   }
 
+  /**
+  @param data : DataView or Uint8Array instance
+  @param cls_or_struct_id : Structable class
+  @param uctx : internal parameter
+  */
   read_object(data, cls_or_struct_id, uctx) {
     var cls, stt;
 
@@ -3238,6 +3322,11 @@ if (typeof window !== "undefined") {
 _nGlobal._structEval = eval;
 
 const _module_exports_$1 = {};
+_module_exports_$1.unpack_context = _module_exports_.unpack_context;
+
+/**
+true means little endian, false means big endian
+*/
 Object.defineProperty(_module_exports_$1, "STRUCT_ENDIAN", {
   get: function () {
     return _module_exports_.STRUCT_ENDIAN;

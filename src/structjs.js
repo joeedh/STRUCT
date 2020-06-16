@@ -17,6 +17,11 @@ let struct_parseutil = require("./struct_parseutil");
 let struct_typesystem = require("./struct_typesystem");
 let struct_parser = require("./struct_parser");
 
+exports.unpack_context = struct_binpack.unpack_context;
+
+/**
+true means little endian, false means big endian
+*/
 Object.defineProperty(exports, "STRUCT_ENDIAN", {
   get: function () {
     return struct_binpack.STRUCT_ENDIAN;
