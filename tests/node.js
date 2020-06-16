@@ -11,7 +11,7 @@ try {
   try {
     structjs = require('nstructjs');
   } catch (error) {
-    structjs = require("../dist/nstructjs.js");
+    structjs = require("../nstructjs.js");
   }
 }
 let filehelper = structjs.filehelper;
