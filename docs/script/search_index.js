@@ -54,6 +54,12 @@ window.esdocSearchIndex = [
     "class"
   ],
   [
+    "nstructjs/src/struct_intern2.js~structfieldtypemap",
+    "variable/index.html#static-variable-StructFieldTypeMap",
+    "<span>StructFieldTypeMap</span> <span class=\"search-result-import-path\">nstructjs/src/struct_intern2.js</span>",
+    "variable"
+  ],
+  [
     "nstructjs/src/struct_parser.js~structtypemap",
     "variable/index.html#static-variable-StructTypeMap",
     "<span>StructTypeMap</span> <span class=\"search-result-import-path\">nstructjs/src/struct_parser.js</span>",
@@ -106,6 +112,12 @@ window.esdocSearchIndex = [
     "class/src/struct_parseutil.js~lexer.html",
     "<span>lexer</span> <span class=\"search-result-import-path\">nstructjs/src/struct_parseutil.js</span>",
     "class"
+  ],
+  [
+    "nstructjs/src/struct_intern2.js~packnull",
+    "function/index.html#static-function-packNull",
+    "<span>packNull</span> <span class=\"search-result-import-path\">nstructjs/src/struct_intern2.js</span>",
+    "function"
   ],
   [
     "nstructjs/src/struct_binpack.js~pack_byte",
@@ -840,6 +852,18 @@ window.esdocSearchIndex = [
     "method"
   ],
   [
+    "src/struct_intern2.js~structarrayfield.packnull",
+    "class/src/struct_intern2.js~StructArrayField.html#static-method-packNull",
+    "src/struct_intern2.js~StructArrayField.packNull",
+    "method"
+  ],
+  [
+    "src/struct_intern2.js~structarrayfield.packnull",
+    "class/src/struct_intern2.js~StructArrayField.html#static-method-packNull",
+    "src/struct_intern2.js~StructArrayField.packNull",
+    "method"
+  ],
+  [
     "src/struct_intern2.js~structarrayfield.unpack",
     "class/src/struct_intern2.js~StructArrayField.html#static-method-unpack",
     "src/struct_intern2.js~StructArrayField.unpack",
@@ -849,6 +873,18 @@ window.esdocSearchIndex = [
     "src/struct_intern2.js~structarrayfield.unpack",
     "class/src/struct_intern2.js~StructArrayField.html#static-method-unpack",
     "src/struct_intern2.js~StructArrayField.unpack",
+    "method"
+  ],
+  [
+    "src/struct_intern2.js~structarrayfield.usehelperjs",
+    "class/src/struct_intern2.js~StructArrayField.html#static-method-useHelperJS",
+    "src/struct_intern2.js~StructArrayField.useHelperJS",
+    "method"
+  ],
+  [
+    "src/struct_intern2.js~structarrayfield.usehelperjs",
+    "class/src/struct_intern2.js~StructArrayField.html#static-method-useHelperJS",
+    "src/struct_intern2.js~StructArrayField.useHelperJS",
     "method"
   ],
   [
@@ -996,6 +1032,12 @@ window.esdocSearchIndex = [
     "method"
   ],
   [
+    "src/struct_intern2.js~structfieldtype.packnull",
+    "class/src/struct_intern2.js~StructFieldType.html#static-method-packNull",
+    "src/struct_intern2.js~StructFieldType.packNull",
+    "method"
+  ],
+  [
     "src/struct_intern2.js~structfieldtype.register",
     "class/src/struct_intern2.js~StructFieldType.html#static-method-register",
     "src/struct_intern2.js~StructFieldType.register",
@@ -1005,6 +1047,12 @@ window.esdocSearchIndex = [
     "src/struct_intern2.js~structfieldtype.unpack",
     "class/src/struct_intern2.js~StructFieldType.html#static-method-unpack",
     "src/struct_intern2.js~StructFieldType.unpack",
+    "method"
+  ],
+  [
+    "src/struct_intern2.js~structfieldtype.usehelperjs",
+    "class/src/struct_intern2.js~StructFieldType.html#static-method-useHelperJS",
+    "src/struct_intern2.js~StructFieldType.useHelperJS",
     "method"
   ],
   [
@@ -1134,6 +1182,18 @@ window.esdocSearchIndex = [
     "method"
   ],
   [
+    "src/struct_intern2.js~structiterfield.packnull",
+    "class/src/struct_intern2.js~StructIterField.html#static-method-packNull",
+    "src/struct_intern2.js~StructIterField.packNull",
+    "method"
+  ],
+  [
+    "src/struct_intern2.js~structiterfield.packnull",
+    "class/src/struct_intern2.js~StructIterField.html#static-method-packNull",
+    "src/struct_intern2.js~StructIterField.packNull",
+    "method"
+  ],
+  [
     "src/struct_intern2.js~structiterfield.unpack",
     "class/src/struct_intern2.js~StructIterField.html#static-method-unpack",
     "src/struct_intern2.js~StructIterField.unpack",
@@ -1143,6 +1203,18 @@ window.esdocSearchIndex = [
     "src/struct_intern2.js~structiterfield.unpack",
     "class/src/struct_intern2.js~StructIterField.html#static-method-unpack",
     "src/struct_intern2.js~StructIterField.unpack",
+    "method"
+  ],
+  [
+    "src/struct_intern2.js~structiterfield.usehelperjs",
+    "class/src/struct_intern2.js~StructIterField.html#static-method-useHelperJS",
+    "src/struct_intern2.js~StructIterField.useHelperJS",
+    "method"
+  ],
+  [
+    "src/struct_intern2.js~structiterfield.usehelperjs",
+    "class/src/struct_intern2.js~StructIterField.html#static-method-useHelperJS",
+    "src/struct_intern2.js~StructIterField.useHelperJS",
     "method"
   ],
   [
@@ -1188,6 +1260,18 @@ window.esdocSearchIndex = [
     "method"
   ],
   [
+    "src/struct_intern2.js~structiterkeysfield.packnull",
+    "class/src/struct_intern2.js~StructIterKeysField.html#static-method-packNull",
+    "src/struct_intern2.js~StructIterKeysField.packNull",
+    "method"
+  ],
+  [
+    "src/struct_intern2.js~structiterkeysfield.packnull",
+    "class/src/struct_intern2.js~StructIterKeysField.html#static-method-packNull",
+    "src/struct_intern2.js~StructIterKeysField.packNull",
+    "method"
+  ],
+  [
     "src/struct_intern2.js~structiterkeysfield.unpack",
     "class/src/struct_intern2.js~StructIterKeysField.html#static-method-unpack",
     "src/struct_intern2.js~StructIterKeysField.unpack",
@@ -1197,6 +1281,18 @@ window.esdocSearchIndex = [
     "src/struct_intern2.js~structiterkeysfield.unpack",
     "class/src/struct_intern2.js~StructIterKeysField.html#static-method-unpack",
     "src/struct_intern2.js~StructIterKeysField.unpack",
+    "method"
+  ],
+  [
+    "src/struct_intern2.js~structiterkeysfield.usehelperjs",
+    "class/src/struct_intern2.js~StructIterKeysField.html#static-method-useHelperJS",
+    "src/struct_intern2.js~StructIterKeysField.useHelperJS",
+    "method"
+  ],
+  [
+    "src/struct_intern2.js~structiterkeysfield.usehelperjs",
+    "class/src/struct_intern2.js~StructIterKeysField.html#static-method-useHelperJS",
+    "src/struct_intern2.js~StructIterKeysField.useHelperJS",
     "method"
   ],
   [
@@ -1284,6 +1380,18 @@ window.esdocSearchIndex = [
     "method"
   ],
   [
+    "src/struct_intern2.js~structstaticarrayfield.packnull",
+    "class/src/struct_intern2.js~StructStaticArrayField.html#static-method-packNull",
+    "src/struct_intern2.js~StructStaticArrayField.packNull",
+    "method"
+  ],
+  [
+    "src/struct_intern2.js~structstaticarrayfield.packnull",
+    "class/src/struct_intern2.js~StructStaticArrayField.html#static-method-packNull",
+    "src/struct_intern2.js~StructStaticArrayField.packNull",
+    "method"
+  ],
+  [
     "src/struct_intern2.js~structstaticarrayfield.unpack",
     "class/src/struct_intern2.js~StructStaticArrayField.html#static-method-unpack",
     "src/struct_intern2.js~StructStaticArrayField.unpack",
@@ -1293,6 +1401,18 @@ window.esdocSearchIndex = [
     "src/struct_intern2.js~structstaticarrayfield.unpack",
     "class/src/struct_intern2.js~StructStaticArrayField.html#static-method-unpack",
     "src/struct_intern2.js~StructStaticArrayField.unpack",
+    "method"
+  ],
+  [
+    "src/struct_intern2.js~structstaticarrayfield.usehelperjs",
+    "class/src/struct_intern2.js~StructStaticArrayField.html#static-method-useHelperJS",
+    "src/struct_intern2.js~StructStaticArrayField.useHelperJS",
+    "method"
+  ],
+  [
+    "src/struct_intern2.js~structstaticarrayfield.usehelperjs",
+    "class/src/struct_intern2.js~StructStaticArrayField.html#static-method-useHelperJS",
+    "src/struct_intern2.js~StructStaticArrayField.useHelperJS",
     "method"
   ],
   [
@@ -1338,6 +1458,18 @@ window.esdocSearchIndex = [
     "method"
   ],
   [
+    "src/struct_intern2.js~structstaticstringfield.packnull",
+    "class/src/struct_intern2.js~StructStaticStringField.html#static-method-packNull",
+    "src/struct_intern2.js~StructStaticStringField.packNull",
+    "method"
+  ],
+  [
+    "src/struct_intern2.js~structstaticstringfield.packnull",
+    "class/src/struct_intern2.js~StructStaticStringField.html#static-method-packNull",
+    "src/struct_intern2.js~StructStaticStringField.packNull",
+    "method"
+  ],
+  [
     "src/struct_intern2.js~structstaticstringfield.unpack",
     "class/src/struct_intern2.js~StructStaticStringField.html#static-method-unpack",
     "src/struct_intern2.js~StructStaticStringField.unpack",
@@ -1377,6 +1509,18 @@ window.esdocSearchIndex = [
     "src/struct_intern2.js~structstringfield.pack",
     "class/src/struct_intern2.js~StructStringField.html#static-method-pack",
     "src/struct_intern2.js~StructStringField.pack",
+    "method"
+  ],
+  [
+    "src/struct_intern2.js~structstringfield.packnull",
+    "class/src/struct_intern2.js~StructStringField.html#static-method-packNull",
+    "src/struct_intern2.js~StructStringField.packNull",
+    "method"
+  ],
+  [
+    "src/struct_intern2.js~structstringfield.packnull",
+    "class/src/struct_intern2.js~StructStringField.html#static-method-packNull",
+    "src/struct_intern2.js~StructStringField.packNull",
     "method"
   ],
   [
@@ -1434,6 +1578,18 @@ window.esdocSearchIndex = [
     "method"
   ],
   [
+    "src/struct_intern2.js~structstructfield.packnull",
+    "class/src/struct_intern2.js~StructStructField.html#static-method-packNull",
+    "src/struct_intern2.js~StructStructField.packNull",
+    "method"
+  ],
+  [
+    "src/struct_intern2.js~structstructfield.packnull",
+    "class/src/struct_intern2.js~StructStructField.html#static-method-packNull",
+    "src/struct_intern2.js~StructStructField.packNull",
+    "method"
+  ],
+  [
     "src/struct_intern2.js~structstructfield.unpack",
     "class/src/struct_intern2.js~StructStructField.html#static-method-unpack",
     "src/struct_intern2.js~StructStructField.unpack",
@@ -1485,6 +1641,18 @@ window.esdocSearchIndex = [
     "src/struct_intern2.js~structtstructfield.pack",
     "class/src/struct_intern2.js~StructTStructField.html#static-method-pack",
     "src/struct_intern2.js~StructTStructField.pack",
+    "method"
+  ],
+  [
+    "src/struct_intern2.js~structtstructfield.packnull",
+    "class/src/struct_intern2.js~StructTStructField.html#static-method-packNull",
+    "src/struct_intern2.js~StructTStructField.packNull",
+    "method"
+  ],
+  [
+    "src/struct_intern2.js~structtstructfield.packnull",
+    "class/src/struct_intern2.js~StructTStructField.html#static-method-packNull",
+    "src/struct_intern2.js~StructTStructField.packNull",
     "method"
   ],
   [

@@ -2924,10 +2924,9 @@ var STRUCT = class STRUCT {
           val = obj[f.name];
         }
         
-        if (f.name === "points3") {
-          //console.log(obj.points3.map(v => v.id), "bleh");
+        if (_nGlobal.DEBUG && _nGlobal.DEBUG.tinyeval) { 
+          console.log("\n\n\n", f.get, "Helper JS Ret", val, "\n\n\n");
         }
-        console.log("\n\n\n", f.get, "Helper JS Ret", val, "\n\n\n");
         
         do_pack$1(data, val, obj, thestruct, f, t1);
       }
