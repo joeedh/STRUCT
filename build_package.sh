@@ -1,5 +1,7 @@
 #!/bin/sh
 
+git commit -a
+
 bash build.sh
 
 mkdir -p package
