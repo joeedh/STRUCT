@@ -3,7 +3,17 @@ global.DEBUG = {
 };
 
 //let structjs = require('../build/nstructjs');
-let structjs = require('../src/structjs');
+let structjs;
+
+try {
+  structjs = require('../src/structjs');
+} catch (error) {
+  try {
+    structjs = require('nstructjs');
+  } catch (error) {
+    structjs = require("../dist/nstructjs.js");
+  }
+}
 let filehelper = structjs.filehelper;
 let fs = require('fs');
 
