@@ -93,7 +93,6 @@
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-register">register</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-useTinyEval">useTinyEval</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-writeObject">writeObject</a></span></span></li>
-<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-StructFieldTypeMap">StructFieldTypeMap</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-StructEnum">StructEnum</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-StructTypeMap">StructTypeMap</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-StructTypes">StructTypes</a></span></span></li>
@@ -251,11 +250,25 @@ let StructFieldType = exports.StructFieldType = class StructFieldType {
     return this.define().name;
   }
   
+  /**
+  Define field class info.
+  
+  Example:
+  &lt;pre&gt;
+  static define() {return {
+    type : StructEnum.T_INT,
+    name : &quot;int&quot;
+  }}
+  &lt;/pre&gt;
+  */
   static define() {return {
     type : -1,
     name : &quot;(error)&quot;
   }}
   
+  /**
+  Register field packer/unpacker class.  Will throw an error if define() method is bad.
+  */
   static register(cls) {
     if (exports.StructFieldTypes.indexOf(cls) &gt;= 0) {
       throw new Error(&quot;class already registered&quot;);

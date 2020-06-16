@@ -3,6 +3,55 @@ const marked = require("marked")
 const ASTNodeContainer = require('esdoc/out/src/Util/ASTNodeContainer.js').default;
 const ASTUtil = require('esdoc/out/src/Util/ASTUtil').default;
 const EPlugin = require('esdoc/out/src/Plugin/Plugin').default;
+const ParamParser = require("esdoc/out/src/Parser/ParamParser").default;
+const CommentParser = require("esdoc/out/src/Parser/CommentParser").default;
+const MethodDoc = require("esdoc/out/src/Doc/MethodDoc").default;
+const ClassPropertyDoc = require("esdoc/out/src/Doc/ClassPropertyDoc").default;
+const ClassDoc = require("esdoc/out/src/Doc/ClassDoc").default;
+const MemberDoc = require("esdoc/out/src/Doc/MemberDoc").default;
+const VariableDoc = require("esdoc/out/src/Doc/VariableDoc").default;
+const TypedefDoc = require("esdoc/out/src/Doc/TypedefDoc").default;
+const FileDoc = require("esdoc/out/src/Doc/FileDoc").default;
+const FunctionDoc = require("esdoc/out/src/Doc/FunctionDoc").default;
+const AssignmentDoc = require("esdoc/out/src/Doc/AssignmentDoc").default;
+const PathResolver= require("esdoc/out/src/util/PathResolver").default;
+
+function getDocGenerator(type) {
+  let Clazz;
+ 
+  type = type.toLowerCase();
+  
+  switch (type) {
+    case 'file':
+      Clazz = FileDoc;break;
+    case 'class':
+      Clazz = ClassDoc;break;
+    case 'method':
+    case 'staticmethod':
+    case 'classmethod':
+      Clazz = MethodDoc;break;
+    case 'classproperty':
+    case 'objectproperty':
+      Clazz = ClassPropertyDoc;break;
+    case 'member':
+      Clazz = MemberDoc;break;
+    case 'function':
+      Clazz = FunctionDoc;break;
+    case 'variable':
+      Clazz = VariableDoc;break;
+    case 'assignment':
+      Clazz = AssignmentDoc;break;
+    case 'typedef':
+      Clazz = TypedefDoc;break;
+    case 'external':
+      Clazz = ExternalDoc;break;
+    default:
+      console.warn(`unexpected type: ${type}`);
+      return undefined;
+  }
+  
+  return Clazz;
+}
 
 let pathmod = require("path");
 
@@ -118,8 +167,9 @@ function parseFile(f, ev) {
   let comments = [];
   let commentmap = new Array(buf.length);
   let nodecommentmap = new Array(buf.length);
+  let ast;
   
-  node = babel.parse(buf, {
+  node = ast = babel.parse(buf, {
   });
 
 
@@ -423,7 +473,6 @@ function parseFile(f, ev) {
   walk.full(node, (node) => {
     types.add(node.type);
   });
-  //console.log(types)
   
   function genjs(node) {
     let s = "";
@@ -533,7 +582,6 @@ function parseFile(f, ev) {
     return s;
   }
 
-  //console.log(types);
   let exports = {};
   
   walk.simple(node, {
@@ -690,6 +738,8 @@ function parseFile(f, ev) {
   let _nvisit = new Set();
   
   function makeDoc(args, node) {
+    let pathresolve = new PathResolver(pathmod.resolve("./src"), f, "nstructjs");
+    
     if (!node) {
       throw new Error("node was undefined");
     }
@@ -708,12 +758,37 @@ function parseFile(f, ev) {
     }
     
     ASTNodeContainer._docId = idgen = Math.max(ASTNodeContainer._docId, idgen+1);
+
+    let DocClass = getDocGenerator(node.type);
+    if (!DocClass && args.kind) {
+      DocClass = getDocGenerator(args.kind);
+    }
     
-    let ret = Object.assign({
-      __docId__ : idgen,
-      "static" : true
-    }, args);
+    let docgen;
+    let ret;
     
+    if (DocClass) {
+      //how does this work in esdoc code? AbstractDoc.prototype.$longname throws
+      //docgen = new DocClass(ast, node, pathresolve);
+      
+      docgen = Object.create(DocClass.prototype);
+      docgen.constructor = DocClass;
+      docgen._commentTags = [];
+
+      ret = docgen._value = Object.assign({}, args);
+      
+      docgen._ast = ast;
+      docgen._value.memberof = args.memberof ? args.memberof : args.longname;
+      
+      ret.__docId__ = idgen++;
+      ret["static"] = true;
+    } else {
+      ret = Object.assign({
+        static : true,
+        __docId__ : idgen++
+      }, args);
+    }
+     
     if (!ret.kind) {
       throw new Error("kind field must be specificied");      
     }
@@ -748,6 +823,127 @@ function parseFile(f, ev) {
       ev.data.docs.push(ret);
     }
     
+    node.doc = docgen;
+    
+    if (docgen && node) {
+      //emulate ObjectExpression
+      if (ret.kind === "variable" && !node.declarations) {
+        node.declarations = [{
+          id : {
+            type : "Identifier",
+            name : ret.name
+          }
+        }]
+      }
+
+      let tags = undefined;
+      let description;
+      
+      if (ret.description) {
+        description = ret.description;
+        
+        let buf = description.trim();
+        while (buf.length > 0 && buf.startsWith("*")) {
+          buf = buf.slice(1, buf.length).trim();
+        }
+        buf += "\n";
+        
+        /* not working?
+        tags = CommentParser.parse({
+          value : description
+        });*/
+        
+        //hack our own for now.  based on CommentParser code.
+        tags = [];
+        if (buf.charAt(0) !== '@') buf = `@desc ${buf}`; // auto insert @desc
+        buf = buf.trim();
+        
+        buf = buf.replace(/\r\n/gm, '\n'); // for windows
+        if (buf.charAt(0) !== '@') buf = `@desc ${buf}`; // auto insert @desc
+        buf = buf.replace(/```[\s\S]*?```/g, match => match.replace(/@/g, '\\ESCAPED_AT\\')); // escape code in descriptions
+        buf = buf.replace(/^[\t ]*(@\w+)$/gm, '$1 \\TRUE'); // auto insert tag text to non-text tag (e.g. @interface)
+        buf = buf.replace(/^[\t ]*(@\w+)[\t ](.*)/gm, '\\Z$1\\Z$2'); // insert separator (\\Z@tag\\Ztext)
+        
+        let lines = buf.split("\n");
+        let tags2 = [];
+        
+        for (let i=0; i<buf.length; i++) {
+          if (buf[i] === "@") {
+            tags2.push("@");
+            continue;
+          }
+          
+          tags2[tags2.length-1] += buf[i];
+        }
+        
+        let desc = "";
+        
+        for (let l of tags2) {
+          if (l.trim().length === 0 || !l.trim().startsWith("@")) {
+            desc += l;
+            continue;
+          }
+          
+          l = l.trim();
+          
+          let i1 = l.search(":");
+          let i2 = l.search(/[ \t]/);
+          let i;
+
+          
+          if (l.startsWith("\\Z")) {
+            l = l.slice(2, l.length);
+          }
+          
+          let i3 = l.search(/\\Z/);
+          
+          i1 = i1 < 0 ? l.length : i1;
+          i2 = i2 < 0 ? l.length : i2;
+          i3 = i3 < 0 ? l.length : i3;
+          i = Math.min(Math.min(i1, i2), i3);
+          
+          let tagName = l.slice(0, i).trim();
+          let tagValue = l.slice(i, l.length).replace(/\\Z/g, '');
+          
+          tagValue = tagValue.replace('\\TRUE', '').replace(/\\ESCAPED_AT\\/g, '@').replace(/^\n/, '').replace(/\n*$/, '');
+          
+          if (tagName === "@param") {
+            tagValue = tagValue.replace(/:/g, "");
+          }
+          
+          tags.push({tagName, tagValue});
+        }
+        
+        if (tags.length === 0) {
+          tags = undefined;
+        } else {
+          description = desc;
+        }
+        
+        if (buf.search("@") >= 0) {
+          /*
+          console.log(tags);
+          
+          if (!global.__i) {
+            global.__i = 1;
+          } else if (global.__i++ > 7) {
+        //    process.exit();
+          }//*/
+        }
+
+      }
+      
+      if (tags) {
+        docgen._commentTags = tags;
+      }
+      docgen._node = node;
+      docgen._pathResolver = pathresolve;
+      docgen._apply();
+      
+      if (!tags) {
+        ret.description = description;
+      }
+    }
     return ret;
   }
   /*
@@ -1118,7 +1314,7 @@ class Plugin {
 
     //myLog(ev.data.docs);
     
-    console.log(marked.Renderer);
+    //console.log(marked.Renderer);
     
     function test(path) {
       for (let p of listdir("./wiki")) {
@@ -1151,7 +1347,7 @@ class Plugin {
       if (href.startsWith("@")) {
         href = norm(href.slice(1, href.length));
         
-        console.log(href)
+        //console.log(href)
         
         for (let doc of ev.data.docs) {
           let w = 0;
@@ -1173,10 +1369,10 @@ class Plugin {
             matches.push([doc, norm(doc.name)]);
           }
         }
-        console.log("----");
+        //console.log("----");
       }
       
-      console.log(matches.length);
+      //console.log(matches.length);
       let doc;
       let max = -1e17;
       
@@ -1194,7 +1390,7 @@ class Plugin {
         let type = doc.kind;
 
         url = type + "/" + url;
-        console.log(doc)
+        //console.log(doc)
         
         let path;
         
@@ -1229,7 +1425,7 @@ class Plugin {
     marked.Renderer.prototype.link = function(href, title, text) {
       href = href.trim();
       
-      console.log(href);
+      //console.log(href);
       
       let is_href = /https?:\/\//; 
       is_href = href.trim().toLowerCase().search(is_href) == 0.0;
@@ -1258,10 +1454,10 @@ class Plugin {
           href = "manual/" + href2;
         }
         
-        console.log(href);
+        //console.log(href);
         //stop();
       }
-      console.log(href, title, text, is_href);
+      //console.log(href, title, text, is_href);
       
       let hr = handleRefLink(href, title, text);
       if (hr) {
@@ -1295,7 +1491,8 @@ class Plugin {
 
     for (let p of EPlugin._plugins) {
       if (p.name === "esdoc-integrate-manual-plugin") {
-        console.log(doManual(p));
+        let ret = doManual(p);
+        console.log(ret);
       }
     }
     

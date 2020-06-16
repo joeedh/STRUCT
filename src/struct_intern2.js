@@ -147,11 +147,25 @@ let StructFieldType = exports.StructFieldType = class StructFieldType {
     return this.define().name;
   }
   
+  /**
+  Define field class info.
+  
+  Example:
+  <pre>
+  static define() {return {
+    type : StructEnum.T_INT,
+    name : "int"
+  }}
+  </pre>
+  */
   static define() {return {
     type : -1,
     name : "(error)"
   }}
   
+  /**
+  Register field packer/unpacker class.  Will throw an error if define() method is bad.
+  */
   static register(cls) {
     if (exports.StructFieldTypes.indexOf(cls) >= 0) {
       throw new Error("class already registered");

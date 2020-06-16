@@ -565,6 +565,10 @@ var STRUCT = exports.STRUCT = class STRUCT {
     }
   }
 
+  /**
+  @param data : array to write data into,
+  @param obj  : structable object
+  */
   write_object(data, obj) {
     var cls = obj.constructor.structName;
     var stt = this.get_struct(cls);
@@ -576,15 +580,32 @@ var STRUCT = exports.STRUCT = class STRUCT {
     this.write_struct(data, obj, stt);
     return data;
   }
+
+  /**
+  Read an object from binary data
   
-  readObject() {
-    return this.read_object(...arguments);
+  @param data : DataView or Uint8Array instance
+  @param cls_or_struct_id : Structable class
+  @param uctx : internal parameter
+  @return {cls_or_struct_id} Instance of cls_or_struct_id
+  */
+  readObject(data, cls_or_struct_id, uctx) {
+    return this.read_object(data, cls_or_struct_id, uctx);
   }
   
+  /**
+  @param data array to write data into,
+  @param obj structable object
+  */
   writeObject() {
-    return this.write_object(...arguments);
+    return this.write_object(data, obj);
   }
 
+  /**
+  @param data : DataView or Uint8Array instance
+  @param cls_or_struct_id : Structable class
+  @param uctx : internal parameter
+  */
   read_object(data, cls_or_struct_id, uctx) {
     var cls, stt;
 

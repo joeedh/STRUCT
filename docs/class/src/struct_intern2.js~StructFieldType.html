@@ -93,7 +93,6 @@
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-register">register</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-useTinyEval">useTinyEval</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-writeObject">writeObject</a></span></span></li>
-<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-StructFieldTypeMap">StructFieldTypeMap</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-StructEnum">StructEnum</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-StructTypeMap">StructTypeMap</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-StructTypes">StructTypes</a></span></span></li>
@@ -165,7 +164,9 @@
       <div>
         
         
-        
+        <div data-ice="description"><p><pre>*
+  Define field class info.</pre></p>
+</div>
       </div>
     </td>
     <td>
@@ -249,7 +250,9 @@
       <div>
         
         
-        
+        <div data-ice="description"><p><pre>*
+  Register field packer/unpacker class.</pre></p>
+</div>
       </div>
     </td>
     <td>
@@ -309,14 +312,25 @@
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/struct_intern2.js.html#lineNumberundefined">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/struct_intern2.js.html#lineNumber161">source</a></span></span>
     </span>
   </h3>
 
   
   
   
-  
+  <div data-ice="description"><p><pre>*
+  Define field class info.
+
+  Example:
+  <pre>
+  static define() {return {
+    type : StructEnum.T_INT,
+    name : &quot;int&quot;
+  }}
+  </pre>
+  </pre></p>
+</div>
 
   
 
@@ -364,7 +378,7 @@
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/struct_intern2.js.html#lineNumberundefined">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/struct_intern2.js.html#lineNumber146">source</a></span></span>
     </span>
   </h3>
 
@@ -435,7 +449,7 @@
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/struct_intern2.js.html#lineNumberundefined">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/struct_intern2.js.html#lineNumber140">source</a></span></span>
     </span>
   </h3>
 
@@ -524,14 +538,17 @@
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/struct_intern2.js.html#lineNumberundefined">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/struct_intern2.js.html#lineNumber169">source</a></span></span>
     </span>
   </h3>
 
   
   
   
-  
+  <div data-ice="description"><p><pre>*
+  Register field packer/unpacker class.  Will throw an error if define() method is bad.
+  </pre></p>
+</div>
 
   
 
@@ -583,7 +600,7 @@
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/struct_intern2.js.html#lineNumberundefined">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/struct_intern2.js.html#lineNumber143">source</a></span></span>
     </span>
   </h3>
 
