@@ -85,7 +85,11 @@ exports.setDebugMode = (t) => {
 exports.setDebugMode(debug);
 
 exports.StructFieldTypes = [];
-exports.StructFieldTypeMap = {};
+let StructFieldTypeMap = exports.StructFieldTypeMap = {};
+
+let packNull = exports.packNull = function(manager, data, field, type) {
+  StructFieldTypeMap[type.type].packNull(manager, data, field, type);
+}
 
 function unpack_field(manager, data, type, uctx) {
   let name;
@@ -141,6 +145,10 @@ let StructFieldType = exports.StructFieldType = class StructFieldType {
   }
   
   static unpack(manager, data, type, uctx) {
+  }
+  
+  static packNull(manager, data, field, type) {
+    this.pack(manager, data, 0, 0, field, type);
   }
   
   static format(type) {
@@ -250,6 +258,10 @@ class StructStringField extends StructFieldType {
     pack_string(data, val);
   }
   
+  static packNull(manager, data, field, type) {
+    this.pack(manager, data, "", 0, field, type);
+  }
+  
   static unpack(manager, data, type, uctx) {
     return unpack_string(data, uctx);
   }   
@@ -272,6 +284,10 @@ class StructStaticStringField extends StructFieldType {
     return `static_string[${type.data.maxlength}]`;
   }
  
+  static packNull(manager, data, field, type) {
+    this.pack(manager, data, "", 0, field, type);
+  }
+
   static unpack(manager, data, type, uctx) {
     return unpack_static_string(data, uctx, type.data.maxlength);
   }   
@@ -290,6 +306,16 @@ class StructStructField extends StructFieldType {
   
   static format(type) {
     return type.data;
+  }
+  
+  static packNull(manager, data, field, type) {
+    let stt = manager.get_struct(type.data);
+    
+    for (let field2 of stt.fields) {
+      let type2 = field2.type;
+      
+      packNull(manager, data, field2, type2);
+    }
   }
   
   static unpack(manager, data, type, uctx) {
@@ -324,10 +350,17 @@ class StructTStructField extends StructFieldType {
 
     packer_debug("int " + stt.id);
 
-    struct_binpack.pack_int(data, stt.id);
+    pack_int(data, stt.id);
     manager.write_struct(data, val, stt);
   }
   
+  static packNull(manager, data, field, type) {
+    let stt = manager.get_struct(type.data);
+    
+    pack_int(data, stt.id);
+    packNull(manager, data, field, {type : STructEnum.T_STRUCT, data : type.data});
+  }
+
   static format(type) {
     return "abstract(" + type.data + ")";
   }
@@ -398,6 +431,10 @@ class StructArrayField extends StructFieldType {
       fakeField.type = type2;
       do_pack(manager, data, val2, obj, fakeField, type2);
     }
+  }
+  
+  static packNull(manager, data, field, type) {
+    pack_int(data, 0);
   }
   
   static format(type) {
@@ -487,6 +524,10 @@ class StructIterField extends StructFieldType {
     }, this);
   }
   
+  static packNull(manager, data, field, type) {
+    pack_int(data, 0);
+  }
+
   static useHelperJS(field) {
     return !field.type.data.iname;
   }
@@ -616,6 +657,10 @@ class StructIterKeysField extends StructFieldType {
     }
   }
   
+  static packNull(manager, data, field, type) {
+    pack_int(data, 0);
+  }
+  
   static useHelperJS(field) {
     return !field.type.data.iname;
   }
@@ -681,6 +726,9 @@ class StructUshortField extends StructFieldType {
 }
 StructFieldType.register(StructUshortField);
 
+//let writeEmpty = exports.writeEmpty = function writeEmpty(stt) {
+//}
+
 class StructStaticArrayField extends StructFieldType {
   static pack(manager, data, val, obj, field, type) {
     if (type.data.size === undefined) {
@@ -688,6 +736,11 @@ class StructStaticArrayField extends StructFieldType {
     }
     
     let itername = type.data.iname;
+    
+    if (val === undefined || !val.length) {
+      this.packNull(manager, data, field, type);
+      return;
+    }
     
     for (let i=0; i<type.data.size; i++) {
       let i2 = Math.min(i, Math.min(val.length-1, type.data.size));
@@ -709,6 +762,13 @@ class StructStaticArrayField extends StructFieldType {
     return !field.type.data.iname;
   }
   
+  static packNull(manager, data, field, type) {
+    let size = type.data.size;
+    for (let i=0; i<size; i++) {
+      packNull(manager, data, field, type.data.type);
+    }
+  }
+
   static format(type) {
     let type2 = exports.StructFieldTypeMap[type.data.type.type].format(type.data.type);
     

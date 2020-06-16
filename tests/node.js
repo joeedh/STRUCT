@@ -82,6 +82,9 @@ class Polygon {
       idmap[p.id] = p;
     }
     
+    //console.log(this.points3);
+    //process.exit();
+
     for (let i=0; i<this.points3.length; i++) {
       this.points3[i] = idmap[this.points3[i]];
     }
@@ -113,13 +116,13 @@ node.Polygon {
   flag      : int;
   pointmap  : iterkeys(e, int);
   pointmap2 : iterkeys(int);
-  points3   : static_array[short, 32, e] | e.id;
+  points3   : static_array[short, 32] | this.points3.map(v => v.id);
   str       : static_string[32] | "asdsa";
   points2   : iter(node.Point) | this.points;
   points    : array(e, int) | e.id;
   active    : int | this.points.active !== undefined ? this.points.active : -1;
 }`;
-
+//points3   : static_array[short, 32] | [1,2,3];
 structjs.manager.add_class(Polygon, "node.Polygon");
 
 class Canvas {
@@ -228,12 +231,15 @@ function test_main() {
   let passed = json1.length == json2.length;
   passed = passed && JSON.stringify(writer.version) == JSON.stringify(reader.version);
   
-  console.log(json2.points3);
+  //console.log(json2.points3);
   if (!passed) {
     console.log(json1, "\n\n\n\n\n\n\n\n\n", json2, json1.length, json2.length);
   }
   
   console.log(passed ? "PASSED" : "FAILED")
+  if (!passed) {
+    process.exit(-1);
+  }
 }
 
 test_main();
