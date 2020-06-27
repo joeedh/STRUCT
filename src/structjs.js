@@ -44,6 +44,10 @@ for (var k in struct_intern) {
   exports[k] = struct_intern[k];
 }
 
+exports.validateStructs = function validateStructs(onerror) {
+  return exports.manager.validateStructs(onerror);
+}
+
 /** Register a class with nstructjs **/
 exports.register = function register(cls, structName) {
   return exports.manager.register(cls, structName);

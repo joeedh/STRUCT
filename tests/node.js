@@ -8,6 +8,8 @@ let structjs;
 try {
   structjs = require('../src/structjs');
 } catch (error) {
+  console.error("Didn't load src files; trying packed ones. . .");
+
   try {
     structjs = require('nstructjs');
   } catch (error) {
@@ -198,6 +200,8 @@ Canvas.STRUCT = [
 structjs.manager.add_class(Canvas, "node.Canvas");
 
 function test_main() {
+  structjs.validateStructs();
+
   let canvas = new Canvas();
   
   let ps = [
@@ -220,6 +224,8 @@ function test_main() {
       micro : 2
     }
   };
+
+
   let writer = new filehelper.FileHelper(params);
   
   let data = writer.write([writer.makeBlock("DATA", canvas)]);
@@ -250,6 +256,8 @@ function test_main() {
   if (!passed) {
     process.exit(-1);
   }
+
+  structjs.validateStructs();
 }
 
 test_main();
