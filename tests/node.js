@@ -13,13 +13,16 @@ try {
   try {
     structjs = require('nstructjs');
   } catch (error) {
-    structjs = require("../nstructjs.js");
+    structjs = require("../build/nstructjs.js");
   }
 }
+
 let filehelper = structjs.filehelper;
 let fs = require('fs');
 
 structjs.useTinyEval();
+//structjs.setDebugMode(3);
+//structjs.setWarningMode(3);
 
 class Point {
   constructor(x, y) {
@@ -83,7 +86,7 @@ class Polygon {
   loadSTRUCT(reader) {
     reader(this);
     
-    //console.log(this.points2);
+    console.log("THIS.POINTS", this.points);
     //console.log(this.pointmap);
     //console.log(this.pointmap2);
   }
@@ -91,6 +94,7 @@ class Polygon {
   afterSTRUCT() {
     let idmap = {};
     for (let p of this.points) {
+      console.log(this.points);
       idmap[p.id] = p;
     }
     
@@ -173,12 +177,13 @@ class Canvas {
     this.idmap = {};
     
     for (let p of this.points) {
+      console.log("P.ID", p.id, p);
       this.idmap[p.id] = p;
     }
     
     for (let p of this.polygons) {
       this.idmap[p.id] = p;
-      
+
       for (let i=0; i<p.points.length; i++) {
         p.points[i] = this.idmap[p.points[i]];
       }
@@ -244,20 +249,36 @@ function test_main() {
   let json1 = JSON.stringify(canvas, undefined, 2);
   let json2 = JSON.stringify(canvas2, undefined, 2);
   
-  let passed = json1.length == json2.length;
+  let passed = json1.length === json2.length;
   passed = passed && JSON.stringify(writer.version) == JSON.stringify(reader.version);
   
   //console.log(json2.points3);
   if (!passed) {
     console.log(json1, "\n\n\n\n\n\n\n\n\n", json2, json1.length, json2.length);
   }
+
+  structjs.validateStructs();
+
+  let jsonout = structjs.writeJSON(canvas);
+
+  console.log("Writing JSON");
+  console.log(JSON.stringify(jsonout, undefined, 1));
+  console.log("done");
+  console.log(structjs.readJSON(jsonout, Canvas));
+
+  {
+    let s1 = JSON.stringify(structjs.readJSON(jsonout, Canvas));
+    let s2 = JSON.stringify(canvas);
+    console.log(s1.length, s2.length);
+
+    passed = passed && s1 === s2;
+  }
+
   
   console.log(passed ? "PASSED" : "FAILED")
   if (!passed) {
     process.exit(-1);
   }
-
-  structjs.validateStructs();
 }
 
 test_main();

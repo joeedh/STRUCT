@@ -70,6 +70,14 @@ exports.writeObject = function(data, obj) {
   return exports.manager.writeObject(data.obj);
 }
 
+exports.writeJSON = function(obj) {
+  return exports.manager.writeJSON(obj);
+}
+
+exports.readJSON = function(json, class_or_struct_id) {
+  return exports.manager.readJSON(json, class_or_struct_id);
+}
+
 exports.setDebugMode = struct_intern.setDebugMode;
 exports.setWarningMode = struct_intern.setWarningMode;
 

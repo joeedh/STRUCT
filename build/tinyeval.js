@@ -5718,10 +5718,11 @@ const _export_eval_ = function(buf, scope={}) {
               if (debug) {
                 console.log(" RET IN FUNC", ret, state2.stack);
               }
-              
+
               if (ret && ret.type === "Identifier") {
                 ret = state2.scope[ret.name];
               }
+
               
               /*
               if (_nGlobal.DEBUG && _nGlobal.DEBUG.tinyeval) {
@@ -5786,8 +5787,9 @@ const _export_eval_ = function(buf, scope={}) {
           
           throw new ReturnException();
         },
+
         Literal(n, state, visit) {
-            state.stack.push(n);
+            state.stack.push(n.value);
         },
 
         _getValue(n, state) {

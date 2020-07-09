@@ -559,7 +559,7 @@ var STRUCT = exports.STRUCT = class STRUCT {
 
   _env_call(code, obj, env) {
     var envcode = _static_envcode_null;
-    if (env != undefined) {
+    if (env !== undefined) {
       envcode = "";
       for (var i = 0; i < env.length; i++) {
         envcode = "var " + env[i][0] + " = env[" + i.toString() + "][1];\n" + envcode;
@@ -631,7 +631,7 @@ var STRUCT = exports.STRUCT = class STRUCT {
         if (_nGlobal.DEBUG && _nGlobal.DEBUG.tinyeval) { 
           console.log("\n\n\n", f.get, "Helper JS Ret", val, "\n\n\n");
         }
-        
+
         do_pack(data, val, obj, thestruct, f, t1);
       }
       else {
@@ -673,8 +673,54 @@ var STRUCT = exports.STRUCT = class STRUCT {
   @param data array to write data into,
   @param obj structable object
   */
-  writeObject() {
+  writeObject(data, obj) {
     return this.write_object(data, obj);
+  }
+
+  writeJSON(obj, stt=undefined) {
+    var cls = obj.constructor.structName;
+    stt = stt || this.get_struct(cls);
+
+    function use_helper_js(field) {
+      let type = field.type.type;
+      let cls = StructFieldTypeMap[type];
+      return cls.useHelperJS(field);
+    }
+
+    let toJSON = sintern2.toJSON;
+
+    var fields = stt.fields;
+    var thestruct = this;
+    let json = {};
+
+    for (var i = 0; i < fields.length; i++) {
+      var f = fields[i];
+      var t1 = f.type;
+      var t2 = t1.type;
+      var val;
+
+      if (use_helper_js(f)) {
+        var type = t2;
+        if (f.get !== undefined) {
+          val = thestruct._env_call(f.get, obj);
+        }
+        else {
+          val = obj[f.name];
+        }
+
+        if (_nGlobal.DEBUG && _nGlobal.DEBUG.tinyeval) {
+          console.log("\n\n\n", f.get, "Helper JS Ret", val, "\n\n\n");
+        }
+
+        json[f.name] = toJSON(this, val, obj, f, t1);
+      }
+      else {
+        val = obj[f.name];
+        json[f.name] = toJSON(this, val, obj, f, t1);
+      }
+    }
+
+    return json;
   }
 
   /**
@@ -755,6 +801,76 @@ var STRUCT = exports.STRUCT = class STRUCT {
       }
 
       load(obj);
+
+      return obj;
+    }
+  }
+
+  readJSON(data, cls_or_struct_id) {
+    var cls, stt;
+
+    if (typeof cls_or_struct_id === "number") {
+      cls = this.struct_cls[this.struct_ids[cls_or_struct_id].name];
+    } else {
+      cls = cls_or_struct_id;
+    }
+
+    if (cls === undefined) {
+      throw new Error("bad cls_or_struct_id " + cls_or_struct_id);
+    }
+
+    stt = this.structs[cls.structName];
+
+    let fromJSON = sintern2.fromJSON;
+    var thestruct = this;
+
+    let this2  = this;
+
+    let was_run = false;
+
+    function reader(obj) {
+      if (was_run) {
+        return;
+      }
+
+      was_run = true;
+
+      var fields = stt.fields;
+      var flen = fields.length;
+      for (var i = 0; i < flen; i++) {
+        var f = fields[i];
+
+        packer_debug("Load field " + f.name);
+        obj[f.name] = fromJSON(thestruct, data[f.name], data, f.type);
+      }
+    }
+
+    if (cls.prototype.loadSTRUCT !== undefined) {
+      let obj;
+
+      if (cls.newSTRUCT !== undefined) {
+        obj = cls.newSTRUCT();
+      } else {
+        obj = new cls();
+      }
+
+      obj.loadSTRUCT(reader);
+
+      return obj;
+    } else if (cls.fromSTRUCT !== undefined) {
+      if (warninglvl > 1)
+        console.warn("Warning: class " + cls.name + " is using deprecated fromSTRUCT interface; use newSTRUCT/loadSTRUCT instead");
+
+      return cls.fromSTRUCT(reader);
+    } else { //default case, make new instance and then call reader() on it
+      let obj;
+      if (cls.newSTRUCT !== undefined) {
+        obj = cls.newSTRUCT();
+      } else {
+        obj = new cls();
+      }
+
+      reader(obj);
 
       return obj;
     }
