@@ -48,6 +48,10 @@ exports.validateStructs = function validateStructs(onerror) {
   return exports.manager.validateStructs(onerror);
 }
 
+exports.setAllowOverriding = function setAllowOverriding(t) {
+  return exports.manager.allowOverriding = !!t;
+}
+
 /** Register a class with nstructjs **/
 exports.register = function register(cls, structName) {
   return exports.manager.register(cls, structName);

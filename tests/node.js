@@ -17,6 +17,8 @@ try {
   }
 }
 
+structjs.setAllowOverriding(false);
+
 let filehelper = structjs.filehelper;
 let fs = require('fs');
 
@@ -202,7 +204,8 @@ Canvas.STRUCT = [
 "  polygons : array(node.Polygon);",
 "}"
 ].join("\n");
-structjs.manager.add_class(Canvas, "node.Canvas");
+structjs.register(Canvas, "node.Canvas");
+//structjs.register(Canvas, "node.Canvas");
 
 function test_main() {
   structjs.validateStructs();
@@ -274,7 +277,7 @@ function test_main() {
     passed = passed && s1 === s2;
   }
 
-  
+
   console.log(passed ? "PASSED" : "FAILED")
   if (!passed) {
     process.exit(-1);

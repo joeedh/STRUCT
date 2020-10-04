@@ -86,7 +86,6 @@ else {
   };
 }
 
-
 exports.setWarningMode = (t) => {
   sintern2.setWarningMode(t);
   
@@ -161,6 +160,7 @@ function define_empty_class(name) {
 var STRUCT = exports.STRUCT = class STRUCT {
   constructor() {
     this.idgen = new struct_util.IDGen();
+    this.allowOverriding = true;
 
     this.structs = {}
     this.struct_cls = {}
@@ -399,6 +399,16 @@ var STRUCT = exports.STRUCT = class STRUCT {
       stt.name = cls.structName;
     } else {
       throw new Error("Missing structName parameter");
+    }
+
+    if (cls.structName in this.structs) {
+      console.warn("Struct " + cls.structName + " is already registered", cls);
+
+      if (!this.allowOverriding) {
+        throw new Error("Struct " + cls.structName + " is already registered");
+      }
+
+      return;
     }
 
     if (stt.id === -1)
