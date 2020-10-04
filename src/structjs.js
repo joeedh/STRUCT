@@ -90,7 +90,7 @@ exports.tinyeval = require("../tinyeval/tinyeval.js");
 
 exports.useTinyEval = function() {
   _nGlobal._structEval = (buf) => {
-    return exports.tinyeval.eval(buf);
+    return exports.tinyeval.eval(buf, _nGlobal);
   }
 };
 //$BUILD_TINYEVAL_END

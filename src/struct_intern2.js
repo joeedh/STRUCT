@@ -308,9 +308,13 @@ class StructStringField extends StructFieldType {
     
     pack_string(data, val);
   }
-  
+
   static packNull(manager, data, field, type) {
     this.pack(manager, data, "", 0, field, type);
+  }
+
+  static toJSON(manager, val, obj, field, type) {
+    return "" + val;
   }
   
   static unpack(manager, data, type, uctx) {
@@ -1070,9 +1074,8 @@ class StructStaticArrayField extends StructFieldType {
 
     let itername = type.data.iname;
 
-    if (val === undefined || !val.length) {
-      this.packNull(manager, data, field, type);
-      return;
+    if (val === undefined || !val.length) {;
+      return [];
     }
 
     let ret = [];

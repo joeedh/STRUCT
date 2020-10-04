@@ -52,7 +52,7 @@ exports.eval = function(buf, scope={}) {
     let scopePush = (state, scope={}) => {
         let ret = {
             stack : state.stack,
-            scope : Object.assign({}, state.scope)
+            scope : Object.create(state.scope) //Object.assign({}, state.scope)
         };
         for (let k in scope) {
             ret.scope[k] = scope[k];
@@ -85,7 +85,8 @@ exports.eval = function(buf, scope={}) {
             let a = state.stack.pop();
 
             if (nodeIs(a, "Identifier")) {
-                a = state.scope[a.name];
+                let name = a.name;
+                a = state.scope[name];
             }
 
             //let state2 = scopePush(state);
@@ -108,7 +109,7 @@ exports.eval = function(buf, scope={}) {
             }
 
             //console.log("+++", b);
-            
+
             a = a[b];
             state.stack.push(a);
         },
@@ -122,7 +123,7 @@ exports.eval = function(buf, scope={}) {
 
             let state2 = scopePush(state);
             state2.stack = [];
-            
+
             for (let arg of n.params) {
                 arg = arg.name;
                 args.push(arg);
@@ -144,8 +145,10 @@ exports.eval = function(buf, scope={}) {
               }
               let this2 = !useLexThis ? this : state2.scope["this"];
               
-              if (debug) {
+              if (state2.scope["this"] && state2.scope["this"].constructor.name[0].search(/[PAC]/) <0) {
                 //console.log(state2.scope);
+                //console.log(state2.scope["this"].constructor)
+                //process.exit()
               }
               
               try {
@@ -189,6 +192,28 @@ exports.eval = function(buf, scope={}) {
 
             state.stack.push(func);
         },
+        ObjectExpression(n, state, visit) {
+            let ret = {};
+
+            for (let prop of n.properties) {
+                let key = prop.key;
+
+                if (!prop.computed) {
+                    key = key.name;
+                } else {
+                    //state.stack.push(key);
+                    visit(key, state);
+                    key = this._getValue(state.stack.pop(), state);
+                }
+
+                visit(prop.value, state);
+                let val = this._getValue(state.stack.pop(), state);
+
+                ret[key] = val;
+            }
+
+            state.stack.push(ret);
+        },
         CallExpression(n, state, visit) {
             state = scopePush(state);
             visit(n.callee, state);
@@ -209,8 +234,9 @@ exports.eval = function(buf, scope={}) {
             if (debug) {
               console.log("  RET", ret, args);
             }
-            
-            state.stack.push(ret);            
+
+            state.stack.push(ret);
+            //console.log("FUNC", n, args);
             //console.log(func, Reflect.ownKeys(state.scope), state.scope["this"], "::")
         },
 

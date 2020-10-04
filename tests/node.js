@@ -35,6 +35,13 @@ class Point {
     this.fid = 3.5;
     this.did = 1.5
     this.bid = 255;
+    this.strtest = {};
+  }
+
+  loadSTRUCT(reader) {
+    reader(this);
+
+    this.strtest = JSON.parse(this.strtest);
   }
 }
 
@@ -47,6 +54,7 @@ node.Point {
   bid  : byte;
   fid  : float;
   did  : double;
+  strtest : string | JSON.stringify({});
 }`;
 
 structjs.manager.add_class(Point, "node.Point");
@@ -57,7 +65,9 @@ class Polygon {
     this.idgen = 0;
     this.flag = 0;
     this.id = -1;
-    
+
+    this.strtest = {a : 2};
+
     this.pointmap = {
       a : 1,
       b : 2,
@@ -87,7 +97,9 @@ class Polygon {
   
   loadSTRUCT(reader) {
     reader(this);
-    
+
+    this.strtest = JSON.parse(this.strtest);
+
     console.log("THIS.POINTS", this.points);
     //console.log(this.pointmap);
     //console.log(this.pointmap2);
@@ -139,6 +151,7 @@ node.Polygon {
   points2   : iter(node.Point) | this.points;
   points    : array(e, int) | e.id;
   active    : int | this.points.active !== undefined ? this.points.active : -1;
+  strtest   : string | JSON.stringify({a:2});
 }`;
 //points3   : static_array[short, 32] | [1,2,3];
 structjs.manager.add_class(Polygon, "node.Polygon");
@@ -262,12 +275,14 @@ function test_main() {
 
   structjs.validateStructs();
 
+  //*
   let jsonout = structjs.writeJSON(canvas);
 
   console.log("Writing JSON");
   console.log(JSON.stringify(jsonout, undefined, 1));
   console.log("done");
   console.log(structjs.readJSON(jsonout, Canvas));
+  //*/
 
   {
     let s1 = JSON.stringify(structjs.readJSON(jsonout, Canvas));
@@ -277,6 +292,7 @@ function test_main() {
     passed = passed && s1 === s2;
   }
 
+  console.log(json2);
 
   console.log(passed ? "PASSED" : "FAILED")
   if (!passed) {

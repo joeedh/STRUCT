@@ -1,3 +1,5 @@
+"use strict";
+
 let struct_util = require("./struct_util");
 let struct_typesystem = require("./struct_typesystem");
 
@@ -113,7 +115,7 @@ var decode_utf8 = exports.decode_utf8 = function decode_utf8(arr) {
       sum |= c;
     }
 
-    if (sum == 0) break;
+    if (sum === 0) break;
 
     str += String.fromCharCode(sum);
     i++;
@@ -239,34 +241,38 @@ exports.unpack_short = function (dview, uctx) {
   return dview.getInt16(uctx.i - 2, exports.STRUCT_ENDIAN);
 }
 
-var _static_arr_us = new Array(32);
+let _static_arr_us = new Array(32);
 exports.unpack_string = function (data, uctx) {
-  var str = ""
+  let slen = unpack_int(data, uctx);
 
-  var slen = unpack_int(data, uctx);
-  var arr = slen < 2048 ? _static_arr_us : new Array(slen);
+  if (!slen) {
+    return "";
+  }
+
+  let str = ""
+  let arr = slen < 2048 ? _static_arr_us : new Array(slen);
 
   arr.length = slen;
-  for (var i = 0; i < slen; i++) {
+  for (let i = 0; i < slen; i++) {
     arr[i] = unpack_byte(data, uctx);
   }
 
   return decode_utf8(arr);
 }
 
-var _static_arr_uss = new Array(2048);
+let _static_arr_uss = new Array(2048);
 exports.unpack_static_string = function unpack_static_string(data, uctx, length) {
-  var str = "";
+  let str = "";
 
   if (length == undefined)
     throw new Error("'length' cannot be undefined in unpack_static_string()");
 
-  var arr = length < 2048 ? _static_arr_uss : new Array(length);
+  let arr = length < 2048 ? _static_arr_uss : new Array(length);
   arr.length = 0;
 
-  var done = false;
-  for (var i = 0; i < length; i++) {
-    var c = unpack_byte(data, uctx);
+  let done = false;
+  for (let i = 0; i < length; i++) {
+    let c = unpack_byte(data, uctx);
 
     if (c == 0) {
       done = true;
