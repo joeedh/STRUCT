@@ -1,7 +1,26 @@
-let struct_typesystem = require("./struct_typesystem");
+require("./polyfill.js");
 
-var Class = struct_typesystem.Class;
+Symbol["_struct_keystr"] = Symbol("_struct_keystr");
+
+String.prototype[Symbol._struct_keystr] = function () {
+  return this;
+}
+
+Number.prototype[Symbol._struct_keystr] = Boolean.prototype[Symbol._struct_keystr] = function () {
+  return "" + this;
+}
+
 var _o_basic_types = {"String": 0, "Number": 0, "Array": 0, "Function": 0};
+
+exports.truncateDollarSign = function(s) {
+  let i = s.search("$");
+
+  if (i > 0) {
+    return s.slice(0, i).trim();
+  }
+
+  return s;
+}
 
 exports.cachering = class cachering extends Array {
   constructor(cb, tot) {
@@ -67,7 +86,7 @@ function set_getkey(obj) {
   else if (typeof obj == "string")
     return obj;
   else
-    return obj.__keystr__();
+    return obj[Symbol._struct_keystr]();
 }
 
 exports.get_callstack = function get_callstack(err) {
@@ -157,95 +176,199 @@ exports.print_stack = function print_stack(err) {
   }
 }
 
-var set = exports.set = Class([
-  function constructor(input) {
+const EmptySlot = Symbol("emptyslot");
+
+/**
+ Set
+
+ Stores objects in a set; each object is converted to a value via
+ a [Symbol._struct_keystr] method, and if that value already exists in the set
+ then the object is not added.
+
+
+ * */
+var set = exports.set =  class set {
+  constructor(input) {
     this.items = [];
     this.keys = {};
     this.freelist = [];
 
     this.length = 0;
 
-    if (input != undefined && input instanceof Array) {
-      for (var i = 0; i < input.length; i++) {
-        this.add(input[i]);
-      }
-    } else if (input != undefined && input.forEach != undefined) {
-      input.forEach(function (item) {
-        this.add(input[i]);
-      }, this);
+    if (typeof input == "string") {
+      input = new String(input);
     }
-  },
-  function add(obj) {
-    var key = set_getkey(obj);
+
+    if (input !== undefined) {
+      if (Symbol.iterator in input) {
+        for (var item of input) {
+          this.add(item);
+        }
+      } else if ("forEach" in input) {
+        input.forEach(function(item) {
+          this.add(item);
+        }, this);
+      } else if (input instanceof Array) {
+        for (var i=0; i<input.length; i++) {
+          this.add(input[i]);
+        }
+      }
+    }
+  }
+
+  [Symbol.iterator] () {
+    return new SetIter(this);
+  }
+
+  equals(setb) {
+    for (let item of this) {
+      if (!setb.has(item)) {
+        return false;
+      }
+    }
+
+    for (let item of setb) {
+      if (!this.has(item)) {
+        return false;
+      }
+    }
+
+    return true;
+  }
+
+  clear() {
+    this.items.length = 0;
+    this.keys = {};
+    this.freelist.length = 0;
+    this.length = 0;
+
+    return this;
+  }
+
+  filter(f, thisvar) {
+    let i = 0;
+    let ret = new set();
+
+    for (let item of this) {
+      if (f.call(thisvar, item, i++, this)) {
+        ret.add(item);
+      }
+    }
+
+    return ret;
+
+  }
+
+  map(f, thisvar) {
+    let ret = new set();
+
+    let i = 0;
+
+    for (let item of this) {
+      ret.add(f.call(thisvar, item, i++, this));
+    }
+
+    return ret;
+  }
+
+  reduce(f, initial) {
+    if (initial === undefined) {
+      for (let item of this) {
+        initial = item;
+        break;
+      }
+    }
+
+    let i = 0;
+    for (let item of this) {
+      initial = f(initial, item, i++, this);
+    }
+
+    return initial;
+  }
+
+  copy() {
+    let ret = new set();
+    for (let item of this) {
+      ret.add(item);
+    }
+
+    return ret;
+  }
+
+  add(item) {
+    var key = item[Symbol._struct_keystr]();
+
     if (key in this.keys) return;
 
     if (this.freelist.length > 0) {
       var i = this.freelist.pop();
+
       this.keys[key] = i;
-      this.items[i] = obj;
+      this.items[i] = item;
     } else {
-      this.keys[key] = this.items.length;
-      this.items.push(obj);
+      var i = this.items.length;
+
+      this.keys[key] = i;
+      this.items.push(item);
     }
 
     this.length++;
-  },
-  function remove(obj, raise_error) {
-    var key = set_getkey(obj);
+  }
 
-    if (!(keystr in this.keys)) {
-      if (raise_error)
-        throw new Error("Object not in set");
-      else
-        console.trace("Object not in set", obj);
+  remove(item, ignore_existence) {
+    var key = item[Symbol._struct_keystr]();
+
+    if (!(key in this.keys)) {
+      if (!ignore_existence) {
+        console.warn("Warning, item", item, "is not in set");
+      }
       return;
     }
 
-    var i = this.keys[keystr];
-
+    var i = this.keys[key];
     this.freelist.push(i);
-    this.items[i] = undefined;
+    this.items[i] = EmptySlot;
 
-    delete this.keys[keystr];
+    delete this.keys[key];
+
     this.length--;
-  },
+  }
 
-  function has(obj) {
-    return set_getkey(obj) in this.keys;
-  },
+  has(item) {
+    return item[Symbol._struct_keystr]() in this.keys;
+  }
 
-  function forEach(func, thisvar) {
-    for (var i = 0; i < this.items.length; i++) {
+  forEach(func, thisvar) {
+    for (var i=0; i<this.items.length; i++) {
       var item = this.items[i];
 
-      if (item == undefined) continue;
+      if (item === EmptySlot)
+        continue;
 
-      if (thisvar != undefined)
-        func.call(thisvar, item);
-      else
-        func(item);
+      thisvar !== undefined ? func.call(thisvar, item) : func(item);
     }
   }
-]);
+}
 
-var IDGen = exports.IDGen = Class([
-  function constructor() {
+var IDGen = exports.IDGen = class IDGen {
+  constructor() {
     this.cur_id = 1;
-  },
+  }
 
-  function gen_id() {
+  gen_id() {
     return this.cur_id++;
-  },
+  }
 
-  Class.static_method(function fromSTRUCT(reader) {
+  static fromSTRUCT(reader) {
     var ret = new IDGen();
     reader(ret);
     return ret;
-  })
-]);
+  }
+}
 
-IDGen.STRUCT = [
-  "struct_util.IDGen {",
-  "  cur_id : int;",
-  "}"
-].join("\n");
+IDGen.STRUCT = `
+struct_util.IDGen {
+  cur_id : int;
+}
+`;

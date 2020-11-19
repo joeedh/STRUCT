@@ -2,13 +2,20 @@
 let struct_util = require("./struct_util");
 let struct_binpack = require("./struct_binpack");
 let struct_parseutil = require("./struct_parseutil");
-let struct_typesystem = require("./struct_typesystem");
 let struct_parser = require("./struct_parser");
 
 let sintern2 = require("./struct_intern2.js");
 let StructFieldTypeMap = sintern2.StructFieldTypeMap;
 
 let warninglvl = 2;
+
+function unmangle(name) {
+  if (exports.truncateDollarSign) {
+    return struct_util.truncateDollarSign(name);
+  } else {
+    return name;
+  }
+}
 
 /*
 
@@ -37,7 +44,6 @@ nstructjs.manager.add_class(SomeClass);
 */
 let StructTypeMap = struct_parser.StructTypeMap;
 let StructTypes = struct_parser.StructTypes;
-let Class = struct_typesystem.Class;
 
 let struct_parse = struct_parser.struct_parse;
 let StructEnum = struct_parser.StructEnum;
@@ -45,6 +51,9 @@ let StructEnum = struct_parser.StructEnum;
 let _static_envcode_null = "";
 let debug_struct = 0;
 let packdebug_tablevel = 0;
+
+//truncate webpack-mangled names
+exports.truncateDollarSign = true;
 
 function gen_tabstr(tot) {
   var ret = "";
@@ -304,7 +313,7 @@ let STRUCT = exports.STRUCT = class STRUCT {
         cls.structName = stt.name;
       } else if (!cls.structName && cls.name !== "Object") {
         if (warninglvl > 0) 
-          console.log("Warning, bad class in registered class list", cls.name, cls);
+          console.log("Warning, bad class in registered class list", unmangle(cls.name), cls);
         continue;
       }
 
@@ -367,9 +376,9 @@ let STRUCT = exports.STRUCT = class STRUCT {
       }
       
       if (bad) {
-        console.warn("Generating STRUCT script for derived class " + cls.name);
+        console.warn("Generating STRUCT script for derived class " + unmangle(cls.name));
         if (!structName) {
-          structName = cls.name;
+          structName = unmangle(cls.name);
         }
         
         cls.STRUCT = STRUCT.inherit(cls, p) + `\n}`;
@@ -377,10 +386,12 @@ let STRUCT = exports.STRUCT = class STRUCT {
     }
     
     if (!cls.STRUCT) {
-      throw new Error("class " + cls.name + " has no STRUCT script");
+      throw new Error("class " + unmangle(cls.name) + " has no STRUCT script");
     }
 
     let stt = struct_parse.parse(cls.STRUCT);
+
+    stt.name = unmangle(stt.name);
 
     cls.structName = stt.name;
 
@@ -395,17 +406,15 @@ let STRUCT = exports.STRUCT = class STRUCT {
       stt.name = cls.structName = structName;
     } else if (cls.structName === undefined) {
       cls.structName = stt.name;
-    } else if (cls.structName !== undefined) {
-      stt.name = cls.structName;
     } else {
-      throw new Error("Missing structName parameter");
+      stt.name = cls.structName;
     }
 
     if (cls.structName in this.structs) {
-      console.warn("Struct " + cls.structName + " is already registered", cls);
+      console.warn("Struct " + unmangle(cls.structName) + " is already registered", cls);
 
       if (!this.allowOverriding) {
-        throw new Error("Struct " + cls.structName + " is already registered");
+        throw new Error("Struct " + unmangle(cls.structName) + " is already registered");
       }
 
       return;
@@ -800,7 +809,7 @@ let STRUCT = exports.STRUCT = class STRUCT {
       return obj;
     } else if (cls.fromSTRUCT !== undefined) {
       if (warninglvl > 1) 
-        console.warn("Warning: class " + cls.name + " is using deprecated fromSTRUCT interface; use newSTRUCT/loadSTRUCT instead");
+        console.warn("Warning: class " + unmangle(cls.name) + " is using deprecated fromSTRUCT interface; use newSTRUCT/loadSTRUCT instead");
       return cls.fromSTRUCT(load);
     } else { //default case, make new instance and then call load() on it
       let obj;
@@ -869,7 +878,7 @@ let STRUCT = exports.STRUCT = class STRUCT {
       return obj;
     } else if (cls.fromSTRUCT !== undefined) {
       if (warninglvl > 1)
-        console.warn("Warning: class " + cls.name + " is using deprecated fromSTRUCT interface; use newSTRUCT/loadSTRUCT instead");
+        console.warn("Warning: class " + unmangle(cls.name) + " is using deprecated fromSTRUCT interface; use newSTRUCT/loadSTRUCT instead");
 
       return cls.fromSTRUCT(reader);
     } else { //default case, make new instance and then call reader() on it

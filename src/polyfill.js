@@ -1,4 +1,4 @@
-if (Array.prototype.pop_i == undefined) {
+if (Array.prototype.pop_i === undefined) {
   Array.prototype.pop_i = function (idx) {
     if (idx < 0 || idx >= this.length) {
       throw new Error("Index out of range");
@@ -6,13 +6,14 @@ if (Array.prototype.pop_i == undefined) {
 
     while (idx < this.length) {
       this[idx] = this[idx + 1];
+      idx++;
     }
 
     this.length -= 1;
   }
 }
 
-if (Array.prototype.remove == undefined) {
+if (Array.prototype.remove === undefined) {
   Array.prototype.remove = function (item, suppress_error) {
     var i = this.indexOf(item);
 
@@ -29,17 +30,8 @@ if (Array.prototype.remove == undefined) {
   }
 }
 
-if (String.prototype.contains == undefined) {
+if (String.prototype.contains === undefined) {
   String.prototype.contains = function (substr) {
     return String.search(substr) != null;
   }
 }
-
-String.prototype.__keystr__ = function () {
-  return this;
-}
-
-Number.prototype.__keystr__ = Boolean.prototype.__keystr__ = function () {
-  return "" + this;
-}
-

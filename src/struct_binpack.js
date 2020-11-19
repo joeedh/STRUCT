@@ -1,20 +1,17 @@
 "use strict";
 
 let struct_util = require("./struct_util");
-let struct_typesystem = require("./struct_typesystem");
 
 exports.STRUCT_ENDIAN = true; //little endian
-
-var Class = struct_typesystem.Class;
 
 var temp_dataview = new DataView(new ArrayBuffer(16));
 var uint8_view = new Uint8Array(temp_dataview.buffer);
 
-var unpack_context = exports.unpack_context = Class([
-  function constructor() {
+var unpack_context = exports.unpack_context = class unpack_context {
+  constructor() {
     this.i = 0;
   }
-]);
+}
 
 var pack_byte = exports.pack_byte = function (array, val) {
   array.push(val);

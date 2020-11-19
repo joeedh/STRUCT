@@ -164,7 +164,6 @@ var types = {
   colon: new TokenType(":", beforeExpr),
   dot: new TokenType("."),
   question: new TokenType("?", beforeExpr),
-  questionDot: new TokenType("?."),
   arrow: new TokenType("=>", beforeExpr),
   template: new TokenType("template"),
   invalidTemplate: new TokenType("invalidTemplate"),
@@ -1704,10 +1703,6 @@ pp$2.toAssignable = function(node, isBinding, refDestructuringErrors) {
       this.toAssignable(node.expression, isBinding, refDestructuringErrors);
       break
 
-    case "ChainExpression":
-      this.raiseRecoverable(node.start, "Optional chaining cannot appear in left-hand side");
-      break
-
     case "MemberExpression":
       if (!isBinding) { break }
 
@@ -1836,10 +1831,6 @@ pp$2.checkLVal = function(expr, bindingType, checkClashes) {
       checkClashes[expr.name] = true;
     }
     if (bindingType !== BIND_NONE && bindingType !== BIND_OUTSIDE) { this.declareName(expr.name, bindingType, expr.start); }
-    break
-
-  case "ChainExpression":
-    this.raiseRecoverable(expr.start, "Optional chaining cannot appear in left-hand side");
     break
 
   case "MemberExpression":
@@ -2139,40 +2130,21 @@ pp$3.parseSubscripts = function(base, startPos, startLoc, noCalls) {
   var maybeAsyncArrow = this.options.ecmaVersion >= 8 && base.type === "Identifier" && base.name === "async" &&
       this.lastTokEnd === base.end && !this.canInsertSemicolon() && base.end - base.start === 5 &&
       this.potentialArrowAt === base.start;
-  var optionalChained = false;
-
   while (true) {
-    var element = this.parseSubscript(base, startPos, startLoc, noCalls, maybeAsyncArrow, optionalChained);
-
-    if (element.optional) { optionalChained = true; }
-    if (element === base || element.type === "ArrowFunctionExpression") {
-      if (optionalChained) {
-        var chainNode = this.startNodeAt(startPos, startLoc);
-        chainNode.expression = element;
-        element = this.finishNode(chainNode, "ChainExpression");
-      }
-      return element
-    }
-
+    var element = this.parseSubscript(base, startPos, startLoc, noCalls, maybeAsyncArrow);
+    if (element === base || element.type === "ArrowFunctionExpression") { return element }
     base = element;
   }
 };
 
-pp$3.parseSubscript = function(base, startPos, startLoc, noCalls, maybeAsyncArrow, optionalChained) {
-  var optionalSupported = this.options.ecmaVersion >= 11;
-  var optional = optionalSupported && this.eat(types.questionDot);
-  if (noCalls && optional) { this.raise(this.lastTokStart, "Optional chaining cannot appear in the callee of new expressions"); }
-
+pp$3.parseSubscript = function(base, startPos, startLoc, noCalls, maybeAsyncArrow) {
   var computed = this.eat(types.bracketL);
-  if (computed || (optional && this.type !== types.parenL && this.type !== types.backQuote) || this.eat(types.dot)) {
+  if (computed || this.eat(types.dot)) {
     var node = this.startNodeAt(startPos, startLoc);
     node.object = base;
     node.property = computed ? this.parseExpression() : this.parseIdent(this.options.allowReserved !== "never");
     node.computed = !!computed;
     if (computed) { this.expect(types.bracketR); }
-    if (optionalSupported) {
-      node.optional = optional;
-    }
     base = this.finishNode(node, "MemberExpression");
   } else if (!noCalls && this.eat(types.parenL)) {
     var refDestructuringErrors = new DestructuringErrors, oldYieldPos = this.yieldPos, oldAwaitPos = this.awaitPos, oldAwaitIdentPos = this.awaitIdentPos;
@@ -2180,7 +2152,7 @@ pp$3.parseSubscript = function(base, startPos, startLoc, noCalls, maybeAsyncArro
     this.awaitPos = 0;
     this.awaitIdentPos = 0;
     var exprList = this.parseExprList(types.parenR, this.options.ecmaVersion >= 8, false, refDestructuringErrors);
-    if (maybeAsyncArrow && !optional && !this.canInsertSemicolon() && this.eat(types.arrow)) {
+    if (maybeAsyncArrow && !this.canInsertSemicolon() && this.eat(types.arrow)) {
       this.checkPatternErrors(refDestructuringErrors, false);
       this.checkYieldAwaitInDefaultParams();
       if (this.awaitIdentPos > 0)
@@ -2197,14 +2169,8 @@ pp$3.parseSubscript = function(base, startPos, startLoc, noCalls, maybeAsyncArro
     var node$1 = this.startNodeAt(startPos, startLoc);
     node$1.callee = base;
     node$1.arguments = exprList;
-    if (optionalSupported) {
-      node$1.optional = optional;
-    }
     base = this.finishNode(node$1, "CallExpression");
   } else if (this.type === types.backQuote) {
-    if (optional || optionalChained) {
-      this.raise(this.start, "Optional chaining cannot appear in the tag of tagged template expressions");
-    }
     var node$2 = this.startNodeAt(startPos, startLoc);
     node$2.tag = base;
     node$2.quasi = this.parseTemplate({isTagged: true});
@@ -2383,7 +2349,7 @@ pp$3.parseLiteral = function(value) {
   var node = this.startNode();
   node.value = value;
   node.raw = this.input.slice(this.start, this.end);
-  if (node.raw.charCodeAt(node.raw.length - 1) === 110) { node.bigint = node.raw.slice(0, -1).replace(/_/g, ""); }
+  if (node.raw.charCodeAt(node.raw.length - 1) === 110) { node.bigint = node.raw.slice(0, -1); }
   this.next();
   return this.finishNode(node, "Literal")
 };
@@ -2635,7 +2601,7 @@ pp$3.parsePropertyValue = function(prop, isPattern, isGenerator, isAsync, startP
   } else if (!isPattern && !containsEsc &&
              this.options.ecmaVersion >= 5 && !prop.computed && prop.key.type === "Identifier" &&
              (prop.key.name === "get" || prop.key.name === "set") &&
-             (this.type !== types.comma && this.type !== types.braceR && this.type !== types.eq)) {
+             (this.type !== types.comma && this.type !== types.braceR)) {
     if (isGenerator || isAsync) { this.unexpected(); }
     prop.kind = prop.key.name;
     this.parsePropertyName(prop);
@@ -4549,13 +4515,7 @@ pp$9.readToken_mult_modulo_exp = function(code) { // '%*'
 
 pp$9.readToken_pipe_amp = function(code) { // '|&'
   var next = this.input.charCodeAt(this.pos + 1);
-  if (next === code) {
-    if (this.options.ecmaVersion >= 12) {
-      var next2 = this.input.charCodeAt(this.pos + 2);
-      if (next2 === 61) { return this.finishOp(types.assign, 3) }
-    }
-    return this.finishOp(code === 124 ? types.logicalOR : types.logicalAND, 2)
-  }
+  if (next === code) { return this.finishOp(code === 124 ? types.logicalOR : types.logicalAND, 2) }
   if (next === 61) { return this.finishOp(types.assign, 2) }
   return this.finishOp(code === 124 ? types.bitwiseOR : types.bitwiseAND, 1)
 };
@@ -4612,20 +4572,9 @@ pp$9.readToken_eq_excl = function(code) { // '=!'
 };
 
 pp$9.readToken_question = function() { // '?'
-  var ecmaVersion = this.options.ecmaVersion;
-  if (ecmaVersion >= 11) {
+  if (this.options.ecmaVersion >= 11) {
     var next = this.input.charCodeAt(this.pos + 1);
-    if (next === 46) {
-      var next2 = this.input.charCodeAt(this.pos + 2);
-      if (next2 < 48 || next2 > 57) { return this.finishOp(types.questionDot, 2) }
-    }
-    if (next === 63) {
-      if (ecmaVersion >= 12) {
-        var next2$1 = this.input.charCodeAt(this.pos + 2);
-        if (next2$1 === 61) { return this.finishOp(types.assign, 3) }
-      }
-      return this.finishOp(types.coalesce, 2)
-    }
+    if (next === 63) { return this.finishOp(types.coalesce, 2) }
   }
   return this.finishOp(types.question, 1)
 };
@@ -4754,59 +4703,22 @@ pp$9.readRegexp = function() {
 // were read, the integer value otherwise. When `len` is given, this
 // will return `null` unless the integer has exactly `len` digits.
 
-pp$9.readInt = function(radix, len, maybeLegacyOctalNumericLiteral) {
-  // `len` is used for character escape sequences. In that case, disallow separators.
-  var allowSeparators = this.options.ecmaVersion >= 12 && len === undefined;
-
-  // `maybeLegacyOctalNumericLiteral` is true if it doesn't have prefix (0x,0o,0b)
-  // and isn't fraction part nor exponent part. In that case, if the first digit
-  // is zero then disallow separators.
-  var isLegacyOctalNumericLiteral = maybeLegacyOctalNumericLiteral && this.input.charCodeAt(this.pos) === 48;
-
-  var start = this.pos, total = 0, lastCode = 0;
-  for (var i = 0, e = len == null ? Infinity : len; i < e; ++i, ++this.pos) {
+pp$9.readInt = function(radix, len) {
+  var start = this.pos, total = 0;
+  for (var i = 0, e = len == null ? Infinity : len; i < e; ++i) {
     var code = this.input.charCodeAt(this.pos), val = (void 0);
-
-    if (allowSeparators && code === 95) {
-      if (isLegacyOctalNumericLiteral) { this.raiseRecoverable(this.pos, "Numeric separator is not allowed in legacy octal numeric literals"); }
-      if (lastCode === 95) { this.raiseRecoverable(this.pos, "Numeric separator must be exactly one underscore"); }
-      if (i === 0) { this.raiseRecoverable(this.pos, "Numeric separator is not allowed at the first of digits"); }
-      lastCode = code;
-      continue
-    }
-
     if (code >= 97) { val = code - 97 + 10; } // a
     else if (code >= 65) { val = code - 65 + 10; } // A
     else if (code >= 48 && code <= 57) { val = code - 48; } // 0-9
     else { val = Infinity; }
     if (val >= radix) { break }
-    lastCode = code;
+    ++this.pos;
     total = total * radix + val;
   }
-
-  if (allowSeparators && lastCode === 95) { this.raiseRecoverable(this.pos - 1, "Numeric separator is not allowed at the last of digits"); }
   if (this.pos === start || len != null && this.pos - start !== len) { return null }
 
   return total
 };
-
-function stringToNumber(str, isLegacyOctalNumericLiteral) {
-  if (isLegacyOctalNumericLiteral) {
-    return parseInt(str, 8)
-  }
-
-  // `parseFloat(value)` stops parsing at the first numeric separator then returns a wrong value.
-  return parseFloat(str.replace(/_/g, ""))
-}
-
-function stringToBigInt(str) {
-  if (typeof BigInt !== "function") {
-    return null
-  }
-
-  // `BigInt(value)` throws syntax error if the string contains numeric separators.
-  return BigInt(str.replace(/_/g, ""))
-}
 
 pp$9.readRadixNumber = function(radix) {
   var start = this.pos;
@@ -4814,7 +4726,7 @@ pp$9.readRadixNumber = function(radix) {
   var val = this.readInt(radix);
   if (val == null) { this.raise(this.start + 2, "Expected number in radix " + radix); }
   if (this.options.ecmaVersion >= 11 && this.input.charCodeAt(this.pos) === 110) {
-    val = stringToBigInt(this.input.slice(start, this.pos));
+    val = typeof BigInt !== "undefined" ? BigInt(this.input.slice(start, this.pos)) : null;
     ++this.pos;
   } else if (isIdentifierStart(this.fullCharCodeAtPos())) { this.raise(this.pos, "Identifier directly after number"); }
   return this.finishToken(types.num, val)
@@ -4824,12 +4736,13 @@ pp$9.readRadixNumber = function(radix) {
 
 pp$9.readNumber = function(startsWithDot) {
   var start = this.pos;
-  if (!startsWithDot && this.readInt(10, undefined, true) === null) { this.raise(start, "Invalid number"); }
+  if (!startsWithDot && this.readInt(10) === null) { this.raise(start, "Invalid number"); }
   var octal = this.pos - start >= 2 && this.input.charCodeAt(start) === 48;
   if (octal && this.strict) { this.raise(start, "Invalid number"); }
   var next = this.input.charCodeAt(this.pos);
   if (!octal && !startsWithDot && this.options.ecmaVersion >= 11 && next === 110) {
-    var val$1 = stringToBigInt(this.input.slice(start, this.pos));
+    var str$1 = this.input.slice(start, this.pos);
+    var val$1 = typeof BigInt !== "undefined" ? BigInt(str$1) : null;
     ++this.pos;
     if (isIdentifierStart(this.fullCharCodeAtPos())) { this.raise(this.pos, "Identifier directly after number"); }
     return this.finishToken(types.num, val$1)
@@ -4847,7 +4760,8 @@ pp$9.readNumber = function(startsWithDot) {
   }
   if (isIdentifierStart(this.fullCharCodeAtPos())) { this.raise(this.pos, "Identifier directly after number"); }
 
-  var val = stringToNumber(this.input.slice(start, this.pos), octal);
+  var str = this.input.slice(start, this.pos);
+  var val = octal ? parseInt(str, 8) : parseFloat(str);
   return this.finishToken(types.num, val)
 };
 
@@ -5106,7 +5020,7 @@ pp$9.readWord = function() {
 
 // Acorn is a tiny, fast JavaScript parser written in JavaScript.
 
-var version = "7.4.0";
+var version = "7.1.0";
 
 Parser.acorn = {
   Parser: Parser,
@@ -5378,7 +5292,7 @@ base.Program = base.BlockStatement = function (node, st, c) {
 };
 base.Statement = skipThrough;
 base.EmptyStatement = ignore;
-base.ExpressionStatement = base.ParenthesizedExpression = base.ChainExpression =
+base.ExpressionStatement = base.ParenthesizedExpression =
   function (node, st, c) { return c(node.expression, st, "Expression"); };
 base.IfStatement = function (node, st, c) {
   c(node.test, st, "Expression");
@@ -5583,8 +5497,6 @@ base.ExportNamedDeclaration = base.ExportDefaultDeclaration = function (node, st
   if (node.source) { c(node.source, st, "Expression"); }
 };
 base.ExportAllDeclaration = function (node, st, c) {
-  if (node.exported)
-    { c(node.exported, st); }
   c(node.source, st, "Expression");
 };
 base.ImportDeclaration = function (node, st, c) {
@@ -5693,7 +5605,7 @@ const _export_eval_ = function(buf, scope={}) {
     let scopePush = (state, scope={}) => {
         let ret = {
             stack : state.stack,
-            scope : Object.assign({}, state.scope)
+            scope : Object.create(state.scope) //Object.assign({}, state.scope)
         };
         for (let k in scope) {
             ret.scope[k] = scope[k];
@@ -5726,7 +5638,8 @@ const _export_eval_ = function(buf, scope={}) {
             let a = state.stack.pop();
 
             if (nodeIs(a, "Identifier")) {
-                a = state.scope[a.name];
+                let name = a.name;
+                a = state.scope[name];
             }
 
             //let state2 = scopePush(state);
@@ -5749,7 +5662,7 @@ const _export_eval_ = function(buf, scope={}) {
             }
 
             //console.log("+++", b);
-            
+
             a = a[b];
             state.stack.push(a);
         },
@@ -5763,7 +5676,7 @@ const _export_eval_ = function(buf, scope={}) {
 
             let state2 = scopePush(state);
             state2.stack = [];
-            
+
             for (let arg of n.params) {
                 arg = arg.name;
                 args.push(arg);
@@ -5785,8 +5698,10 @@ const _export_eval_ = function(buf, scope={}) {
               }
               let this2 = !useLexThis ? this : state2.scope["this"];
               
-              if (debug) {
+              if (state2.scope["this"] && state2.scope["this"].constructor.name[0].search(/[PAC]/) <0) {
                 //console.log(state2.scope);
+                //console.log(state2.scope["this"].constructor)
+                //process.exit()
               }
               
               try {
@@ -5830,6 +5745,28 @@ const _export_eval_ = function(buf, scope={}) {
 
             state.stack.push(func);
         },
+        ObjectExpression(n, state, visit) {
+            let ret = {};
+
+            for (let prop of n.properties) {
+                let key = prop.key;
+
+                if (!prop.computed) {
+                    key = key.name;
+                } else {
+                    //state.stack.push(key);
+                    visit(key, state);
+                    key = this._getValue(state.stack.pop(), state);
+                }
+
+                visit(prop.value, state);
+                let val = this._getValue(state.stack.pop(), state);
+
+                ret[key] = val;
+            }
+
+            state.stack.push(ret);
+        },
         CallExpression(n, state, visit) {
             state = scopePush(state);
             visit(n.callee, state);
@@ -5850,8 +5787,9 @@ const _export_eval_ = function(buf, scope={}) {
             if (debug) {
               console.log("  RET", ret, args);
             }
-            
-            state.stack.push(ret);            
+
+            state.stack.push(ret);
+            //console.log("FUNC", n, args);
             //console.log(func, Reflect.ownKeys(state.scope), state.scope["this"], "::")
         },
 

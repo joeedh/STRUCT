@@ -72,7 +72,8 @@ function StructParser() {
   }
   
   var tokens=[
-    tk("ID", /[a-zA-Z_]+[a-zA-Z0-9_\.]*/, function(t) {
+    tk("ID", /[a-zA-Z_$]+[a-zA-Z0-9_\.$]*/, function(t) {
+
       if (reserved_tokens.has(t.value)) {
           t.type = t.value.toUpperCase();
       }

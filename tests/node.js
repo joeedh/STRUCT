@@ -17,6 +17,7 @@ try {
   }
 }
 
+structjs = require("../build/nstructjs.js");
 structjs.setAllowOverriding(false);
 
 let filehelper = structjs.filehelper;

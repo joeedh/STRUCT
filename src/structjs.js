@@ -44,6 +44,12 @@ for (var k in struct_intern) {
   exports[k] = struct_intern[k];
 }
 
+/** truncate webpack mangled names. defaults to true
+ *  so Mesh$1 turns into Mesh */
+exports.truncateDollarSign = function(value=true) {
+  struct_intern.truncateDollarSign = !!value;
+}
+
 exports.validateStructs = function validateStructs(onerror) {
   return exports.manager.validateStructs(onerror);
 }

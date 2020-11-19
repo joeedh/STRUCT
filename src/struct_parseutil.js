@@ -6,11 +6,8 @@ http://www.dabeaz.com/ply/ply.html
 */
 
 let struct_util = require("./struct_util");
-let struct_typesystem = require("./struct_typesystem");
 
 var t;
-
-var Class = struct_typesystem.Class;
 
 exports.token = class token {
   constructor(type, val, lexpos, lineno, lexer, parser) {

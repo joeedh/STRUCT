@@ -1,4 +1,4 @@
-(function () {
+let nexports = (function () {
   if (typeof window === "undefined" && typeof global != "undefined") {
     global._nGlobal = global;
   } else if (typeof self !== "undefined") {
@@ -8,241 +8,77 @@
   }
   
   let exports;
-  
+  let module = {};
+
   //nodejs?
   if (typeof window === "undefined" && typeof global !== "undefined") {
     console.log("Nodejs!");
   } else {
     exports = {};
-    _nGlobal.module = {};
+    _nGlobal.module = {exports : exports};
   }
-  
   
 'use strict';
 
-"use strict";
-
-//zebra-style class system, see zebkit.org
-
-function ClassGetter(func) {
-  this.func = func;
-}
-
-function ClassSetter(func) {
-  this.func = func;
-}
-
-var prototype_idgen = 1;
-var defined_classes = [];
-
-var StaticMethod = function StaticMethod(func) {
-  this.func = func;
-};
-
-//parent is optional
-var handle_statics = function (cls, methods, parent) {
-  for (var i = 0; i < methods.length; i++) {
-    var m = methods[i];
-
-    if (m instanceof StaticMethod) {
-      cls[m.func.name] = m.func;
+if (Array.prototype.pop_i === undefined) {
+  Array.prototype.pop_i = function (idx) {
+    if (idx < 0 || idx >= this.length) {
+      throw new Error("Index out of range");
     }
-  }
 
-  //inherit from parent too.
-  //only inherit static methods added to parent with this module, though
-  if (parent != undefined) {
-    for (var k in parent) {
-      var v = parent[k];
-
-      if ((typeof v == "object" || typeof v == "function")
-        && "_is_static_method" in v && !(k in cls)) {
-        cls[k] = v;
-      }
+    while (idx < this.length) {
+      this[idx] = this[idx + 1];
+      idx++;
     }
-  }
-};
 
-var Class = function Class(methods) {
-  var construct = undefined;
-  var parent = undefined;
-
-  if (arguments.length > 1) {
-    //a parent was passed in
-
-    parent = methods;
-    methods = arguments[1];
-  }
-
-  for (var i = 0; i < methods.length; i++) {
-    var f = methods[i];
-
-    if (f.name == "constructor") {
-      construct = f;
-      break;
-    }
-  }
-
-  if (construct == undefined) {
-    console.trace("Warning, constructor was not defined", methods);
-
-    if (parent != undefined) {
-      construct = function () {
-        parent.apply(this, arguments);
-      };
-    } else {
-      construct = function () {
-      };
-    }
-  }
-
-  if (parent != undefined) {
-    construct.prototype = Object.create(parent.prototype);
-  }
-
-  construct.prototype.__prototypeid__ = prototype_idgen++;
-  construct.__keystr__ = function () {
-    return this.prototype.__prototypeid__;
+    this.length -= 1;
   };
+}
 
-  construct.__parent__ = parent;
-  construct.__statics__ = [];
+if (Array.prototype.remove === undefined) {
+  Array.prototype.remove = function (item, suppress_error) {
+    var i = this.indexOf(item);
 
-  var getters = {};
-  var setters = {};
-  var getset = {};
+    if (i < 0) {
+      if (suppress_error)
+        console.trace("Warning: item not in array", item);
+      else
+        throw new Error("Error: item not in array " + item);
 
-  //handle getters/setters
-  for (var i = 0; i < methods.length; i++) {
-    var f = methods[i];
-    if (f instanceof ClassSetter) {
-      setters[f.func.name] = f.func;
-      getset[f.func.name] = 1;
-    } else if (f instanceof ClassGetter) {
-      getters[f.func.name] = f.func;
-      getset[f.func.name] = 1;
-    }
-  }
-
-  for (var k in getset) {
-    var def = {
-      enumerable: true,
-      configurable: true,
-      get: getters[k],
-      set: setters[k]
-    };
-
-    Object.defineProperty(construct.prototype, k, def);
-  }
-
-  handle_statics(construct, methods, parent);
-
-  if (parent != undefined)
-    construct.__parent__ = parent;
-
-  for (var i = 0; i < methods.length; i++) {
-    var f = methods[i];
-
-    if (f instanceof StaticMethod || f instanceof ClassGetter || f instanceof ClassSetter)
-      continue;
-
-    construct.prototype[f.name] = f;
-  }
-
-  return construct;
-};
-
-Class.getter = function (func) {
-  return new ClassGetter(func);
-};
-Class.setter = function (func) {
-  return new ClassSetter(func);
-};
-
-Class.static_method = function (func) {
-  func._is_static_method = true;
-
-  return new StaticMethod(func);
-};
-
-var EmptySlot = {};
-
-var set$1 = Class([
-  function constructor(input) {
-    this.items = [];
-    this.keys = {};
-    this.freelist = [];
-
-    this.length = 0;
-
-    if (input != undefined) {
-      input.forEach(function (item) {
-        this.add(item);
-      }, this);
-    }
-  },
-
-  function add(item) {
-    var key = item.__keystr__();
-
-    if (key in this.keys) return;
-
-    if (this.freelist.length > 0) {
-      var i = this.freelist.pop();
-
-      this.keys[key] = i;
-      items[i] = i;
-    } else {
-      var i = this.items.length;
-
-      this.keys[key] = i;
-      this.items.push(item);
-    }
-
-    this.length++;
-  },
-
-  function remove(item) {
-    var key = item.__keystr__();
-
-    if (!(key in this.keys)) {
-      console.trace("Warning, item", item, "is not in set");
       return;
     }
 
-    var i = this.keys[key];
-    this.freelist.push(i);
-    this.items[i] = EmptySlot;
+    this.pop_i(i);
+  };
+}
 
-    delete this.items[i];
-    this.length--;
-  },
+if (String.prototype.contains === undefined) {
+  String.prototype.contains = function (substr) {
+    return String.search(substr) != null;
+  };
+}
 
-  function has(item) {
-    return item.__keystr__() in this.keys;
-  },
+Symbol["_struct_keystr"] = Symbol("_struct_keystr");
 
-  function forEach(func, thisvar) {
-    for (var i = 0; i < this.items.length; i++) {
-      var item = this.items[i];
+String.prototype[Symbol._struct_keystr] = function () {
+  return this;
+};
 
-      if (item === EmptySlot)
-        continue;
+Number.prototype[Symbol._struct_keystr] = Boolean.prototype[Symbol._struct_keystr] = function () {
+  return "" + this;
+};
 
-      thisvar != undefined ? func.call(thisvar, time) : func(item);
-    }
-  }
-]);
-
-var struct_typesystem = /*#__PURE__*/Object.freeze({
-  __proto__: null,
-  defined_classes: defined_classes,
-  Class: Class,
-  set: set$1
-});
-
-var Class$1 = Class;
 var _o_basic_types = {"String": 0, "Number": 0, "Array": 0, "Function": 0};
+
+const _export_truncateDollarSign_ = function(s) {
+  let i = s.search("$");
+
+  if (i > 0) {
+    return s.slice(0, i).trim();
+  }
+
+  return s;
+};
 
 const _export_cachering_ = class cachering extends Array {
   constructor(cb, tot) {
@@ -308,7 +144,7 @@ function set_getkey(obj) {
   else if (typeof obj == "string")
     return obj;
   else
-    return obj.__keystr__();
+    return obj[Symbol._struct_keystr]();
 }
 
 const _export_get_callstack_ = function get_callstack(err) {
@@ -398,122 +234,227 @@ const _export_print_stack_ = function print_stack(err) {
   }
 };
 
-var set$2 = Class$1([
-  function constructor(input) {
+const EmptySlot = Symbol("emptyslot");
+
+/**
+ Set
+
+ Stores objects in a set; each object is converted to a value via
+ a [Symbol._struct_keystr] method, and if that value already exists in the set
+ then the object is not added.
+
+
+ * */
+var set$1 =  class set {
+  constructor(input) {
     this.items = [];
     this.keys = {};
     this.freelist = [];
 
     this.length = 0;
 
-    if (input != undefined && input instanceof Array) {
-      for (var i = 0; i < input.length; i++) {
-        this.add(input[i]);
-      }
-    } else if (input != undefined && input.forEach != undefined) {
-      input.forEach(function (item) {
-        this.add(input[i]);
-      }, this);
+    if (typeof input == "string") {
+      input = new String(input);
     }
-  },
-  function add(obj) {
-    var key = set_getkey(obj);
+
+    if (input !== undefined) {
+      if (Symbol.iterator in input) {
+        for (var item of input) {
+          this.add(item);
+        }
+      } else if ("forEach" in input) {
+        input.forEach(function(item) {
+          this.add(item);
+        }, this);
+      } else if (input instanceof Array) {
+        for (var i=0; i<input.length; i++) {
+          this.add(input[i]);
+        }
+      }
+    }
+  }
+
+  [Symbol.iterator] () {
+    return new SetIter(this);
+  }
+
+  equals(setb) {
+    for (let item of this) {
+      if (!setb.has(item)) {
+        return false;
+      }
+    }
+
+    for (let item of setb) {
+      if (!this.has(item)) {
+        return false;
+      }
+    }
+
+    return true;
+  }
+
+  clear() {
+    this.items.length = 0;
+    this.keys = {};
+    this.freelist.length = 0;
+    this.length = 0;
+
+    return this;
+  }
+
+  filter(f, thisvar) {
+    let i = 0;
+    let ret = new set();
+
+    for (let item of this) {
+      if (f.call(thisvar, item, i++, this)) {
+        ret.add(item);
+      }
+    }
+
+    return ret;
+
+  }
+
+  map(f, thisvar) {
+    let ret = new set();
+
+    let i = 0;
+
+    for (let item of this) {
+      ret.add(f.call(thisvar, item, i++, this));
+    }
+
+    return ret;
+  }
+
+  reduce(f, initial) {
+    if (initial === undefined) {
+      for (let item of this) {
+        initial = item;
+        break;
+      }
+    }
+
+    let i = 0;
+    for (let item of this) {
+      initial = f(initial, item, i++, this);
+    }
+
+    return initial;
+  }
+
+  copy() {
+    let ret = new set();
+    for (let item of this) {
+      ret.add(item);
+    }
+
+    return ret;
+  }
+
+  add(item) {
+    var key = item[Symbol._struct_keystr]();
+
     if (key in this.keys) return;
 
     if (this.freelist.length > 0) {
       var i = this.freelist.pop();
+
       this.keys[key] = i;
-      this.items[i] = obj;
+      this.items[i] = item;
     } else {
-      this.keys[key] = this.items.length;
-      this.items.push(obj);
+      var i = this.items.length;
+
+      this.keys[key] = i;
+      this.items.push(item);
     }
 
     this.length++;
-  },
-  function remove(obj, raise_error) {
-    var key = set_getkey(obj);
+  }
 
-    if (!(keystr in this.keys)) {
-      if (raise_error)
-        throw new Error("Object not in set");
-      else
-        console.trace("Object not in set", obj);
+  remove(item, ignore_existence) {
+    var key = item[Symbol._struct_keystr]();
+
+    if (!(key in this.keys)) {
+      if (!ignore_existence) {
+        console.warn("Warning, item", item, "is not in set");
+      }
       return;
     }
 
-    var i = this.keys[keystr];
-
+    var i = this.keys[key];
     this.freelist.push(i);
-    this.items[i] = undefined;
+    this.items[i] = EmptySlot;
 
-    delete this.keys[keystr];
+    delete this.keys[key];
+
     this.length--;
-  },
+  }
 
-  function has(obj) {
-    return set_getkey(obj) in this.keys;
-  },
+  has(item) {
+    return item[Symbol._struct_keystr]() in this.keys;
+  }
 
-  function forEach(func, thisvar) {
-    for (var i = 0; i < this.items.length; i++) {
+  forEach(func, thisvar) {
+    for (var i=0; i<this.items.length; i++) {
       var item = this.items[i];
 
-      if (item == undefined) continue;
+      if (item === EmptySlot)
+        continue;
 
-      if (thisvar != undefined)
-        func.call(thisvar, item);
-      else
-        func(item);
+      thisvar !== undefined ? func.call(thisvar, item) : func(item);
     }
   }
-]);
+};
 
-var IDGen = Class$1([
-  function constructor() {
+var IDGen = class IDGen {
+  constructor() {
     this.cur_id = 1;
-  },
+  }
 
-  function gen_id() {
+  gen_id() {
     return this.cur_id++;
-  },
+  }
 
-  Class$1.static_method(function fromSTRUCT(reader) {
+  static fromSTRUCT(reader) {
     var ret = new IDGen();
     reader(ret);
     return ret;
-  })
-]);
+  }
+};
 
-IDGen.STRUCT = [
-  "struct_util.IDGen {",
-  "  cur_id : int;",
-  "}"
-].join("\n");
+IDGen.STRUCT = `
+struct_util.IDGen {
+  cur_id : int;
+}
+`;
 
 var struct_util = /*#__PURE__*/Object.freeze({
   __proto__: null,
+  truncateDollarSign: _export_truncateDollarSign_,
   cachering: _export_cachering_,
   is_obj_lit: is_obj_lit,
   get_callstack: _export_get_callstack_,
   print_stack: _export_print_stack_,
-  set: set$2,
+  set: set$1,
   IDGen: IDGen
 });
+
+"use strict";
 
 const _module_exports_ = {};
 _module_exports_.STRUCT_ENDIAN = true; //little endian
 
-var Class$2 = Class;
-
 var temp_dataview = new DataView(new ArrayBuffer(16));
 var uint8_view = new Uint8Array(temp_dataview.buffer);
 
-var unpack_context = _module_exports_.unpack_context = Class$2([
-  function constructor() {
+var unpack_context = _module_exports_.unpack_context = class unpack_context {
+  constructor() {
     this.i = 0;
   }
-]);
+};
 
 var pack_byte = _module_exports_.pack_byte = function (array, val) {
   array.push(val);
@@ -614,7 +555,7 @@ var decode_utf8 = _module_exports_.decode_utf8 = function decode_utf8(arr) {
       sum |= c;
     }
 
-    if (sum == 0) break;
+    if (sum === 0) break;
 
     str += String.fromCharCode(sum);
     i++;
@@ -740,34 +681,38 @@ _module_exports_.unpack_short = function (dview, uctx) {
   return dview.getInt16(uctx.i - 2, _module_exports_.STRUCT_ENDIAN);
 };
 
-var _static_arr_us = new Array(32);
+let _static_arr_us = new Array(32);
 _module_exports_.unpack_string = function (data, uctx) {
-  var str = "";
+  let slen = unpack_int(data, uctx);
 
-  var slen = unpack_int(data, uctx);
-  var arr = slen < 2048 ? _static_arr_us : new Array(slen);
+  if (!slen) {
+    return "";
+  }
+
+  let str = "";
+  let arr = slen < 2048 ? _static_arr_us : new Array(slen);
 
   arr.length = slen;
-  for (var i = 0; i < slen; i++) {
+  for (let i = 0; i < slen; i++) {
     arr[i] = unpack_byte(data, uctx);
   }
 
   return decode_utf8(arr);
 };
 
-var _static_arr_uss = new Array(2048);
+let _static_arr_uss = new Array(2048);
 _module_exports_.unpack_static_string = function unpack_static_string(data, uctx, length) {
-  var str = "";
+  let str = "";
 
   if (length == undefined)
     throw new Error("'length' cannot be undefined in unpack_static_string()");
 
-  var arr = length < 2048 ? _static_arr_uss : new Array(length);
+  let arr = length < 2048 ? _static_arr_uss : new Array(length);
   arr.length = 0;
 
-  var done = false;
-  for (var i = 0; i < length; i++) {
-    var c = unpack_byte(data, uctx);
+  let done = false;
+  for (let i = 0; i < length; i++) {
+    let c = unpack_byte(data, uctx);
 
     if (c == 0) {
       done = true;
@@ -787,8 +732,6 @@ let _export_parser_;
 "use strict";
 
 var t;
-
-var Class$3 = Class;
 
 const _export_token_ = class token {
   constructor(type, val, lexpos, lineno, lexer, parser) {
@@ -1296,11 +1239,11 @@ function gen_tabstr(t) {
 }
 
 function StructParser() {
-  var basic_types=new set$2([
+  var basic_types=new set$1([
     "int", "float", "double", "string", "short", "byte", "bool", "uint", "ushort"
   ]);
   
-  var reserved_tokens=new set$2([
+  var reserved_tokens=new set$1([
     "int", "float", "double", "string", "static_string", "array", 
     "iter", "abstract", "short", "byte", "bool", "iterkeys", "uint", "ushort",
     "static_array"
@@ -1311,7 +1254,8 @@ function StructParser() {
   }
   
   var tokens=[
-    tk("ID", /[a-zA-Z_]+[a-zA-Z0-9_\.]*/, function(t) {
+    tk("ID", /[a-zA-Z_$]+[a-zA-Z0-9_\.$]*/, function(t) {
+
       if (reserved_tokens.has(t.value)) {
           t.type = t.value.toUpperCase();
       }
@@ -1879,9 +1823,13 @@ class StructStringField extends StructFieldType {
     
     pack_string$1(data, val);
   }
-  
+
   static packNull(manager, data, field, type) {
     this.pack(manager, data, "", 0, field, type);
+  }
+
+  static toJSON(manager, val, obj, field, type) {
+    return "" + val;
   }
   
   static unpack(manager, data, type, uctx) {
@@ -2641,9 +2589,8 @@ class StructStaticArrayField extends StructFieldType {
 
     let itername = type.data.iname;
 
-    if (val === undefined || !val.length) {
-      this.packNull(manager, data, field, type);
-      return;
+    if (val === undefined || !val.length) {;
+      return [];
     }
 
     let ret = [];
@@ -2725,11 +2672,19 @@ class StructStaticArrayField extends StructFieldType {
 }
 StructFieldType.register(StructStaticArrayField);
 
-let _export_manager_;
 "use strict";
 let StructFieldTypeMap$1 = _export_StructFieldTypeMap_;
 
 let warninglvl$1 = 2;
+
+const _module_exports_$1 = {};
+function unmangle(name) {
+  if (_module_exports_$1.truncateDollarSign) {
+    return _export_truncateDollarSign_(name);
+  } else {
+    return name;
+  }
+}
 
 /*
 
@@ -2756,21 +2711,23 @@ SomeClass {
 nstructjs.manager.add_class(SomeClass);
 
 */
-var StructTypeMap$1 = StructTypeMap;
-var StructTypes$1 = StructTypes;
-var Class$4 = Class;
+let StructTypeMap$1 = StructTypeMap;
+let StructTypes$1 = StructTypes;
 
-var struct_parse = _export_struct_parse_;
-var StructEnum$2 = StructEnum;
+let struct_parse = _export_struct_parse_;
+let StructEnum$2 = StructEnum;
 
-var _static_envcode_null$1 = "";
-var debug_struct = 0;
-var packdebug_tablevel$1 = 0;
+let _static_envcode_null$1 = "";
+let debug_struct = 0;
+let packdebug_tablevel$1 = 0;
+
+//truncate webpack-mangled names
+_module_exports_$1.truncateDollarSign = true;
 
 function gen_tabstr$2(tot) {
   var ret = "";
 
-  for (var i = 0; i < tot; i++) {
+  for (let i = 0; i < tot; i++) {
     ret += " ";
   }
 
@@ -2782,7 +2739,7 @@ let packer_debug$1, packer_debug_start$1, packer_debug_end$1;
 if (debug_struct) {
   packer_debug$1 = function (msg) {
     if (msg !== undefined) {
-      var t = gen_tabstr$2(packdebug_tablevel$1);
+      let t = gen_tabstr$2(packdebug_tablevel$1);
       console.log(t + msg);
     } else {
       console.log("Warning: undefined msg");
@@ -2807,7 +2764,7 @@ else {
   };
 }
 
-const _export_setWarningMode_$1 = (t) => {
+_module_exports_$1.setWarningMode = (t) => {
   _export_setWarningMode_(t);
   
   if (typeof t !== "number" || isNaN(t)) {
@@ -2817,7 +2774,7 @@ const _export_setWarningMode_$1 = (t) => {
   warninglvl$1 = t;
 };
 
-const _export_setDebugMode_$1 = (t) => {
+_module_exports_$1.setDebugMode = (t) => {
   debug_struct = t;
 
   _export_setDebugMode_(t);
@@ -2825,7 +2782,7 @@ const _export_setDebugMode_$1 = (t) => {
   if (debug_struct) {
     packer_debug$1 = function (msg) {
       if (msg != undefined) {
-        var t = gen_tabstr$2(packdebug_tablevel$1);
+        let t = gen_tabstr$2(packdebug_tablevel$1);
         console.log(t + msg);
       } else {
         console.log("Warning: undefined msg");
@@ -2851,14 +2808,14 @@ const _export_setDebugMode_$1 = (t) => {
   }
 };
 
-var _ws_env$1 = [[undefined, undefined]];
+let _ws_env$1 = [[undefined, undefined]];
 
 function do_pack$1(data, val, obj, thestruct, field, type) {
   StructFieldTypeMap$1[field.type.type].pack(manager, data, val, obj, field, type);
 }
 
 function define_empty_class(name) {
-  var cls = function () {
+  let cls = function () {
   };
 
   cls.prototype = Object.create(Object.prototype);
@@ -2878,7 +2835,7 @@ function define_empty_class(name) {
   return cls;
 }
 
-var STRUCT = class STRUCT {
+let STRUCT = _module_exports_$1.STRUCT = class STRUCT {
   constructor() {
     this.idgen = new IDGen();
     this.allowOverriding = true;
@@ -2891,9 +2848,9 @@ var STRUCT = class STRUCT {
     this.null_natives = {};
 
     function define_null_native(name, cls) {
-      var obj = define_empty_class(name);
+      let obj = define_empty_class(name);
 
-      var stt = struct_parse.parse(obj.STRUCT);
+      let stt = struct_parse.parse(obj.STRUCT);
 
       stt.id = this.idgen.gen_id();
 
@@ -2979,8 +2936,8 @@ var STRUCT = class STRUCT {
   }
 
   forEach(func, thisvar) {
-    for (var k in this.structs) {
-      var stt = this.structs[k];
+    for (let k in this.structs) {
+      let stt = this.structs[k];
 
       if (thisvar !== undefined)
         func.call(thisvar, stt);
@@ -2995,14 +2952,14 @@ var STRUCT = class STRUCT {
   //defaults to structjs.manager
   parse_structs(buf, defined_classes) {
     if (defined_classes === undefined) {
-      defined_classes = _export_manager_;
+      defined_classes = _module_exports_$1.manager;
     }
 
     if (defined_classes instanceof STRUCT) {
-      var struct2 = defined_classes;
+      let struct2 = defined_classes;
       defined_classes = [];
 
-      for (var k in struct2.struct_cls) {
+      for (let k in struct2.struct_cls) {
         defined_classes.push(struct2.struct_cls[k]);
       }
     }
@@ -3010,22 +2967,22 @@ var STRUCT = class STRUCT {
     if (defined_classes === undefined) {
       defined_classes = [];
 
-      for (var k in _export_manager_.struct_cls) {
-        defined_classes.push(_export_manager_.struct_cls[k]);
+      for (let k in _module_exports_$1.manager.struct_cls) {
+        defined_classes.push(_module_exports_$1.manager.struct_cls[k]);
       }
     }
 
-    var clsmap = {};
+    let clsmap = {};
 
-    for (var i = 0; i < defined_classes.length; i++) {
-      var cls = defined_classes[i];
+    for (let i = 0; i < defined_classes.length; i++) {
+      let cls = defined_classes[i];
 
       if (!cls.structName && cls.STRUCT) {
-        var stt = struct_parse.parse(cls.STRUCT.trim());
+        let stt = struct_parse.parse(cls.STRUCT.trim());
         cls.structName = stt.name;
       } else if (!cls.structName && cls.name !== "Object") {
         if (warninglvl$1 > 0) 
-          console.log("Warning, bad class in registered class list", cls.name, cls);
+          console.log("Warning, bad class in registered class list", unmangle(cls.name), cls);
         continue;
       }
 
@@ -3035,14 +2992,14 @@ var STRUCT = class STRUCT {
     struct_parse.input(buf);
 
     while (!struct_parse.at_end()) {
-      var stt = struct_parse.parse(undefined, false);
+      let stt = struct_parse.parse(undefined, false);
 
       if (!(stt.name in clsmap)) {
         if (!(stt.name in this.null_natives))
         if (warninglvl$1 > 0) 
           console.log("WARNING: struct " + stt.name + " is missing from class list.");
 
-        var dummy = define_empty_class(stt.name);
+        let dummy = define_empty_class(stt.name);
 
         dummy.STRUCT = STRUCT.fmt_struct(stt);
         dummy.structName = stt.name;
@@ -3062,7 +3019,7 @@ var STRUCT = class STRUCT {
           this.struct_ids[stt.id] = stt;
       }
 
-      var tok = struct_parse.peek();
+      let tok = struct_parse.peek();
       while (tok && (tok.value === "\n" || tok.value === "\r" || tok.value === "\t" || tok.value === " ")) {
         tok = struct_parse.peek();
       }
@@ -3088,9 +3045,9 @@ var STRUCT = class STRUCT {
       }
       
       if (bad) {
-        console.warn("Generating STRUCT script for derived class " + cls.name);
+        console.warn("Generating STRUCT script for derived class " + unmangle(cls.name));
         if (!structName) {
-          structName = cls.name;
+          structName = unmangle(cls.name);
         }
         
         cls.STRUCT = STRUCT.inherit(cls, p) + `\n}`;
@@ -3098,11 +3055,13 @@ var STRUCT = class STRUCT {
     }
     
     if (!cls.STRUCT) {
-      throw new Error("class " + cls.name + " has no STRUCT script");
+      throw new Error("class " + unmangle(cls.name) + " has no STRUCT script");
     }
 
-    var stt = struct_parse.parse(cls.STRUCT);
+    let stt = struct_parse.parse(cls.STRUCT);
 
+    stt.name = unmangle(stt.name);
+    
     cls.structName = stt.name;
 
     //create default newSTRUCT
@@ -3116,17 +3075,15 @@ var STRUCT = class STRUCT {
       stt.name = cls.structName = structName;
     } else if (cls.structName === undefined) {
       cls.structName = stt.name;
-    } else if (cls.structName !== undefined) {
-      stt.name = cls.structName;
     } else {
-      throw new Error("Missing structName parameter");
+      stt.name = cls.structName;
     }
 
     if (cls.structName in this.structs) {
-      console.warn("Struct " + cls.structName + " is already registered", cls);
+      console.warn("Struct " + unmangle(cls.structName) + " is already registered", cls);
 
       if (!this.allowOverriding) {
-        throw new Error("Struct " + cls.structName + " is already registered");
+        throw new Error("Struct " + unmangle(cls.structName) + " is already registered");
       }
 
       return;
@@ -3165,8 +3122,8 @@ var STRUCT = class STRUCT {
       return structName + "{\n";
     }
 
-    var stt = struct_parse.parse(parent.STRUCT);
-    var code = structName + "{\n";
+    let stt = struct_parse.parse(parent.STRUCT);
+    let code = structName + "{\n";
     code += STRUCT.fmt_struct(stt, true);
     return code;
   }
@@ -3202,16 +3159,16 @@ var STRUCT = class STRUCT {
     if (warninglvl$1 > 0) 
       console.warn("Using deprecated (and evil) chain_fromSTRUCT method, eek!");
 
-    var proto = cls.prototype;
-    var parent = cls.prototype.prototype.constructor;
+    let proto = cls.prototype;
+    let parent = cls.prototype.prototype.constructor;
 
-    var obj = parent.fromSTRUCT(reader);
+    let obj = parent.fromSTRUCT(reader);
     let obj2 = new cls();
 
     let keys = Object.keys(obj).concat(Object.getOwnPropertySymbols(obj));
-    //var keys=Object.keys(proto);
+    //let keys=Object.keys(proto);
 
-    for (var i = 0; i < keys.length; i++) {
+    for (let i = 0; i < keys.length; i++) {
       let k = keys[i];
 
       try {
@@ -3220,7 +3177,7 @@ var STRUCT = class STRUCT {
         if (warninglvl$1 > 0) 
           console.warn("  failed to set property", k);
       }
-      //var k=keys[i];
+      //let k=keys[i];
       //if (k=="__proto__")
       // continue;
       //obj[k] = proto[k];
@@ -3244,14 +3201,14 @@ var STRUCT = class STRUCT {
     if (no_helper_js == undefined)
       no_helper_js = false;
 
-    var s = "";
+    let s = "";
     if (!internal_only) {
       s += stt.name;
       if (stt.id != -1)
         s += " id=" + stt.id;
       s += " {\n";
     }
-    var tab = "  ";
+    let tab = "  ";
 
     function fmt_type(type) {
       return StructFieldTypeMap$1[type.type].format(type);
@@ -3274,9 +3231,9 @@ var STRUCT = class STRUCT {
       }
     }
 
-    var fields = stt.fields;
-    for (var i = 0; i < fields.length; i++) {
-      var f = fields[i];
+    let fields = stt.fields;
+    for (let i = 0; i < fields.length; i++) {
+      let f = fields[i];
       s += tab + f.name + " : " + fmt_type(f.type);
       if (!no_helper_js && f.get != undefined) {
         s += " | " + f.get.trim();
@@ -3289,24 +3246,24 @@ var STRUCT = class STRUCT {
   }
 
   _env_call(code, obj, env) {
-    var envcode = _static_envcode_null$1;
+    let envcode = _static_envcode_null$1;
     if (env !== undefined) {
       envcode = "";
-      for (var i = 0; i < env.length; i++) {
+      for (let i = 0; i < env.length; i++) {
         envcode = "var " + env[i][0] + " = env[" + i.toString() + "][1];\n" + envcode;
       }
     }
-    var fullcode = "";
+    let fullcode = "";
     if (envcode !== _static_envcode_null$1)
       fullcode = envcode + code;
     else
       fullcode = code;
-    var func;
+    let func;
 
     //fullcode = fullcode.replace(/\bthis\b/, "obj");
 
     if (!(fullcode in this.compiled_code)) {
-      var code2 = "func = function(obj, env) { " + envcode + "return " + code + "}";
+      let code2 = "func = function(obj, env) { " + envcode + "return " + code + "}";
       try {
         func = _structEval(code2);
       }
@@ -3328,7 +3285,7 @@ var STRUCT = class STRUCT {
     catch (err) {
       _export_print_stack_(err);
 
-      var code2 = "func = function(obj, env) { " + envcode + "return " + code + "}";
+      let code2 = "func = function(obj, env) { " + envcode + "return " + code + "}";
       console.log(code2);
       console.log(" ");
       throw err;
@@ -3460,7 +3417,7 @@ var STRUCT = class STRUCT {
   @param uctx : internal parameter
   */
   read_object(data, cls_or_struct_id, uctx) {
-    var cls, stt;
+    let cls, stt;
 
     if (data instanceof Array) {
       data = new DataView(new Uint8Array(data).buffer);
@@ -3483,7 +3440,7 @@ var STRUCT = class STRUCT {
 
       packer_debug$1("\n\n=Begin reading " + cls.structName + "=");
     }
-    var thestruct = this;
+    let thestruct = this;
 
     let this2  = this;
     function unpack_field(type) {
@@ -3499,11 +3456,11 @@ var STRUCT = class STRUCT {
 
       was_run = true;
 
-      var fields = stt.fields;
-      var flen = fields.length;
-      for (var i = 0; i < flen; i++) {
-        var f = fields[i];
-        var val = unpack_field(f.type);
+      let fields = stt.fields;
+      let flen = fields.length;
+      for (let i = 0; i < flen; i++) {
+        let f = fields[i];
+        let val = unpack_field(f.type);
         obj[f.name] = val;
       }
     }
@@ -3521,7 +3478,7 @@ var STRUCT = class STRUCT {
       return obj;
     } else if (cls.fromSTRUCT !== undefined) {
       if (warninglvl$1 > 1) 
-        console.warn("Warning: class " + cls.name + " is using deprecated fromSTRUCT interface; use newSTRUCT/loadSTRUCT instead");
+        console.warn("Warning: class " + unmangle(cls.name) + " is using deprecated fromSTRUCT interface; use newSTRUCT/loadSTRUCT instead");
       return cls.fromSTRUCT(load);
     } else { //default case, make new instance and then call load() on it
       let obj;
@@ -3538,7 +3495,7 @@ var STRUCT = class STRUCT {
   }
 
   readJSON(data, cls_or_struct_id) {
-    var cls, stt;
+    let cls, stt;
 
     if (typeof cls_or_struct_id === "number") {
       cls = this.struct_cls[this.struct_ids[cls_or_struct_id].name];
@@ -3553,7 +3510,7 @@ var STRUCT = class STRUCT {
     stt = this.structs[cls.structName];
 
     let fromJSON$1 = fromJSON;
-    var thestruct = this;
+    let thestruct = this;
 
     let this2  = this;
 
@@ -3566,10 +3523,10 @@ var STRUCT = class STRUCT {
 
       was_run = true;
 
-      var fields = stt.fields;
-      var flen = fields.length;
-      for (var i = 0; i < flen; i++) {
-        var f = fields[i];
+      let fields = stt.fields;
+      let flen = fields.length;
+      for (let i = 0; i < flen; i++) {
+        let f = fields[i];
 
         packer_debug$1("Load field " + f.name);
         obj[f.name] = fromJSON$1(thestruct, data[f.name], data, f.type);
@@ -3590,7 +3547,7 @@ var STRUCT = class STRUCT {
       return obj;
     } else if (cls.fromSTRUCT !== undefined) {
       if (warninglvl$1 > 1)
-        console.warn("Warning: class " + cls.name + " is using deprecated fromSTRUCT interface; use newSTRUCT/loadSTRUCT instead");
+        console.warn("Warning: class " + unmangle(cls.name) + " is using deprecated fromSTRUCT interface; use newSTRUCT/loadSTRUCT instead");
 
       return cls.fromSTRUCT(reader);
     } else { //default case, make new instance and then call reader() on it
@@ -3609,7 +3566,7 @@ var STRUCT = class STRUCT {
 };
 
 //main struct script manager
-var manager = _export_manager_ = new STRUCT();
+let manager = _module_exports_$1.manager = new STRUCT();
 
 /**
  * Write all defined structs out to a string.
@@ -3617,24 +3574,24 @@ var manager = _export_manager_ = new STRUCT();
  * @param manager STRUCT instance, defaults to nstructjs.manager
  * @param include_code include save code snippets
  * */
-var write_scripts = function write_scripts(manager, include_code = false) {
+let write_scripts = _module_exports_$1.write_scripts = function write_scripts(manager, include_code = false) {
   if (manager === undefined)
-    manager = _export_manager_;
+    manager = _module_exports_$1.manager;
 
-  var buf = "";
+  let buf = "";
 
   manager.forEach(function (stt) {
     buf += STRUCT.fmt_struct(stt, false, !include_code) + "\n";
   });
 
-  var buf2 = buf;
+  let buf2 = buf;
   buf = "";
 
-  for (var i = 0; i < buf2.length; i++) {
-    var c = buf2[i];
+  for (let i = 0; i < buf2.length; i++) {
+    let c = buf2[i];
     if (c === "\n") {
       buf += "\n";
-      var i2 = i;
+      let i2 = i;
       while (i < buf2.length && (buf2[i] === " " || buf2[i] === "\t" || buf2[i] === "\n")) {
         i++;
       }
@@ -3648,15 +3605,6 @@ var write_scripts = function write_scripts(manager, include_code = false) {
 
   return buf;
 };
-
-var struct_intern = /*#__PURE__*/Object.freeze({
-  __proto__: null,
-  get manager () { return _export_manager_; },
-  setWarningMode: _export_setWarningMode_$1,
-  setDebugMode: _export_setDebugMode_$1,
-  STRUCT: STRUCT,
-  write_scripts: write_scripts
-});
 
 "use strict";
 
@@ -3799,10 +3747,10 @@ let FileHelper = class FileHelper {
     this.version.minor = _module_exports_.unpack_byte(dataview, this.unpack_ctx);
     this.version.micro = _module_exports_.unpack_byte(dataview, this.unpack_ctx);
 
-    let struct = this.struct = new STRUCT();
+    let struct = this.struct = new _module_exports_$1.STRUCT();
 
     let scripts = _module_exports_.unpack_string(dataview, this.unpack_ctx);
-    this.struct.parse_structs(scripts, _export_manager_);
+    this.struct.parse_structs(scripts, _module_exports_$1.manager);
 
     let blocks = [];
     let dviewlen = dataview.buffer.byteLength;
@@ -3844,7 +3792,7 @@ let FileHelper = class FileHelper {
   }
 
   write(blocks) {
-    this.struct = _export_manager_;
+    this.struct = _module_exports_$1.manager;
     this.blocks = blocks;
 
     let data = [];
@@ -3854,7 +3802,7 @@ let FileHelper = class FileHelper {
     _module_exports_.pack_byte(data, this.version.minor & 255);
     _module_exports_.pack_byte(data, this.version.micro & 255);
 
-    let scripts = write_scripts();
+    let scripts = _module_exports_$1.write_scripts();
     _module_exports_.pack_string(data, scripts);
 
     let struct = this.struct;
@@ -3928,6 +3876,10 @@ var struct_filehelper = /*#__PURE__*/Object.freeze({
   FileHelper: FileHelper
 });
 
+var struct_typesystem = /*#__PURE__*/Object.freeze({
+  __proto__: null
+});
+
 if (typeof window !== "undefined") {
   window._nGlobal = window;
 } else if (typeof self !== "undefined") {
@@ -3938,13 +3890,13 @@ if (typeof window !== "undefined") {
 
 _nGlobal._structEval = eval;
 
-const _module_exports_$1 = {};
-_module_exports_$1.unpack_context = _module_exports_.unpack_context;
+const _module_exports_$2 = {};
+_module_exports_$2.unpack_context = _module_exports_.unpack_context;
 
 /**
 true means little endian, false means big endian
 */
-Object.defineProperty(_module_exports_$1, "STRUCT_ENDIAN", {
+Object.defineProperty(_module_exports_$2, "STRUCT_ENDIAN", {
   get: function () {
     return _module_exports_.STRUCT_ENDIAN;
   },
@@ -3953,59 +3905,65 @@ Object.defineProperty(_module_exports_$1, "STRUCT_ENDIAN", {
   }
 });
 
-for (let k in struct_intern) {
-  _module_exports_$1[k] = struct_intern[k];
+for (let k in _module_exports_$1) {
+  _module_exports_$2[k] = _module_exports_$1[k];
 }
 
 var StructTypeMap$2 = StructTypeMap;
 var StructTypes$2 = StructTypes;
-var Class$5 = Class;
+var Class = undefined;
 
 //forward struct_intern's exports
-for (var k$1 in struct_intern) {
-  _module_exports_$1[k$1] = struct_intern[k$1];
+for (var k$1 in _module_exports_$1) {
+  _module_exports_$2[k$1] = _module_exports_$1[k$1];
 }
 
-_module_exports_$1.validateStructs = function validateStructs(onerror) {
-  return _module_exports_$1.manager.validateStructs(onerror);
+/** truncate webpack mangled names. defaults to true
+ *  so Mesh$1 turns into Mesh */
+_module_exports_$2.truncateDollarSign = function(value=true) {
+  _module_exports_$1.truncateDollarSign = !!value;
 };
 
-_module_exports_$1.setAllowOverriding = function setAllowOverriding(t) {
-  return _module_exports_$1.manager.allowOverriding = !!t;
+_module_exports_$2.validateStructs = function validateStructs(onerror) {
+  return _module_exports_$2.manager.validateStructs(onerror);
+};
+
+_module_exports_$2.setAllowOverriding = function setAllowOverriding(t) {
+  return _module_exports_$2.manager.allowOverriding = !!t;
 };
 
 /** Register a class with nstructjs **/
-_module_exports_$1.register = function register(cls, structName) {
-  return _module_exports_$1.manager.register(cls, structName);
+_module_exports_$2.register = function register(cls, structName) {
+  return _module_exports_$2.manager.register(cls, structName);
 };
-_module_exports_$1.inherit = function (child, parent, structName = child.name) {
-  return _module_exports_$1.STRUCT.inherit(...arguments);
+_module_exports_$2.inherit = function (child, parent, structName = child.name) {
+  return _module_exports_$2.STRUCT.inherit(...arguments);
 };
 
 /**
 @param data : DataView
 */
-_module_exports_$1.readObject = function(data, cls, __uctx=undefined) {
-  return _module_exports_$1.manager.readObject(data, cls, __uctx);
+_module_exports_$2.readObject = function(data, cls, __uctx=undefined) {
+  return _module_exports_$2.manager.readObject(data, cls, __uctx);
 };
 
 /**
 @param data : Array instance to write bytes to
 */
-_module_exports_$1.writeObject = function(data, obj) {
-  return _module_exports_$1.manager.writeObject(data.obj);
+_module_exports_$2.writeObject = function(data, obj) {
+  return _module_exports_$2.manager.writeObject(data.obj);
 };
 
-_module_exports_$1.writeJSON = function(obj) {
-  return _module_exports_$1.manager.writeJSON(obj);
+_module_exports_$2.writeJSON = function(obj) {
+  return _module_exports_$2.manager.writeJSON(obj);
 };
 
-_module_exports_$1.readJSON = function(json, class_or_struct_id) {
-  return _module_exports_$1.manager.readJSON(json, class_or_struct_id);
+_module_exports_$2.readJSON = function(json, class_or_struct_id) {
+  return _module_exports_$2.manager.readJSON(json, class_or_struct_id);
 };
 
-_module_exports_$1.setDebugMode = _export_setDebugMode_$1;
-_module_exports_$1.setWarningMode = _export_setWarningMode_$1;
+_module_exports_$2.setDebugMode = _module_exports_$1.setDebugMode;
+_module_exports_$2.setWarningMode = _module_exports_$1.setWarningMode;
 
 /*
 import * as _require___$tinyeval$tinyeval_js_ from "../tinyeval/tinyeval.js";
@@ -4013,28 +3971,32 @@ _module_exports_.tinyeval = _require___$tinyeval$tinyeval_js_;
 
 _module_exports_.useTinyEval = function() {
   _nGlobal._structEval = (buf) => {
-    return _module_exports_.tinyeval.eval(buf);
+    return _module_exports_.tinyeval.eval(buf, _nGlobal);
   }
 };
 */
-   _module_exports_$1.useTinyEval = () => {};
+   _module_exports_$2.useTinyEval = () => {};
 
 
 //export other modules
-_module_exports_$1.binpack = _module_exports_;
-_module_exports_$1.util = struct_util;
-_module_exports_$1.typesystem = struct_typesystem;
-_module_exports_$1.parseutil = struct_parseutil;
-_module_exports_$1.parser = struct_parser;
-_module_exports_$1.filehelper = struct_filehelper;
+_module_exports_$2.binpack = _module_exports_;
+_module_exports_$2.util = struct_util;
+_module_exports_$2.typesystem = struct_typesystem;
+_module_exports_$2.parseutil = struct_parseutil;
+_module_exports_$2.parser = struct_parser;
+_module_exports_$2.filehelper = struct_filehelper;
 
-module.exports = _module_exports_$1;
+module.exports = _module_exports_$2;
   if (!(typeof window === "undefined" && typeof global !== "undefined")) {
     //not nodejs?
     _nGlobal.nstructjs = module.exports;    
     _nGlobal.module = undefined;
   }
   
-  return exports;
+  return module.exports;
 })();
 
+if (typeof window === "undefined" && typeof global !== "undefined" && typeof module !== "undefined") {
+  console.log("Nodejs!", nexports);
+  module.exports = exports = nexports;
+}
