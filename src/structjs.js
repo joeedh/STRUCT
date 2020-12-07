@@ -77,7 +77,7 @@ exports.readObject = function(data, cls, __uctx=undefined) {
 @param data : Array instance to write bytes to
 */
 exports.writeObject = function(data, obj) {
-  return exports.manager.writeObject(data.obj);
+  return exports.manager.writeObject(data, obj);
 }
 
 exports.writeJSON = function(obj) {

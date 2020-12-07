@@ -3061,7 +3061,7 @@ let STRUCT = _module_exports_$1.STRUCT = class STRUCT {
     let stt = struct_parse.parse(cls.STRUCT);
 
     stt.name = unmangle(stt.name);
-    
+
     cls.structName = stt.name;
 
     //create default newSTRUCT
@@ -3951,7 +3951,7 @@ _module_exports_$2.readObject = function(data, cls, __uctx=undefined) {
 @param data : Array instance to write bytes to
 */
 _module_exports_$2.writeObject = function(data, obj) {
-  return _module_exports_$2.manager.writeObject(data.obj);
+  return _module_exports_$2.manager.writeObject(data, obj);
 };
 
 _module_exports_$2.writeJSON = function(obj) {
