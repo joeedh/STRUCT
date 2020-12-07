@@ -13,11 +13,14 @@ try {
   try {
     structjs = require('nstructjs');
   } catch (error) {
-    structjs = require("../build/nstructjs.js");
+    try {
+      structjs = require("../build/nstructjs.js");
+    } catch (error) {
+      structjs = require("../nstructjs.js");
+    }
   }
 }
 
-structjs = require("../build/nstructjs.js");
 structjs.setAllowOverriding(false);
 
 let filehelper = structjs.filehelper;
