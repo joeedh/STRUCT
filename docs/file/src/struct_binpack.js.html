@@ -29,7 +29,8 @@
 <nav class="navigation" data-ice="nav"><div>
   <ul>
     
-  <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/struct_filehelper.js~Block.html">Block</a></span></span></li>
+  <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/struct_binpack.js~unpack_context.html">unpack_context</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/struct_filehelper.js~Block.html">Block</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/struct_filehelper.js~FileError.html">FileError</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/struct_filehelper.js~FileHelper.html">FileHelper</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/struct_filehelper.js~FileParams.html">FileParams</a></span></span></li>
@@ -56,7 +57,9 @@
 <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/struct_parseutil.js~parser.html">parser</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/struct_parseutil.js~tokdef.html">tokdef</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/struct_parseutil.js~token.html">token</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/struct_util.js~IDGen.html">IDGen</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/struct_util.js~cachering.html">cachering</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/struct_util.js~set.html">set</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-decode_utf8">decode_utf8</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-encode_utf8">encode_utf8</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-pack_byte">pack_byte</a></span></span></li>
@@ -84,15 +87,22 @@
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-versionLessThan">versionLessThan</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-versionToInt">versionToInt</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-write_scripts">write_scripts</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-fromJSON">fromJSON</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-packNull">packNull</a></span></span></li>
-<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-Class">Class</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-toJSON">toJSON</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-get_callstack">get_callstack</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-is_obj_lit">is_obj_lit</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-print_stack">print_stack</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-truncateDollarSign">truncateDollarSign</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-inherit">inherit</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-readJSON">readJSON</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-readObject">readObject</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-register">register</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-setAllowOverriding">setAllowOverriding</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-truncateDollarSign">truncateDollarSign</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-useTinyEval">useTinyEval</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-validateStructs">validateStructs</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-writeJSON">writeJSON</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-writeObject">writeObject</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-StructFieldTypeMap">StructFieldTypeMap</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-StructEnum">StructEnum</a></span></span></li>
@@ -103,21 +113,20 @@
 </nav>
 
 <div class="content" data-ice="content"><h1 data-ice="title">src/struct_binpack.js</h1>
-<pre class="source-code line-number raw-source-code"><code class="prettyprint linenums" data-ice="content">let struct_util = require(&quot;./struct_util&quot;);
-let struct_typesystem = require(&quot;./struct_typesystem&quot;);
+<pre class="source-code line-number raw-source-code"><code class="prettyprint linenums" data-ice="content">&quot;use strict&quot;;
+
+let struct_util = require(&quot;./struct_util&quot;);
 
 exports.STRUCT_ENDIAN = true; //little endian
-
-var Class = struct_typesystem.Class;
 
 var temp_dataview = new DataView(new ArrayBuffer(16));
 var uint8_view = new Uint8Array(temp_dataview.buffer);
 
-var unpack_context = exports.unpack_context = Class([
-  function constructor() {
+var unpack_context = exports.unpack_context = class unpack_context {
+  constructor() {
     this.i = 0;
   }
-]);
+}
 
 var pack_byte = exports.pack_byte = function (array, val) {
   array.push(val);
@@ -218,7 +227,7 @@ var decode_utf8 = exports.decode_utf8 = function decode_utf8(arr) {
       sum |= c;
     }
 
-    if (sum == 0) break;
+    if (sum === 0) break;
 
     str += String.fromCharCode(sum);
     i++;
@@ -344,34 +353,38 @@ exports.unpack_short = function (dview, uctx) {
   return dview.getInt16(uctx.i - 2, exports.STRUCT_ENDIAN);
 }
 
-var _static_arr_us = new Array(32);
+let _static_arr_us = new Array(32);
 exports.unpack_string = function (data, uctx) {
-  var str = &quot;&quot;
+  let slen = unpack_int(data, uctx);
 
-  var slen = unpack_int(data, uctx);
-  var arr = slen &lt; 2048 ? _static_arr_us : new Array(slen);
+  if (!slen) {
+    return &quot;&quot;;
+  }
+
+  let str = &quot;&quot;
+  let arr = slen &lt; 2048 ? _static_arr_us : new Array(slen);
 
   arr.length = slen;
-  for (var i = 0; i &lt; slen; i++) {
+  for (let i = 0; i &lt; slen; i++) {
     arr[i] = unpack_byte(data, uctx);
   }
 
   return decode_utf8(arr);
 }
 
-var _static_arr_uss = new Array(2048);
+let _static_arr_uss = new Array(2048);
 exports.unpack_static_string = function unpack_static_string(data, uctx, length) {
-  var str = &quot;&quot;;
+  let str = &quot;&quot;;
 
   if (length == undefined)
     throw new Error(&quot;&apos;length&apos; cannot be undefined in unpack_static_string()&quot;);
 
-  var arr = length &lt; 2048 ? _static_arr_uss : new Array(length);
+  let arr = length &lt; 2048 ? _static_arr_uss : new Array(length);
   arr.length = 0;
 
-  var done = false;
-  for (var i = 0; i &lt; length; i++) {
-    var c = unpack_byte(data, uctx);
+  let done = false;
+  for (let i = 0; i &lt; length; i++) {
+    let c = unpack_byte(data, uctx);
 
     if (c == 0) {
       done = true;

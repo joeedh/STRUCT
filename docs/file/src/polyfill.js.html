@@ -29,7 +29,8 @@
 <nav class="navigation" data-ice="nav"><div>
   <ul>
     
-  <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/struct_filehelper.js~Block.html">Block</a></span></span></li>
+  <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/struct_binpack.js~unpack_context.html">unpack_context</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/struct_filehelper.js~Block.html">Block</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/struct_filehelper.js~FileError.html">FileError</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/struct_filehelper.js~FileHelper.html">FileHelper</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/struct_filehelper.js~FileParams.html">FileParams</a></span></span></li>
@@ -56,7 +57,9 @@
 <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/struct_parseutil.js~parser.html">parser</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/struct_parseutil.js~tokdef.html">tokdef</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/struct_parseutil.js~token.html">token</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/struct_util.js~IDGen.html">IDGen</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/struct_util.js~cachering.html">cachering</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/struct_util.js~set.html">set</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-decode_utf8">decode_utf8</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-encode_utf8">encode_utf8</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-pack_byte">pack_byte</a></span></span></li>
@@ -84,15 +87,22 @@
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-versionLessThan">versionLessThan</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-versionToInt">versionToInt</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-write_scripts">write_scripts</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-fromJSON">fromJSON</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-packNull">packNull</a></span></span></li>
-<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-Class">Class</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-toJSON">toJSON</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-get_callstack">get_callstack</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-is_obj_lit">is_obj_lit</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-print_stack">print_stack</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-truncateDollarSign">truncateDollarSign</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-inherit">inherit</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-readJSON">readJSON</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-readObject">readObject</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-register">register</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-setAllowOverriding">setAllowOverriding</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-truncateDollarSign">truncateDollarSign</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-useTinyEval">useTinyEval</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-validateStructs">validateStructs</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-writeJSON">writeJSON</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-writeObject">writeObject</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-StructFieldTypeMap">StructFieldTypeMap</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-StructEnum">StructEnum</a></span></span></li>
@@ -103,7 +113,7 @@
 </nav>
 
 <div class="content" data-ice="content"><h1 data-ice="title">src/polyfill.js</h1>
-<pre class="source-code line-number raw-source-code"><code class="prettyprint linenums" data-ice="content">if (Array.prototype.pop_i == undefined) {
+<pre class="source-code line-number raw-source-code"><code class="prettyprint linenums" data-ice="content">if (Array.prototype.pop_i === undefined) {
   Array.prototype.pop_i = function (idx) {
     if (idx &lt; 0 || idx &gt;= this.length) {
       throw new Error(&quot;Index out of range&quot;);
@@ -111,13 +121,14 @@
 
     while (idx &lt; this.length) {
       this[idx] = this[idx + 1];
+      idx++;
     }
 
     this.length -= 1;
   }
 }
 
-if (Array.prototype.remove == undefined) {
+if (Array.prototype.remove === undefined) {
   Array.prototype.remove = function (item, suppress_error) {
     var i = this.indexOf(item);
 
@@ -134,20 +145,11 @@ if (Array.prototype.remove == undefined) {
   }
 }
 
-if (String.prototype.contains == undefined) {
+if (String.prototype.contains === undefined) {
   String.prototype.contains = function (substr) {
     return String.search(substr) != null;
   }
 }
-
-String.prototype.__keystr__ = function () {
-  return this;
-}
-
-Number.prototype.__keystr__ = Boolean.prototype.__keystr__ = function () {
-  return &quot;&quot; + this;
-}
-
 </code></pre>
 
 </div>

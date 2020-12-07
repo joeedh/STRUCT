@@ -29,7 +29,8 @@
 <nav class="navigation" data-ice="nav"><div>
   <ul>
     
-  <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/struct_filehelper.js~Block.html">Block</a></span></span></li>
+  <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/struct_binpack.js~unpack_context.html">unpack_context</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/struct_filehelper.js~Block.html">Block</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/struct_filehelper.js~FileError.html">FileError</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/struct_filehelper.js~FileHelper.html">FileHelper</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/struct_filehelper.js~FileParams.html">FileParams</a></span></span></li>
@@ -56,7 +57,9 @@
 <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/struct_parseutil.js~parser.html">parser</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/struct_parseutil.js~tokdef.html">tokdef</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/struct_parseutil.js~token.html">token</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/struct_util.js~IDGen.html">IDGen</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/struct_util.js~cachering.html">cachering</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/struct_util.js~set.html">set</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-decode_utf8">decode_utf8</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-encode_utf8">encode_utf8</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-pack_byte">pack_byte</a></span></span></li>
@@ -84,15 +87,22 @@
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-versionLessThan">versionLessThan</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-versionToInt">versionToInt</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-write_scripts">write_scripts</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-fromJSON">fromJSON</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-packNull">packNull</a></span></span></li>
-<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-Class">Class</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-toJSON">toJSON</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-get_callstack">get_callstack</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-is_obj_lit">is_obj_lit</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-print_stack">print_stack</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-truncateDollarSign">truncateDollarSign</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-inherit">inherit</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-readJSON">readJSON</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-readObject">readObject</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-register">register</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-setAllowOverriding">setAllowOverriding</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-truncateDollarSign">truncateDollarSign</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-useTinyEval">useTinyEval</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-validateStructs">validateStructs</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-writeJSON">writeJSON</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-writeObject">writeObject</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-StructFieldTypeMap">StructFieldTypeMap</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-StructEnum">StructEnum</a></span></span></li>
@@ -114,6 +124,34 @@
   <tbody>
   
   <tr data-ice="target">
+    <td>
+      <span class="access" data-ice="access">public</span>
+      
+      
+      
+      <span class="override" data-ice="override"></span>
+    </td>
+    <td>
+      <div>
+        <p>
+          <span data-ice="kind-icon" class="kind-class">C</span>
+          
+          
+          <span class="code" data-ice="name"><span><a href="class/src/struct_binpack.js~unpack_context.html">unpack_context</a></span></span>
+        </p>
+      </div>
+      <div>
+        
+        
+        
+      </div>
+    </td>
+    <td>
+      
+      
+    </td>
+  </tr>
+<tr data-ice="target">
     <td>
       <span class="access" data-ice="access">public</span>
       
@@ -886,6 +924,34 @@
           <span data-ice="kind-icon" class="kind-class">C</span>
           
           
+          <span class="code" data-ice="name"><span><a href="class/src/struct_util.js~IDGen.html">IDGen</a></span></span>
+        </p>
+      </div>
+      <div>
+        
+        
+        
+      </div>
+    </td>
+    <td>
+      
+      
+    </td>
+  </tr>
+<tr data-ice="target">
+    <td>
+      <span class="access" data-ice="access">public</span>
+      
+      
+      
+      <span class="override" data-ice="override"></span>
+    </td>
+    <td>
+      <div>
+        <p>
+          <span data-ice="kind-icon" class="kind-class">C</span>
+          
+          
           <span class="code" data-ice="name"><span><a href="class/src/struct_util.js~cachering.html">cachering</a></span></span>
         </p>
       </div>
@@ -893,6 +959,43 @@
         
         
         
+      </div>
+    </td>
+    <td>
+      
+      
+    </td>
+  </tr>
+<tr data-ice="target">
+    <td>
+      <span class="access" data-ice="access">public</span>
+      
+      
+      
+      <span class="override" data-ice="override"></span>
+    </td>
+    <td>
+      <div>
+        <p>
+          <span data-ice="kind-icon" class="kind-class">C</span>
+          
+          
+          <span class="code" data-ice="name"><span><a href="class/src/struct_util.js~set.html">set</a></span></span>
+        </p>
+      </div>
+      <div>
+        
+        
+        <div data-ice="description"><p><pre><em>
+ Set
+
+ Stores objects in a set; each object is converted to a value via
+ a [Symbol._struct_keystr] method, and if that value already exists in the set
+ then the object is not added.
+
+
+ </em> </pre></p>
+</div>
       </div>
     </td>
     <td>
@@ -1693,6 +1796,34 @@ file format:
           <span data-ice="kind-icon" class="kind-function">F</span>
           
           
+          <span class="code" data-ice="name"><span><a href="function/index.html#static-function-fromJSON">fromJSON</a></span></span><span class="code" data-ice="signature">(manager: <span>*</span>, data: <span>*</span>, owner: <span>*</span>, type: <span>*</span>): <span>*</span></span>
+        </p>
+      </div>
+      <div>
+        
+        
+        
+      </div>
+    </td>
+    <td>
+      
+      
+    </td>
+  </tr>
+<tr data-ice="target">
+    <td>
+      <span class="access" data-ice="access">public</span>
+      
+      
+      
+      <span class="override" data-ice="override"></span>
+    </td>
+    <td>
+      <div>
+        <p>
+          <span data-ice="kind-icon" class="kind-function">F</span>
+          
+          
           <span class="code" data-ice="name"><span><a href="function/index.html#static-function-packNull">packNull</a></span></span><span class="code" data-ice="signature">(manager: <span>*</span>, data: <span>*</span>, field: <span>*</span>, type: <span>*</span>)</span>
         </p>
       </div>
@@ -1721,7 +1852,7 @@ file format:
           <span data-ice="kind-icon" class="kind-function">F</span>
           
           
-          <span class="code" data-ice="name"><span><a href="function/index.html#static-function-Class">Class</a></span></span><span class="code" data-ice="signature">(methods: <span>*</span>): <span>*</span></span>
+          <span class="code" data-ice="name"><span><a href="function/index.html#static-function-toJSON">toJSON</a></span></span><span class="code" data-ice="signature">(manager: <span>*</span>, val: <span>*</span>, obj: <span>*</span>, field: <span>*</span>, type: <span>*</span>): <span>*</span></span>
         </p>
       </div>
       <div>
@@ -1833,6 +1964,34 @@ file format:
           <span data-ice="kind-icon" class="kind-function">F</span>
           
           
+          <span class="code" data-ice="name"><span><a href="function/index.html#static-function-truncateDollarSign">truncateDollarSign</a></span></span><span class="code" data-ice="signature">(s: <span>*</span>): <span>*</span></span>
+        </p>
+      </div>
+      <div>
+        
+        
+        
+      </div>
+    </td>
+    <td>
+      
+      
+    </td>
+  </tr>
+<tr data-ice="target">
+    <td>
+      <span class="access" data-ice="access">public</span>
+      
+      
+      
+      <span class="override" data-ice="override"></span>
+    </td>
+    <td>
+      <div>
+        <p>
+          <span data-ice="kind-icon" class="kind-function">F</span>
+          
+          
           <span class="code" data-ice="name"><span><a href="function/index.html#static-function-inherit">inherit</a></span></span><span class="code" data-ice="signature">(child: <span>*</span>, parent: <span>*</span>, structName: <span>*</span>): <span>*</span></span>
         </p>
       </div>
@@ -1841,6 +2000,34 @@ file format:
         
         <div data-ice="description"><p><pre><em> Register a class with nstructjs </em></pre></p>
 </div>
+      </div>
+    </td>
+    <td>
+      
+      
+    </td>
+  </tr>
+<tr data-ice="target">
+    <td>
+      <span class="access" data-ice="access">public</span>
+      
+      
+      
+      <span class="override" data-ice="override"></span>
+    </td>
+    <td>
+      <div>
+        <p>
+          <span data-ice="kind-icon" class="kind-function">F</span>
+          
+          
+          <span class="code" data-ice="name"><span><a href="function/index.html#static-function-readJSON">readJSON</a></span></span><span class="code" data-ice="signature">(json: <span>*</span>, class_or_struct_id: <span>*</span>): <span>*</span></span>
+        </p>
+      </div>
+      <div>
+        
+        
+        
       </div>
     </td>
     <td>
@@ -1922,6 +2109,63 @@ file format:
           <span data-ice="kind-icon" class="kind-function">F</span>
           
           
+          <span class="code" data-ice="name"><span><a href="function/index.html#static-function-setAllowOverriding">setAllowOverriding</a></span></span><span class="code" data-ice="signature">(t: <span>*</span>): <span>*</span></span>
+        </p>
+      </div>
+      <div>
+        
+        
+        
+      </div>
+    </td>
+    <td>
+      
+      
+    </td>
+  </tr>
+<tr data-ice="target">
+    <td>
+      <span class="access" data-ice="access">public</span>
+      
+      
+      
+      <span class="override" data-ice="override"></span>
+    </td>
+    <td>
+      <div>
+        <p>
+          <span data-ice="kind-icon" class="kind-function">F</span>
+          
+          
+          <span class="code" data-ice="name"><span><a href="function/index.html#static-function-truncateDollarSign">truncateDollarSign</a></span></span><span class="code" data-ice="signature">(value: <span>*</span>)</span>
+        </p>
+      </div>
+      <div>
+        
+        
+        <div data-ice="description"><p><pre>* truncate webpack mangled names.</pre></p>
+</div>
+      </div>
+    </td>
+    <td>
+      
+      
+    </td>
+  </tr>
+<tr data-ice="target">
+    <td>
+      <span class="access" data-ice="access">public</span>
+      
+      
+      
+      <span class="override" data-ice="override"></span>
+    </td>
+    <td>
+      <div>
+        <p>
+          <span data-ice="kind-icon" class="kind-function">F</span>
+          
+          
           <span class="code" data-ice="name"><span><a href="function/index.html#static-function-useTinyEval">useTinyEval</a></span></span><span class="code" data-ice="signature">()</span>
         </p>
       </div>
@@ -1930,6 +2174,62 @@ file format:
         
         <div data-ice="description"><p><pre>$BUILD_TINYEVAL_START</pre></p>
 </div>
+      </div>
+    </td>
+    <td>
+      
+      
+    </td>
+  </tr>
+<tr data-ice="target">
+    <td>
+      <span class="access" data-ice="access">public</span>
+      
+      
+      
+      <span class="override" data-ice="override"></span>
+    </td>
+    <td>
+      <div>
+        <p>
+          <span data-ice="kind-icon" class="kind-function">F</span>
+          
+          
+          <span class="code" data-ice="name"><span><a href="function/index.html#static-function-validateStructs">validateStructs</a></span></span><span class="code" data-ice="signature">(onerror: <span>*</span>): <span>*</span></span>
+        </p>
+      </div>
+      <div>
+        
+        
+        
+      </div>
+    </td>
+    <td>
+      
+      
+    </td>
+  </tr>
+<tr data-ice="target">
+    <td>
+      <span class="access" data-ice="access">public</span>
+      
+      
+      
+      <span class="override" data-ice="override"></span>
+    </td>
+    <td>
+      <div>
+        <p>
+          <span data-ice="kind-icon" class="kind-function">F</span>
+          
+          
+          <span class="code" data-ice="name"><span><a href="function/index.html#static-function-writeJSON">writeJSON</a></span></span><span class="code" data-ice="signature">(obj: <span>*</span>): <span>*</span></span>
+        </p>
+      </div>
+      <div>
+        
+        
+        
       </div>
     </td>
     <td>

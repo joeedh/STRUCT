@@ -29,7 +29,8 @@
 <nav class="navigation" data-ice="nav"><div>
   <ul>
     
-  <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/struct_filehelper.js~Block.html">Block</a></span></span></li>
+  <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/struct_binpack.js~unpack_context.html">unpack_context</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/struct_filehelper.js~Block.html">Block</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/struct_filehelper.js~FileError.html">FileError</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/struct_filehelper.js~FileHelper.html">FileHelper</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/struct_filehelper.js~FileParams.html">FileParams</a></span></span></li>
@@ -56,7 +57,9 @@
 <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/struct_parseutil.js~parser.html">parser</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/struct_parseutil.js~tokdef.html">tokdef</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/struct_parseutil.js~token.html">token</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/struct_util.js~IDGen.html">IDGen</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/struct_util.js~cachering.html">cachering</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/struct_util.js~set.html">set</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-decode_utf8">decode_utf8</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-encode_utf8">encode_utf8</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-pack_byte">pack_byte</a></span></span></li>
@@ -84,15 +87,22 @@
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-versionLessThan">versionLessThan</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-versionToInt">versionToInt</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-write_scripts">write_scripts</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-fromJSON">fromJSON</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-packNull">packNull</a></span></span></li>
-<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-Class">Class</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-toJSON">toJSON</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-get_callstack">get_callstack</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-is_obj_lit">is_obj_lit</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-print_stack">print_stack</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-truncateDollarSign">truncateDollarSign</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-inherit">inherit</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-readJSON">readJSON</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-readObject">readObject</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-register">register</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-setAllowOverriding">setAllowOverriding</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-truncateDollarSign">truncateDollarSign</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-useTinyEval">useTinyEval</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-validateStructs">validateStructs</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-writeJSON">writeJSON</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-writeObject">writeObject</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-StructFieldTypeMap">StructFieldTypeMap</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-StructEnum">StructEnum</a></span></span></li>
@@ -109,7 +119,7 @@
   
   
   
-  <span data-ice="source">| <span><a href="file/src/struct_intern2.js.html#lineNumber399">source</a></span></span>
+  <span data-ice="source">| <span><a href="file/src/struct_intern2.js.html#lineNumber512">source</a></span></span>
 </div>
 
 <div class="self-detail detail">
@@ -384,6 +394,118 @@
           
           
           
+          <span class="code" data-ice="name"><span><a href="class/src/struct_intern2.js~StructArrayField.html#static-method-readJSON">readJSON</a></span></span><span class="code" data-ice="signature">(manager: <span>*</span>, data: <span>*</span>, owner: <span>*</span>, type: <span>*</span>): <span>*</span></span>
+        </p>
+      </div>
+      <div>
+        
+        
+        
+      </div>
+    </td>
+    <td>
+      
+      
+    </td>
+  </tr>
+<tr data-ice="target">
+    <td>
+      <span class="access" data-ice="access">public</span>
+      <span data-ice="static">static</span>
+      
+      
+      <span class="override" data-ice="override"></span>
+    </td>
+    <td>
+      <div>
+        <p>
+          
+          
+          
+          <span class="code" data-ice="name"><span><a href="class/src/struct_intern2.js~StructArrayField.html#static-method-readJSON">readJSON</a></span></span><span class="code" data-ice="signature">(manager: <span>*</span>, data: <span>*</span>, owner: <span>*</span>, type: <span>*</span>): <span>*</span></span>
+        </p>
+      </div>
+      <div>
+        
+        
+        
+      </div>
+    </td>
+    <td>
+      
+      
+    </td>
+  </tr>
+<tr data-ice="target">
+    <td>
+      <span class="access" data-ice="access">public</span>
+      <span data-ice="static">static</span>
+      
+      
+      <span class="override" data-ice="override"></span>
+    </td>
+    <td>
+      <div>
+        <p>
+          
+          
+          
+          <span class="code" data-ice="name"><span><a href="class/src/struct_intern2.js~StructArrayField.html#static-method-toJSON">toJSON</a></span></span><span class="code" data-ice="signature">(manager: <span>*</span>, val: <span>*</span>, obj: <span>*</span>, field: <span>*</span>, type: <span>*</span>): <span>*</span></span>
+        </p>
+      </div>
+      <div>
+        
+        
+        
+      </div>
+    </td>
+    <td>
+      
+      
+    </td>
+  </tr>
+<tr data-ice="target">
+    <td>
+      <span class="access" data-ice="access">public</span>
+      <span data-ice="static">static</span>
+      
+      
+      <span class="override" data-ice="override"></span>
+    </td>
+    <td>
+      <div>
+        <p>
+          
+          
+          
+          <span class="code" data-ice="name"><span><a href="class/src/struct_intern2.js~StructArrayField.html#static-method-toJSON">toJSON</a></span></span><span class="code" data-ice="signature">(manager: <span>*</span>, val: <span>*</span>, obj: <span>*</span>, field: <span>*</span>, type: <span>*</span>): <span>*</span></span>
+        </p>
+      </div>
+      <div>
+        
+        
+        
+      </div>
+    </td>
+    <td>
+      
+      
+    </td>
+  </tr>
+<tr data-ice="target">
+    <td>
+      <span class="access" data-ice="access">public</span>
+      <span data-ice="static">static</span>
+      
+      
+      <span class="override" data-ice="override"></span>
+    </td>
+    <td>
+      <div>
+        <p>
+          
+          
+          
           <span class="code" data-ice="name"><span><a href="class/src/struct_intern2.js~StructArrayField.html#static-method-unpack">unpack</a></span></span><span class="code" data-ice="signature">(manager: <span>*</span>, data: <span>*</span>, type: <span>*</span>, uctx: <span>*</span>): <span>*</span></span>
         </p>
       </div>
@@ -506,7 +628,7 @@
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/struct_intern2.js.html#lineNumber465">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/struct_intern2.js.html#lineNumber634">source</a></span></span>
     </span>
   </h3>
 
@@ -561,7 +683,7 @@
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/struct_intern2.js.html#lineNumber465">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/struct_intern2.js.html#lineNumber634">source</a></span></span>
     </span>
   </h3>
 
@@ -616,7 +738,7 @@
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/struct_intern2.js.html#lineNumber440">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/struct_intern2.js.html#lineNumber593">source</a></span></span>
     </span>
   </h3>
 
@@ -687,7 +809,7 @@
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/struct_intern2.js.html#lineNumber440">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/struct_intern2.js.html#lineNumber593">source</a></span></span>
     </span>
   </h3>
 
@@ -758,7 +880,7 @@
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/struct_intern2.js.html#lineNumber400">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/struct_intern2.js.html#lineNumber513">source</a></span></span>
     </span>
   </h3>
 
@@ -847,7 +969,7 @@
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/struct_intern2.js.html#lineNumber400">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/struct_intern2.js.html#lineNumber513">source</a></span></span>
     </span>
   </h3>
 
@@ -936,7 +1058,7 @@
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/struct_intern2.js.html#lineNumber436">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/struct_intern2.js.html#lineNumber589">source</a></span></span>
     </span>
   </h3>
 
@@ -1013,7 +1135,7 @@
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/struct_intern2.js.html#lineNumber436">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/struct_intern2.js.html#lineNumber589">source</a></span></span>
     </span>
   </h3>
 
@@ -1079,6 +1201,374 @@
   
 </div>
 <div class="detail" data-ice="detail">
+  <h3 data-ice="anchor" id="static-method-readJSON">
+    <span class="access" data-ice="access">public</span>
+    <span data-ice="static">static</span>
+    
+    
+    
+    
+    <span class="code" data-ice="name">readJSON</span><span class="code" data-ice="signature">(manager: <span>*</span>, data: <span>*</span>, owner: <span>*</span>, type: <span>*</span>): <span>*</span></span>
+    <span class="right-info">
+      
+      
+      <span data-ice="source"><span><a href="file/src/struct_intern2.js.html#lineNumber618">source</a></span></span>
+    </span>
+  </h3>
+
+  
+  
+  
+  
+
+  
+
+  <div data-ice="properties"><div data-ice="properties">
+  <h4 data-ice="title">Params:</h4>
+  <table class="params">
+    <thead>
+    <tr><td>Name</td><td>Type</td><td>Attribute</td><td>Description</td></tr>
+    </thead>
+    <tbody>
+    
+    <tr data-ice="property" data-depth="0">
+      <td data-ice="name" class="code" data-depth="0">manager</td>
+      <td data-ice="type" class="code"><span>*</span></td>
+      <td data-ice="appendix"></td>
+      <td data-ice="description"></td>
+    </tr>
+<tr data-ice="property" data-depth="0">
+      <td data-ice="name" class="code" data-depth="0">data</td>
+      <td data-ice="type" class="code"><span>*</span></td>
+      <td data-ice="appendix"></td>
+      <td data-ice="description"></td>
+    </tr>
+<tr data-ice="property" data-depth="0">
+      <td data-ice="name" class="code" data-depth="0">owner</td>
+      <td data-ice="type" class="code"><span>*</span></td>
+      <td data-ice="appendix"></td>
+      <td data-ice="description"></td>
+    </tr>
+<tr data-ice="property" data-depth="0">
+      <td data-ice="name" class="code" data-depth="0">type</td>
+      <td data-ice="type" class="code"><span>*</span></td>
+      <td data-ice="appendix"></td>
+      <td data-ice="description"></td>
+    </tr>
+</tbody>
+  </table>
+</div>
+</div>
+
+  <div class="return-params" data-ice="returnParams">
+    <h4>Return:</h4>
+    <table>
+      <tbody>
+        <tr>
+          <td class="return-type code" data-ice="returnType"><span>*</span></td>
+          
+        </tr>
+      </tbody>
+    </table>
+    <div data-ice="returnProperties">
+</div>
+  </div>
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+  
+</div>
+<div class="detail" data-ice="detail">
+  <h3 data-ice="anchor" id="static-method-readJSON">
+    <span class="access" data-ice="access">public</span>
+    <span data-ice="static">static</span>
+    
+    
+    
+    
+    <span class="code" data-ice="name">readJSON</span><span class="code" data-ice="signature">(manager: <span>*</span>, data: <span>*</span>, owner: <span>*</span>, type: <span>*</span>): <span>*</span></span>
+    <span class="right-info">
+      
+      
+      <span data-ice="source"><span><a href="file/src/struct_intern2.js.html#lineNumber618">source</a></span></span>
+    </span>
+  </h3>
+
+  
+  
+  
+  
+
+  
+
+  <div data-ice="properties"><div data-ice="properties">
+  <h4 data-ice="title">Params:</h4>
+  <table class="params">
+    <thead>
+    <tr><td>Name</td><td>Type</td><td>Attribute</td><td>Description</td></tr>
+    </thead>
+    <tbody>
+    
+    <tr data-ice="property" data-depth="0">
+      <td data-ice="name" class="code" data-depth="0">manager</td>
+      <td data-ice="type" class="code"><span>*</span></td>
+      <td data-ice="appendix"></td>
+      <td data-ice="description"></td>
+    </tr>
+<tr data-ice="property" data-depth="0">
+      <td data-ice="name" class="code" data-depth="0">data</td>
+      <td data-ice="type" class="code"><span>*</span></td>
+      <td data-ice="appendix"></td>
+      <td data-ice="description"></td>
+    </tr>
+<tr data-ice="property" data-depth="0">
+      <td data-ice="name" class="code" data-depth="0">owner</td>
+      <td data-ice="type" class="code"><span>*</span></td>
+      <td data-ice="appendix"></td>
+      <td data-ice="description"></td>
+    </tr>
+<tr data-ice="property" data-depth="0">
+      <td data-ice="name" class="code" data-depth="0">type</td>
+      <td data-ice="type" class="code"><span>*</span></td>
+      <td data-ice="appendix"></td>
+      <td data-ice="description"></td>
+    </tr>
+</tbody>
+  </table>
+</div>
+</div>
+
+  <div class="return-params" data-ice="returnParams">
+    <h4>Return:</h4>
+    <table>
+      <tbody>
+        <tr>
+          <td class="return-type code" data-ice="returnType"><span>*</span></td>
+          
+        </tr>
+      </tbody>
+    </table>
+    <div data-ice="returnProperties">
+</div>
+  </div>
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+  
+</div>
+<div class="detail" data-ice="detail">
+  <h3 data-ice="anchor" id="static-method-toJSON">
+    <span class="access" data-ice="access">public</span>
+    <span data-ice="static">static</span>
+    
+    
+    
+    
+    <span class="code" data-ice="name">toJSON</span><span class="code" data-ice="signature">(manager: <span>*</span>, val: <span>*</span>, obj: <span>*</span>, field: <span>*</span>, type: <span>*</span>): <span>*</span></span>
+    <span class="right-info">
+      
+      
+      <span data-ice="source"><span><a href="file/src/struct_intern2.js.html#lineNumber549">source</a></span></span>
+    </span>
+  </h3>
+
+  
+  
+  
+  
+
+  
+
+  <div data-ice="properties"><div data-ice="properties">
+  <h4 data-ice="title">Params:</h4>
+  <table class="params">
+    <thead>
+    <tr><td>Name</td><td>Type</td><td>Attribute</td><td>Description</td></tr>
+    </thead>
+    <tbody>
+    
+    <tr data-ice="property" data-depth="0">
+      <td data-ice="name" class="code" data-depth="0">manager</td>
+      <td data-ice="type" class="code"><span>*</span></td>
+      <td data-ice="appendix"></td>
+      <td data-ice="description"></td>
+    </tr>
+<tr data-ice="property" data-depth="0">
+      <td data-ice="name" class="code" data-depth="0">val</td>
+      <td data-ice="type" class="code"><span>*</span></td>
+      <td data-ice="appendix"></td>
+      <td data-ice="description"></td>
+    </tr>
+<tr data-ice="property" data-depth="0">
+      <td data-ice="name" class="code" data-depth="0">obj</td>
+      <td data-ice="type" class="code"><span>*</span></td>
+      <td data-ice="appendix"></td>
+      <td data-ice="description"></td>
+    </tr>
+<tr data-ice="property" data-depth="0">
+      <td data-ice="name" class="code" data-depth="0">field</td>
+      <td data-ice="type" class="code"><span>*</span></td>
+      <td data-ice="appendix"></td>
+      <td data-ice="description"></td>
+    </tr>
+<tr data-ice="property" data-depth="0">
+      <td data-ice="name" class="code" data-depth="0">type</td>
+      <td data-ice="type" class="code"><span>*</span></td>
+      <td data-ice="appendix"></td>
+      <td data-ice="description"></td>
+    </tr>
+</tbody>
+  </table>
+</div>
+</div>
+
+  <div class="return-params" data-ice="returnParams">
+    <h4>Return:</h4>
+    <table>
+      <tbody>
+        <tr>
+          <td class="return-type code" data-ice="returnType"><span>*</span></td>
+          
+        </tr>
+      </tbody>
+    </table>
+    <div data-ice="returnProperties">
+</div>
+  </div>
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+  
+</div>
+<div class="detail" data-ice="detail">
+  <h3 data-ice="anchor" id="static-method-toJSON">
+    <span class="access" data-ice="access">public</span>
+    <span data-ice="static">static</span>
+    
+    
+    
+    
+    <span class="code" data-ice="name">toJSON</span><span class="code" data-ice="signature">(manager: <span>*</span>, val: <span>*</span>, obj: <span>*</span>, field: <span>*</span>, type: <span>*</span>): <span>*</span></span>
+    <span class="right-info">
+      
+      
+      <span data-ice="source"><span><a href="file/src/struct_intern2.js.html#lineNumber549">source</a></span></span>
+    </span>
+  </h3>
+
+  
+  
+  
+  
+
+  
+
+  <div data-ice="properties"><div data-ice="properties">
+  <h4 data-ice="title">Params:</h4>
+  <table class="params">
+    <thead>
+    <tr><td>Name</td><td>Type</td><td>Attribute</td><td>Description</td></tr>
+    </thead>
+    <tbody>
+    
+    <tr data-ice="property" data-depth="0">
+      <td data-ice="name" class="code" data-depth="0">manager</td>
+      <td data-ice="type" class="code"><span>*</span></td>
+      <td data-ice="appendix"></td>
+      <td data-ice="description"></td>
+    </tr>
+<tr data-ice="property" data-depth="0">
+      <td data-ice="name" class="code" data-depth="0">val</td>
+      <td data-ice="type" class="code"><span>*</span></td>
+      <td data-ice="appendix"></td>
+      <td data-ice="description"></td>
+    </tr>
+<tr data-ice="property" data-depth="0">
+      <td data-ice="name" class="code" data-depth="0">obj</td>
+      <td data-ice="type" class="code"><span>*</span></td>
+      <td data-ice="appendix"></td>
+      <td data-ice="description"></td>
+    </tr>
+<tr data-ice="property" data-depth="0">
+      <td data-ice="name" class="code" data-depth="0">field</td>
+      <td data-ice="type" class="code"><span>*</span></td>
+      <td data-ice="appendix"></td>
+      <td data-ice="description"></td>
+    </tr>
+<tr data-ice="property" data-depth="0">
+      <td data-ice="name" class="code" data-depth="0">type</td>
+      <td data-ice="type" class="code"><span>*</span></td>
+      <td data-ice="appendix"></td>
+      <td data-ice="description"></td>
+    </tr>
+</tbody>
+  </table>
+</div>
+</div>
+
+  <div class="return-params" data-ice="returnParams">
+    <h4>Return:</h4>
+    <table>
+      <tbody>
+        <tr>
+          <td class="return-type code" data-ice="returnType"><span>*</span></td>
+          
+        </tr>
+      </tbody>
+    </table>
+    <div data-ice="returnProperties">
+</div>
+  </div>
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+  
+</div>
+<div class="detail" data-ice="detail">
   <h3 data-ice="anchor" id="static-method-unpack">
     <span class="access" data-ice="access">public</span>
     <span data-ice="static">static</span>
@@ -1090,7 +1580,7 @@
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/struct_intern2.js.html#lineNumber453">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/struct_intern2.js.html#lineNumber606">source</a></span></span>
     </span>
   </h3>
 
@@ -1179,7 +1669,7 @@
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/struct_intern2.js.html#lineNumber453">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/struct_intern2.js.html#lineNumber606">source</a></span></span>
     </span>
   </h3>
 
@@ -1268,7 +1758,7 @@
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/struct_intern2.js.html#lineNumber449">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/struct_intern2.js.html#lineNumber602">source</a></span></span>
     </span>
   </h3>
 
@@ -1339,7 +1829,7 @@
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/struct_intern2.js.html#lineNumber449">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/struct_intern2.js.html#lineNumber602">source</a></span></span>
     </span>
   </h3>
 

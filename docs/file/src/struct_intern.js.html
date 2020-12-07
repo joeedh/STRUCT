@@ -29,7 +29,8 @@
 <nav class="navigation" data-ice="nav"><div>
   <ul>
     
-  <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/struct_filehelper.js~Block.html">Block</a></span></span></li>
+  <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/struct_binpack.js~unpack_context.html">unpack_context</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/struct_filehelper.js~Block.html">Block</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/struct_filehelper.js~FileError.html">FileError</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/struct_filehelper.js~FileHelper.html">FileHelper</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/struct_filehelper.js~FileParams.html">FileParams</a></span></span></li>
@@ -56,7 +57,9 @@
 <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/struct_parseutil.js~parser.html">parser</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/struct_parseutil.js~tokdef.html">tokdef</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/struct_parseutil.js~token.html">token</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/struct_util.js~IDGen.html">IDGen</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/struct_util.js~cachering.html">cachering</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/struct_util.js~set.html">set</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-decode_utf8">decode_utf8</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-encode_utf8">encode_utf8</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-pack_byte">pack_byte</a></span></span></li>
@@ -84,15 +87,22 @@
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-versionLessThan">versionLessThan</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-versionToInt">versionToInt</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-write_scripts">write_scripts</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-fromJSON">fromJSON</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-packNull">packNull</a></span></span></li>
-<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-Class">Class</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-toJSON">toJSON</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-get_callstack">get_callstack</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-is_obj_lit">is_obj_lit</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-print_stack">print_stack</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-truncateDollarSign">truncateDollarSign</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-inherit">inherit</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-readJSON">readJSON</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-readObject">readObject</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-register">register</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-setAllowOverriding">setAllowOverriding</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-truncateDollarSign">truncateDollarSign</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-useTinyEval">useTinyEval</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-validateStructs">validateStructs</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-writeJSON">writeJSON</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-writeObject">writeObject</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-StructFieldTypeMap">StructFieldTypeMap</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-StructEnum">StructEnum</a></span></span></li>
@@ -107,13 +117,20 @@
 let struct_util = require(&quot;./struct_util&quot;);
 let struct_binpack = require(&quot;./struct_binpack&quot;);
 let struct_parseutil = require(&quot;./struct_parseutil&quot;);
-let struct_typesystem = require(&quot;./struct_typesystem&quot;);
 let struct_parser = require(&quot;./struct_parser&quot;);
 
 let sintern2 = require(&quot;./struct_intern2.js&quot;);
 let StructFieldTypeMap = sintern2.StructFieldTypeMap;
 
 let warninglvl = 2;
+
+function unmangle(name) {
+  if (exports.truncateDollarSign) {
+    return struct_util.truncateDollarSign(name);
+  } else {
+    return name;
+  }
+}
 
 /*
 
@@ -140,21 +157,23 @@ SomeClass {
 nstructjs.manager.add_class(SomeClass);
 
 */
-var StructTypeMap = struct_parser.StructTypeMap;
-var StructTypes = struct_parser.StructTypes;
-var Class = struct_typesystem.Class;
+let StructTypeMap = struct_parser.StructTypeMap;
+let StructTypes = struct_parser.StructTypes;
 
-var struct_parse = struct_parser.struct_parse;
-var StructEnum = struct_parser.StructEnum;
+let struct_parse = struct_parser.struct_parse;
+let StructEnum = struct_parser.StructEnum;
 
-var _static_envcode_null = &quot;&quot;;
-var debug_struct = 0;
-var packdebug_tablevel = 0;
+let _static_envcode_null = &quot;&quot;;
+let debug_struct = 0;
+let packdebug_tablevel = 0;
+
+//truncate webpack-mangled names
+exports.truncateDollarSign = true;
 
 function gen_tabstr(tot) {
   var ret = &quot;&quot;;
 
-  for (var i = 0; i &lt; tot; i++) {
+  for (let i = 0; i &lt; tot; i++) {
     ret += &quot; &quot;;
   }
 
@@ -166,7 +185,7 @@ let packer_debug, packer_debug_start, packer_debug_end;
 if (debug_struct) {
   packer_debug = function (msg) {
     if (msg !== undefined) {
-      var t = gen_tabstr(packdebug_tablevel);
+      let t = gen_tabstr(packdebug_tablevel);
       console.log(t + msg);
     } else {
       console.log(&quot;Warning: undefined msg&quot;);
@@ -191,7 +210,6 @@ else {
   };
 }
 
-
 exports.setWarningMode = (t) =&gt; {
   sintern2.setWarningMode(t);
   
@@ -210,7 +228,7 @@ exports.setDebugMode = (t) =&gt; {
   if (debug_struct) {
     packer_debug = function (msg) {
       if (msg != undefined) {
-        var t = gen_tabstr(packdebug_tablevel);
+        let t = gen_tabstr(packdebug_tablevel);
         console.log(t + msg);
       } else {
         console.log(&quot;Warning: undefined msg&quot;);
@@ -236,14 +254,14 @@ exports.setDebugMode = (t) =&gt; {
   }
 }
 
-var _ws_env = [[undefined, undefined]];
+let _ws_env = [[undefined, undefined]];
 
 function do_pack(data, val, obj, thestruct, field, type) {
   StructFieldTypeMap[field.type.type].pack(manager, data, val, obj, field, type);
 }
 
 function define_empty_class(name) {
-  var cls = function () {
+  let cls = function () {
   };
 
   cls.prototype = Object.create(Object.prototype);
@@ -263,9 +281,10 @@ function define_empty_class(name) {
   return cls;
 }
 
-var STRUCT = exports.STRUCT = class STRUCT {
+let STRUCT = exports.STRUCT = class STRUCT {
   constructor() {
     this.idgen = new struct_util.IDGen();
+    this.allowOverriding = true;
 
     this.structs = {}
     this.struct_cls = {}
@@ -275,9 +294,9 @@ var STRUCT = exports.STRUCT = class STRUCT {
     this.null_natives = {}
 
     function define_null_native(name, cls) {
-      var obj = define_empty_class(name);
+      let obj = define_empty_class(name);
 
-      var stt = struct_parse.parse(obj.STRUCT);
+      let stt = struct_parse.parse(obj.STRUCT);
 
       stt.id = this.idgen.gen_id();
 
@@ -291,11 +310,82 @@ var STRUCT = exports.STRUCT = class STRUCT {
     define_null_native.call(this, &quot;Object&quot;, Object);
   }
 
-  forEach(func, thisvar) {
-    for (var k in this.structs) {
-      var stt = this.structs[k];
+  validateStructs(onerror) {
+    function getType(type) {
+      switch (type.type) {
+        case StructEnum.T_ITERKEYS:
+        case StructEnum.T_ITER:
+        case StructEnum.T_STATIC_ARRAY:
+        case StructEnum.T_ARRAY:
+          return getType(type.data.type);
+        case StructEnum.T_TSTRUCT:
+          return type;
+        case StructEnum.T_STRUCT:
+        default:
+          return type;
+      }
+    }
 
-      if (thisvar != undefined)
+    function formatType(type) {
+      let ret = {};
+
+      ret.type = type.type;
+
+      if (typeof ret.type === &quot;number&quot;) {
+        for (let k in StructEnum) {
+          if (StructEnum[k] === ret.type) {
+            ret.type = k;
+            break;
+          }
+        }
+      } else if (typeof ret.type === &quot;object&quot;) {
+        ret.type = formatType(ret.type);
+      }
+
+      if (typeof type.data === &quot;object&quot;) {
+        ret.data = formatType(type.data);
+      } else {
+        ret.data = type.data;
+      }
+
+      return ret;
+    }
+
+    for (let k in this.structs) {
+      let stt = this.structs[k];
+
+      for (let field of stt.fields) {
+        let type = getType(field.type);
+
+        //console.log(formatType(type));
+
+        if (type.type !== StructEnum.T_STRUCT &amp;&amp; type.type !== StructEnum.T_TSTRUCT) {
+          continue;
+        }
+
+        if (!(type.data in this.structs)) {
+
+          let msg = stt.name + &quot;:&quot; + field.name + &quot;: Unknown struct &quot; + type.data + &quot;.&quot;;
+          let buf = STRUCT.formatStruct(stt);
+
+          console.error(buf + &quot;\n\n&quot; + msg);
+
+          if (onerror) {
+            onerror(msg, stt, field);
+          } else {
+            throw new Error(msg);
+          }
+        }
+        //console.log(formatType(field.type));
+      }
+    }
+  }
+
+  forEach(func, thisvar) {
+    for (let k in this.structs) {
+      let stt = this.structs[k];
+
+      if (thisvar !== undefined)
         func.call(thisvar, stt);
       else
         func(stt);
@@ -312,32 +402,33 @@ var STRUCT = exports.STRUCT = class STRUCT {
     }
 
     if (defined_classes instanceof STRUCT) {
-      var struct2 = defined_classes;
+      let struct2 = defined_classes;
       defined_classes = [];
 
-      for (var k in struct2.struct_cls) {
+      for (let k in struct2.struct_cls) {
         defined_classes.push(struct2.struct_cls[k]);
       }
     }
 
-    if (defined_classes == undefined) {
+    if (defined_classes === undefined) {
       defined_classes = [];
-      for (var k in exports.manager.struct_cls) {
+
+      for (let k in exports.manager.struct_cls) {
         defined_classes.push(exports.manager.struct_cls[k]);
       }
     }
 
-    var clsmap = {}
+    let clsmap = {}
 
-    for (var i = 0; i &lt; defined_classes.length; i++) {
-      var cls = defined_classes[i];
+    for (let i = 0; i &lt; defined_classes.length; i++) {
+      let cls = defined_classes[i];
 
-      if (cls.structName == undefined &amp;&amp; cls.STRUCT != undefined) {
-        var stt = struct_parse.parse(cls.STRUCT.trim());
+      if (!cls.structName &amp;&amp; cls.STRUCT) {
+        let stt = struct_parse.parse(cls.STRUCT.trim());
         cls.structName = stt.name;
-      } else if (cls.structName == undefined &amp;&amp; cls.name != &quot;Object&quot;) {
+      } else if (!cls.structName &amp;&amp; cls.name !== &quot;Object&quot;) {
         if (warninglvl &gt; 0) 
-          console.log(&quot;Warning, bad class in registered class list&quot;, cls.name, cls);
+          console.log(&quot;Warning, bad class in registered class list&quot;, unmangle(cls.name), cls);
         continue;
       }
 
@@ -347,14 +438,14 @@ var STRUCT = exports.STRUCT = class STRUCT {
     struct_parse.input(buf);
 
     while (!struct_parse.at_end()) {
-      var stt = struct_parse.parse(undefined, false);
+      let stt = struct_parse.parse(undefined, false);
 
       if (!(stt.name in clsmap)) {
         if (!(stt.name in this.null_natives))
         if (warninglvl &gt; 0) 
           console.log(&quot;WARNING: struct &quot; + stt.name + &quot; is missing from class list.&quot;);
 
-        var dummy = define_empty_class(stt.name);
+        let dummy = define_empty_class(stt.name);
 
         dummy.STRUCT = STRUCT.fmt_struct(stt);
         dummy.structName = stt.name;
@@ -364,18 +455,18 @@ var STRUCT = exports.STRUCT = class STRUCT {
         this.struct_cls[dummy.structName] = dummy;
         this.structs[dummy.structName] = stt;
 
-        if (stt.id != -1)
+        if (stt.id !== -1)
           this.struct_ids[stt.id] = stt;
       } else {
         this.struct_cls[stt.name] = clsmap[stt.name];
         this.structs[stt.name] = stt;
 
-        if (stt.id != -1)
+        if (stt.id !== -1)
           this.struct_ids[stt.id] = stt;
       }
 
-      var tok = struct_parse.peek();
-      while (tok != undefined &amp;&amp; (tok.value == &quot;\n&quot; || tok.value == &quot;\r&quot; || tok.value == &quot;\t&quot; || tok.value == &quot; &quot;)) {
+      let tok = struct_parse.peek();
+      while (tok &amp;&amp; (tok.value === &quot;\n&quot; || tok.value === &quot;\r&quot; || tok.value === &quot;\t&quot; || tok.value === &quot; &quot;)) {
         tok = struct_parse.peek();
       }
     }
@@ -400,9 +491,9 @@ var STRUCT = exports.STRUCT = class STRUCT {
       }
       
       if (bad) {
-        console.warn(&quot;Generating STRUCT script for derived class &quot; + cls.name);
+        console.warn(&quot;Generating STRUCT script for derived class &quot; + unmangle(cls.name));
         if (!structName) {
-          structName = cls.name;
+          structName = unmangle(cls.name);
         }
         
         cls.STRUCT = STRUCT.inherit(cls, p) + `\n}`;
@@ -410,10 +501,12 @@ var STRUCT = exports.STRUCT = class STRUCT {
     }
     
     if (!cls.STRUCT) {
-      throw new Error(&quot;class &quot; + cls.name + &quot; has no STRUCT script&quot;);
+      throw new Error(&quot;class &quot; + unmangle(cls.name) + &quot; has no STRUCT script&quot;);
     }
 
-    var stt = struct_parse.parse(cls.STRUCT);
+    let stt = struct_parse.parse(cls.STRUCT);
+
+    stt.name = unmangle(stt.name);
 
     cls.structName = stt.name;
 
@@ -428,13 +521,21 @@ var STRUCT = exports.STRUCT = class STRUCT {
       stt.name = cls.structName = structName;
     } else if (cls.structName === undefined) {
       cls.structName = stt.name;
-    } else if (cls.structName !== undefined) {
-      stt.name = cls.structName;
     } else {
-      throw new Error(&quot;Missing structName parameter&quot;);
+      stt.name = cls.structName;
     }
 
-    if (stt.id == -1)
+    if (cls.structName in this.structs) {
+      console.warn(&quot;Struct &quot; + unmangle(cls.structName) + &quot; is already registered&quot;, cls);
+
+      if (!this.allowOverriding) {
+        throw new Error(&quot;Struct &quot; + unmangle(cls.structName) + &quot; is already registered&quot;);
+      }
+
+      return;
+    }
+
+    if (stt.id === -1)
       stt.id = this.idgen.gen_id();
 
     this.structs[cls.structName] = stt;
@@ -467,8 +568,8 @@ var STRUCT = exports.STRUCT = class STRUCT {
       return structName + &quot;{\n&quot;;
     }
 
-    var stt = struct_parse.parse(parent.STRUCT);
-    var code = structName + &quot;{\n&quot;;
+    let stt = struct_parse.parse(parent.STRUCT);
+    let code = structName + &quot;{\n&quot;;
     code += STRUCT.fmt_struct(stt, true);
     return code;
   }
@@ -504,16 +605,16 @@ var STRUCT = exports.STRUCT = class STRUCT {
     if (warninglvl &gt; 0) 
       console.warn(&quot;Using deprecated (and evil) chain_fromSTRUCT method, eek!&quot;);
 
-    var proto = cls.prototype;
-    var parent = cls.prototype.prototype.constructor;
+    let proto = cls.prototype;
+    let parent = cls.prototype.prototype.constructor;
 
-    var obj = parent.fromSTRUCT(reader);
+    let obj = parent.fromSTRUCT(reader);
     let obj2 = new cls();
 
     let keys = Object.keys(obj).concat(Object.getOwnPropertySymbols(obj));
-    //var keys=Object.keys(proto);
+    //let keys=Object.keys(proto);
 
-    for (var i = 0; i &lt; keys.length; i++) {
+    for (let i = 0; i &lt; keys.length; i++) {
       let k = keys[i];
 
       try {
@@ -522,7 +623,7 @@ var STRUCT = exports.STRUCT = class STRUCT {
         if (warninglvl &gt; 0) 
           console.warn(&quot;  failed to set property&quot;, k);
       }
-      //var k=keys[i];
+      //let k=keys[i];
       //if (k==&quot;__proto__&quot;)
       // continue;
       //obj[k] = proto[k];
@@ -546,39 +647,39 @@ var STRUCT = exports.STRUCT = class STRUCT {
     if (no_helper_js == undefined)
       no_helper_js = false;
 
-    var s = &quot;&quot;;
+    let s = &quot;&quot;;
     if (!internal_only) {
       s += stt.name;
       if (stt.id != -1)
         s += &quot; id=&quot; + stt.id;
       s += &quot; {\n&quot;;
     }
-    var tab = &quot;  &quot;;
+    let tab = &quot;  &quot;;
 
     function fmt_type(type) {
       return StructFieldTypeMap[type.type].format(type);
       
-      if (type.type == StructEnum.T_ARRAY || type.type == StructEnum.T_ITER || type.type === StructEnum.T_ITERKEYS) {
-        if (type.data.iname != &quot;&quot; &amp;&amp; type.data.iname != undefined) {
+      if (type.type === StructEnum.T_ARRAY || type.type === StructEnum.T_ITER || type.type === StructEnum.T_ITERKEYS) {
+        if (type.data.iname !== &quot;&quot; &amp;&amp; type.data.iname !== undefined) {
           return &quot;array(&quot; + type.data.iname + &quot;, &quot; + fmt_type(type.data.type) + &quot;)&quot;;
         }
         else {
           return &quot;array(&quot; + fmt_type(type.data.type) + &quot;)&quot;;
         }
-      } else if (type.type == StructEnum.T_STATIC_STRING) {
+      } else if (type.type === StructEnum.T_STATIC_STRING) {
         return &quot;static_string[&quot; + type.data.maxlength + &quot;]&quot;;
-      } else if (type.type == StructEnum.T_STRUCT) {
+      } else if (type.type === StructEnum.T_STRUCT) {
         return type.data;
-      } else if (type.type == StructEnum.T_TSTRUCT) {
+      } else if (type.type === StructEnum.T_TSTRUCT) {
         return &quot;abstract(&quot; + type.data + &quot;)&quot;;
       } else {
         return StructTypeMap[type.type];
       }
     }
 
-    var fields = stt.fields;
-    for (var i = 0; i &lt; fields.length; i++) {
-      var f = fields[i];
+    let fields = stt.fields;
+    for (let i = 0; i &lt; fields.length; i++) {
+      let f = fields[i];
       s += tab + f.name + &quot; : &quot; + fmt_type(f.type);
       if (!no_helper_js &amp;&amp; f.get != undefined) {
         s += &quot; | &quot; + f.get.trim();
@@ -591,24 +692,24 @@ var STRUCT = exports.STRUCT = class STRUCT {
   }
 
   _env_call(code, obj, env) {
-    var envcode = _static_envcode_null;
-    if (env != undefined) {
+    let envcode = _static_envcode_null;
+    if (env !== undefined) {
       envcode = &quot;&quot;;
-      for (var i = 0; i &lt; env.length; i++) {
+      for (let i = 0; i &lt; env.length; i++) {
         envcode = &quot;var &quot; + env[i][0] + &quot; = env[&quot; + i.toString() + &quot;][1];\n&quot; + envcode;
       }
     }
-    var fullcode = &quot;&quot;;
+    let fullcode = &quot;&quot;;
     if (envcode !== _static_envcode_null)
       fullcode = envcode + code;
     else
       fullcode = code;
-    var func;
+    let func;
 
     //fullcode = fullcode.replace(/\bthis\b/, &quot;obj&quot;);
 
     if (!(fullcode in this.compiled_code)) {
-      var code2 = &quot;func = function(obj, env) { &quot; + envcode + &quot;return &quot; + code + &quot;}&quot;;
+      let code2 = &quot;func = function(obj, env) { &quot; + envcode + &quot;return &quot; + code + &quot;}&quot;;
       try {
         func = _structEval(code2);
       }
@@ -630,7 +731,7 @@ var STRUCT = exports.STRUCT = class STRUCT {
     catch (err) {
       struct_util.print_stack(err);
 
-      var code2 = &quot;func = function(obj, env) { &quot; + envcode + &quot;return &quot; + code + &quot;}&quot;;
+      let code2 = &quot;func = function(obj, env) { &quot; + envcode + &quot;return &quot; + code + &quot;}&quot;;
       console.log(code2);
       console.log(&quot; &quot;);
       throw err;
@@ -664,7 +765,7 @@ var STRUCT = exports.STRUCT = class STRUCT {
         if (_nGlobal.DEBUG &amp;&amp; _nGlobal.DEBUG.tinyeval) { 
           console.log(&quot;\n\n\n&quot;, f.get, &quot;Helper JS Ret&quot;, val, &quot;\n\n\n&quot;);
         }
-        
+
         do_pack(data, val, obj, thestruct, f, t1);
       }
       else {
@@ -706,8 +807,54 @@ var STRUCT = exports.STRUCT = class STRUCT {
   @param data array to write data into,
   @param obj structable object
   */
-  writeObject() {
+  writeObject(data, obj) {
     return this.write_object(data, obj);
+  }
+
+  writeJSON(obj, stt=undefined) {
+    var cls = obj.constructor.structName;
+    stt = stt || this.get_struct(cls);
+
+    function use_helper_js(field) {
+      let type = field.type.type;
+      let cls = StructFieldTypeMap[type];
+      return cls.useHelperJS(field);
+    }
+
+    let toJSON = sintern2.toJSON;
+
+    var fields = stt.fields;
+    var thestruct = this;
+    let json = {};
+
+    for (var i = 0; i &lt; fields.length; i++) {
+      var f = fields[i];
+      var t1 = f.type;
+      var t2 = t1.type;
+      var val;
+
+      if (use_helper_js(f)) {
+        var type = t2;
+        if (f.get !== undefined) {
+          val = thestruct._env_call(f.get, obj);
+        }
+        else {
+          val = obj[f.name];
+        }
+
+        if (_nGlobal.DEBUG &amp;&amp; _nGlobal.DEBUG.tinyeval) {
+          console.log(&quot;\n\n\n&quot;, f.get, &quot;Helper JS Ret&quot;, val, &quot;\n\n\n&quot;);
+        }
+
+        json[f.name] = toJSON(this, val, obj, f, t1);
+      }
+      else {
+        val = obj[f.name];
+        json[f.name] = toJSON(this, val, obj, f, t1);
+      }
+    }
+
+    return json;
   }
 
   /**
@@ -716,7 +863,7 @@ var STRUCT = exports.STRUCT = class STRUCT {
   @param uctx : internal parameter
   */
   read_object(data, cls_or_struct_id, uctx) {
-    var cls, stt;
+    let cls, stt;
 
     if (data instanceof Array) {
       data = new DataView(new Uint8Array(data).buffer);
@@ -739,7 +886,7 @@ var STRUCT = exports.STRUCT = class STRUCT {
 
       packer_debug(&quot;\n\n=Begin reading &quot; + cls.structName + &quot;=&quot;);
     }
-    var thestruct = this;
+    let thestruct = this;
 
     let this2  = this;
     function unpack_field(type) {
@@ -755,11 +902,11 @@ var STRUCT = exports.STRUCT = class STRUCT {
 
       was_run = true;
 
-      var fields = stt.fields;
-      var flen = fields.length;
-      for (var i = 0; i &lt; flen; i++) {
-        var f = fields[i];
-        var val = unpack_field(f.type);
+      let fields = stt.fields;
+      let flen = fields.length;
+      for (let i = 0; i &lt; flen; i++) {
+        let f = fields[i];
+        let val = unpack_field(f.type);
         obj[f.name] = val;
       }
     }
@@ -777,7 +924,7 @@ var STRUCT = exports.STRUCT = class STRUCT {
       return obj;
     } else if (cls.fromSTRUCT !== undefined) {
       if (warninglvl &gt; 1) 
-        console.warn(&quot;Warning: class &quot; + cls.name + &quot; is using deprecated fromSTRUCT interface; use newSTRUCT/loadSTRUCT instead&quot;);
+        console.warn(&quot;Warning: class &quot; + unmangle(cls.name) + &quot; is using deprecated fromSTRUCT interface; use newSTRUCT/loadSTRUCT instead&quot;);
       return cls.fromSTRUCT(load);
     } else { //default case, make new instance and then call load() on it
       let obj;
@@ -792,10 +939,80 @@ var STRUCT = exports.STRUCT = class STRUCT {
       return obj;
     }
   }
+
+  readJSON(data, cls_or_struct_id) {
+    let cls, stt;
+
+    if (typeof cls_or_struct_id === &quot;number&quot;) {
+      cls = this.struct_cls[this.struct_ids[cls_or_struct_id].name];
+    } else {
+      cls = cls_or_struct_id;
+    }
+
+    if (cls === undefined) {
+      throw new Error(&quot;bad cls_or_struct_id &quot; + cls_or_struct_id);
+    }
+
+    stt = this.structs[cls.structName];
+
+    let fromJSON = sintern2.fromJSON;
+    let thestruct = this;
+
+    let this2  = this;
+
+    let was_run = false;
+
+    function reader(obj) {
+      if (was_run) {
+        return;
+      }
+
+      was_run = true;
+
+      let fields = stt.fields;
+      let flen = fields.length;
+      for (let i = 0; i &lt; flen; i++) {
+        let f = fields[i];
+
+        packer_debug(&quot;Load field &quot; + f.name);
+        obj[f.name] = fromJSON(thestruct, data[f.name], data, f.type);
+      }
+    }
+
+    if (cls.prototype.loadSTRUCT !== undefined) {
+      let obj;
+
+      if (cls.newSTRUCT !== undefined) {
+        obj = cls.newSTRUCT();
+      } else {
+        obj = new cls();
+      }
+
+      obj.loadSTRUCT(reader);
+
+      return obj;
+    } else if (cls.fromSTRUCT !== undefined) {
+      if (warninglvl &gt; 1)
+        console.warn(&quot;Warning: class &quot; + unmangle(cls.name) + &quot; is using deprecated fromSTRUCT interface; use newSTRUCT/loadSTRUCT instead&quot;);
+
+      return cls.fromSTRUCT(reader);
+    } else { //default case, make new instance and then call reader() on it
+      let obj;
+      if (cls.newSTRUCT !== undefined) {
+        obj = cls.newSTRUCT();
+      } else {
+        obj = new cls();
+      }
+
+      reader(obj);
+
+      return obj;
+    }
+  }
 }
 
 //main struct script manager
-var manager = exports.manager = new STRUCT();
+let manager = exports.manager = new STRUCT();
 
 /**
  * Write all defined structs out to a string.
@@ -803,24 +1020,24 @@ var manager = exports.manager = new STRUCT();
  * @param manager STRUCT instance, defaults to nstructjs.manager
  * @param include_code include save code snippets
  * */
-var write_scripts = exports.write_scripts = function write_scripts(manager, include_code = false) {
+let write_scripts = exports.write_scripts = function write_scripts(manager, include_code = false) {
   if (manager === undefined)
     manager = exports.manager;
 
-  var buf = &quot;&quot;;
+  let buf = &quot;&quot;;
 
   manager.forEach(function (stt) {
     buf += STRUCT.fmt_struct(stt, false, !include_code) + &quot;\n&quot;;
   });
 
-  var buf2 = buf;
+  let buf2 = buf;
   buf = &quot;&quot;;
 
-  for (var i = 0; i &lt; buf2.length; i++) {
-    var c = buf2[i];
+  for (let i = 0; i &lt; buf2.length; i++) {
+    let c = buf2[i];
     if (c === &quot;\n&quot;) {
       buf += &quot;\n&quot;;
-      var i2 = i;
+      let i2 = i;
       while (i &lt; buf2.length &amp;&amp; (buf2[i] === &quot; &quot; || buf2[i] === &quot;\t&quot; || buf2[i] === &quot;\n&quot;)) {
         i++;
       }
