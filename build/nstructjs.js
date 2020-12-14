@@ -3987,11 +3987,19 @@ _module_exports_$2.parser = struct_parser;
 _module_exports_$2.filehelper = struct_filehelper;
 
 module.exports = _module_exports_$2;
-  if (!(typeof window === "undefined" && typeof global !== "undefined")) {
-    //not nodejs?
-    _nGlobal.nstructjs = module.exports;    
-    _nGlobal.module = undefined;
-  }
+{
+    let glob = !((typeof window === "undefined" && typeof self === "undefined") && typeof global !== "undefined");
+
+    //try to detect nodejs in es6 module mode
+    glob = glob || (typeof global !== "undefined" && typeof global.require === "undefined");
+
+
+    if (glob) {
+        //not nodejs?
+        _nGlobal.nstructjs = module.exports;
+        _nGlobal.module = undefined;
+    }
+}
   
   return module.exports;
 })();
