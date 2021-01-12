@@ -305,3 +305,5 @@ function test_main() {
 }
 
 test_main();
+
+console.log(structjs.isRegistered(Canvas));

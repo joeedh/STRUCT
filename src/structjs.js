@@ -58,6 +58,10 @@ exports.setAllowOverriding = function setAllowOverriding(t) {
   return exports.manager.allowOverriding = !!t;
 }
 
+exports.isRegistered = function isRegistered(cls) {
+  return exports.manager.isRegistered(cls);
+}
+
 /** Register a class with nstructjs **/
 exports.register = function register(cls, structName) {
   return exports.manager.register(cls, structName);

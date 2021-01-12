@@ -2690,7 +2690,7 @@ function unmangle(name) {
 
 class SomeClass {
   static newSTRUCT() {
-    //returns a new, empty instance of SomeClass
+    //optional method, returns a new, empty instance of SomeClass
   }
   
   loadSTRUCT(reader) {
@@ -3095,6 +3095,14 @@ let STRUCT = _module_exports_$1.STRUCT = class STRUCT {
     this.structs[cls.structName] = stt;
     this.struct_cls[cls.structName] = cls;
     this.struct_ids[stt.id] = stt;
+  }
+
+  isRegistered(cls) {
+    if (!cls.hasOwnProperty("structName")) {
+      return false;
+    }
+
+    return cls === this.struct_cls[cls.structName];
   }
 
   get_struct_id(id) {
@@ -9965,6 +9973,10 @@ _module_exports_$2.setAllowOverriding = function setAllowOverriding(t) {
   return _module_exports_$2.manager.allowOverriding = !!t;
 };
 
+_module_exports_$2.isRegistered = function isRegistered(cls) {
+  return _module_exports_$2.manager.isRegistered(cls);
+};
+
 /** Register a class with nstructjs **/
 _module_exports_$2.register = function register(cls, structName) {
   return _module_exports_$2.manager.register(cls, structName);
@@ -10016,7 +10028,7 @@ _module_exports_$2.parser = struct_parser;
 _module_exports_$2.filehelper = struct_filehelper;
 
 module.exports = _module_exports_$2;
-{
+  {
     let glob = !((typeof window === "undefined" && typeof self === "undefined") && typeof global !== "undefined");
 
     //try to detect nodejs in es6 module mode
@@ -10028,7 +10040,7 @@ module.exports = _module_exports_$2;
         _nGlobal.nstructjs = module.exports;
         _nGlobal.module = undefined;
     }
-}
+  }
   
   return module.exports;
 })();

@@ -21,7 +21,7 @@ function unmangle(name) {
 
 class SomeClass {
   static newSTRUCT() {
-    //returns a new, empty instance of SomeClass
+    //optional method, returns a new, empty instance of SomeClass
   }
   
   loadSTRUCT(reader) {
@@ -426,6 +426,14 @@ let STRUCT = exports.STRUCT = class STRUCT {
     this.structs[cls.structName] = stt;
     this.struct_cls[cls.structName] = cls;
     this.struct_ids[stt.id] = stt;
+  }
+
+  isRegistered(cls) {
+    if (!cls.hasOwnProperty("structName")) {
+      return false;
+    }
+
+    return cls === this.struct_cls[cls.structName];
   }
 
   get_struct_id(id) {
