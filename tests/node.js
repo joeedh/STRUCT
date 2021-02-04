@@ -1,5 +1,5 @@
 global.DEBUG = {
-  tinyeval : true
+  tinyeval : false
 };
 
 //let structjs = require('../build/nstructjs');
@@ -61,7 +61,7 @@ node.Point {
   strtest : string | JSON.stringify({});
 }`;
 
-structjs.manager.add_class(Point, "node.Point");
+structjs.register(Point, "node.Point");
 
 class Polygon {
   constructor(points) {
@@ -158,14 +158,26 @@ node.Polygon {
   strtest   : string | JSON.stringify({a:2});
 }`;
 //points3   : static_array[short, 32] | [1,2,3];
-structjs.manager.add_class(Polygon, "node.Polygon");
+structjs.register(Polygon, "node.Polygon");
+
+class PolygonList extends Array {
+  constructor() {
+    super();
+  }
+}
+PolygonList.STRUCT = `
+node.PolygonList {
+  this : array(node.Polygon);
+}
+`;
+structjs.register(PolygonList);
 
 class Canvas {
   constructor() {
     this.idgen = 0;
     this.idmap = {};
     this.points = [];
-    this.polygons = [];
+    this.polygons = new PolygonList();
   }
   
   makePoint(x, y) {
@@ -218,7 +230,7 @@ Canvas.STRUCT = [
 "node.Canvas {",
 "  idgen    : int;",
 "  points   : array(abstract(node.Point));",
-"  polygons : array(node.Polygon);",
+"  polygons : node.PolygonList;",
 "}"
 ].join("\n");
 structjs.register(Canvas, "node.Canvas");
@@ -277,6 +289,7 @@ function test_main() {
     console.log(json1, "\n\n\n\n\n\n\n\n\n", json2, json1.length, json2.length);
   }
 
+  return;
   structjs.validateStructs();
 
   //*

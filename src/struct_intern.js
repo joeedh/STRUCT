@@ -56,7 +56,7 @@ let packdebug_tablevel = 0;
 exports.truncateDollarSign = true;
 
 function gen_tabstr(tot) {
-  var ret = "";
+  let ret = "";
 
   for (let i = 0; i < tot; i++) {
     ret += " ";
@@ -112,7 +112,7 @@ exports.setDebugMode = (t) => {
   
   if (debug_struct) {
     packer_debug = function (msg) {
-      if (msg != undefined) {
+      if (msg !== undefined) {
         let t = gen_tabstr(packdebug_tablevel);
         console.log(t + msg);
       } else {
@@ -236,10 +236,30 @@ let STRUCT = exports.STRUCT = class STRUCT {
       return ret;
     }
 
+    function throwError(stt, field, msg) {
+      let buf = STRUCT.formatStruct(stt);
+
+      console.error(buf + "\n\n" + msg);
+
+      if (onerror) {
+        onerror(msg, stt, field);
+      } else {
+        throw new Error(msg);
+      }
+    }
+
     for (let k in this.structs) {
       let stt = this.structs[k];
 
       for (let field of stt.fields) {
+        if (field.name === "this") {
+          let type = field.type.type;
+
+          if (struct_parser.ValueTypes.has(type)) {
+            throwError(stt, field, "'this' cannot be used with value types");
+          }
+        }
+
         let type = getType(field.type);
 
         //console.log(formatType(type));
@@ -249,17 +269,8 @@ let STRUCT = exports.STRUCT = class STRUCT {
         }
 
         if (!(type.data in this.structs)) {
-
           let msg = stt.name + ":" + field.name + ": Unknown struct " + type.data + ".";
-          let buf = STRUCT.formatStruct(stt);
-
-          console.error(buf + "\n\n" + msg);
-
-          if (onerror) {
-            onerror(msg, stt, field);
-          } else {
-            throw new Error(msg);
-          }
+          throwError(stt, field, msg);
         }
         //console.log(formatType(field.type));
       }
@@ -535,15 +546,15 @@ let STRUCT = exports.STRUCT = class STRUCT {
   }
 
   static fmt_struct(stt, internal_only, no_helper_js) {
-    if (internal_only == undefined)
+    if (internal_only === undefined)
       internal_only = false;
-    if (no_helper_js == undefined)
+    if (no_helper_js === undefined)
       no_helper_js = false;
 
     let s = "";
     if (!internal_only) {
       s += stt.name;
-      if (stt.id != -1)
+      if (stt.id !== -1)
         s += " id=" + stt.id;
       s += " {\n";
     }
@@ -574,7 +585,7 @@ let STRUCT = exports.STRUCT = class STRUCT {
     for (let i = 0; i < fields.length; i++) {
       let f = fields[i];
       s += tab + f.name + " : " + fmt_type(f.type);
-      if (!no_helper_js && f.get != undefined) {
+      if (!no_helper_js && f.get !== undefined) {
         s += " | " + f.get.trim();
       }
       s += ";\n";
@@ -589,7 +600,7 @@ let STRUCT = exports.STRUCT = class STRUCT {
     if (env !== undefined) {
       envcode = "";
       for (let i = 0; i < env.length; i++) {
-        envcode = "var " + env[i][0] + " = env[" + i.toString() + "][1];\n" + envcode;
+        envcode = "let " + env[i][0] + " = env[" + i.toString() + "][1];\n" + envcode;
       }
     }
     let fullcode = "";
@@ -638,21 +649,20 @@ let STRUCT = exports.STRUCT = class STRUCT {
       return cls.useHelperJS(field);
     }
 
-    var fields = stt.fields;
-    var thestruct = this;
-    for (var i = 0; i < fields.length; i++) {
-      var f = fields[i];
-      var t1 = f.type;
-      var t2 = t1.type;
+    let fields = stt.fields;
+    let thestruct = this;
+    for (let i = 0; i < fields.length; i++) {
+      let f = fields[i];
+      let t1 = f.type;
+      let t2 = t1.type;
 
       if (use_helper_js(f)) {
-        var val;
-        var type = t2;
-        if (f.get != undefined) {
+        let val;
+        let type = t2;
+        if (f.get !== undefined) {
           val = thestruct._env_call(f.get, obj);
-        }
-        else {
-          val = obj[f.name];
+        } else {
+          val = f.name === "this" ? obj : obj[f.name];
         }
         
         if (_nGlobal.DEBUG && _nGlobal.DEBUG.tinyeval) { 
@@ -662,7 +672,7 @@ let STRUCT = exports.STRUCT = class STRUCT {
         do_pack(data, val, obj, thestruct, f, t1);
       }
       else {
-        var val = obj[f.name];
+        let val = f.name === "this" ? obj : obj[f.name];
         do_pack(data, val, obj, thestruct, f, t1);
       }
     }
@@ -673,8 +683,8 @@ let STRUCT = exports.STRUCT = class STRUCT {
   @param obj  : structable object
   */
   write_object(data, obj) {
-    var cls = obj.constructor.structName;
-    var stt = this.get_struct(cls);
+    let cls = obj.constructor.structName;
+    let stt = this.get_struct(cls);
 
     if (data === undefined) {
       data = [];
@@ -705,7 +715,7 @@ let STRUCT = exports.STRUCT = class STRUCT {
   }
 
   writeJSON(obj, stt=undefined) {
-    var cls = obj.constructor.structName;
+    let cls = obj.constructor.structName;
     stt = stt || this.get_struct(cls);
 
     function use_helper_js(field) {
@@ -716,18 +726,18 @@ let STRUCT = exports.STRUCT = class STRUCT {
 
     let toJSON = sintern2.toJSON;
 
-    var fields = stt.fields;
-    var thestruct = this;
+    let fields = stt.fields;
+    let thestruct = this;
     let json = {};
 
-    for (var i = 0; i < fields.length; i++) {
-      var f = fields[i];
-      var t1 = f.type;
-      var t2 = t1.type;
-      var val;
+    for (let i = 0; i < fields.length; i++) {
+      let f = fields[i];
+      let t1 = f.type;
+      let t2 = t1.type;
+      let val;
 
       if (use_helper_js(f)) {
-        var type = t2;
+        let type = t2;
         if (f.get !== undefined) {
           val = thestruct._env_call(f.get, obj);
         }
@@ -755,14 +765,14 @@ let STRUCT = exports.STRUCT = class STRUCT {
   @param cls_or_struct_id : Structable class
   @param uctx : internal parameter
   */
-  read_object(data, cls_or_struct_id, uctx) {
+  read_object(data, cls_or_struct_id, uctx, objInstance) {
     let cls, stt;
 
     if (data instanceof Array) {
       data = new DataView(new Uint8Array(data).buffer);
     }
 
-    if (typeof cls_or_struct_id == "number") {
+    if (typeof cls_or_struct_id === "number") {
       cls = this.struct_cls[this.struct_ids[cls_or_struct_id].name];
     } else {
       cls = cls_or_struct_id;
@@ -774,7 +784,7 @@ let STRUCT = exports.STRUCT = class STRUCT {
 
     stt = this.structs[cls.structName];
 
-    if (uctx == undefined) {
+    if (uctx === undefined) {
       uctx = new struct_binpack.unpack_context();
 
       packer_debug("\n\n=Begin reading " + cls.structName + "=");
@@ -786,30 +796,45 @@ let STRUCT = exports.STRUCT = class STRUCT {
       return StructFieldTypeMap[type.type].unpack(this2, data, type, uctx);
     }
 
+    function unpack_into(type, dest) {
+      console.log(type);
+      return StructFieldTypeMap[type.type].unpackInto(this2, data, type, uctx, dest);
+    }
+
     let was_run = false;
 
-    function load(obj) {
-      if (was_run) {
-        return;
-      }
+    function makeLoader(stt) {
+      return function load(obj) {
+        if (was_run) {
+          return;
+        }
 
-      was_run = true;
+        was_run = true;
 
-      let fields = stt.fields;
-      let flen = fields.length;
-      for (let i = 0; i < flen; i++) {
-        let f = fields[i];
-        let val = unpack_field(f.type);
-        obj[f.name] = val;
+        let fields = stt.fields;
+        let flen = fields.length;
+
+        for (let i = 0; i < flen; i++) {
+          let f = fields[i];
+
+          if (f.name === 'this') {
+            //load data into obj directly
+            unpack_into(f.type, obj);
+          } else {
+            obj[f.name] = unpack_field(f.type);
+          }
+        }
       }
     }
 
-    if (cls.prototype.loadSTRUCT !== undefined) {
-      let obj;
+    let load = makeLoader(stt);
 
-      if (cls.newSTRUCT !== undefined) {
+    if (cls.prototype.loadSTRUCT !== undefined) {
+      let obj = objInstance;
+
+      if (!obj && cls.newSTRUCT !== undefined) {
         obj = cls.newSTRUCT();
-      } else {
+      } else if (!obj) {
         obj = new cls();
       }
 
@@ -820,10 +845,11 @@ let STRUCT = exports.STRUCT = class STRUCT {
         console.warn("Warning: class " + unmangle(cls.name) + " is using deprecated fromSTRUCT interface; use newSTRUCT/loadSTRUCT instead");
       return cls.fromSTRUCT(load);
     } else { //default case, make new instance and then call load() on it
-      let obj;
-      if (cls.newSTRUCT !== undefined) {
+      let obj = objInstance;
+
+      if (!obj && cls.newSTRUCT !== undefined) {
         obj = cls.newSTRUCT();
-      } else {
+      } else if (!obj) {
         obj = new cls();
       }
 

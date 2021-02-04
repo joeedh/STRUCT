@@ -5,7 +5,7 @@ let struct_parseutil = require("./struct_parseutil");
 //the discontinuous id's are to make sure
 //the version I originally wrote (which had a few application-specific types)
 //and this one do not become totally incompatible.
-var StructEnum = exports.StructEnum = {
+let StructEnum = exports.StructEnum = {
   T_INT      : 0,
   T_FLOAT    : 1,
   T_DOUBLE   : 2,
@@ -24,7 +24,20 @@ var StructEnum = exports.StructEnum = {
   T_STATIC_ARRAY : 19
 };
 
-var StructTypes = exports.StructTypes = {
+let ValueTypes = exports.ValueTypes = new Set([
+  StructEnum.T_INT,
+  StructEnum.T_FLOAT,
+  StructEnum.T_DOUBLE,
+  StructEnum.T_STRING,
+  StructEnum.T_STATIC_STRING,
+  StructEnum.T_SHORT,
+  StructEnum.T_BYTE,
+  StructEnum.T_BOOL,
+  StructEnum.T_UINT,
+  StructEnum.T_USHORT
+])
+
+let StructTypes = exports.StructTypes = {
   "int": StructEnum.T_INT, 
   "uint": StructEnum.T_UINT, 
   "ushort": StructEnum.T_USHORT, 
@@ -42,26 +55,26 @@ var StructTypes = exports.StructTypes = {
   "iterkeys" : StructEnum.T_ITERKEYS
 };
 
-var StructTypeMap = exports.StructTypeMap = {};
+let StructTypeMap = exports.StructTypeMap = {};
 
-for (var k in StructTypes) {
+for (let k in StructTypes) {
   StructTypeMap[StructTypes[k]] = k;
 }
 
 function gen_tabstr(t) {
-  var s="";
-  for (var i=0; i<t; i++) {
+  let s="";
+  for (let i=0; i<t; i++) {
       s+="  ";
   }
   return s;
 }
 
 function StructParser() {
-  var basic_types=new struct_util.set([
+  let basic_types=new struct_util.set([
     "int", "float", "double", "string", "short", "byte", "bool", "uint", "ushort"
   ]);
   
-  var reserved_tokens=new struct_util.set([
+  let reserved_tokens=new struct_util.set([
     "int", "float", "double", "string", "static_string", "array", 
     "iter", "abstract", "short", "byte", "bool", "iterkeys", "uint", "ushort",
     "static_array"
@@ -71,7 +84,7 @@ function StructParser() {
     return new struct_parseutil.tokdef(name, re, func);
   }
   
-  var tokens=[
+  let tokens=[
     tk("ID", /[a-zA-Z_$]+[a-zA-Z0-9_\.$]*/, function(t) {
 
       if (reserved_tokens.has(t.value)) {
@@ -86,10 +99,10 @@ function StructParser() {
     tk("SOPEN", /\[/), 
     tk("SCLOSE", /\]/), 
     tk("JSCRIPT", /\|/, function(t) {
-      var js="";
-      var lexer=t.lexer;
+      let js="";
+      let lexer=t.lexer;
       while (lexer.lexpos<lexer.lexdata.length) {
-        var c=lexer.lexdata[lexer.lexpos];
+        let c=lexer.lexdata[lexer.lexpos];
         if (c=="\n")
           break;
         js+=c;
@@ -123,13 +136,13 @@ function StructParser() {
     return true;
   }
   
-  var lex=new struct_parseutil.lexer(tokens, errfunc);
-  var parser=new struct_parseutil.parser(lex);
+  let lex=new struct_parseutil.lexer(tokens, errfunc);
+  let parser=new struct_parseutil.parser(lex);
   
   function p_Static_String(p) {
     p.expect("STATIC_STRING");
     p.expect("SOPEN");
-    var num=p.expect("NUM");
+    let num=p.expect("NUM");
     p.expect("SCLOSE");
     return {type: StructEnum.T_STATIC_STRING, data: {maxlength: num}}
   }
@@ -137,7 +150,7 @@ function StructParser() {
   function p_DataRef(p) {
     p.expect("DATAREF");
     p.expect("LPARAM");
-    var tname=p.expect("ID");
+    let tname=p.expect("ID");
     p.expect("RPARAM");
     return {type: StructEnum.T_DATAREF, data: tname}
   }
@@ -145,9 +158,9 @@ function StructParser() {
   function p_Array(p) {
     p.expect("ARRAY");
     p.expect("LPARAM");
-    var arraytype=p_Type(p);
+    let arraytype=p_Type(p);
     
-    var itername="";
+    let itername="";
     if (p.optional("COMMA")) {
         itername = arraytype.data.replace(/"/g, "");
         arraytype = p_Type(p);
@@ -160,8 +173,8 @@ function StructParser() {
   function p_Iter(p) {
     p.expect("ITER");
     p.expect("LPARAM");
-    var arraytype=p_Type(p);
-    var itername="";
+    let arraytype=p_Type(p);
+    let itername="";
     
     if (p.optional("COMMA")) {
         itername = arraytype.data.replace(/"/g, "");
@@ -175,11 +188,11 @@ function StructParser() {
   function p_StaticArray(p) {
     p.expect("STATIC_ARRAY");
     p.expect("SOPEN");
-    var arraytype=p_Type(p);
-    var itername="";
+    let arraytype=p_Type(p);
+    let itername="";
     
     p.expect("COMMA")
-    var size = p.expect("NUM");
+    let size = p.expect("NUM");
     
     if (size < 0 || Math.abs(size - Math.floor(size)) > 0.000001) { 
       console.log(Math.abs(size - Math.floor(size)));
@@ -200,8 +213,8 @@ function StructParser() {
     p.expect("ITERKEYS");
     p.expect("LPARAM");
     
-    var arraytype=p_Type(p);
-    var itername="";
+    let arraytype=p_Type(p);
+    let itername="";
     
     if (p.optional("COMMA")) {
         itername = arraytype.data.replace(/"/g, "");
@@ -215,13 +228,13 @@ function StructParser() {
   function p_Abstract(p) {
     p.expect("ABSTRACT");
     p.expect("LPARAM");
-    var type=p.expect("ID");
+    let type=p.expect("ID");
     p.expect("RPARAM");
     return {type: StructEnum.T_TSTRUCT, data: type}
   }
   
   function p_Type(p) {
-    var tok=p.peek();
+    let tok=p.peek();
     
     if (tok.type=="ID") {
         p.next();
@@ -260,7 +273,7 @@ function StructParser() {
   }
   
   function p_Field(p) {
-    var field={}
+    let field={}
     
     field.name = p_ID_or_num(p);
     p.expect("COLON");
@@ -271,7 +284,7 @@ function StructParser() {
     
     let check = 0;
     
-    var tok=p.peek();
+    let tok=p.peek();
     if (tok.type=="JSCRIPT") {
         field.get = tok.value;
         check = 1;
@@ -291,14 +304,14 @@ function StructParser() {
   }
   
   function p_Struct(p) {
-    var st={}
+    let st={}
     
     st.name = p.expect("ID", "struct name");
     
     st.fields = [];
     st.id = -1;
-    var tok=p.peek();
-    var id=-1;
+    let tok=p.peek();
+    let id=-1;
     if (tok.type=="ID"&&tok.value=="id") {
         p.next();
         p.expect("EQUALS");
