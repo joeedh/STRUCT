@@ -12,6 +12,7 @@ let pack_ushort = struct_binpack.pack_ushort;
 let pack_float = struct_binpack.pack_float;
 let pack_string = struct_binpack.pack_string;
 let pack_byte = struct_binpack.pack_byte;
+let pack_sbyte = struct_binpack.pack_sbyte;
 let pack_double = struct_binpack.pack_double;
 let pack_static_string = struct_binpack.pack_static_string;
 let pack_short = struct_binpack.pack_short;
@@ -22,6 +23,7 @@ let unpack_uint = struct_binpack.unpack_uint;
 let unpack_ushort = struct_binpack.unpack_ushort;
 let unpack_string = struct_binpack.unpack_string;
 let unpack_byte = struct_binpack.unpack_byte;
+let unpack_sbyte = struct_binpack.unpack_sbyte;
 let unpack_double = struct_binpack.unpack_double;
 let unpack_static_string = struct_binpack.unpack_static_string;
 let unpack_short = struct_binpack.unpack_short;
@@ -639,6 +641,22 @@ class StructByteField extends StructFieldType {
   }}
 }
 StructFieldType.register(StructByteField);
+
+class StructSignedByteField extends StructFieldType {
+  static pack(manager, data, val, obj, field, type) {
+    pack_sbyte(data, val);
+  }
+
+  static unpack(manager, data, type, uctx) {
+    return unpack_sbyte(data, uctx);
+  }
+
+  static define() {return {
+    type : StructEnum.T_SIGNED_BYTE,
+    name : "sbyte"
+  }}
+}
+StructFieldType.register(StructSignedByteField);
 
 class StructBoolField extends StructFieldType {
   static pack(manager, data, val, obj, field, type) {

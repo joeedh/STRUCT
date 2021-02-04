@@ -21,7 +21,8 @@ let StructEnum = exports.StructEnum = {
   T_ITERKEYS : 16,
   T_UINT     : 17,
   T_USHORT   : 18,
-  T_STATIC_ARRAY : 19
+  T_STATIC_ARRAY : 19,
+  T_SIGNED_BYTE : 20
 };
 
 let ValueTypes = exports.ValueTypes = new Set([
@@ -34,7 +35,9 @@ let ValueTypes = exports.ValueTypes = new Set([
   StructEnum.T_BYTE,
   StructEnum.T_BOOL,
   StructEnum.T_UINT,
-  StructEnum.T_USHORT
+  StructEnum.T_USHORT,
+  StructEnum.T_SIGNED_BYTE
+
 ])
 
 let StructTypes = exports.StructTypes = {
@@ -52,7 +55,8 @@ let StructTypes = exports.StructTypes = {
   "short": StructEnum.T_SHORT,
   "byte": StructEnum.T_BYTE,
   "bool": StructEnum.T_BOOL,
-  "iterkeys" : StructEnum.T_ITERKEYS
+  "iterkeys" : StructEnum.T_ITERKEYS,
+  "sbyte" : StructEnum.T_SIGNED_BYTE
 };
 
 let StructTypeMap = exports.StructTypeMap = {};
@@ -71,12 +75,12 @@ function gen_tabstr(t) {
 
 function StructParser() {
   let basic_types=new struct_util.set([
-    "int", "float", "double", "string", "short", "byte", "bool", "uint", "ushort"
+    "int", "float", "double", "string", "short", "byte", "sbyte", "bool", "uint", "ushort"
   ]);
   
   let reserved_tokens=new struct_util.set([
     "int", "float", "double", "string", "static_string", "array", 
-    "iter", "abstract", "short", "byte", "bool", "iterkeys", "uint", "ushort",
+    "iter", "abstract", "short", "byte", "sbyte", "bool", "iterkeys", "uint", "ushort",
     "static_array"
   ]);
 

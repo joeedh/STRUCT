@@ -39,6 +39,7 @@ class Point {
     this.fid = 3.5;
     this.did = 1.5
     this.bid = 255;
+    this.sid = ~~((Math.random()*255) - 127);
     this.strtest = {};
   }
 
@@ -58,6 +59,7 @@ node.Point {
   bid  : byte;
   fid  : float;
   did  : double;
+  sid  : sbyte;
   strtest : string | JSON.stringify({});
 }`;
 

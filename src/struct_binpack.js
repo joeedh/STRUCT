@@ -4,26 +4,34 @@ let struct_util = require("./struct_util");
 
 exports.STRUCT_ENDIAN = true; //little endian
 
-var temp_dataview = new DataView(new ArrayBuffer(16));
-var uint8_view = new Uint8Array(temp_dataview.buffer);
+let temp_dataview = new DataView(new ArrayBuffer(16));
+let uint8_view = new Uint8Array(temp_dataview.buffer);
 
-var unpack_context = exports.unpack_context = class unpack_context {
+let unpack_context = exports.unpack_context = class unpack_context {
   constructor() {
     this.i = 0;
   }
 }
 
-var pack_byte = exports.pack_byte = function (array, val) {
+let pack_byte = exports.pack_byte = function (array, val) {
   array.push(val);
 }
 
-var pack_bytes = exports.pack_bytes = function (array, bytes) {
-  for (var i = 0; i < bytes.length; i++) {
+let pack_sbyte = exports.pack_sbyte = function (array, val) {
+  if (val < 0) {
+    val = 256 + val;
+  }
+
+  array.push(val);
+}
+
+let pack_bytes = exports.pack_bytes = function (array, bytes) {
+  for (let i = 0; i < bytes.length; i++) {
     array.push(bytes[i]);
   }
 }
 
-var pack_int = exports.pack_int = function (array, val) {
+let pack_int = exports.pack_int = function (array, val) {
   temp_dataview.setInt32(0, val, exports.STRUCT_ENDIAN);
 
   array.push(uint8_view[0]);
@@ -32,7 +40,7 @@ var pack_int = exports.pack_int = function (array, val) {
   array.push(uint8_view[3]);
 }
 
-var pack_uint = exports.pack_uint = function (array, val) {
+let pack_uint = exports.pack_uint = function (array, val) {
   temp_dataview.setUint32(0, val, exports.STRUCT_ENDIAN);
 
   array.push(uint8_view[0]);
@@ -41,7 +49,7 @@ var pack_uint = exports.pack_uint = function (array, val) {
   array.push(uint8_view[3]);
 }
 
-var pack_ushort = exports.pack_ushort = function (array, val) {
+let pack_ushort = exports.pack_ushort = function (array, val) {
   temp_dataview.setUint16(0, val, exports.STRUCT_ENDIAN);
 
   array.push(uint8_view[0]);
@@ -77,12 +85,12 @@ exports.pack_short = function (array, val) {
   array.push(uint8_view[1]);
 }
 
-var encode_utf8 = exports.encode_utf8 = function encode_utf8(arr, str) {
-  for (var i = 0; i < str.length; i++) {
-    var c = str.charCodeAt(i);
+let encode_utf8 = exports.encode_utf8 = function encode_utf8(arr, str) {
+  for (let i = 0; i < str.length; i++) {
+    let c = str.charCodeAt(i);
 
     while (c != 0) {
-      var uc = c & 127;
+      let uc = c & 127;
       c = c >> 7;
 
       if (c != 0)
@@ -93,15 +101,15 @@ var encode_utf8 = exports.encode_utf8 = function encode_utf8(arr, str) {
   }
 }
 
-var decode_utf8 = exports.decode_utf8 = function decode_utf8(arr) {
-  var str = ""
-  var i = 0;
+let decode_utf8 = exports.decode_utf8 = function decode_utf8(arr) {
+  let str = ""
+  let i = 0;
 
   while (i < arr.length) {
-    var c = arr[i];
-    var sum = c & 127;
-    var j = 0;
-    var lasti = i;
+    let c = arr[i];
+    let sum = c & 127;
+    let j = 0;
+    let lasti = i;
 
     while (i < arr.length && (c & 128)) {
       j += 7;
@@ -121,12 +129,12 @@ var decode_utf8 = exports.decode_utf8 = function decode_utf8(arr) {
   return str;
 }
 
-var test_utf8 = exports.test_utf8 = function test_utf8() {
-  var s = "a" + String.fromCharCode(8800) + "b";
-  var arr = [];
+let test_utf8 = exports.test_utf8 = function test_utf8() {
+  let s = "a" + String.fromCharCode(8800) + "b";
+  let arr = [];
 
   encode_utf8(arr, s);
-  var s2 = decode_utf8(arr);
+  let s2 = decode_utf8(arr);
 
   if (s != s2) {
     throw new Error("UTF-8 encoding/decoding test failed");
@@ -136,14 +144,14 @@ var test_utf8 = exports.test_utf8 = function test_utf8() {
 }
 
 function truncate_utf8(arr, maxlen) {
-  var len = Math.min(arr.length, maxlen);
+  let len = Math.min(arr.length, maxlen);
 
-  var last_codepoint = 0;
-  var last2 = 0;
+  let last_codepoint = 0;
+  let last2 = 0;
 
-  var incode = false;
-  var i = 0;
-  var code = 0;
+  let incode = false;
+  let i = 0;
+  let code = 0;
   while (i < len) {
     incode = arr[i] & 128;
 
@@ -163,18 +171,18 @@ function truncate_utf8(arr, maxlen) {
   return arr;
 }
 
-var _static_sbuf_ss = new Array(2048);
-var pack_static_string = exports.pack_static_string = function pack_static_string(data, str, length) {
+let _static_sbuf_ss = new Array(2048);
+let pack_static_string = exports.pack_static_string = function pack_static_string(data, str, length) {
   if (length == undefined)
     throw new Error("'length' paremter is not optional for pack_static_string()");
 
-  var arr = length < 2048 ? _static_sbuf_ss : new Array();
+  let arr = length < 2048 ? _static_sbuf_ss : new Array();
   arr.length = 0;
 
   encode_utf8(arr, str);
   truncate_utf8(arr, length);
 
-  for (var i = 0; i < length; i++) {
+  for (let i = 0; i < length; i++) {
     if (i >= arr.length) {
       data.push(0);
     } else {
@@ -183,42 +191,46 @@ var pack_static_string = exports.pack_static_string = function pack_static_strin
   }
 }
 
-var _static_sbuf = new Array(32);
+let _static_sbuf = new Array(32);
 
 /*strings are packed as 32-bit unicode codepoints*/
-var pack_string = exports.pack_string = function pack_string(data, str) {
+let pack_string = exports.pack_string = function pack_string(data, str) {
   _static_sbuf.length = 0;
   encode_utf8(_static_sbuf, str);
 
   pack_int(data, _static_sbuf.length);
 
-  for (var i = 0; i < _static_sbuf.length; i++) {
+  for (let i = 0; i < _static_sbuf.length; i++) {
     data.push(_static_sbuf[i]);
   }
 }
 
-var unpack_bytes = exports.unpack_bytes = function unpack_bytes(dview, uctx, len) {
-  var ret = new DataView(dview.buffer.slice(uctx.i, uctx.i + len));
+let unpack_bytes = exports.unpack_bytes = function unpack_bytes(dview, uctx, len) {
+  let ret = new DataView(dview.buffer.slice(uctx.i, uctx.i + len));
   uctx.i += len;
 
   return ret;
 }
 
-var unpack_byte = exports.unpack_byte = function (dview, uctx) {
+let unpack_byte = exports.unpack_byte = function (dview, uctx) {
   return dview.getUint8(uctx.i++);
 }
 
-var unpack_int = exports.unpack_int = function (dview, uctx) {
+let unpack_sbyte = exports.unpack_sbyte = function (dview, uctx) {
+  return dview.getInt8(uctx.i++);
+}
+
+let unpack_int = exports.unpack_int = function (dview, uctx) {
   uctx.i += 4;
   return dview.getInt32(uctx.i - 4, exports.STRUCT_ENDIAN);
 }
 
-var unpack_uint = exports.unpack_uint = function (dview, uctx) {
+let unpack_uint = exports.unpack_uint = function (dview, uctx) {
   uctx.i += 4;
   return dview.getUint32(uctx.i - 4, exports.STRUCT_ENDIAN);
 }
 
-var unpack_ushort = exports.unpack_ushort = function (dview, uctx) {
+let unpack_ushort = exports.unpack_ushort = function (dview, uctx) {
   uctx.i += 2;
   return dview.getUint16(uctx.i - 2, exports.STRUCT_ENDIAN);
 }

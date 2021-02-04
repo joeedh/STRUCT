@@ -447,26 +447,34 @@ var struct_util = /*#__PURE__*/Object.freeze({
 const _module_exports_ = {};
 _module_exports_.STRUCT_ENDIAN = true; //little endian
 
-var temp_dataview = new DataView(new ArrayBuffer(16));
-var uint8_view = new Uint8Array(temp_dataview.buffer);
+let temp_dataview = new DataView(new ArrayBuffer(16));
+let uint8_view = new Uint8Array(temp_dataview.buffer);
 
-var unpack_context = _module_exports_.unpack_context = class unpack_context {
+let unpack_context = _module_exports_.unpack_context = class unpack_context {
   constructor() {
     this.i = 0;
   }
 };
 
-var pack_byte = _module_exports_.pack_byte = function (array, val) {
+let pack_byte = _module_exports_.pack_byte = function (array, val) {
   array.push(val);
 };
 
-var pack_bytes = _module_exports_.pack_bytes = function (array, bytes) {
-  for (var i = 0; i < bytes.length; i++) {
+let pack_sbyte = _module_exports_.pack_sbyte = function (array, val) {
+  if (val < 0) {
+    val = 256 + val;
+  }
+
+  array.push(val);
+};
+
+let pack_bytes = _module_exports_.pack_bytes = function (array, bytes) {
+  for (let i = 0; i < bytes.length; i++) {
     array.push(bytes[i]);
   }
 };
 
-var pack_int = _module_exports_.pack_int = function (array, val) {
+let pack_int = _module_exports_.pack_int = function (array, val) {
   temp_dataview.setInt32(0, val, _module_exports_.STRUCT_ENDIAN);
 
   array.push(uint8_view[0]);
@@ -475,7 +483,7 @@ var pack_int = _module_exports_.pack_int = function (array, val) {
   array.push(uint8_view[3]);
 };
 
-var pack_uint = _module_exports_.pack_uint = function (array, val) {
+let pack_uint = _module_exports_.pack_uint = function (array, val) {
   temp_dataview.setUint32(0, val, _module_exports_.STRUCT_ENDIAN);
 
   array.push(uint8_view[0]);
@@ -484,7 +492,7 @@ var pack_uint = _module_exports_.pack_uint = function (array, val) {
   array.push(uint8_view[3]);
 };
 
-var pack_ushort = _module_exports_.pack_ushort = function (array, val) {
+let pack_ushort = _module_exports_.pack_ushort = function (array, val) {
   temp_dataview.setUint16(0, val, _module_exports_.STRUCT_ENDIAN);
 
   array.push(uint8_view[0]);
@@ -520,12 +528,12 @@ _module_exports_.pack_short = function (array, val) {
   array.push(uint8_view[1]);
 };
 
-var encode_utf8 = _module_exports_.encode_utf8 = function encode_utf8(arr, str) {
-  for (var i = 0; i < str.length; i++) {
-    var c = str.charCodeAt(i);
+let encode_utf8 = _module_exports_.encode_utf8 = function encode_utf8(arr, str) {
+  for (let i = 0; i < str.length; i++) {
+    let c = str.charCodeAt(i);
 
     while (c != 0) {
-      var uc = c & 127;
+      let uc = c & 127;
       c = c >> 7;
 
       if (c != 0)
@@ -536,15 +544,15 @@ var encode_utf8 = _module_exports_.encode_utf8 = function encode_utf8(arr, str) 
   }
 };
 
-var decode_utf8 = _module_exports_.decode_utf8 = function decode_utf8(arr) {
-  var str = "";
-  var i = 0;
+let decode_utf8 = _module_exports_.decode_utf8 = function decode_utf8(arr) {
+  let str = "";
+  let i = 0;
 
   while (i < arr.length) {
-    var c = arr[i];
-    var sum = c & 127;
-    var j = 0;
-    var lasti = i;
+    let c = arr[i];
+    let sum = c & 127;
+    let j = 0;
+    let lasti = i;
 
     while (i < arr.length && (c & 128)) {
       j += 7;
@@ -564,12 +572,12 @@ var decode_utf8 = _module_exports_.decode_utf8 = function decode_utf8(arr) {
   return str;
 };
 
-var test_utf8 = _module_exports_.test_utf8 = function test_utf8() {
-  var s = "a" + String.fromCharCode(8800) + "b";
-  var arr = [];
+let test_utf8 = _module_exports_.test_utf8 = function test_utf8() {
+  let s = "a" + String.fromCharCode(8800) + "b";
+  let arr = [];
 
   encode_utf8(arr, s);
-  var s2 = decode_utf8(arr);
+  let s2 = decode_utf8(arr);
 
   if (s != s2) {
     throw new Error("UTF-8 encoding/decoding test failed");
@@ -579,14 +587,14 @@ var test_utf8 = _module_exports_.test_utf8 = function test_utf8() {
 };
 
 function truncate_utf8(arr, maxlen) {
-  var len = Math.min(arr.length, maxlen);
+  let len = Math.min(arr.length, maxlen);
 
-  var last_codepoint = 0;
-  var last2 = 0;
+  let last_codepoint = 0;
+  let last2 = 0;
 
-  var incode = false;
-  var i = 0;
-  var code = 0;
+  let incode = false;
+  let i = 0;
+  let code = 0;
   while (i < len) {
     incode = arr[i] & 128;
 
@@ -606,18 +614,18 @@ function truncate_utf8(arr, maxlen) {
   return arr;
 }
 
-var _static_sbuf_ss = new Array(2048);
-var pack_static_string = _module_exports_.pack_static_string = function pack_static_string(data, str, length) {
+let _static_sbuf_ss = new Array(2048);
+let pack_static_string = _module_exports_.pack_static_string = function pack_static_string(data, str, length) {
   if (length == undefined)
     throw new Error("'length' paremter is not optional for pack_static_string()");
 
-  var arr = length < 2048 ? _static_sbuf_ss : new Array();
+  let arr = length < 2048 ? _static_sbuf_ss : new Array();
   arr.length = 0;
 
   encode_utf8(arr, str);
   truncate_utf8(arr, length);
 
-  for (var i = 0; i < length; i++) {
+  for (let i = 0; i < length; i++) {
     if (i >= arr.length) {
       data.push(0);
     } else {
@@ -626,42 +634,46 @@ var pack_static_string = _module_exports_.pack_static_string = function pack_sta
   }
 };
 
-var _static_sbuf = new Array(32);
+let _static_sbuf = new Array(32);
 
 /*strings are packed as 32-bit unicode codepoints*/
-var pack_string = _module_exports_.pack_string = function pack_string(data, str) {
+let pack_string = _module_exports_.pack_string = function pack_string(data, str) {
   _static_sbuf.length = 0;
   encode_utf8(_static_sbuf, str);
 
   pack_int(data, _static_sbuf.length);
 
-  for (var i = 0; i < _static_sbuf.length; i++) {
+  for (let i = 0; i < _static_sbuf.length; i++) {
     data.push(_static_sbuf[i]);
   }
 };
 
-var unpack_bytes = _module_exports_.unpack_bytes = function unpack_bytes(dview, uctx, len) {
-  var ret = new DataView(dview.buffer.slice(uctx.i, uctx.i + len));
+let unpack_bytes = _module_exports_.unpack_bytes = function unpack_bytes(dview, uctx, len) {
+  let ret = new DataView(dview.buffer.slice(uctx.i, uctx.i + len));
   uctx.i += len;
 
   return ret;
 };
 
-var unpack_byte = _module_exports_.unpack_byte = function (dview, uctx) {
+let unpack_byte = _module_exports_.unpack_byte = function (dview, uctx) {
   return dview.getUint8(uctx.i++);
 };
 
-var unpack_int = _module_exports_.unpack_int = function (dview, uctx) {
+let unpack_sbyte = _module_exports_.unpack_sbyte = function (dview, uctx) {
+  return dview.getInt8(uctx.i++);
+};
+
+let unpack_int = _module_exports_.unpack_int = function (dview, uctx) {
   uctx.i += 4;
   return dview.getInt32(uctx.i - 4, _module_exports_.STRUCT_ENDIAN);
 };
 
-var unpack_uint = _module_exports_.unpack_uint = function (dview, uctx) {
+let unpack_uint = _module_exports_.unpack_uint = function (dview, uctx) {
   uctx.i += 4;
   return dview.getUint32(uctx.i - 4, _module_exports_.STRUCT_ENDIAN);
 };
 
-var unpack_ushort = _module_exports_.unpack_ushort = function (dview, uctx) {
+let unpack_ushort = _module_exports_.unpack_ushort = function (dview, uctx) {
   uctx.i += 2;
   return dview.getUint16(uctx.i - 2, _module_exports_.STRUCT_ENDIAN);
 };
@@ -1203,7 +1215,8 @@ let StructEnum = {
   T_ITERKEYS : 16,
   T_UINT     : 17,
   T_USHORT   : 18,
-  T_STATIC_ARRAY : 19
+  T_STATIC_ARRAY : 19,
+  T_SIGNED_BYTE : 20
 };
 
 let ValueTypes = new Set([
@@ -1216,7 +1229,9 @@ let ValueTypes = new Set([
   StructEnum.T_BYTE,
   StructEnum.T_BOOL,
   StructEnum.T_UINT,
-  StructEnum.T_USHORT
+  StructEnum.T_USHORT,
+  StructEnum.T_SIGNED_BYTE
+
 ]);
 
 let StructTypes = {
@@ -1234,7 +1249,8 @@ let StructTypes = {
   "short": StructEnum.T_SHORT,
   "byte": StructEnum.T_BYTE,
   "bool": StructEnum.T_BOOL,
-  "iterkeys" : StructEnum.T_ITERKEYS
+  "iterkeys" : StructEnum.T_ITERKEYS,
+  "sbyte" : StructEnum.T_SIGNED_BYTE
 };
 
 let StructTypeMap = {};
@@ -1253,7 +1269,7 @@ function gen_tabstr(t) {
 
 function StructParser() {
   let basic_types=new set$1([
-    "int", "float", "double", "string", "short", "byte", "bool", "uint", "ushort"
+    "int", "float", "double", "string", "short", "byte", "sbyte", "bool", "uint", "ushort"
   ]);
   
   let reserved_tokens=new set$1([
@@ -1541,6 +1557,7 @@ let pack_ushort$1 = _module_exports_.pack_ushort;
 let pack_float = _module_exports_.pack_float;
 let pack_string$1 = _module_exports_.pack_string;
 let pack_byte$1 = _module_exports_.pack_byte;
+let pack_sbyte$1 = _module_exports_.pack_sbyte;
 let pack_double = _module_exports_.pack_double;
 let pack_static_string$1 = _module_exports_.pack_static_string;
 let pack_short = _module_exports_.pack_short;
@@ -1551,6 +1568,7 @@ let unpack_uint$1 = _module_exports_.unpack_uint;
 let unpack_ushort$1 = _module_exports_.unpack_ushort;
 let unpack_string = _module_exports_.unpack_string;
 let unpack_byte$1 = _module_exports_.unpack_byte;
+let unpack_sbyte$1 = _module_exports_.unpack_sbyte;
 let unpack_double = _module_exports_.unpack_double;
 let unpack_static_string = _module_exports_.unpack_static_string;
 let unpack_short = _module_exports_.unpack_short;
@@ -2168,6 +2186,22 @@ class StructByteField extends StructFieldType {
   }}
 }
 StructFieldType.register(StructByteField);
+
+class StructSignedByteField extends StructFieldType {
+  static pack(manager, data, val, obj, field, type) {
+    pack_byte$1(data, val);
+  }
+
+  static unpack(manager, data, type, uctx) {
+    return unpack_byte$1(data, uctx);
+  }
+
+  static define() {return {
+    type : StructEnum$1.T_SIGNED_BYTE,
+    name : "sbyte"
+  }}
+}
+StructFieldType.register(StructSignedByteField);
 
 class StructBoolField extends StructFieldType {
   static pack(manager, data, val, obj, field, type) {
