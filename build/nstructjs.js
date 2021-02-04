@@ -2672,8 +2672,6 @@ let STRUCT = _module_exports_$1.STRUCT = class STRUCT {
 
         let type = getType(field.type);
 
-        //console.log(formatType(type));
-
         if (type.type !== StructEnum$2.T_STRUCT && type.type !== StructEnum$2.T_TSTRUCT) {
           continue;
         }
@@ -2682,7 +2680,6 @@ let STRUCT = _module_exports_$1.STRUCT = class STRUCT {
           let msg = stt.name + ":" + field.name + ": Unknown struct " + type.data + ".";
           throwError(stt, field, msg);
         }
-        //console.log(formatType(field.type));
       }
     }
   }
@@ -3207,7 +3204,6 @@ let STRUCT = _module_exports_$1.STRUCT = class STRUCT {
     }
 
     function unpack_into(type, dest) {
-      console.log(type);
       return StructFieldTypeMap$1[type.type].unpackInto(this2, data, type, uctx, dest);
     }
 

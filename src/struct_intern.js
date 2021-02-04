@@ -262,8 +262,6 @@ let STRUCT = exports.STRUCT = class STRUCT {
 
         let type = getType(field.type);
 
-        //console.log(formatType(type));
-
         if (type.type !== StructEnum.T_STRUCT && type.type !== StructEnum.T_TSTRUCT) {
           continue;
         }
@@ -272,7 +270,6 @@ let STRUCT = exports.STRUCT = class STRUCT {
           let msg = stt.name + ":" + field.name + ": Unknown struct " + type.data + ".";
           throwError(stt, field, msg);
         }
-        //console.log(formatType(field.type));
       }
     }
   }
@@ -797,7 +794,6 @@ let STRUCT = exports.STRUCT = class STRUCT {
     }
 
     function unpack_into(type, dest) {
-      console.log(type);
       return StructFieldTypeMap[type.type].unpackInto(this2, data, type, uctx, dest);
     }
 
