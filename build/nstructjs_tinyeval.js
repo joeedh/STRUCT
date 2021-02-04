@@ -1274,7 +1274,7 @@ function StructParser() {
   
   let reserved_tokens=new set$1([
     "int", "float", "double", "string", "static_string", "array", 
-    "iter", "abstract", "short", "byte", "bool", "iterkeys", "uint", "ushort",
+    "iter", "abstract", "short", "byte", "sbyte", "bool", "iterkeys", "uint", "ushort",
     "static_array"
   ]);
 
@@ -2189,11 +2189,11 @@ StructFieldType.register(StructByteField);
 
 class StructSignedByteField extends StructFieldType {
   static pack(manager, data, val, obj, field, type) {
-    pack_byte$1(data, val);
+    pack_sbyte$1(data, val);
   }
 
   static unpack(manager, data, type, uctx) {
-    return unpack_byte$1(data, uctx);
+    return unpack_sbyte$1(data, uctx);
   }
 
   static define() {return {
