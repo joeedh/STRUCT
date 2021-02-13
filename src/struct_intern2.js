@@ -398,7 +398,7 @@ class StructTStructField extends StructFieldType {
     let stt = manager.get_struct(val.constructor.structName);
     let ret = manager.writeJSON(val, stt);
 
-    ret._structName = stt.name;
+    ret._structName = "" + stt.name;
 
     return ret;
   }

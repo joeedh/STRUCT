@@ -1196,27 +1196,35 @@ var struct_parseutil = /*#__PURE__*/Object.freeze({
 
 "use strict";
 
+let NStruct = class NStruct {
+  constructor(name) {
+    this.fields = [];
+    this.id = -1;
+    this.name = name;
+  }
+};
+
 //the discontinuous id's are to make sure
 //the version I originally wrote (which had a few application-specific types)
 //and this one do not become totally incompatible.
 let StructEnum = {
-  T_INT      : 0,
-  T_FLOAT    : 1,
-  T_DOUBLE   : 2,
-  T_STRING   : 7,
-  T_STATIC_STRING : 8, //fixed-length string
-  T_STRUCT   : 9, 
-  T_TSTRUCT  : 10,
-  T_ARRAY    : 11,
-  T_ITER     : 12,
-  T_SHORT    : 13,
-  T_BYTE     : 14,
-  T_BOOL     : 15,
-  T_ITERKEYS : 16,
-  T_UINT     : 17,
-  T_USHORT   : 18,
+  T_INT          : 0,
+  T_FLOAT        : 1,
+  T_DOUBLE       : 2,
+  T_STRING       : 7,
+  T_STATIC_STRING: 8, //fixed-length string
+  T_STRUCT       : 9,
+  T_TSTRUCT      : 10,
+  T_ARRAY        : 11,
+  T_ITER         : 12,
+  T_SHORT        : 13,
+  T_BYTE         : 14,
+  T_BOOL         : 15,
+  T_ITERKEYS     : 16,
+  T_UINT         : 17,
+  T_USHORT       : 18,
   T_STATIC_ARRAY : 19,
-  T_SIGNED_BYTE : 20
+  T_SIGNED_BYTE  : 20
 };
 
 let ValueTypes = new Set([
@@ -1235,22 +1243,22 @@ let ValueTypes = new Set([
 ]);
 
 let StructTypes = {
-  "int": StructEnum.T_INT, 
-  "uint": StructEnum.T_UINT, 
-  "ushort": StructEnum.T_USHORT, 
-  "float": StructEnum.T_FLOAT, 
-  "double": StructEnum.T_DOUBLE, 
-  "string": StructEnum.T_STRING,
-  "static_string": StructEnum.T_STATIC_STRING, 
-  "struct": StructEnum.T_STRUCT, 
-  "abstract": StructEnum.T_TSTRUCT, 
-  "array": StructEnum.T_ARRAY, 
-  "iter": StructEnum.T_ITER,
-  "short": StructEnum.T_SHORT,
-  "byte": StructEnum.T_BYTE,
-  "bool": StructEnum.T_BOOL,
-  "iterkeys" : StructEnum.T_ITERKEYS,
-  "sbyte" : StructEnum.T_SIGNED_BYTE
+  "int"          : StructEnum.T_INT,
+  "uint"         : StructEnum.T_UINT,
+  "ushort"       : StructEnum.T_USHORT,
+  "float"        : StructEnum.T_FLOAT,
+  "double"       : StructEnum.T_DOUBLE,
+  "string"       : StructEnum.T_STRING,
+  "static_string": StructEnum.T_STATIC_STRING,
+  "struct"       : StructEnum.T_STRUCT,
+  "abstract"     : StructEnum.T_TSTRUCT,
+  "array"        : StructEnum.T_ARRAY,
+  "iter"         : StructEnum.T_ITER,
+  "short"        : StructEnum.T_SHORT,
+  "byte"         : StructEnum.T_BYTE,
+  "bool"         : StructEnum.T_BOOL,
+  "iterkeys"     : StructEnum.T_ITERKEYS,
+  "sbyte"        : StructEnum.T_SIGNED_BYTE
 };
 
 let StructTypeMap = {};
@@ -1260,20 +1268,20 @@ for (let k in StructTypes) {
 }
 
 function gen_tabstr(t) {
-  let s="";
-  for (let i=0; i<t; i++) {
-      s+="  ";
+  let s = "";
+  for (let i = 0; i < t; i++) {
+    s += "  ";
   }
   return s;
 }
 
 function StructParser() {
-  let basic_types=new set$1([
+  let basic_types = new set$1([
     "int", "float", "double", "string", "short", "byte", "sbyte", "bool", "uint", "ushort"
   ]);
-  
-  let reserved_tokens=new set$1([
-    "int", "float", "double", "string", "static_string", "array", 
+
+  let reserved_tokens = new set$1([
+    "int", "float", "double", "string", "static_string", "array",
     "iter", "abstract", "short", "byte", "sbyte", "bool", "iterkeys", "uint", "ushort",
     "static_array"
   ]);
@@ -1281,256 +1289,254 @@ function StructParser() {
   function tk(name, re, func) {
     return new _export_tokdef_(name, re, func);
   }
-  
-  let tokens=[
-    tk("ID", /[a-zA-Z_$]+[a-zA-Z0-9_\.$]*/, function(t) {
+
+  let tokens = [
+    tk("ID", /[a-zA-Z_$]+[a-zA-Z0-9_\.$]*/, function (t) {
 
       if (reserved_tokens.has(t.value)) {
-          t.type = t.value.toUpperCase();
+        t.type = t.value.toUpperCase();
       }
       return t;
-    }, "identifier"), 
-    tk("OPEN", /\{/), 
-    tk("EQUALS", /=/), 
-    tk("CLOSE", /}/), 
-    tk("COLON", /:/), 
-    tk("SOPEN", /\[/), 
-    tk("SCLOSE", /\]/), 
-    tk("JSCRIPT", /\|/, function(t) {
-      let js="";
-      let lexer=t.lexer;
-      while (lexer.lexpos<lexer.lexdata.length) {
-        let c=lexer.lexdata[lexer.lexpos];
-        if (c=="\n")
+    }, "identifier"),
+    tk("OPEN", /\{/),
+    tk("EQUALS", /=/),
+    tk("CLOSE", /}/),
+    tk("COLON", /:/),
+    tk("SOPEN", /\[/),
+    tk("SCLOSE", /\]/),
+    tk("JSCRIPT", /\|/, function (t) {
+      let js = "";
+      let lexer = t.lexer;
+      while (lexer.lexpos < lexer.lexdata.length) {
+        let c = lexer.lexdata[lexer.lexpos];
+        if (c === "\n")
           break;
-        js+=c;
+        js += c;
         lexer.lexpos++;
       }
-      
+
       while (js.trim().endsWith(";")) {
-          js = js.slice(0, js.length-1);
-          lexer.lexpos--;
+        js = js.slice(0, js.length - 1);
+        lexer.lexpos--;
       }
       t.value = js.trim();
       return t;
-    }), 
-    tk("LPARAM", /\(/), 
-    tk("RPARAM", /\)/), 
-    tk("COMMA", /,/), 
-    tk("NUM", /[0-9]+/, undefined, "number"), 
-    tk("SEMI", /;/), 
-    tk("NEWLINE", /\n/, function(t) {
-      t.lexer.lineno+=1;
+    }),
+    tk("LPARAM", /\(/),
+    tk("RPARAM", /\)/),
+    tk("COMMA", /,/),
+    tk("NUM", /[0-9]+/, undefined, "number"),
+    tk("SEMI", /;/),
+    tk("NEWLINE", /\n/, function (t) {
+      t.lexer.lineno += 1;
     }, "newline"),
-    tk("SPACE", / |\t/, function(t) {
+    tk("SPACE", / |\t/, function (t) {
     }, "whitespace")
   ];
-  
-  reserved_tokens.forEach(function(rt) {
+
+  reserved_tokens.forEach(function (rt) {
     tokens.push(tk(rt.toUpperCase()));
   });
-  
+
   function errfunc(lexer) {
     return true;
   }
-  
-  let lex=new _export_lexer_(tokens, errfunc);
-  let parser=new _export_parser_(lex);
-  
+
+  let lex = new _export_lexer_(tokens, errfunc);
+  let parser = new _export_parser_(lex);
+
   function p_Static_String(p) {
     p.expect("STATIC_STRING");
     p.expect("SOPEN");
-    let num=p.expect("NUM");
+    let num = p.expect("NUM");
     p.expect("SCLOSE");
     return {type: StructEnum.T_STATIC_STRING, data: {maxlength: num}}
   }
-  
+
   function p_DataRef(p) {
     p.expect("DATAREF");
     p.expect("LPARAM");
-    let tname=p.expect("ID");
+    let tname = p.expect("ID");
     p.expect("RPARAM");
     return {type: StructEnum.T_DATAREF, data: tname}
   }
-  
+
   function p_Array(p) {
     p.expect("ARRAY");
     p.expect("LPARAM");
-    let arraytype=p_Type(p);
-    
-    let itername="";
+    let arraytype = p_Type(p);
+
+    let itername = "";
     if (p.optional("COMMA")) {
-        itername = arraytype.data.replace(/"/g, "");
-        arraytype = p_Type(p);
+      itername = arraytype.data.replace(/"/g, "");
+      arraytype = p_Type(p);
     }
-    
+
     p.expect("RPARAM");
     return {type: StructEnum.T_ARRAY, data: {type: arraytype, iname: itername}}
   }
-  
+
   function p_Iter(p) {
     p.expect("ITER");
     p.expect("LPARAM");
-    let arraytype=p_Type(p);
-    let itername="";
-    
+    let arraytype = p_Type(p);
+    let itername = "";
+
     if (p.optional("COMMA")) {
-        itername = arraytype.data.replace(/"/g, "");
-        arraytype = p_Type(p);
+      itername = arraytype.data.replace(/"/g, "");
+      arraytype = p_Type(p);
     }
-    
+
     p.expect("RPARAM");
     return {type: StructEnum.T_ITER, data: {type: arraytype, iname: itername}}
   }
-  
+
   function p_StaticArray(p) {
     p.expect("STATIC_ARRAY");
     p.expect("SOPEN");
-    let arraytype=p_Type(p);
-    let itername="";
-    
+    let arraytype = p_Type(p);
+    let itername = "";
+
     p.expect("COMMA");
     let size = p.expect("NUM");
-    
-    if (size < 0 || Math.abs(size - Math.floor(size)) > 0.000001) { 
+
+    if (size < 0 || Math.abs(size - Math.floor(size)) > 0.000001) {
       console.log(Math.abs(size - Math.floor(size)));
       p.error("Expected an integer");
     }
-    
+
     size = Math.floor(size);
-    
+
     if (p.optional("COMMA")) {
-        itername = p_Type(p).data;
+      itername = p_Type(p).data;
     }
-    
+
     p.expect("SCLOSE");
     return {type: StructEnum.T_STATIC_ARRAY, data: {type: arraytype, size: size, iname: itername}}
   }
-  
+
   function p_IterKeys(p) {
     p.expect("ITERKEYS");
     p.expect("LPARAM");
-    
-    let arraytype=p_Type(p);
-    let itername="";
-    
+
+    let arraytype = p_Type(p);
+    let itername = "";
+
     if (p.optional("COMMA")) {
-        itername = arraytype.data.replace(/"/g, "");
-        arraytype = p_Type(p);
+      itername = arraytype.data.replace(/"/g, "");
+      arraytype = p_Type(p);
     }
-    
+
     p.expect("RPARAM");
     return {type: StructEnum.T_ITERKEYS, data: {type: arraytype, iname: itername}}
   }
-  
+
   function p_Abstract(p) {
     p.expect("ABSTRACT");
     p.expect("LPARAM");
-    let type=p.expect("ID");
+    let type = p.expect("ID");
     p.expect("RPARAM");
     return {type: StructEnum.T_TSTRUCT, data: type}
   }
-  
+
   function p_Type(p) {
-    let tok=p.peek();
-    
-    if (tok.type=="ID") {
-        p.next();
-        return {type: StructEnum.T_STRUCT, data: tok.value}
+    let tok = p.peek();
+
+    if (tok.type === "ID") {
+      p.next();
+      return {type: StructEnum.T_STRUCT, data: tok.value}
     } else if (basic_types.has(tok.type.toLowerCase())) {
-        p.next();
-        return {type: StructTypes[tok.type.toLowerCase()]}
-    } else if (tok.type=="ARRAY") {
-        return p_Array(p);
-    } else if (tok.type=="ITER") {
-        return p_Iter(p);
-    } else if (tok.type=="ITERKEYS") {
-        return p_IterKeys(p);
+      p.next();
+      return {type: StructTypes[tok.type.toLowerCase()]}
+    } else if (tok.type === "ARRAY") {
+      return p_Array(p);
+    } else if (tok.type === "ITER") {
+      return p_Iter(p);
+    } else if (tok.type === "ITERKEYS") {
+      return p_IterKeys(p);
     } else if (tok.type === "STATIC_ARRAY") {
       return p_StaticArray(p);
-    } else if (tok.type=="STATIC_STRING") {
-        return p_Static_String(p);
-    } else if (tok.type=="ABSTRACT") {
-        return p_Abstract(p);
-    } else if (tok.type=="DATAREF") {
-        return p_DataRef(p);
+    } else if (tok.type === "STATIC_STRING") {
+      return p_Static_String(p);
+    } else if (tok.type === "ABSTRACT") {
+      return p_Abstract(p);
+    } else if (tok.type === "DATAREF") {
+      return p_DataRef(p);
     } else {
-      p.error(tok, "invalid type "+tok.type);
+      p.error(tok, "invalid type " + tok.type);
     }
   }
-  
+
   function p_ID_or_num(p) {
     let t = p.peeknext();
 
-    if (t.type == "NUM") {
+    if (t.type === "NUM") {
       p.next();
       return t.value;
     } else {
       return p.expect("ID", "struct field name");
     }
   }
-  
+
   function p_Field(p) {
-    let field={};
-    
+    let field = {};
+
     field.name = p_ID_or_num(p);
     p.expect("COLON");
-    
+
     field.type = p_Type(p);
     field.set = undefined;
     field.get = undefined;
-    
+
     let check = 0;
-    
-    let tok=p.peek();
-    if (tok.type=="JSCRIPT") {
-        field.get = tok.value;
-        check = 1;
-        p.next();
+
+    let tok = p.peek();
+    if (tok.type === "JSCRIPT") {
+      field.get = tok.value;
+      check = 1;
+      p.next();
     }
-    
+
     tok = p.peek();
-    if (tok.type=="JSCRIPT") {
-        check = 1;
-        field.set = tok.value;
-        p.next();
+    if (tok.type === "JSCRIPT") {
+      check = 1;
+      field.set = tok.value;
+      p.next();
     }
-    
+
     p.expect("SEMI");
-    
+
     return field;
   }
-  
+
   function p_Struct(p) {
-    let st={};
-    
-    st.name = p.expect("ID", "struct name");
-    
-    st.fields = [];
-    st.id = -1;
-    let tok=p.peek();
-    let id=-1;
-    if (tok.type=="ID"&&tok.value=="id") {
-        p.next();
-        p.expect("EQUALS");
-        st.id = p.expect("NUM");
+    let name = p.expect("ID", "struct name");
+
+    let st = new NStruct(name);
+
+    let tok = p.peek();
+    let id = -1;
+
+    if (tok.type === "ID" && tok.value === "id") {
+      p.next();
+      p.expect("EQUALS");
+      st.id = p.expect("NUM");
     }
-    
+
     p.expect("OPEN");
     while (1) {
       if (p.at_end()) {
-          p.error(undefined);
-      }
-      else 
-        if (p.optional("CLOSE")) {
-          break;
-      }
-      else {
+        p.error(undefined);
+      } else if (p.optional("CLOSE")) {
+        break;
+      } else {
         st.fields.push(p_Field(p));
       }
     }
+
     return st;
   }
+
   parser.start = p_Struct;
   return parser;
 }
@@ -1539,6 +1545,7 @@ const _export_struct_parse_ = StructParser();
 
 var struct_parser = /*#__PURE__*/Object.freeze({
   __proto__: null,
+  NStruct: NStruct,
   StructEnum: StructEnum,
   ValueTypes: ValueTypes,
   StructTypes: StructTypes,
@@ -1638,6 +1645,14 @@ let packNull = function(manager, data, field, type) {
   StructFieldTypeMap[type.type].packNull(manager, data, field, type);
 };
 
+let toJSON = function(manager, val, obj, field, type) {
+  return _export_StructFieldTypeMap_[type.type].toJSON(manager, val, obj, field, type);
+};
+
+let fromJSON = function(manager, val, obj, field, type, instance) {
+  return _export_StructFieldTypeMap_[type.type].fromJSON(manager, val, obj, field, type, instance);
+};
+
 function unpack_field(manager, data, type, uctx) {
   let name;
 
@@ -1700,6 +1715,14 @@ let StructFieldType = class StructFieldType {
 
   static format(type) {
     return this.define().name;
+  }
+
+  static toJSON(manager, val, obj, field, type) {
+    return val;
+  }
+
+  static fromJSON(manager, val, obj, field, type, instance) {
+    return val;
   }
 
   /**
@@ -1855,6 +1878,17 @@ class StructStructField extends StructFieldType {
     return type.data;
   }
 
+  static fromJSON(manager, val, obj, field, type, instance) {
+    let stt = manager.get_struct(type.data);
+
+    return manager.readJSON(val, stt, instance);
+  }
+
+  static toJSON(manager, val, obj, field, type) {
+    let stt = manager.get_struct(type.data);
+    return manager.writeJSON(val, stt);
+  }
+
   static unpackInto(manager, data, type, uctx, dest) {
     let cls2 = manager.get_struct_cls(type.data);
     return manager.read_object(data, cls2, uctx, dest);
@@ -1906,11 +1940,26 @@ class StructTStructField extends StructFieldType {
     manager.write_struct(data, val, stt);
   }
 
+  static fromJSON(manager, val, obj, field, type, instance) {
+    let stt = manager.get_struct(val._structName);
+
+    return manager.readJSON(val, stt, instance);
+  }
+
+  static toJSON(manager, val, obj, field, type) {
+    let stt = manager.get_struct(val.constructor.structName);
+    let ret = manager.writeJSON(val, stt);
+
+    ret._structName = "" + stt.name;
+
+    return ret;
+  }
+
   static packNull(manager, data, field, type) {
     let stt = manager.get_struct(type.data);
 
     pack_int$1(data, stt.id);
-    packNull(manager, data, field, {type : STructEnum.T_STRUCT, data : type.data});
+    packNull(manager, data, field, {type : StructEnum$1.T_STRUCT, data : type.data});
   }
 
   static format(type) {
@@ -2023,6 +2072,50 @@ class StructArrayField extends StructFieldType {
     return !field.type.data.iname;
   }
 
+  static fromJSON(manager, val, obj, field, type, instance) {
+    let ret = instance || [];
+
+    ret.length = 0;
+
+    for (let i=0; i<val.length; i++) {
+      let val2 = fromJSON(manager, val[i], val, field, type.data.type, undefined);
+
+      if (val2 === undefined) {
+        console.log(val2);
+        console.error("eeek");
+        process.exit();
+      }
+
+      ret.push(val2);
+    }
+
+    return ret;
+  }
+
+  static toJSON(manager, val, obj, field, type) {
+    val = val || [];
+    let json = [];
+
+    let itername = type.data.iname;
+
+    for (let i=0; i<val.length; i++) {
+      let val2 = val[i];
+      let env = _ws_env;
+
+      if (itername !== "" && itername !== undefined && field.get) {
+        env[0][0] = itername;
+        env[0][1] = val2;
+        val2 = manager._env_call(field.get, obj, env);
+
+        //console.log("VAL2", val2, toJSON(manager, val2, val, field, type.data.type));
+      }
+
+      json.push(toJSON(manager, val2, val, field, type.data.type));
+    }
+
+    return json;
+  }
+
   static unpackInto(manager, data, type, uctx, dest) {
     let len = _module_exports_.unpack_int(data, uctx);
     dest.length = 0;
@@ -2104,6 +2197,33 @@ class StructIterField extends StructFieldType {
 
       i++;
     }, this);
+  }
+
+  static fromJSON() {
+    return StructArrayField.fromJSON(...arguments);
+  }
+
+  static toJSON(manager, val, obj, field, type) {
+    val = val || [];
+    let json = [];
+
+    let itername = type.data.iname;
+
+    for (let val2 of val) {
+      let env = _ws_env;
+
+      if (itername !== "" && itername !== undefined && field.get) {
+        env[0][0] = itername;
+        env[0][1] = val2;
+        val2 = manager._env_call(field.get, obj, env);
+
+        //console.log("VAL2", val2, toJSON(manager, val2, val, field, type.data.type));
+      }
+
+      json.push(toJSON(manager, val2, val, field, type.data.type));
+    }
+
+    return json;
   }
 
   static packNull(manager, data, field, type) {
@@ -2268,6 +2388,34 @@ class StructIterKeysField extends StructFieldType {
     }
   }
 
+  static fromJSON() {
+    return StructArrayField.fromJSON(...arguments);
+  }
+
+  static toJSON(manager, val, obj, field, type) {
+    val = val || [];
+    let json = [];
+
+    let itername = type.data.iname;
+
+    for (let k in val) {
+      let val2 = val[k];
+      let env = _ws_env;
+
+      if (itername !== "" && itername !== undefined && field.get) {
+        env[0][0] = itername;
+        env[0][1] = val2;
+        val2 = manager._env_call(field.get, obj, env);
+
+        //console.log("VAL2", val2, toJSON(manager, val2, val, field, type.data.type));
+      }
+
+      json.push(toJSON(manager, val2, val, field, type.data.type));
+    }
+
+    return json;
+  }
+
   static packNull(manager, data, field, type) {
     pack_int$1(data, 0);
   }
@@ -2386,11 +2534,19 @@ class StructStaticArrayField extends StructFieldType {
     return !field.type.data.iname;
   }
 
+  static fromJSON() {
+    return StructArrayField.fromJSON(...arguments);
+  }
+
   static packNull(manager, data, field, type) {
     let size = type.data.size;
     for (let i=0; i<size; i++) {
       packNull(manager, data, field, type.data.type);
     }
+  }
+
+  static toJSON(manager, val, obj, field, type) {
+    return StructArrayField.toJSON(...arguments);
   }
 
   static format(type) {
@@ -2437,17 +2593,9 @@ class StructStaticArrayField extends StructFieldType {
 }
 StructFieldType.register(StructStaticArrayField);
 
-var sintern2 = /*#__PURE__*/Object.freeze({
-  __proto__: null,
-  get StructFieldTypeMap () { return _export_StructFieldTypeMap_; },
-  setWarningMode: _export_setWarningMode_,
-  setDebugMode: _export_setDebugMode_,
-  StructFieldTypes: _export_StructFieldTypes_,
-  packNull: packNull,
-  StructFieldType: StructFieldType
-});
-
 "use strict";
+
+const NStruct$1 = NStruct;
 let StructFieldTypeMap$1 = _export_StructFieldTypeMap_;
 
 let warninglvl$1 = 2;
@@ -2894,7 +3042,7 @@ let STRUCT = _module_exports_$1.STRUCT = class STRUCT {
 
   get_struct(name) {
     if (!(name in this.structs)) {
-      console.trace();
+      console.warn("Unknown struct", name);
       throw new Error("Unknown struct " + name);
     }
     return this.structs[name];
@@ -3156,8 +3304,8 @@ let STRUCT = _module_exports_$1.STRUCT = class STRUCT {
   }
 
   writeJSON(obj, stt=undefined) {
-    let cls = obj.constructor.structName;
-    stt = stt || this.get_struct(cls);
+    let cls = obj.constructor;
+    stt = stt || this.get_struct(cls.structName);
 
     function use_helper_js(field) {
       let type = field.type.type;
@@ -3165,7 +3313,7 @@ let STRUCT = _module_exports_$1.STRUCT = class STRUCT {
       return cls.useHelperJS(field);
     }
 
-    let toJSON = undefined;
+    let toJSON$1 = toJSON;
 
     let fields = stt.fields;
     let thestruct = this;
@@ -3173,28 +3321,47 @@ let STRUCT = _module_exports_$1.STRUCT = class STRUCT {
 
     for (let i = 0; i < fields.length; i++) {
       let f = fields[i];
-      let t1 = f.type;
-      let t2 = t1.type;
       let val;
+      let t1 = f.type;
+
+      let json2;
+
+      console.log(stt.name, f, use_helper_js(f));
 
       if (use_helper_js(f)) {
-        let type = t2;
         if (f.get !== undefined) {
           val = thestruct._env_call(f.get, obj);
-        }
-        else {
-          val = obj[f.name];
+        } else {
+          val = f.name === "this" ? obj : obj[f.name];
         }
 
         if (_nGlobal.DEBUG && _nGlobal.DEBUG.tinyeval) {
           console.log("\n\n\n", f.get, "Helper JS Ret", val, "\n\n\n");
         }
 
-        json[f.name] = toJSON(this, val, obj, f, t1);
+        json2 = toJSON$1(this, val, obj, f, t1);
       }
       else {
-        val = obj[f.name];
-        json[f.name] = toJSON(this, val, obj, f, t1);
+        val = f.name === "this" ? obj : obj[f.name];
+        json2 = toJSON$1(this, val, obj, f, t1);
+      }
+
+      if (val !== obj) {
+        json[f.name] = json2;
+      } else { //f.name was 'this'?
+        let isArray = Array.isArray(json2);
+        isArray = isArray || f.type.type === StructTypes$1.T_ARRAY;
+        isArray = isArray || f.type.type === StructTypes$1.T_STATIC_ARRAY;
+
+        if (isArray) {
+          json.length = json2.length;
+
+          for (let i=0; i<json2.length; i++) {
+            json[i] = json2[i];
+          }
+        } else {
+          Object.assign(json, json2);
+        }
       }
     }
 
@@ -3299,11 +3466,13 @@ let STRUCT = _module_exports_$1.STRUCT = class STRUCT {
     }
   }
 
-  readJSON(data, cls_or_struct_id) {
+  readJSON(json, cls_or_struct_id, objInstance=undefined) {
     let cls, stt;
 
     if (typeof cls_or_struct_id === "number") {
       cls = this.struct_cls[this.struct_ids[cls_or_struct_id].name];
+    } else if (cls_or_struct_id instanceof NStruct$1) {
+      cls = this.get_struct_cls(cls_or_struct_id.name);
     } else {
       cls = cls_or_struct_id;
     }
@@ -3314,56 +3483,77 @@ let STRUCT = _module_exports_$1.STRUCT = class STRUCT {
 
     stt = this.structs[cls.structName];
 
-    let fromJSON = undefined;
+    packer_debug$1("\n\n=Begin reading " + cls.structName + "=");
     let thestruct = this;
-
     let this2  = this;
-
     let was_run = false;
+    let fromJSON$1 = fromJSON;
 
-    function reader(obj) {
-      if (was_run) {
-        return;
-      }
+    function makeLoader(stt) {
+      return function load(obj) {
+        if (was_run) {
+          return;
+        }
 
-      was_run = true;
+        was_run = true;
 
-      let fields = stt.fields;
-      let flen = fields.length;
-      for (let i = 0; i < flen; i++) {
-        let f = fields[i];
+        let fields = stt.fields;
+        let flen = fields.length;
 
-        packer_debug$1("Load field " + f.name);
-        obj[f.name] = fromJSON(thestruct, data[f.name], data, f.type);
+        for (let i = 0; i < flen; i++) {
+          let f = fields[i];
+
+          let val;
+
+          if (f.name === 'this') {
+            val = json;
+          } else {
+            val = json[f.name];
+          }
+
+          if (val === undefined) {
+            console.warn("nstructjs.readJSON: Missing field " + f.name + " in struct " + stt.name);
+            continue;
+          }
+
+          let instance = f.name === 'this' ? obj : objInstance;
+
+          let ret = fromJSON$1(this2, val, obj, f, f.type, instance);
+
+          if (f.name !== 'this') {
+            obj[f.name] = ret;
+          }
+        }
       }
     }
 
-    if (cls.prototype.loadSTRUCT !== undefined) {
-      let obj;
+    let load = makeLoader(stt);
 
-      if (cls.newSTRUCT !== undefined) {
+    if (cls.prototype.loadSTRUCT !== undefined) {
+      let obj = objInstance;
+
+      if (!obj && cls.newSTRUCT !== undefined) {
         obj = cls.newSTRUCT();
-      } else {
+      } else if (!obj) {
         obj = new cls();
       }
 
-      obj.loadSTRUCT(reader);
-
+      obj.loadSTRUCT(load);
       return obj;
     } else if (cls.fromSTRUCT !== undefined) {
       if (warninglvl$1 > 1)
         console.warn("Warning: class " + unmangle(cls.name) + " is using deprecated fromSTRUCT interface; use newSTRUCT/loadSTRUCT instead");
+      return cls.fromSTRUCT(load);
+    } else { //default case, make new instance and then call load() on it
+      let obj = objInstance;
 
-      return cls.fromSTRUCT(reader);
-    } else { //default case, make new instance and then call reader() on it
-      let obj;
-      if (cls.newSTRUCT !== undefined) {
+      if (!obj && cls.newSTRUCT !== undefined) {
         obj = cls.newSTRUCT();
-      } else {
+      } else if (!obj) {
         obj = new cls();
       }
 
-      reader(obj);
+      load(obj);
 
       return obj;
     }
