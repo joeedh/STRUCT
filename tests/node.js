@@ -4,7 +4,8 @@ global.DEBUG = {
 
 //let structjs = require('../build/nstructjs');
 let structjs;
-
+structjs = require('../src/structjs');
+/*
 try {
   structjs = require('../src/structjs');
 } catch (error) {
@@ -19,7 +20,7 @@ try {
       structjs = require("../nstructjs.js");
     }
   }
-}
+}//*/
 
 structjs.setAllowOverriding(false);
 
@@ -68,7 +69,7 @@ structjs.register(Point, "node.Point");
 class Polygon {
   constructor(points) {
     this.points = [];
-    this.idgen = 0;
+    this.idgen = 5;
     this.flag = 0;
     this.id = -1;
 
@@ -176,7 +177,7 @@ structjs.register(PolygonList);
 
 class Canvas {
   constructor() {
-    this.idgen = 0;
+    this.idgen = 5;
     this.idmap = {};
     this.points = [];
     this.polygons = new PolygonList();
@@ -205,24 +206,30 @@ class Canvas {
   }
   
   loadSTRUCT(reader) {
+    this.points.length = 0;
+    this.polygons.length = 0;
+
     reader(this);
-    
-    this.idmap = {};
-    
+
+    let idmap = this.idmap = {};
+
     for (let p of this.points) {
       console.log("P.ID", p.id, p);
-      this.idmap[p.id] = p;
+      idmap[p.id] = p;
     }
     
     for (let p of this.polygons) {
-      this.idmap[p.id] = p;
+      idmap[p.id] = p;
+
+      console.log("POLYGON_POINTS", p.points);
 
       for (let i=0; i<p.points.length; i++) {
-        p.points[i] = this.idmap[p.points[i]];
+        p.points[i] = idmap[p.points[i]];
       }
     }
-    
+
     for (let p of this.polygons) {
+      console.log("POLYGON", p);
       p.afterSTRUCT();
     }
   }
@@ -250,8 +257,8 @@ function test_main() {
     canvas.makePoint(-1, 1)
   ];
   
-  let poly = canvas.makePolygon(ps);
-  
+  canvas.makePolygon([ps[0], ps[1], ps[2]]);
+
   let params = {
     magic      : "NSTK",
     ext        : ".bin",
@@ -264,6 +271,19 @@ function test_main() {
     }
   };
 
+
+  let njson1 = structjs.writeJSON(canvas);
+
+  console.log("JSON", JSON.stringify(njson1, undefined, 2));
+  let canvas4 = structjs.readJSON(njson1, Canvas);
+  console.log(canvas4);
+
+  let s41 = JSON.stringify(canvas);
+  let s42 = JSON.stringify(canvas4);
+
+  if (s41 !== s42) {
+    throw new Error("JSON api failed");
+  }
 
   let writer = new filehelper.FileHelper(params);
   
@@ -284,14 +304,12 @@ function test_main() {
   let json2 = JSON.stringify(canvas2, undefined, 2);
   
   let passed = json1.length === json2.length;
-  passed = passed && JSON.stringify(writer.version) == JSON.stringify(reader.version);
+  passed = passed && JSON.stringify(writer.version) === JSON.stringify(reader.version);
   
   //console.log(json2.points3);
   if (!passed) {
     console.log(json1, "\n\n\n\n\n\n\n\n\n", json2, json1.length, json2.length);
   }
-
-  return;
   structjs.validateStructs();
 
   //*
@@ -300,10 +318,10 @@ function test_main() {
   console.log("Writing JSON");
   console.log(JSON.stringify(jsonout, undefined, 1));
   console.log("done");
-  console.log(structjs.readJSON(jsonout, Canvas));
+  //console.log(structjs.readJSON(jsonout, Canvas));
   //*/
 
-  {
+  if (0) {
     let s1 = JSON.stringify(structjs.readJSON(jsonout, Canvas));
     let s2 = JSON.stringify(canvas);
     console.log(s1.length, s2.length);
@@ -311,6 +329,7 @@ function test_main() {
     passed = passed && s1 === s2;
   }
 
+  //json2 = JSON.stringify(canvas2.polygons, undefined, 2);
   console.log(json2);
 
   console.log(passed ? "PASSED" : "FAILED")

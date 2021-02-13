@@ -91,7 +91,15 @@ let StructFieldTypeMap = exports.StructFieldTypeMap = {};
 
 let packNull = exports.packNull = function(manager, data, field, type) {
   StructFieldTypeMap[type.type].packNull(manager, data, field, type);
-}
+};
+
+let toJSON = exports.toJSON = function(manager, val, obj, field, type) {
+  return exports.StructFieldTypeMap[type.type].toJSON(manager, val, obj, field, type);
+};
+
+let fromJSON = exports.fromJSON = function(manager, val, obj, field, type, instance) {
+  return exports.StructFieldTypeMap[type.type].fromJSON(manager, val, obj, field, type, instance);
+};
 
 function unpack_field(manager, data, type, uctx) {
   let name;
@@ -155,6 +163,14 @@ let StructFieldType = exports.StructFieldType = class StructFieldType {
 
   static format(type) {
     return this.define().name;
+  }
+
+  static toJSON(manager, val, obj, field, type) {
+    return val;
+  }
+
+  static fromJSON(manager, val, obj, field, type, instance) {
+    return val;
   }
 
   /**
@@ -310,6 +326,17 @@ class StructStructField extends StructFieldType {
     return type.data;
   }
 
+  static fromJSON(manager, val, obj, field, type, instance) {
+    let stt = manager.get_struct(type.data);
+
+    return manager.readJSON(val, stt, instance);
+  }
+
+  static toJSON(manager, val, obj, field, type) {
+    let stt = manager.get_struct(type.data);
+    return manager.writeJSON(val, stt);
+  }
+
   static unpackInto(manager, data, type, uctx, dest) {
     let cls2 = manager.get_struct_cls(type.data);
     return manager.read_object(data, cls2, uctx, dest);
@@ -361,11 +388,26 @@ class StructTStructField extends StructFieldType {
     manager.write_struct(data, val, stt);
   }
 
+  static fromJSON(manager, val, obj, field, type, instance) {
+    let stt = manager.get_struct(val._structName);
+
+    return manager.readJSON(val, stt, instance);
+  }
+
+  static toJSON(manager, val, obj, field, type) {
+    let stt = manager.get_struct(val.constructor.structName);
+    let ret = manager.writeJSON(val, stt);
+
+    ret._structName = stt.name;
+
+    return ret;
+  }
+
   static packNull(manager, data, field, type) {
     let stt = manager.get_struct(type.data);
 
     pack_int(data, stt.id);
-    packNull(manager, data, field, {type : STructEnum.T_STRUCT, data : type.data});
+    packNull(manager, data, field, {type : StructEnum.T_STRUCT, data : type.data});
   }
 
   static format(type) {
@@ -478,6 +520,50 @@ class StructArrayField extends StructFieldType {
     return !field.type.data.iname;
   }
 
+  static fromJSON(manager, val, obj, field, type, instance) {
+    let ret = instance || [];
+
+    ret.length = 0;
+
+    for (let i=0; i<val.length; i++) {
+      let val2 = fromJSON(manager, val[i], val, field, type.data.type, undefined);
+
+      if (val2 === undefined) {
+        console.log(val2);
+        console.error("eeek");
+        process.exit();
+      }
+
+      ret.push(val2);
+    }
+
+    return ret;
+  }
+
+  static toJSON(manager, val, obj, field, type) {
+    val = val || [];
+    let json = [];
+
+    let itername = type.data.iname;
+
+    for (let i=0; i<val.length; i++) {
+      let val2 = val[i];
+      let env = _ws_env;
+
+      if (itername !== "" && itername !== undefined && field.get) {
+        env[0][0] = itername;
+        env[0][1] = val2;
+        val2 = manager._env_call(field.get, obj, env);
+
+        //console.log("VAL2", val2, toJSON(manager, val2, val, field, type.data.type));
+      }
+
+      json.push(toJSON(manager, val2, val, field, type.data.type));
+    }
+
+    return json;
+  }
+
   static unpackInto(manager, data, type, uctx, dest) {
     let len = struct_binpack.unpack_int(data, uctx);
     dest.length = 0;
@@ -559,6 +645,33 @@ class StructIterField extends StructFieldType {
 
       i++;
     }, this);
+  }
+
+  static fromJSON() {
+    return StructArrayField.fromJSON(...arguments);
+  }
+
+  static toJSON(manager, val, obj, field, type) {
+    val = val || [];
+    let json = [];
+
+    let itername = type.data.iname;
+
+    for (let val2 of val) {
+      let env = _ws_env;
+
+      if (itername !== "" && itername !== undefined && field.get) {
+        env[0][0] = itername;
+        env[0][1] = val2;
+        val2 = manager._env_call(field.get, obj, env);
+
+        //console.log("VAL2", val2, toJSON(manager, val2, val, field, type.data.type));
+      }
+
+      json.push(toJSON(manager, val2, val, field, type.data.type));
+    }
+
+    return json;
   }
 
   static packNull(manager, data, field, type) {
@@ -723,6 +836,34 @@ class StructIterKeysField extends StructFieldType {
     }
   }
 
+  static fromJSON() {
+    return StructArrayField.fromJSON(...arguments);
+  }
+
+  static toJSON(manager, val, obj, field, type) {
+    val = val || [];
+    let json = [];
+
+    let itername = type.data.iname;
+
+    for (let k in val) {
+      let val2 = val[k];
+      let env = _ws_env;
+
+      if (itername !== "" && itername !== undefined && field.get) {
+        env[0][0] = itername;
+        env[0][1] = val2;
+        val2 = manager._env_call(field.get, obj, env);
+
+        //console.log("VAL2", val2, toJSON(manager, val2, val, field, type.data.type));
+      }
+
+      json.push(toJSON(manager, val2, val, field, type.data.type));
+    }
+
+    return json;
+  }
+
   static packNull(manager, data, field, type) {
     pack_int(data, 0);
   }
@@ -841,11 +982,19 @@ class StructStaticArrayField extends StructFieldType {
     return !field.type.data.iname;
   }
 
+  static fromJSON() {
+    return StructArrayField.fromJSON(...arguments);
+  }
+
   static packNull(manager, data, field, type) {
     let size = type.data.size;
     for (let i=0; i<size; i++) {
       packNull(manager, data, field, type.data.type);
     }
+  }
+
+  static toJSON(manager, val, obj, field, type) {
+    return StructArrayField.toJSON(...arguments);
   }
 
   static format(type) {

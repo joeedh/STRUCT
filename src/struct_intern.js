@@ -4,6 +4,8 @@ let struct_binpack = require("./struct_binpack");
 let struct_parseutil = require("./struct_parseutil");
 let struct_parser = require("./struct_parser");
 
+const NStruct = struct_parser.NStruct;
+
 let sintern2 = require("./struct_intern2.js");
 let StructFieldTypeMap = sintern2.StructFieldTypeMap;
 
@@ -450,7 +452,7 @@ let STRUCT = exports.STRUCT = class STRUCT {
 
   get_struct(name) {
     if (!(name in this.structs)) {
-      console.trace();
+      console.warn("Unknown struct", name);
       throw new Error("Unknown struct " + name);
     }
     return this.structs[name];
@@ -712,8 +714,8 @@ let STRUCT = exports.STRUCT = class STRUCT {
   }
 
   writeJSON(obj, stt=undefined) {
-    let cls = obj.constructor.structName;
-    stt = stt || this.get_struct(cls);
+    let cls = obj.constructor;
+    stt = stt || this.get_struct(cls.structName);
 
     function use_helper_js(field) {
       let type = field.type.type;
@@ -729,28 +731,47 @@ let STRUCT = exports.STRUCT = class STRUCT {
 
     for (let i = 0; i < fields.length; i++) {
       let f = fields[i];
-      let t1 = f.type;
-      let t2 = t1.type;
       let val;
+      let t1 = f.type;
+
+      let json2;
+
+      console.log(stt.name, f, use_helper_js(f));
 
       if (use_helper_js(f)) {
-        let type = t2;
         if (f.get !== undefined) {
           val = thestruct._env_call(f.get, obj);
-        }
-        else {
-          val = obj[f.name];
+        } else {
+          val = f.name === "this" ? obj : obj[f.name];
         }
 
         if (_nGlobal.DEBUG && _nGlobal.DEBUG.tinyeval) {
           console.log("\n\n\n", f.get, "Helper JS Ret", val, "\n\n\n");
         }
 
-        json[f.name] = toJSON(this, val, obj, f, t1);
+        json2 = toJSON(this, val, obj, f, t1);
       }
       else {
-        val = obj[f.name];
-        json[f.name] = toJSON(this, val, obj, f, t1);
+        val = f.name === "this" ? obj : obj[f.name];
+        json2 = toJSON(this, val, obj, f, t1);
+      }
+
+      if (val !== obj) {
+        json[f.name] = json2;
+      } else { //f.name was 'this'?
+        let isArray = Array.isArray(json2);
+        isArray = isArray || f.type.type === StructTypes.T_ARRAY;
+        isArray = isArray || f.type.type === StructTypes.T_STATIC_ARRAY;
+
+        if (isArray) {
+          json.length = json2.length;
+
+          for (let i=0; i<json2.length; i++) {
+            json[i] = json2[i];
+          }
+        } else {
+          Object.assign(json, json2);
+        }
       }
     }
 
@@ -855,11 +876,13 @@ let STRUCT = exports.STRUCT = class STRUCT {
     }
   }
 
-  readJSON(data, cls_or_struct_id) {
+  readJSON(json, cls_or_struct_id, objInstance=undefined) {
     let cls, stt;
 
     if (typeof cls_or_struct_id === "number") {
       cls = this.struct_cls[this.struct_ids[cls_or_struct_id].name];
+    } else if (cls_or_struct_id instanceof NStruct) {
+      cls = this.get_struct_cls(cls_or_struct_id.name);
     } else {
       cls = cls_or_struct_id;
     }
@@ -870,56 +893,77 @@ let STRUCT = exports.STRUCT = class STRUCT {
 
     stt = this.structs[cls.structName];
 
-    let fromJSON = sintern2.fromJSON;
+    packer_debug("\n\n=Begin reading " + cls.structName + "=");
     let thestruct = this;
-
     let this2  = this;
-
     let was_run = false;
+    let fromJSON = sintern2.fromJSON;
 
-    function reader(obj) {
-      if (was_run) {
-        return;
-      }
+    function makeLoader(stt) {
+      return function load(obj) {
+        if (was_run) {
+          return;
+        }
 
-      was_run = true;
+        was_run = true;
 
-      let fields = stt.fields;
-      let flen = fields.length;
-      for (let i = 0; i < flen; i++) {
-        let f = fields[i];
+        let fields = stt.fields;
+        let flen = fields.length;
 
-        packer_debug("Load field " + f.name);
-        obj[f.name] = fromJSON(thestruct, data[f.name], data, f.type);
+        for (let i = 0; i < flen; i++) {
+          let f = fields[i];
+
+          let val;
+
+          if (f.name === 'this') {
+            val = json;
+          } else {
+            val = json[f.name];
+          }
+
+          if (val === undefined) {
+            console.warn("nstructjs.readJSON: Missing field " + f.name + " in struct " + stt.name);
+            continue;
+          }
+
+          let instance = f.name === 'this' ? obj : objInstance;
+
+          let ret = fromJSON(this2, val, obj, f, f.type, instance);
+
+          if (f.name !== 'this') {
+            obj[f.name] = ret;
+          }
+        }
       }
     }
 
-    if (cls.prototype.loadSTRUCT !== undefined) {
-      let obj;
+    let load = makeLoader(stt);
 
-      if (cls.newSTRUCT !== undefined) {
+    if (cls.prototype.loadSTRUCT !== undefined) {
+      let obj = objInstance;
+
+      if (!obj && cls.newSTRUCT !== undefined) {
         obj = cls.newSTRUCT();
-      } else {
+      } else if (!obj) {
         obj = new cls();
       }
 
-      obj.loadSTRUCT(reader);
-
+      obj.loadSTRUCT(load);
       return obj;
     } else if (cls.fromSTRUCT !== undefined) {
       if (warninglvl > 1)
         console.warn("Warning: class " + unmangle(cls.name) + " is using deprecated fromSTRUCT interface; use newSTRUCT/loadSTRUCT instead");
+      return cls.fromSTRUCT(load);
+    } else { //default case, make new instance and then call load() on it
+      let obj = objInstance;
 
-      return cls.fromSTRUCT(reader);
-    } else { //default case, make new instance and then call reader() on it
-      let obj;
-      if (cls.newSTRUCT !== undefined) {
+      if (!obj && cls.newSTRUCT !== undefined) {
         obj = cls.newSTRUCT();
-      } else {
+      } else if (!obj) {
         obj = new cls();
       }
 
-      reader(obj);
+      load(obj);
 
       return obj;
     }
