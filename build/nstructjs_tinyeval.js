@@ -3292,6 +3292,12 @@ let STRUCT = _module_exports_$1.STRUCT = class STRUCT {
   @return {cls_or_struct_id} Instance of cls_or_struct_id
   */
   readObject(data, cls_or_struct_id, uctx) {
+    if (data instanceof Uint8Array || data instanceof Uint8ClampedArray) {
+      data = new DataView(data.buffer);
+    } else if (data instanceof Array) {
+      data = new DataView(new Uint8Array(data).buffer);
+    }
+
     return this.read_object(data, cls_or_struct_id, uctx);
   }
   
