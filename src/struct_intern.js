@@ -856,7 +856,7 @@ let STRUCT = exports.STRUCT = class STRUCT {
       let obj = objInstance;
 
       if (!obj && cls.newSTRUCT !== undefined) {
-        obj = cls.newSTRUCT();
+        obj = cls.newSTRUCT(load);
       } else if (!obj) {
         obj = new cls();
       }
@@ -871,7 +871,7 @@ let STRUCT = exports.STRUCT = class STRUCT {
       let obj = objInstance;
 
       if (!obj && cls.newSTRUCT !== undefined) {
-        obj = cls.newSTRUCT();
+        obj = cls.newSTRUCT(load);
       } else if (!obj) {
         obj = new cls();
       }
@@ -949,7 +949,7 @@ let STRUCT = exports.STRUCT = class STRUCT {
       let obj = objInstance;
 
       if (!obj && cls.newSTRUCT !== undefined) {
-        obj = cls.newSTRUCT();
+        obj = cls.newSTRUCT(load);
       } else if (!obj) {
         obj = new cls();
       }
@@ -964,7 +964,7 @@ let STRUCT = exports.STRUCT = class STRUCT {
       let obj = objInstance;
 
       if (!obj && cls.newSTRUCT !== undefined) {
-        obj = cls.newSTRUCT();
+        obj = cls.newSTRUCT(load);
       } else if (!obj) {
         obj = new cls();
       }
