@@ -66,6 +66,11 @@ exports.isRegistered = function isRegistered(cls) {
 exports.register = function register(cls, structName) {
   return exports.manager.register(cls, structName);
 }
+
+exports.unregister = function unregister(cls) {
+  exports.manager.unregister(cls);
+}
+
 exports.inherit = function (child, parent, structName = child.name) {
   return exports.STRUCT.inherit(...arguments);
 }

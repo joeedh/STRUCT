@@ -371,6 +371,20 @@ let STRUCT = exports.STRUCT = class STRUCT {
     return this.add_class(cls, structName);
   }
 
+  unregister(cls) {
+    if (!cls || !cls.structName || !(cls.structName in this.struct_cls)) {
+      console.warn("Class not registered with nstructjs", cls);
+      return;
+    }
+
+
+    let st = this.structs[cls.structName];
+
+    delete this.structs[cls.structName];
+    delete this.struct_cls[cls.structName];
+    delete this.struct_ids[st.id];
+  }
+
   add_class(cls, structName) {
     if (cls.STRUCT) {
       let bad = false;

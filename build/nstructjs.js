@@ -2961,6 +2961,20 @@ let STRUCT = _module_exports_$1.STRUCT = class STRUCT {
     return this.add_class(cls, structName);
   }
 
+  unregister(cls) {
+    if (!cls || !cls.structName || !(cls.structName in this.struct_cls)) {
+      console.warn("Class not registered with nstructjs", cls);
+      return;
+    }
+
+
+    let st = this.structs[cls.structName];
+
+    delete this.structs[cls.structName];
+    delete this.struct_cls[cls.structName];
+    delete this.struct_ids[st.id];
+  }
+
   add_class(cls, structName) {
     if (cls.STRUCT) {
       let bad = false;
@@ -3941,6 +3955,11 @@ _module_exports_$2.isRegistered = function isRegistered(cls) {
 _module_exports_$2.register = function register(cls, structName) {
   return _module_exports_$2.manager.register(cls, structName);
 };
+
+_module_exports_$2.unregister = function unregister(cls) {
+  _module_exports_$2.manager.unregister(cls);
+};
+
 _module_exports_$2.inherit = function (child, parent, structName = child.name) {
   return _module_exports_$2.STRUCT.inherit(...arguments);
 };
