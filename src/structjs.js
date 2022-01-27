@@ -54,6 +54,18 @@ exports.validateStructs = function validateStructs(onerror) {
   return exports.manager.validateStructs(onerror);
 }
 
+exports.setEndian = function(mode) {
+  let ret = struct_binpack.STRUCT_ENDIAN;
+
+  struct_binpack.STRUCT_ENDIAN = mode;
+
+  return ret;
+}
+
+exports.getEndian = function() {
+  return struct_binpack.STRUCT_ENDIAN;
+}
+
 exports.setAllowOverriding = function setAllowOverriding(t) {
   return exports.manager.allowOverriding = !!t;
 }

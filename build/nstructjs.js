@@ -3941,6 +3941,18 @@ _module_exports_$2.validateStructs = function validateStructs(onerror) {
   return _module_exports_$2.manager.validateStructs(onerror);
 };
 
+_module_exports_$2.setEndian = function(mode) {
+  let ret = _module_exports_.STRUCT_ENDIAN;
+
+  _module_exports_.STRUCT_ENDIAN = mode;
+
+  return ret;
+};
+
+_module_exports_$2.getEndian = function() {
+  return _module_exports_.STRUCT_ENDIAN;
+};
+
 _module_exports_$2.setAllowOverriding = function setAllowOverriding(t) {
   return _module_exports_$2.manager.allowOverriding = !!t;
 };
