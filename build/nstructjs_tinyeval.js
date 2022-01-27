@@ -2448,7 +2448,7 @@ function define_empty_class(name) {
   return cls;
 }
 
-class STRUCT$1 {
+class STRUCT {
   constructor() {
     this.idgen = 0;
     this.allowOverriding = true;
@@ -2484,7 +2484,7 @@ class STRUCT$1 {
 
     let stt = struct_parse.parse(parent.STRUCT);
     let code = structName + "{\n";
-    code += STRUCT$1.fmt_struct(stt, true);
+    code += STRUCT.fmt_struct(stt, true);
     return code;
   }
 
@@ -2650,7 +2650,7 @@ class STRUCT$1 {
     }
 
     function throwError(stt, field, msg) {
-      let buf = STRUCT$1.formatStruct(stt);
+      let buf = STRUCT.formatStruct(stt);
 
       console.error(buf + "\n\n" + msg);
 
@@ -2704,7 +2704,7 @@ class STRUCT$1 {
       defined_classes = exports.manager;
     }
 
-    if (defined_classes instanceof STRUCT$1) {
+    if (defined_classes instanceof STRUCT) {
       let struct2 = defined_classes;
       defined_classes = [];
 
@@ -2750,7 +2750,7 @@ class STRUCT$1 {
 
         let dummy = define_empty_class(stt.name);
 
-        dummy.STRUCT = STRUCT$1.fmt_struct(stt);
+        dummy.STRUCT = STRUCT.fmt_struct(stt);
         dummy.structName = stt.name;
 
         dummy.prototype.structName = dummy.name;
@@ -2813,7 +2813,7 @@ class STRUCT$1 {
           structName = unmangle(cls.name);
         }
 
-        cls.STRUCT = STRUCT$1.inherit(cls, p) + `\n}`;
+        cls.STRUCT = STRUCT.inherit(cls, p) + `\n}`;
       }
     }
 
@@ -3265,7 +3265,7 @@ class STRUCT$1 {
 };
 
 //main struct script manager
-exports.manager = new STRUCT$1();
+exports.manager = new STRUCT();
 
 /**
  * Write all defined structs out to a string.
@@ -3277,7 +3277,7 @@ function write_scripts(nManager = exports.manager, include_code = false) {
   let buf = "";
 
   nManager.forEach(function (stt) {
-    buf += STRUCT$1.fmt_struct(stt, false, !include_code) + "\n";
+    buf += STRUCT.fmt_struct(stt, false, !include_code) + "\n";
   });
 
   let buf2 = buf;
@@ -3445,7 +3445,7 @@ class FileHelper {
     this.version.minor = unpack_byte(dataview, this.unpack_ctx);
     this.version.micro = unpack_byte(dataview, this.unpack_ctx);
 
-    let struct = this.struct = new STRUCT$1();
+    let struct = this.struct = new STRUCT();
 
     let scripts = unpack_string(dataview, this.unpack_ctx);
     this.struct.parse_structs(scripts, exports.manager);
@@ -9681,7 +9681,7 @@ function useTinyEval() {
   });
 };
 
-exports.STRUCT = STRUCT$1;
+exports.STRUCT = STRUCT;
 exports._truncateDollarSign = _truncateDollarSign;
 exports.binpack = struct_binpack;
 exports.filehelper = struct_filehelper;

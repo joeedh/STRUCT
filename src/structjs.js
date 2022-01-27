@@ -7,7 +7,7 @@ import * as struct_intern from './struct_intern.js';
 import * as struct_eval from './struct_eval.js';
 
 export {unpack_context} from './struct_binpack.js';
-import {manager, setTruncateDollarSign} from './struct_intern.js';
+import {STRUCT, manager, setTruncateDollarSign} from './struct_intern.js';
 
 export * from './struct_intern.js';
 
