@@ -1,5 +1,7 @@
-exports.acorn = require("acorn");
-exports.walk = require("acorn-walk");
+import acorn from "acorn";
+import walk from "acorn-walk";
+
+let exports = {acorn, walk};
 
 let color = exports.color = function color(str, c) {
   return "\u001b[" + c + "m" + str + "\u001b[0m";
@@ -34,13 +36,15 @@ exports.eval = function(buf, scope={}) {
     let debug = 0//_nGlobal.DEBUG && _nGlobal.DEBUG.tinyeval;
 
 
-    let acorn = exports.acorn, walk = exports.walk;
-
     let stack = [];
     let startstate = {stack : stack, scope : scope};
 
-    scope["undefined"] = undefined;
-    scope["null"] = null;
+    if (!("undefined" in scope)) {
+        scope["undefined"] = undefined;
+    }
+    if (!("null" in scope)) {
+        scope["null"] = null;
+    }
 
     let node;
     if (buf in cache) {
@@ -473,3 +477,5 @@ function test() {
 
     console.log(fn({y : 1}))
 }
+
+export default exports;

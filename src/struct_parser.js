@@ -1,8 +1,8 @@
 "use strict";
-let struct_util = require("./struct_util");
-let struct_parseutil = require("./struct_parseutil");
 
-let NStruct = exports.NStruct = class NStruct {
+import * as struct_parseutil from './struct_parseutil.js';
+
+export class NStruct {
   constructor(name) {
     this.fields = [];
     this.id = -1;
@@ -13,7 +13,7 @@ let NStruct = exports.NStruct = class NStruct {
 //the discontinuous id's are to make sure
 //the version I originally wrote (which had a few application-specific types)
 //and this one do not become totally incompatible.
-let StructEnum = exports.StructEnum = {
+export const StructEnum = {
   T_INT          : 0,
   T_FLOAT        : 1,
   T_DOUBLE       : 2,
@@ -33,7 +33,7 @@ let StructEnum = exports.StructEnum = {
   T_SIGNED_BYTE  : 20
 };
 
-let ValueTypes = exports.ValueTypes = new Set([
+export const ValueTypes = new Set([
   StructEnum.T_INT,
   StructEnum.T_FLOAT,
   StructEnum.T_DOUBLE,
@@ -48,7 +48,7 @@ let ValueTypes = exports.ValueTypes = new Set([
 
 ])
 
-let StructTypes = exports.StructTypes = {
+export let StructTypes = {
   "int"          : StructEnum.T_INT,
   "uint"         : StructEnum.T_UINT,
   "ushort"       : StructEnum.T_USHORT,
@@ -67,7 +67,7 @@ let StructTypes = exports.StructTypes = {
   "sbyte"        : StructEnum.T_SIGNED_BYTE
 };
 
-let StructTypeMap = exports.StructTypeMap = {};
+export let StructTypeMap = {};
 
 for (let k in StructTypes) {
   StructTypeMap[StructTypes[k]] = k;
@@ -82,11 +82,11 @@ function gen_tabstr(t) {
 }
 
 function StructParser() {
-  let basic_types = new struct_util.set([
+  let basic_types = new Set([
     "int", "float", "double", "string", "short", "byte", "sbyte", "bool", "uint", "ushort"
   ]);
 
-  let reserved_tokens = new struct_util.set([
+  let reserved_tokens = new Set([
     "int", "float", "double", "string", "static_string", "array",
     "iter", "abstract", "short", "byte", "sbyte", "bool", "iterkeys", "uint", "ushort",
     "static_array"
@@ -185,6 +185,7 @@ function StructParser() {
   function p_Iter(p) {
     p.expect("ITER");
     p.expect("LPARAM");
+
     let arraytype = p_Type(p);
     let itername = "";
 
@@ -347,4 +348,5 @@ function StructParser() {
   return parser;
 }
 
-exports.struct_parse = StructParser();
+export const struct_parse = StructParser();
+

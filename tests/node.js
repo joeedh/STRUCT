@@ -3,8 +3,8 @@ global.DEBUG = {
 };
 
 //let structjs = require('../build/nstructjs');
-let structjs;
-structjs = require('../src/structjs');
+import * as structjs from '../src/structjs.js';
+
 /*
 try {
   structjs = require('../src/structjs');
@@ -25,7 +25,7 @@ try {
 structjs.setAllowOverriding(false);
 
 let filehelper = structjs.filehelper;
-let fs = require('fs');
+import fs from 'fs';
 
 structjs.useTinyEval();
 //structjs.setDebugMode(3);

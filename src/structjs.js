@@ -1,60 +1,30 @@
-if (typeof window !== "undefined") {
-  window._nGlobal = window;
-} else if (typeof self !== "undefined") {
-  self._nGlobal = self;
-} else {
-  global._nGlobal = global;
-}
+import * as struct_parser from './struct_parser.js';
+import * as struct_typesystem from './struct_typesystem.js';
+import * as struct_parseutil from './struct_parseutil.js';
+import * as struct_binpack from './struct_binpack.js';
+import * as struct_filehelper from './struct_filehelper.js';
+import * as struct_intern from './struct_intern.js';
+import * as struct_eval from './struct_eval.js';
 
-_nGlobal._structEval = eval;
+export {unpack_context} from './struct_binpack.js';
+import {manager} from './struct_intern.js';
 
-
-let struct_intern = require("./struct_intern");
-let struct_filehelper = require("./struct_filehelper");
-let struct_util = require("./struct_util");
-let struct_binpack = require("./struct_binpack");
-let struct_parseutil = require("./struct_parseutil");
-let struct_typesystem = require("./struct_typesystem");
-let struct_parser = require("./struct_parser");
-
-exports.unpack_context = struct_binpack.unpack_context;
-
-/**
-true means little endian, false means big endian
-*/
-Object.defineProperty(exports, "STRUCT_ENDIAN", {
-  get: function () {
-    return struct_binpack.STRUCT_ENDIAN;
-  },
-  set: function (val) {
-    struct_binpack.STRUCT_ENDIAN = val;
-  }
-});
-
-for (let k in struct_intern) {
-  exports[k] = struct_intern[k];
-}
-
-var StructTypeMap = struct_parser.StructTypeMap;
-var StructTypes = struct_parser.StructTypes;
-var Class = struct_typesystem.Class;
-
-//forward struct_intern's exports
-for (var k in struct_intern) {
-  exports[k] = struct_intern[k];
-}
+export * from './struct_intern.js';
 
 /** truncate webpack mangled names. defaults to true
  *  so Mesh$1 turns into Mesh */
-exports.truncateDollarSign = function(value=true) {
+export function truncateDollarSign(value = true) {
   struct_intern.truncateDollarSign = !!value;
 }
 
-exports.validateStructs = function validateStructs(onerror) {
-  return exports.manager.validateStructs(onerror);
+export function validateStructs(onerror) {
+  return manager.validateStructs(onerror);
 }
 
-exports.setEndian = function(mode) {
+/**
+ true means little endian, false means big endian
+ */
+export function setEndian(mode) {
   let ret = struct_binpack.STRUCT_ENDIAN;
 
   struct_binpack.STRUCT_ENDIAN = mode;
@@ -62,71 +32,73 @@ exports.setEndian = function(mode) {
   return ret;
 }
 
-exports.getEndian = function() {
+export function getEndian() {
   return struct_binpack.STRUCT_ENDIAN;
 }
 
-exports.setAllowOverriding = function setAllowOverriding(t) {
-  return exports.manager.allowOverriding = !!t;
+export function setAllowOverriding(t) {
+  return manager.allowOverriding = !!t;
 }
 
-exports.isRegistered = function isRegistered(cls) {
-  return exports.manager.isRegistered(cls);
+export function isRegistered(cls) {
+  return manager.isRegistered(cls);
 }
 
 /** Register a class with nstructjs **/
-exports.register = function register(cls, structName) {
-  return exports.manager.register(cls, structName);
+export function register(cls, structName) {
+  return manager.register(cls, structName);
 }
 
-exports.unregister = function unregister(cls) {
-  exports.manager.unregister(cls);
+export function unregister(cls) {
+  manager.unregister(cls);
 }
 
-exports.inherit = function (child, parent, structName = child.name) {
-  return exports.STRUCT.inherit(...arguments);
-}
-
-/**
-@param data : DataView
-*/
-exports.readObject = function(data, cls, __uctx=undefined) {
-  return exports.manager.readObject(data, cls, __uctx);
+export function inherit(child, parent, structName = child.name) {
+  return STRUCT.inherit(...arguments);
 }
 
 /**
-@param data : Array instance to write bytes to
-*/
-exports.writeObject = function(data, obj) {
-  return exports.manager.writeObject(data, obj);
+ @param data : DataView
+ */
+export function readObject(data, cls, __uctx = undefined) {
+  return manager.readObject(data, cls, __uctx);
 }
 
-exports.writeJSON = function(obj) {
-  return exports.manager.writeJSON(obj);
+/**
+ @param data : Array instance to write bytes to
+ */
+export function writeObject(data, obj) {
+  return manager.writeObject(data, obj);
 }
 
-exports.readJSON = function(json, class_or_struct_id) {
-  return exports.manager.readJSON(json, class_or_struct_id);
+export function writeJSON(obj) {
+  return manager.writeJSON(obj);
 }
 
-exports.setDebugMode = struct_intern.setDebugMode;
-exports.setWarningMode = struct_intern.setWarningMode;
+export function readJSON(json, class_or_struct_id) {
+  return manager.readJSON(json, class_or_struct_id);
+}
+
+export {setDebugMode} from './struct_intern.js';
+export {setWarningMode} from './struct_intern.js';
 
 //$BUILD_TINYEVAL_START
-exports.tinyeval = require("../tinyeval/tinyeval.js");
+import tinyeval1 from "../tinyeval/tinyeval.js";
+export const tinyeval = tinyeval1;
+import {nGlobal} from './struct_global.js';
 
-exports.useTinyEval = function() {
-  _nGlobal._structEval = (buf) => {
-    return exports.tinyeval.eval(buf, _nGlobal);
-  }
+export function useTinyEval() {
+  struct_eval.setStructEval((buf) => {
+    return tinyeval.eval(buf, nGlobal);
+  });
 };
 //$BUILD_TINYEVAL_END
 
 
 //export other modules
-exports.binpack = struct_binpack;
-exports.util = struct_util;
-exports.typesystem = struct_typesystem;
-exports.parseutil = struct_parseutil;
-exports.parser = struct_parser;
-exports.filehelper = struct_filehelper;
+
+export {struct_binpack as binpack}
+export {struct_typesystem as typesystem}
+export {struct_parseutil as parseutil}
+export {struct_parser as parser}
+export {struct_filehelper as filehelper}

@@ -1,18 +1,23 @@
 "use strict";
 
+import * as struct_binpack from './struct_binpack.js';
+import * as struct_intern from './struct_intern.js';
+
+let nbtoa, natob;
+
 if (typeof btoa === "undefined") {
-  _nGlobal.btoa = function btoa(str) {
+  nbtoa = function btoa(str) {
     let buffer = new Buffer("" + str, 'binary');
     return buffer.toString('base64');
   }
 
-  _nGlobal.atob = function atob(str) {
+  natob = function atob(str) {
     return new Buffer(str, 'base64').toString('binary');
   }
+} else {
+  natob = atob;
+  nbtoa = btoa;
 }
-
-let struct_binpack = require("./struct_binpack.js");
-let struct_intern = require("./struct_intern.js");
 
 /*
 file format:
@@ -31,15 +36,15 @@ file format:
     data                                   : ...
 */
 
-exports.versionToInt = function(v) {
-  v = exports.versionCoerce(v);
+export function versionToInt(v) {
+  v = versionCoerce(v);
   let mul = 64;
   return ~~(v.major*mul*mul*mul + v.minor*mul*mul + v.micro*mul);
 }
 
 let ver_pat = /[0-9]+\.[0-9]+\.[0-9]+$/;
 
-exports.versionCoerce = function(v) {
+export function versionCoerce(v) {
   if (!v) {
     throw new Error("empty version: " + v);
   }
@@ -72,15 +77,13 @@ exports.versionCoerce = function(v) {
   } else {
     throw new Error("invalid version " + v);
   }
-};
+}
 
-exports.versionLessThan = function(a, b) {
-  return exports.versionToInt(a) < exports.versionToInt(b);
-};
+export function versionLessThan(a, b) {
+  return versionToInt(a) < versionToInt(b);
+}
 
-let versionLessThan = exports.versionLessThan;
-
-let FileParams = exports.FileParams = class FileParams {
+export class FileParams {
   constructor() {
     this.magic = "STRT";
     this.ext = ".bin";
@@ -95,17 +98,17 @@ let FileParams = exports.FileParams = class FileParams {
 }
 
 //used to define blocks
-let Block = exports.Block = class Block {
+export class Block {
   constructor(type_magic, data) {
     this.type = type_magic;
     this.data = data;
   }
-};
+}
 
-let FileError = exports.FileError = class FileeError extends Error {
-};
+export class FileeError extends Error {
+}
 
-let FileHelper = exports.FileHelper = class FileHelper {
+export class FileHelper {
   //params can be FileParams instance, or object literal
   //(it will convert to FileParams)
   constructor(params) {
@@ -160,7 +163,7 @@ let FileHelper = exports.FileHelper = class FileHelper {
 
       //console.log(type, datalen, bstruct);
 
-      if (bstruct == -2) { //string data, e.g. JSON
+      if (bstruct === -2) { //string data, e.g. JSON
         bdata = struct_binpack.unpack_static_string(dataview, this.unpack_ctx, datalen);
       } else {
         bdata = struct_binpack.unpack_bytes(dataview, this.unpack_ctx, datalen);
@@ -241,7 +244,7 @@ let FileHelper = exports.FileHelper = class FileHelper {
       str += String.fromCharCode(bytes[i]);
     }
 
-    return btoa(str);
+    return nbtoa(str);
   }
 
   makeBlock(type, data) {
@@ -249,7 +252,7 @@ let FileHelper = exports.FileHelper = class FileHelper {
   }
 
   readBase64(base64) {
-    let data = atob(base64);
+    let data = natob(base64);
     let data2 = new Uint8Array(data.length);
 
     for (let i = 0; i < data.length; i++) {
@@ -258,4 +261,4 @@ let FileHelper = exports.FileHelper = class FileHelper {
 
     return this.read(new DataView(data2.buffer));
   }
-};
+}
