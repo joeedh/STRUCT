@@ -1,7 +1,5 @@
 'use strict';
 
-Object.defineProperty(exports, '__esModule', { value: true });
-
 // Reserved word lists for various dialects of the language
 
 var reservedWords = {
@@ -5070,7 +5068,7 @@ function tokenizer(input, options) {
   return Parser.tokenizer(input, options)
 }
 
-var _require_acorn_ = /*#__PURE__*/Object.freeze({
+var acorn1 = /*#__PURE__*/Object.freeze({
   __proto__: null,
   Node: Node,
   Parser: Parser,
@@ -5536,7 +5534,7 @@ base.MethodDefinition = base.Property = function (node, st, c) {
   c(node.value, st, "Expression");
 };
 
-var _require_acorn_walk_ = /*#__PURE__*/Object.freeze({
+var walk1 = /*#__PURE__*/Object.freeze({
   __proto__: null,
   ancestor: ancestor,
   base: base,
@@ -5551,10 +5549,15 @@ var _require_acorn_walk_ = /*#__PURE__*/Object.freeze({
   simple: simple
 });
 
-const _export_acorn_ = _require_acorn_;
-const _export_walk_ = _require_acorn_walk_;
+/* have to do this weirdness to make rollup happy */
+let acorn = acorn1;
+let walk = walk1;
+acorn = acorn.default ? acorn.default : acorn;
+walk = walk.default ? walk.default : walk;
 
-let color = function color(str, c) {
+let exports$1 = {acorn, walk};
+
+let color = exports$1.color = function color(str, c) {
   return "\u001b[" + c + "m" + str + "\u001b[0m";
 };
 
@@ -5578,7 +5581,7 @@ class ReturnException extends Error {}
 
 
 let cache = {};
-const _export_eval_ = function(buf, scope={}) {
+exports$1.eval = function(buf, scope={}) {
     /*
     global.DEBUG = {
       tinyeval : true
@@ -5587,13 +5590,15 @@ const _export_eval_ = function(buf, scope={}) {
     let debug = 0;//_nGlobal.DEBUG && _nGlobal.DEBUG.tinyeval;
 
 
-    let acorn = _export_acorn_, walk = _export_walk_;
-
     let stack = [];
     let startstate = {stack : stack, scope : scope};
 
-    scope["undefined"] = undefined;
-    scope["null"] = null;
+    if (!("undefined" in scope)) {
+        scope["undefined"] = undefined;
+    }
+    if (!("null" in scope)) {
+        scope["null"] = null;
+    }
 
     let node;
     if (buf in cache) {
@@ -6018,7 +6023,7 @@ function test() {
     let t = 0.3;
     console.log(a && a.y ? 1 : -1);
     "a.b.c.d(t)[0] + 1 + t";
-    let fn = _export_eval_(`
+    let fn = exports$1.eval(`
     a = function(a, b){
         return a && a.y ? 1 : -1;
     }
@@ -6027,7 +6032,4 @@ function test() {
     console.log(fn({y : 1}));
 }
 
-exports.acorn = _export_acorn_;
-exports.color = color;
-exports.eval = _export_eval_;
-exports.walk = _export_walk_;
+module.exports = exports$1;

@@ -18,3 +18,6 @@ echo "wrote build/nstructjs_tinyeval.js"
 
 ./node_modules/.bin/rollup -c acorn_rollup.config.js
 echo "write build/tinyeval.js"
+
+echo "write build/nstructjs_es6.js"
+./node_modules/.bin/rollup -c rollup_module.config.js

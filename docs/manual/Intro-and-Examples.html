@@ -94,6 +94,22 @@
        this.f = 1.23432;
     }
 
+    /*
+      Optional method to allocate a new instance.
+
+      reader is the exact same continuation that&apos;s 
+      passed to loadSTRUCT, try not to use it
+      (it&apos;s necassary for typed arrays to work 
+       properly with nstructjs).
+
+      Note that the return value&apos;s .loadSTRUCT method 
+      is still called, though the
+      call to reader inside of it will be ignored
+     */
+    static newSTRUCT(reader) {
+        return new SomeClass();
+    }
+
     loadSTRUCT(reader) {
       reader(this);
       //if you wanted to include parent class&apos;s loadSTRUCT, 

@@ -16,5 +16,5 @@
     }
   },
   {"name" : "esdoc-lint-plugin", "option" : {"enable" : false}},
-  {"name" : "./nstructjs_esdoc.js"}
+  {"name" : "./nstructjs_esdoc.cjs"}
 ]}

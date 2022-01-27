@@ -7,14 +7,14 @@ import * as struct_intern from './struct_intern.js';
 import * as struct_eval from './struct_eval.js';
 
 export {unpack_context} from './struct_binpack.js';
-import {manager} from './struct_intern.js';
+import {manager, setTruncateDollarSign} from './struct_intern.js';
 
 export * from './struct_intern.js';
 
 /** truncate webpack mangled names. defaults to true
  *  so Mesh$1 turns into Mesh */
 export function truncateDollarSign(value = true) {
-  struct_intern.truncateDollarSign = !!value;
+  setTruncateDollarSign(value);
 }
 
 export function validateStructs(onerror) {
@@ -27,7 +27,7 @@ export function validateStructs(onerror) {
 export function setEndian(mode) {
   let ret = struct_binpack.STRUCT_ENDIAN;
 
-  struct_binpack.STRUCT_ENDIAN = mode;
+  struct_binpack.setEndian(mode);
 
   return ret;
 }

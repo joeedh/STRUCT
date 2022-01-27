@@ -13,6 +13,10 @@ let warninglvl = 2;
 export var truncateDollarSign = true;
 export var manager;
 
+export function setTruncateDollarSign(v) {
+  truncateDollarSign = !!v;
+}
+
 export function _truncateDollarSign(s) {
   let i = s.search("$");
 

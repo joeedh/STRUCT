@@ -1,45 +1,15 @@
 window.esdocSearchIndex = [
   [
-    "nstructjs/src/struct_filehelper.js~block",
-    "class/src/struct_filehelper.js~Block.html",
-    "<span>Block</span> <span class=\"search-result-import-path\">nstructjs/src/struct_filehelper.js</span>",
-    "class"
+    "nstructjs/src/struct_global.js~debug",
+    "variable/index.html#static-variable-DEBUG",
+    "<span>DEBUG</span> <span class=\"search-result-import-path\">nstructjs/src/struct_global.js</span>",
+    "variable"
   ],
   [
-    "nstructjs/src/struct_filehelper.js~fileerror",
-    "class/src/struct_filehelper.js~FileError.html",
-    "<span>FileError</span> <span class=\"search-result-import-path\">nstructjs/src/struct_filehelper.js</span>",
-    "class"
-  ],
-  [
-    "nstructjs/src/struct_filehelper.js~filehelper",
-    "class/src/struct_filehelper.js~FileHelper.html",
-    "<span>FileHelper</span> <span class=\"search-result-import-path\">nstructjs/src/struct_filehelper.js</span>",
-    "class"
-  ],
-  [
-    "nstructjs/src/struct_filehelper.js~fileparams",
-    "class/src/struct_filehelper.js~FileParams.html",
-    "<span>FileParams</span> <span class=\"search-result-import-path\">nstructjs/src/struct_filehelper.js</span>",
-    "class"
-  ],
-  [
-    "nstructjs/src/struct_util.js~idgen",
-    "class/src/struct_util.js~IDGen.html",
-    "<span>IDGen</span> <span class=\"search-result-import-path\">nstructjs/src/struct_util.js</span>",
-    "class"
-  ],
-  [
-    "nstructjs/src/struct_parseutil.js~putil_parseerror",
-    "class/src/struct_parseutil.js~PUTIL_ParseError.html",
-    "<span>PUTIL_ParseError</span> <span class=\"search-result-import-path\">nstructjs/src/struct_parseutil.js</span>",
-    "class"
-  ],
-  [
-    "nstructjs/src/struct_intern.js~struct",
-    "class/src/struct_intern.js~STRUCT.html",
-    "<span>STRUCT</span> <span class=\"search-result-import-path\">nstructjs/src/struct_intern.js</span>",
-    "class"
+    "nstructjs/src/struct_binpack.js~struct_endian",
+    "variable/index.html#static-variable-STRUCT_ENDIAN",
+    "<span>STRUCT_ENDIAN</span> <span class=\"search-result-import-path\">nstructjs/src/struct_binpack.js</span>",
+    "variable"
   ],
   [
     "nstructjs/src/struct_parser.js~structenum",
@@ -48,15 +18,15 @@ window.esdocSearchIndex = [
     "variable"
   ],
   [
-    "nstructjs/src/struct_intern2.js~structfieldtype",
-    "class/src/struct_intern2.js~StructFieldType.html",
-    "<span>StructFieldType</span> <span class=\"search-result-import-path\">nstructjs/src/struct_intern2.js</span>",
-    "class"
-  ],
-  [
     "nstructjs/src/struct_intern2.js~structfieldtypemap",
     "variable/index.html#static-variable-StructFieldTypeMap",
     "<span>StructFieldTypeMap</span> <span class=\"search-result-import-path\">nstructjs/src/struct_intern2.js</span>",
+    "variable"
+  ],
+  [
+    "nstructjs/src/struct_intern2.js~structfieldtypes",
+    "variable/index.html#static-variable-StructFieldTypes",
+    "<span>StructFieldTypes</span> <span class=\"search-result-import-path\">nstructjs/src/struct_intern2.js</span>",
     "variable"
   ],
   [
@@ -72,10 +42,16 @@ window.esdocSearchIndex = [
     "variable"
   ],
   [
-    "nstructjs/src/struct_util.js~cachering",
-    "class/src/struct_util.js~cachering.html",
-    "<span>cachering</span> <span class=\"search-result-import-path\">nstructjs/src/struct_util.js</span>",
-    "class"
+    "nstructjs/src/struct_parser.js~valuetypes",
+    "variable/index.html#static-variable-ValueTypes",
+    "<span>ValueTypes</span> <span class=\"search-result-import-path\">nstructjs/src/struct_parser.js</span>",
+    "variable"
+  ],
+  [
+    "nstructjs/src/struct_intern.js~_truncatedollarsign",
+    "function/index.html#static-function-_truncateDollarSign",
+    "<span>_truncateDollarSign</span> <span class=\"search-result-import-path\">nstructjs/src/struct_intern.js</span>",
+    "function"
   ],
   [
     "nstructjs/src/struct_binpack.js~decode_utf8",
@@ -96,9 +72,9 @@ window.esdocSearchIndex = [
     "function"
   ],
   [
-    "nstructjs/src/struct_util.js~get_callstack",
-    "function/index.html#static-function-get_callstack",
-    "<span>get_callstack</span> <span class=\"search-result-import-path\">nstructjs/src/struct_util.js</span>",
+    "nstructjs/src/structjs.js~getendian",
+    "function/index.html#static-function-getEndian",
+    "<span>getEndian</span> <span class=\"search-result-import-path\">nstructjs/src/structjs.js</span>",
     "function"
   ],
   [
@@ -108,16 +84,10 @@ window.esdocSearchIndex = [
     "function"
   ],
   [
-    "nstructjs/src/struct_util.js~is_obj_lit",
-    "function/index.html#static-function-is_obj_lit",
-    "<span>is_obj_lit</span> <span class=\"search-result-import-path\">nstructjs/src/struct_util.js</span>",
+    "nstructjs/src/structjs.js~isregistered",
+    "function/index.html#static-function-isRegistered",
+    "<span>isRegistered</span> <span class=\"search-result-import-path\">nstructjs/src/structjs.js</span>",
     "function"
-  ],
-  [
-    "nstructjs/src/struct_parseutil.js~lexer",
-    "class/src/struct_parseutil.js~lexer.html",
-    "<span>lexer</span> <span class=\"search-result-import-path\">nstructjs/src/struct_parseutil.js</span>",
-    "class"
   ],
   [
     "nstructjs/src/struct_intern2.js~packnull",
@@ -156,6 +126,12 @@ window.esdocSearchIndex = [
     "function"
   ],
   [
+    "nstructjs/src/struct_binpack.js~pack_sbyte",
+    "function/index.html#static-function-pack_sbyte",
+    "<span>pack_sbyte</span> <span class=\"search-result-import-path\">nstructjs/src/struct_binpack.js</span>",
+    "function"
+  ],
+  [
     "nstructjs/src/struct_binpack.js~pack_short",
     "function/index.html#static-function-pack_short",
     "<span>pack_short</span> <span class=\"search-result-import-path\">nstructjs/src/struct_binpack.js</span>",
@@ -186,18 +162,6 @@ window.esdocSearchIndex = [
     "function"
   ],
   [
-    "nstructjs/src/struct_parseutil.js~parser",
-    "class/src/struct_parseutil.js~parser.html",
-    "<span>parser</span> <span class=\"search-result-import-path\">nstructjs/src/struct_parseutil.js</span>",
-    "class"
-  ],
-  [
-    "nstructjs/src/struct_util.js~print_stack",
-    "function/index.html#static-function-print_stack",
-    "<span>print_stack</span> <span class=\"search-result-import-path\">nstructjs/src/struct_util.js</span>",
-    "function"
-  ],
-  [
     "nstructjs/src/structjs.js~readjson",
     "function/index.html#static-function-readJSON",
     "<span>readJSON</span> <span class=\"search-result-import-path\">nstructjs/src/structjs.js</span>",
@@ -216,16 +180,70 @@ window.esdocSearchIndex = [
     "function"
   ],
   [
-    "nstructjs/src/struct_util.js~set",
-    "class/src/struct_util.js~set.html",
-    "<span>set</span> <span class=\"search-result-import-path\">nstructjs/src/struct_util.js</span>",
-    "class"
-  ],
-  [
     "nstructjs/src/structjs.js~setallowoverriding",
     "function/index.html#static-function-setAllowOverriding",
     "<span>setAllowOverriding</span> <span class=\"search-result-import-path\">nstructjs/src/structjs.js</span>",
     "function"
+  ],
+  [
+    "nstructjs/src/struct_intern.js~setdebugmode",
+    "function/index.html#static-function-setDebugMode",
+    "<span>setDebugMode</span> <span class=\"search-result-import-path\">nstructjs/src/struct_intern.js</span>",
+    "function"
+  ],
+  [
+    "nstructjs/src/struct_intern2.js~setdebugmode",
+    "function/index.html#static-function-setDebugMode",
+    "<span>setDebugMode</span> <span class=\"search-result-import-path\">nstructjs/src/struct_intern2.js</span>",
+    "function"
+  ],
+  [
+    "nstructjs/src/struct_binpack.js~setendian",
+    "function/index.html#static-function-setEndian",
+    "<span>setEndian</span> <span class=\"search-result-import-path\">nstructjs/src/struct_binpack.js</span>",
+    "function"
+  ],
+  [
+    "nstructjs/src/structjs.js~setendian",
+    "function/index.html#static-function-setEndian",
+    "<span>setEndian</span> <span class=\"search-result-import-path\">nstructjs/src/structjs.js</span>",
+    "function"
+  ],
+  [
+    "nstructjs/src/struct_eval.js~setstructeval",
+    "function/index.html#static-function-setStructEval",
+    "<span>setStructEval</span> <span class=\"search-result-import-path\">nstructjs/src/struct_eval.js</span>",
+    "function"
+  ],
+  [
+    "nstructjs/src/struct_intern.js~settruncatedollarsign",
+    "function/index.html#static-function-setTruncateDollarSign",
+    "<span>setTruncateDollarSign</span> <span class=\"search-result-import-path\">nstructjs/src/struct_intern.js</span>",
+    "function"
+  ],
+  [
+    "nstructjs/src/struct_intern.js~setwarningmode",
+    "function/index.html#static-function-setWarningMode",
+    "<span>setWarningMode</span> <span class=\"search-result-import-path\">nstructjs/src/struct_intern.js</span>",
+    "function"
+  ],
+  [
+    "nstructjs/src/struct_intern2.js~setwarningmode",
+    "function/index.html#static-function-setWarningMode",
+    "<span>setWarningMode</span> <span class=\"search-result-import-path\">nstructjs/src/struct_intern2.js</span>",
+    "function"
+  ],
+  [
+    "nstructjs/src/struct_eval.js~structeval",
+    "variable/index.html#static-variable-structEval",
+    "<span>structEval</span> <span class=\"search-result-import-path\">nstructjs/src/struct_eval.js</span>",
+    "variable"
+  ],
+  [
+    "nstructjs/src/struct_parser.js~struct_parse",
+    "variable/index.html#static-variable-struct_parse",
+    "<span>struct_parse</span> <span class=\"search-result-import-path\">nstructjs/src/struct_parser.js</span>",
+    "variable"
   ],
   [
     "nstructjs/src/struct_binpack.js~test_utf8",
@@ -234,28 +252,22 @@ window.esdocSearchIndex = [
     "function"
   ],
   [
+    "nstructjs/src/structjs.js~tinyeval",
+    "variable/index.html#static-variable-tinyeval",
+    "<span>tinyeval</span> <span class=\"search-result-import-path\">nstructjs/src/structjs.js</span>",
+    "variable"
+  ],
+  [
     "nstructjs/src/struct_intern2.js~tojson",
     "function/index.html#static-function-toJSON",
     "<span>toJSON</span> <span class=\"search-result-import-path\">nstructjs/src/struct_intern2.js</span>",
     "function"
   ],
   [
-    "nstructjs/src/struct_parseutil.js~tokdef",
-    "class/src/struct_parseutil.js~tokdef.html",
-    "<span>tokdef</span> <span class=\"search-result-import-path\">nstructjs/src/struct_parseutil.js</span>",
-    "class"
-  ],
-  [
-    "nstructjs/src/struct_parseutil.js~token",
-    "class/src/struct_parseutil.js~token.html",
-    "<span>token</span> <span class=\"search-result-import-path\">nstructjs/src/struct_parseutil.js</span>",
-    "class"
-  ],
-  [
-    "nstructjs/src/struct_util.js~truncatedollarsign",
-    "function/index.html#static-function-truncateDollarSign",
-    "<span>truncateDollarSign</span> <span class=\"search-result-import-path\">nstructjs/src/struct_util.js</span>",
-    "function"
+    "nstructjs/src/struct_intern.js~truncatedollarsign",
+    "variable/index.html#static-variable-truncateDollarSign",
+    "<span>truncateDollarSign</span> <span class=\"search-result-import-path\">nstructjs/src/struct_intern.js</span>",
+    "variable"
   ],
   [
     "nstructjs/src/structjs.js~truncatedollarsign",
@@ -276,12 +288,6 @@ window.esdocSearchIndex = [
     "function"
   ],
   [
-    "nstructjs/src/struct_binpack.js~unpack_context",
-    "class/src/struct_binpack.js~unpack_context.html",
-    "<span>unpack_context</span> <span class=\"search-result-import-path\">nstructjs/src/struct_binpack.js</span>",
-    "class"
-  ],
-  [
     "nstructjs/src/struct_binpack.js~unpack_double",
     "function/index.html#static-function-unpack_double",
     "<span>unpack_double</span> <span class=\"search-result-import-path\">nstructjs/src/struct_binpack.js</span>",
@@ -297,6 +303,12 @@ window.esdocSearchIndex = [
     "nstructjs/src/struct_binpack.js~unpack_int",
     "function/index.html#static-function-unpack_int",
     "<span>unpack_int</span> <span class=\"search-result-import-path\">nstructjs/src/struct_binpack.js</span>",
+    "function"
+  ],
+  [
+    "nstructjs/src/struct_binpack.js~unpack_sbyte",
+    "function/index.html#static-function-unpack_sbyte",
+    "<span>unpack_sbyte</span> <span class=\"search-result-import-path\">nstructjs/src/struct_binpack.js</span>",
     "function"
   ],
   [
@@ -327,6 +339,18 @@ window.esdocSearchIndex = [
     "nstructjs/src/struct_binpack.js~unpack_ushort",
     "function/index.html#static-function-unpack_ushort",
     "<span>unpack_ushort</span> <span class=\"search-result-import-path\">nstructjs/src/struct_binpack.js</span>",
+    "function"
+  ],
+  [
+    "nstructjs/src/structjs.js~unregister",
+    "function/index.html#static-function-unregister",
+    "<span>unregister</span> <span class=\"search-result-import-path\">nstructjs/src/structjs.js</span>",
+    "function"
+  ],
+  [
+    "nstructjs/src/struct_global.js~updatedebug",
+    "function/index.html#static-function-updateDEBUG",
+    "<span>updateDEBUG</span> <span class=\"search-result-import-path\">nstructjs/src/struct_global.js</span>",
     "function"
   ],
   [
@@ -376,18 +400,6 @@ window.esdocSearchIndex = [
     "function/index.html#static-function-write_scripts",
     "<span>write_scripts</span> <span class=\"search-result-import-path\">nstructjs/src/struct_intern.js</span>",
     "function"
-  ],
-  [
-    "node_modules/acorn-walk/dist/walk.js",
-    "file/node_modules/acorn-walk/dist/walk.js.html",
-    "node_modules/acorn-walk/dist/walk.js",
-    "file"
-  ],
-  [
-    "node_modules/acorn/dist/acorn.js",
-    "file/node_modules/acorn/dist/acorn.js.html",
-    "node_modules/acorn/dist/acorn.js",
-    "file"
   ],
   [
     "src/.external-ecmascript.js~array",
@@ -684,10 +696,28 @@ window.esdocSearchIndex = [
     "file"
   ],
   [
+    "src/struct_binpack.js~unpack_context",
+    "class/src/struct_binpack.js~unpack_context.html",
+    "src/struct_binpack.js~unpack_context",
+    "class"
+  ],
+  [
     "src/struct_binpack.js~unpack_context#constructor",
-    "class/src/struct_binpack.js~unpack_context.html#instance-constructor-constructor",
+    "class/src/struct_binpack.js~unpack_context.html#static-constructor-constructor",
     "src/struct_binpack.js~unpack_context#constructor",
     "method"
+  ],
+  [
+    "src/struct_binpack.js~unpack_context#i",
+    "class/src/struct_binpack.js~unpack_context.html#instance-member-i",
+    "src/struct_binpack.js~unpack_context#i",
+    "member"
+  ],
+  [
+    "src/struct_eval.js",
+    "file/src/struct_eval.js.html",
+    "src/struct_eval.js",
+    "file"
   ],
   [
     "src/struct_filehelper.js",
@@ -696,58 +726,166 @@ window.esdocSearchIndex = [
     "file"
   ],
   [
+    "src/struct_filehelper.js~block",
+    "class/src/struct_filehelper.js~Block.html",
+    "src/struct_filehelper.js~Block",
+    "class"
+  ],
+  [
     "src/struct_filehelper.js~block#constructor",
-    "class/src/struct_filehelper.js~Block.html#instance-constructor-constructor",
+    "class/src/struct_filehelper.js~Block.html#static-constructor-constructor",
     "src/struct_filehelper.js~Block#constructor",
     "method"
   ],
   [
+    "src/struct_filehelper.js~block#data",
+    "class/src/struct_filehelper.js~Block.html#instance-member-data",
+    "src/struct_filehelper.js~Block#data",
+    "member"
+  ],
+  [
+    "src/struct_filehelper.js~block#type",
+    "class/src/struct_filehelper.js~Block.html#instance-member-type",
+    "src/struct_filehelper.js~Block#type",
+    "member"
+  ],
+  [
+    "src/struct_filehelper.js~filehelper",
+    "class/src/struct_filehelper.js~FileHelper.html",
+    "src/struct_filehelper.js~FileHelper",
+    "class"
+  ],
+  [
+    "src/struct_filehelper.js~filehelper#blocks",
+    "class/src/struct_filehelper.js~FileHelper.html#instance-member-blocks",
+    "src/struct_filehelper.js~FileHelper#blocks",
+    "member"
+  ],
+  [
+    "src/struct_filehelper.js~filehelper#blocktypes",
+    "class/src/struct_filehelper.js~FileHelper.html#instance-member-blocktypes",
+    "src/struct_filehelper.js~FileHelper#blocktypes",
+    "member"
+  ],
+  [
     "src/struct_filehelper.js~filehelper#constructor",
-    "class/src/struct_filehelper.js~FileHelper.html#instance-constructor-constructor",
+    "class/src/struct_filehelper.js~FileHelper.html#static-constructor-constructor",
     "src/struct_filehelper.js~FileHelper#constructor",
     "method"
   ],
   [
     "src/struct_filehelper.js~filehelper#doversions",
-    "class/src/struct_filehelper.js~FileHelper.html#instance-method-doVersions",
+    "class/src/struct_filehelper.js~FileHelper.html#static-method-doVersions",
     "src/struct_filehelper.js~FileHelper#doVersions",
     "method"
   ],
   [
+    "src/struct_filehelper.js~filehelper#ext",
+    "class/src/struct_filehelper.js~FileHelper.html#instance-member-ext",
+    "src/struct_filehelper.js~FileHelper#ext",
+    "member"
+  ],
+  [
+    "src/struct_filehelper.js~filehelper#magic",
+    "class/src/struct_filehelper.js~FileHelper.html#instance-member-magic",
+    "src/struct_filehelper.js~FileHelper#magic",
+    "member"
+  ],
+  [
     "src/struct_filehelper.js~filehelper#makeblock",
-    "class/src/struct_filehelper.js~FileHelper.html#instance-method-makeBlock",
+    "class/src/struct_filehelper.js~FileHelper.html#static-method-makeBlock",
     "src/struct_filehelper.js~FileHelper#makeBlock",
     "method"
   ],
   [
     "src/struct_filehelper.js~filehelper#read",
-    "class/src/struct_filehelper.js~FileHelper.html#instance-method-read",
+    "class/src/struct_filehelper.js~FileHelper.html#static-method-read",
     "src/struct_filehelper.js~FileHelper#read",
     "method"
   ],
   [
     "src/struct_filehelper.js~filehelper#readbase64",
-    "class/src/struct_filehelper.js~FileHelper.html#instance-method-readBase64",
+    "class/src/struct_filehelper.js~FileHelper.html#static-method-readBase64",
     "src/struct_filehelper.js~FileHelper#readBase64",
     "method"
   ],
   [
+    "src/struct_filehelper.js~filehelper#struct",
+    "class/src/struct_filehelper.js~FileHelper.html#instance-member-struct",
+    "src/struct_filehelper.js~FileHelper#struct",
+    "member"
+  ],
+  [
+    "src/struct_filehelper.js~filehelper#unpack_ctx",
+    "class/src/struct_filehelper.js~FileHelper.html#instance-member-unpack_ctx",
+    "src/struct_filehelper.js~FileHelper#unpack_ctx",
+    "member"
+  ],
+  [
+    "src/struct_filehelper.js~filehelper#version",
+    "class/src/struct_filehelper.js~FileHelper.html#instance-member-version",
+    "src/struct_filehelper.js~FileHelper#version",
+    "member"
+  ],
+  [
     "src/struct_filehelper.js~filehelper#write",
-    "class/src/struct_filehelper.js~FileHelper.html#instance-method-write",
+    "class/src/struct_filehelper.js~FileHelper.html#static-method-write",
     "src/struct_filehelper.js~FileHelper#write",
     "method"
   ],
   [
     "src/struct_filehelper.js~filehelper#writebase64",
-    "class/src/struct_filehelper.js~FileHelper.html#instance-method-writeBase64",
+    "class/src/struct_filehelper.js~FileHelper.html#static-method-writeBase64",
     "src/struct_filehelper.js~FileHelper#writeBase64",
     "method"
   ],
   [
+    "src/struct_filehelper.js~fileparams",
+    "class/src/struct_filehelper.js~FileParams.html",
+    "src/struct_filehelper.js~FileParams",
+    "class"
+  ],
+  [
+    "src/struct_filehelper.js~fileparams#blocktypes",
+    "class/src/struct_filehelper.js~FileParams.html#instance-member-blocktypes",
+    "src/struct_filehelper.js~FileParams#blocktypes",
+    "member"
+  ],
+  [
     "src/struct_filehelper.js~fileparams#constructor",
-    "class/src/struct_filehelper.js~FileParams.html#instance-constructor-constructor",
+    "class/src/struct_filehelper.js~FileParams.html#static-constructor-constructor",
     "src/struct_filehelper.js~FileParams#constructor",
     "method"
+  ],
+  [
+    "src/struct_filehelper.js~fileparams#ext",
+    "class/src/struct_filehelper.js~FileParams.html#instance-member-ext",
+    "src/struct_filehelper.js~FileParams#ext",
+    "member"
+  ],
+  [
+    "src/struct_filehelper.js~fileparams#magic",
+    "class/src/struct_filehelper.js~FileParams.html#instance-member-magic",
+    "src/struct_filehelper.js~FileParams#magic",
+    "member"
+  ],
+  [
+    "src/struct_filehelper.js~fileparams#version",
+    "class/src/struct_filehelper.js~FileParams.html#instance-member-version",
+    "src/struct_filehelper.js~FileParams#version",
+    "member"
+  ],
+  [
+    "src/struct_filehelper.js~fileeerror",
+    "class/src/struct_filehelper.js~FileeError.html",
+    "src/struct_filehelper.js~FileeError",
+    "class"
+  ],
+  [
+    "src/struct_global.js",
+    "file/src/struct_global.js.html",
+    "src/struct_global.js",
+    "file"
   ],
   [
     "src/struct_intern.js",
@@ -756,105 +894,171 @@ window.esdocSearchIndex = [
     "file"
   ],
   [
+    "src/struct_intern.js~struct",
+    "class/src/struct_intern.js~STRUCT.html",
+    "src/struct_intern.js~STRUCT",
+    "class"
+  ],
+  [
     "src/struct_intern.js~struct#_env_call",
-    "class/src/struct_intern.js~STRUCT.html#instance-method-_env_call",
+    "class/src/struct_intern.js~STRUCT.html#static-method-_env_call",
     "src/struct_intern.js~STRUCT#_env_call",
     "method"
   ],
   [
     "src/struct_intern.js~struct#add_class",
-    "class/src/struct_intern.js~STRUCT.html#instance-method-add_class",
+    "class/src/struct_intern.js~STRUCT.html#static-method-add_class",
     "src/struct_intern.js~STRUCT#add_class",
     "method"
   ],
   [
+    "src/struct_intern.js~struct#allowoverriding",
+    "class/src/struct_intern.js~STRUCT.html#instance-member-allowOverriding",
+    "src/struct_intern.js~STRUCT#allowOverriding",
+    "member"
+  ],
+  [
+    "src/struct_intern.js~struct#compiled_code",
+    "class/src/struct_intern.js~STRUCT.html#instance-member-compiled_code",
+    "src/struct_intern.js~STRUCT#compiled_code",
+    "member"
+  ],
+  [
     "src/struct_intern.js~struct#constructor",
-    "class/src/struct_intern.js~STRUCT.html#instance-constructor-constructor",
+    "class/src/struct_intern.js~STRUCT.html#static-constructor-constructor",
     "src/struct_intern.js~STRUCT#constructor",
     "method"
   ],
   [
     "src/struct_intern.js~struct#foreach",
-    "class/src/struct_intern.js~STRUCT.html#instance-method-forEach",
+    "class/src/struct_intern.js~STRUCT.html#static-method-forEach",
     "src/struct_intern.js~STRUCT#forEach",
     "method"
   ],
   [
     "src/struct_intern.js~struct#get_struct",
-    "class/src/struct_intern.js~STRUCT.html#instance-method-get_struct",
+    "class/src/struct_intern.js~STRUCT.html#static-method-get_struct",
     "src/struct_intern.js~STRUCT#get_struct",
     "method"
   ],
   [
     "src/struct_intern.js~struct#get_struct_cls",
-    "class/src/struct_intern.js~STRUCT.html#instance-method-get_struct_cls",
+    "class/src/struct_intern.js~STRUCT.html#static-method-get_struct_cls",
     "src/struct_intern.js~STRUCT#get_struct_cls",
     "method"
   ],
   [
     "src/struct_intern.js~struct#get_struct_id",
-    "class/src/struct_intern.js~STRUCT.html#instance-method-get_struct_id",
+    "class/src/struct_intern.js~STRUCT.html#static-method-get_struct_id",
     "src/struct_intern.js~STRUCT#get_struct_id",
     "method"
   ],
   [
+    "src/struct_intern.js~struct#idgen",
+    "class/src/struct_intern.js~STRUCT.html#instance-member-idgen",
+    "src/struct_intern.js~STRUCT#idgen",
+    "member"
+  ],
+  [
+    "src/struct_intern.js~struct#isregistered",
+    "class/src/struct_intern.js~STRUCT.html#static-method-isRegistered",
+    "src/struct_intern.js~STRUCT#isRegistered",
+    "method"
+  ],
+  [
+    "src/struct_intern.js~struct#null_natives",
+    "class/src/struct_intern.js~STRUCT.html#instance-member-null_natives",
+    "src/struct_intern.js~STRUCT#null_natives",
+    "member"
+  ],
+  [
     "src/struct_intern.js~struct#parse_structs",
-    "class/src/struct_intern.js~STRUCT.html#instance-method-parse_structs",
+    "class/src/struct_intern.js~STRUCT.html#static-method-parse_structs",
     "src/struct_intern.js~STRUCT#parse_structs",
     "method"
   ],
   [
     "src/struct_intern.js~struct#readjson",
-    "class/src/struct_intern.js~STRUCT.html#instance-method-readJSON",
+    "class/src/struct_intern.js~STRUCT.html#static-method-readJSON",
     "src/struct_intern.js~STRUCT#readJSON",
     "method"
   ],
   [
     "src/struct_intern.js~struct#readobject",
-    "class/src/struct_intern.js~STRUCT.html#instance-method-readObject",
+    "class/src/struct_intern.js~STRUCT.html#static-method-readObject",
     "src/struct_intern.js~STRUCT#readObject",
     "method"
   ],
   [
     "src/struct_intern.js~struct#read_object",
-    "class/src/struct_intern.js~STRUCT.html#instance-method-read_object",
+    "class/src/struct_intern.js~STRUCT.html#static-method-read_object",
     "src/struct_intern.js~STRUCT#read_object",
     "method"
   ],
   [
     "src/struct_intern.js~struct#register",
-    "class/src/struct_intern.js~STRUCT.html#instance-method-register",
+    "class/src/struct_intern.js~STRUCT.html#static-method-register",
     "src/struct_intern.js~STRUCT#register",
     "method"
   ],
   [
+    "src/struct_intern.js~struct#struct_cls",
+    "class/src/struct_intern.js~STRUCT.html#instance-member-struct_cls",
+    "src/struct_intern.js~STRUCT#struct_cls",
+    "member"
+  ],
+  [
+    "src/struct_intern.js~struct#struct_ids",
+    "class/src/struct_intern.js~STRUCT.html#instance-member-struct_ids",
+    "src/struct_intern.js~STRUCT#struct_ids",
+    "member"
+  ],
+  [
+    "src/struct_intern.js~struct#structs",
+    "class/src/struct_intern.js~STRUCT.html#instance-member-structs",
+    "src/struct_intern.js~STRUCT#structs",
+    "member"
+  ],
+  [
+    "src/struct_intern.js~struct#unregister",
+    "class/src/struct_intern.js~STRUCT.html#static-method-unregister",
+    "src/struct_intern.js~STRUCT#unregister",
+    "method"
+  ],
+  [
     "src/struct_intern.js~struct#validatestructs",
-    "class/src/struct_intern.js~STRUCT.html#instance-method-validateStructs",
+    "class/src/struct_intern.js~STRUCT.html#static-method-validateStructs",
     "src/struct_intern.js~STRUCT#validateStructs",
     "method"
   ],
   [
     "src/struct_intern.js~struct#writejson",
-    "class/src/struct_intern.js~STRUCT.html#instance-method-writeJSON",
+    "class/src/struct_intern.js~STRUCT.html#static-method-writeJSON",
     "src/struct_intern.js~STRUCT#writeJSON",
     "method"
   ],
   [
     "src/struct_intern.js~struct#writeobject",
-    "class/src/struct_intern.js~STRUCT.html#instance-method-writeObject",
+    "class/src/struct_intern.js~STRUCT.html#static-method-writeObject",
     "src/struct_intern.js~STRUCT#writeObject",
     "method"
   ],
   [
     "src/struct_intern.js~struct#write_object",
-    "class/src/struct_intern.js~STRUCT.html#instance-method-write_object",
+    "class/src/struct_intern.js~STRUCT.html#static-method-write_object",
     "src/struct_intern.js~STRUCT#write_object",
     "method"
   ],
   [
     "src/struct_intern.js~struct#write_struct",
-    "class/src/struct_intern.js~STRUCT.html#instance-method-write_struct",
+    "class/src/struct_intern.js~STRUCT.html#static-method-write_struct",
     "src/struct_intern.js~STRUCT#write_struct",
+    "method"
+  ],
+  [
+    "src/struct_intern.js~struct.super",
+    "class/src/struct_intern.js~STRUCT.html#static-method-Super",
+    "src/struct_intern.js~STRUCT.Super",
     "method"
   ],
   [
@@ -870,6 +1074,18 @@ window.esdocSearchIndex = [
     "method"
   ],
   [
+    "src/struct_intern.js~struct.chain_fromstruct",
+    "class/src/struct_intern.js~STRUCT.html#static-method-chain_fromSTRUCT",
+    "src/struct_intern.js~STRUCT.chain_fromSTRUCT",
+    "method"
+  ],
+  [
+    "src/struct_intern.js~struct.fmt_struct",
+    "class/src/struct_intern.js~STRUCT.html#static-method-fmt_struct",
+    "src/struct_intern.js~STRUCT.fmt_struct",
+    "method"
+  ],
+  [
     "src/struct_intern.js~struct.fmt_struct",
     "class/src/struct_intern.js~STRUCT.html#static-method-fmt_struct",
     "src/struct_intern.js~STRUCT.fmt_struct",
@@ -879,6 +1095,18 @@ window.esdocSearchIndex = [
     "src/struct_intern.js~struct.formatstruct",
     "class/src/struct_intern.js~STRUCT.html#static-method-formatStruct",
     "src/struct_intern.js~STRUCT.formatStruct",
+    "method"
+  ],
+  [
+    "src/struct_intern.js~struct.formatstruct",
+    "class/src/struct_intern.js~STRUCT.html#static-method-formatStruct",
+    "src/struct_intern.js~STRUCT.formatStruct",
+    "method"
+  ],
+  [
+    "src/struct_intern.js~struct.inherit",
+    "class/src/struct_intern.js~STRUCT.html#static-method-inherit",
+    "src/struct_intern.js~STRUCT.inherit",
     "method"
   ],
   [
@@ -924,6 +1152,18 @@ window.esdocSearchIndex = [
     "method"
   ],
   [
+    "src/struct_intern2.js~structarrayfield.fromjson",
+    "class/src/struct_intern2.js~StructArrayField.html#static-method-fromJSON",
+    "src/struct_intern2.js~StructArrayField.fromJSON",
+    "method"
+  ],
+  [
+    "src/struct_intern2.js~structarrayfield.fromjson",
+    "class/src/struct_intern2.js~StructArrayField.html#static-method-fromJSON",
+    "src/struct_intern2.js~StructArrayField.fromJSON",
+    "method"
+  ],
+  [
     "src/struct_intern2.js~structarrayfield.pack",
     "class/src/struct_intern2.js~StructArrayField.html#static-method-pack",
     "src/struct_intern2.js~StructArrayField.pack",
@@ -948,18 +1188,6 @@ window.esdocSearchIndex = [
     "method"
   ],
   [
-    "src/struct_intern2.js~structarrayfield.readjson",
-    "class/src/struct_intern2.js~StructArrayField.html#static-method-readJSON",
-    "src/struct_intern2.js~StructArrayField.readJSON",
-    "method"
-  ],
-  [
-    "src/struct_intern2.js~structarrayfield.readjson",
-    "class/src/struct_intern2.js~StructArrayField.html#static-method-readJSON",
-    "src/struct_intern2.js~StructArrayField.readJSON",
-    "method"
-  ],
-  [
     "src/struct_intern2.js~structarrayfield.tojson",
     "class/src/struct_intern2.js~StructArrayField.html#static-method-toJSON",
     "src/struct_intern2.js~StructArrayField.toJSON",
@@ -981,6 +1209,18 @@ window.esdocSearchIndex = [
     "src/struct_intern2.js~structarrayfield.unpack",
     "class/src/struct_intern2.js~StructArrayField.html#static-method-unpack",
     "src/struct_intern2.js~StructArrayField.unpack",
+    "method"
+  ],
+  [
+    "src/struct_intern2.js~structarrayfield.unpackinto",
+    "class/src/struct_intern2.js~StructArrayField.html#static-method-unpackInto",
+    "src/struct_intern2.js~StructArrayField.unpackInto",
+    "method"
+  ],
+  [
+    "src/struct_intern2.js~structarrayfield.unpackinto",
+    "class/src/struct_intern2.js~StructArrayField.html#static-method-unpackInto",
+    "src/struct_intern2.js~StructArrayField.unpackInto",
     "method"
   ],
   [
@@ -1122,6 +1362,18 @@ window.esdocSearchIndex = [
     "method"
   ],
   [
+    "src/struct_intern2.js~structfieldtype",
+    "class/src/struct_intern2.js~StructFieldType.html",
+    "src/struct_intern2.js~StructFieldType",
+    "class"
+  ],
+  [
+    "src/struct_intern2.js~structfieldtype.define",
+    "class/src/struct_intern2.js~StructFieldType.html#static-method-define",
+    "src/struct_intern2.js~StructFieldType.define",
+    "method"
+  ],
+  [
     "src/struct_intern2.js~structfieldtype.define",
     "class/src/struct_intern2.js~StructFieldType.html#static-method-define",
     "src/struct_intern2.js~StructFieldType.define",
@@ -1131,6 +1383,30 @@ window.esdocSearchIndex = [
     "src/struct_intern2.js~structfieldtype.format",
     "class/src/struct_intern2.js~StructFieldType.html#static-method-format",
     "src/struct_intern2.js~StructFieldType.format",
+    "method"
+  ],
+  [
+    "src/struct_intern2.js~structfieldtype.format",
+    "class/src/struct_intern2.js~StructFieldType.html#static-method-format",
+    "src/struct_intern2.js~StructFieldType.format",
+    "method"
+  ],
+  [
+    "src/struct_intern2.js~structfieldtype.fromjson",
+    "class/src/struct_intern2.js~StructFieldType.html#static-method-fromJSON",
+    "src/struct_intern2.js~StructFieldType.fromJSON",
+    "method"
+  ],
+  [
+    "src/struct_intern2.js~structfieldtype.fromjson",
+    "class/src/struct_intern2.js~StructFieldType.html#static-method-fromJSON",
+    "src/struct_intern2.js~StructFieldType.fromJSON",
+    "method"
+  ],
+  [
+    "src/struct_intern2.js~structfieldtype.pack",
+    "class/src/struct_intern2.js~StructFieldType.html#static-method-pack",
+    "src/struct_intern2.js~StructFieldType.pack",
     "method"
   ],
   [
@@ -1146,9 +1422,15 @@ window.esdocSearchIndex = [
     "method"
   ],
   [
-    "src/struct_intern2.js~structfieldtype.readjson",
-    "class/src/struct_intern2.js~StructFieldType.html#static-method-readJSON",
-    "src/struct_intern2.js~StructFieldType.readJSON",
+    "src/struct_intern2.js~structfieldtype.packnull",
+    "class/src/struct_intern2.js~StructFieldType.html#static-method-packNull",
+    "src/struct_intern2.js~StructFieldType.packNull",
+    "method"
+  ],
+  [
+    "src/struct_intern2.js~structfieldtype.register",
+    "class/src/struct_intern2.js~StructFieldType.html#static-method-register",
+    "src/struct_intern2.js~StructFieldType.register",
     "method"
   ],
   [
@@ -1164,9 +1446,27 @@ window.esdocSearchIndex = [
     "method"
   ],
   [
+    "src/struct_intern2.js~structfieldtype.tojson",
+    "class/src/struct_intern2.js~StructFieldType.html#static-method-toJSON",
+    "src/struct_intern2.js~StructFieldType.toJSON",
+    "method"
+  ],
+  [
     "src/struct_intern2.js~structfieldtype.unpack",
     "class/src/struct_intern2.js~StructFieldType.html#static-method-unpack",
     "src/struct_intern2.js~StructFieldType.unpack",
+    "method"
+  ],
+  [
+    "src/struct_intern2.js~structfieldtype.unpack",
+    "class/src/struct_intern2.js~StructFieldType.html#static-method-unpack",
+    "src/struct_intern2.js~StructFieldType.unpack",
+    "method"
+  ],
+  [
+    "src/struct_intern2.js~structfieldtype.usehelperjs",
+    "class/src/struct_intern2.js~StructFieldType.html#static-method-useHelperJS",
+    "src/struct_intern2.js~StructFieldType.useHelperJS",
     "method"
   ],
   [
@@ -1290,6 +1590,18 @@ window.esdocSearchIndex = [
     "method"
   ],
   [
+    "src/struct_intern2.js~structiterfield.fromjson",
+    "class/src/struct_intern2.js~StructIterField.html#static-method-fromJSON",
+    "src/struct_intern2.js~StructIterField.fromJSON",
+    "method"
+  ],
+  [
+    "src/struct_intern2.js~structiterfield.fromjson",
+    "class/src/struct_intern2.js~StructIterField.html#static-method-fromJSON",
+    "src/struct_intern2.js~StructIterField.fromJSON",
+    "method"
+  ],
+  [
     "src/struct_intern2.js~structiterfield.pack",
     "class/src/struct_intern2.js~StructIterField.html#static-method-pack",
     "src/struct_intern2.js~StructIterField.pack",
@@ -1314,18 +1626,6 @@ window.esdocSearchIndex = [
     "method"
   ],
   [
-    "src/struct_intern2.js~structiterfield.readjson",
-    "class/src/struct_intern2.js~StructIterField.html#static-method-readJSON",
-    "src/struct_intern2.js~StructIterField.readJSON",
-    "method"
-  ],
-  [
-    "src/struct_intern2.js~structiterfield.readjson",
-    "class/src/struct_intern2.js~StructIterField.html#static-method-readJSON",
-    "src/struct_intern2.js~StructIterField.readJSON",
-    "method"
-  ],
-  [
     "src/struct_intern2.js~structiterfield.tojson",
     "class/src/struct_intern2.js~StructIterField.html#static-method-toJSON",
     "src/struct_intern2.js~StructIterField.toJSON",
@@ -1347,6 +1647,18 @@ window.esdocSearchIndex = [
     "src/struct_intern2.js~structiterfield.unpack",
     "class/src/struct_intern2.js~StructIterField.html#static-method-unpack",
     "src/struct_intern2.js~StructIterField.unpack",
+    "method"
+  ],
+  [
+    "src/struct_intern2.js~structiterfield.unpackinto",
+    "class/src/struct_intern2.js~StructIterField.html#static-method-unpackInto",
+    "src/struct_intern2.js~StructIterField.unpackInto",
+    "method"
+  ],
+  [
+    "src/struct_intern2.js~structiterfield.unpackinto",
+    "class/src/struct_intern2.js~StructIterField.html#static-method-unpackInto",
+    "src/struct_intern2.js~StructIterField.unpackInto",
     "method"
   ],
   [
@@ -1392,6 +1704,18 @@ window.esdocSearchIndex = [
     "method"
   ],
   [
+    "src/struct_intern2.js~structiterkeysfield.fromjson",
+    "class/src/struct_intern2.js~StructIterKeysField.html#static-method-fromJSON",
+    "src/struct_intern2.js~StructIterKeysField.fromJSON",
+    "method"
+  ],
+  [
+    "src/struct_intern2.js~structiterkeysfield.fromjson",
+    "class/src/struct_intern2.js~StructIterKeysField.html#static-method-fromJSON",
+    "src/struct_intern2.js~StructIterKeysField.fromJSON",
+    "method"
+  ],
+  [
     "src/struct_intern2.js~structiterkeysfield.pack",
     "class/src/struct_intern2.js~StructIterKeysField.html#static-method-pack",
     "src/struct_intern2.js~StructIterKeysField.pack",
@@ -1416,18 +1740,6 @@ window.esdocSearchIndex = [
     "method"
   ],
   [
-    "src/struct_intern2.js~structiterkeysfield.readjson",
-    "class/src/struct_intern2.js~StructIterKeysField.html#static-method-readJSON",
-    "src/struct_intern2.js~StructIterKeysField.readJSON",
-    "method"
-  ],
-  [
-    "src/struct_intern2.js~structiterkeysfield.readjson",
-    "class/src/struct_intern2.js~StructIterKeysField.html#static-method-readJSON",
-    "src/struct_intern2.js~StructIterKeysField.readJSON",
-    "method"
-  ],
-  [
     "src/struct_intern2.js~structiterkeysfield.tojson",
     "class/src/struct_intern2.js~StructIterKeysField.html#static-method-toJSON",
     "src/struct_intern2.js~StructIterKeysField.toJSON",
@@ -1449,6 +1761,18 @@ window.esdocSearchIndex = [
     "src/struct_intern2.js~structiterkeysfield.unpack",
     "class/src/struct_intern2.js~StructIterKeysField.html#static-method-unpack",
     "src/struct_intern2.js~StructIterKeysField.unpack",
+    "method"
+  ],
+  [
+    "src/struct_intern2.js~structiterkeysfield.unpackinto",
+    "class/src/struct_intern2.js~StructIterKeysField.html#static-method-unpackInto",
+    "src/struct_intern2.js~StructIterKeysField.unpackInto",
+    "method"
+  ],
+  [
+    "src/struct_intern2.js~structiterkeysfield.unpackinto",
+    "class/src/struct_intern2.js~StructIterKeysField.html#static-method-unpackInto",
+    "src/struct_intern2.js~StructIterKeysField.unpackInto",
     "method"
   ],
   [
@@ -1506,6 +1830,48 @@ window.esdocSearchIndex = [
     "method"
   ],
   [
+    "src/struct_intern2.js~structsignedbytefield",
+    "class/src/struct_intern2.js~StructSignedByteField.html",
+    "src/struct_intern2.js~StructSignedByteField",
+    "class"
+  ],
+  [
+    "src/struct_intern2.js~structsignedbytefield.define",
+    "class/src/struct_intern2.js~StructSignedByteField.html#static-method-define",
+    "src/struct_intern2.js~StructSignedByteField.define",
+    "method"
+  ],
+  [
+    "src/struct_intern2.js~structsignedbytefield.define",
+    "class/src/struct_intern2.js~StructSignedByteField.html#static-method-define",
+    "src/struct_intern2.js~StructSignedByteField.define",
+    "method"
+  ],
+  [
+    "src/struct_intern2.js~structsignedbytefield.pack",
+    "class/src/struct_intern2.js~StructSignedByteField.html#static-method-pack",
+    "src/struct_intern2.js~StructSignedByteField.pack",
+    "method"
+  ],
+  [
+    "src/struct_intern2.js~structsignedbytefield.pack",
+    "class/src/struct_intern2.js~StructSignedByteField.html#static-method-pack",
+    "src/struct_intern2.js~StructSignedByteField.pack",
+    "method"
+  ],
+  [
+    "src/struct_intern2.js~structsignedbytefield.unpack",
+    "class/src/struct_intern2.js~StructSignedByteField.html#static-method-unpack",
+    "src/struct_intern2.js~StructSignedByteField.unpack",
+    "method"
+  ],
+  [
+    "src/struct_intern2.js~structsignedbytefield.unpack",
+    "class/src/struct_intern2.js~StructSignedByteField.html#static-method-unpack",
+    "src/struct_intern2.js~StructSignedByteField.unpack",
+    "method"
+  ],
+  [
     "src/struct_intern2.js~structstaticarrayfield",
     "class/src/struct_intern2.js~StructStaticArrayField.html",
     "src/struct_intern2.js~StructStaticArrayField",
@@ -1536,6 +1902,18 @@ window.esdocSearchIndex = [
     "method"
   ],
   [
+    "src/struct_intern2.js~structstaticarrayfield.fromjson",
+    "class/src/struct_intern2.js~StructStaticArrayField.html#static-method-fromJSON",
+    "src/struct_intern2.js~StructStaticArrayField.fromJSON",
+    "method"
+  ],
+  [
+    "src/struct_intern2.js~structstaticarrayfield.fromjson",
+    "class/src/struct_intern2.js~StructStaticArrayField.html#static-method-fromJSON",
+    "src/struct_intern2.js~StructStaticArrayField.fromJSON",
+    "method"
+  ],
+  [
     "src/struct_intern2.js~structstaticarrayfield.pack",
     "class/src/struct_intern2.js~StructStaticArrayField.html#static-method-pack",
     "src/struct_intern2.js~StructStaticArrayField.pack",
@@ -1560,18 +1938,6 @@ window.esdocSearchIndex = [
     "method"
   ],
   [
-    "src/struct_intern2.js~structstaticarrayfield.readjson",
-    "class/src/struct_intern2.js~StructStaticArrayField.html#static-method-readJSON",
-    "src/struct_intern2.js~StructStaticArrayField.readJSON",
-    "method"
-  ],
-  [
-    "src/struct_intern2.js~structstaticarrayfield.readjson",
-    "class/src/struct_intern2.js~StructStaticArrayField.html#static-method-readJSON",
-    "src/struct_intern2.js~StructStaticArrayField.readJSON",
-    "method"
-  ],
-  [
     "src/struct_intern2.js~structstaticarrayfield.tojson",
     "class/src/struct_intern2.js~StructStaticArrayField.html#static-method-toJSON",
     "src/struct_intern2.js~StructStaticArrayField.toJSON",
@@ -1593,6 +1959,18 @@ window.esdocSearchIndex = [
     "src/struct_intern2.js~structstaticarrayfield.unpack",
     "class/src/struct_intern2.js~StructStaticArrayField.html#static-method-unpack",
     "src/struct_intern2.js~StructStaticArrayField.unpack",
+    "method"
+  ],
+  [
+    "src/struct_intern2.js~structstaticarrayfield.unpackinto",
+    "class/src/struct_intern2.js~StructStaticArrayField.html#static-method-unpackInto",
+    "src/struct_intern2.js~StructStaticArrayField.unpackInto",
+    "method"
+  ],
+  [
+    "src/struct_intern2.js~structstaticarrayfield.unpackinto",
+    "class/src/struct_intern2.js~StructStaticArrayField.html#static-method-unpackInto",
+    "src/struct_intern2.js~StructStaticArrayField.unpackInto",
     "method"
   ],
   [
@@ -1716,18 +2094,6 @@ window.esdocSearchIndex = [
     "method"
   ],
   [
-    "src/struct_intern2.js~structstringfield.tojson",
-    "class/src/struct_intern2.js~StructStringField.html#static-method-toJSON",
-    "src/struct_intern2.js~StructStringField.toJSON",
-    "method"
-  ],
-  [
-    "src/struct_intern2.js~structstringfield.tojson",
-    "class/src/struct_intern2.js~StructStringField.html#static-method-toJSON",
-    "src/struct_intern2.js~StructStringField.toJSON",
-    "method"
-  ],
-  [
     "src/struct_intern2.js~structstringfield.unpack",
     "class/src/struct_intern2.js~StructStringField.html#static-method-unpack",
     "src/struct_intern2.js~StructStringField.unpack",
@@ -1770,6 +2136,18 @@ window.esdocSearchIndex = [
     "method"
   ],
   [
+    "src/struct_intern2.js~structstructfield.fromjson",
+    "class/src/struct_intern2.js~StructStructField.html#static-method-fromJSON",
+    "src/struct_intern2.js~StructStructField.fromJSON",
+    "method"
+  ],
+  [
+    "src/struct_intern2.js~structstructfield.fromjson",
+    "class/src/struct_intern2.js~StructStructField.html#static-method-fromJSON",
+    "src/struct_intern2.js~StructStructField.fromJSON",
+    "method"
+  ],
+  [
     "src/struct_intern2.js~structstructfield.pack",
     "class/src/struct_intern2.js~StructStructField.html#static-method-pack",
     "src/struct_intern2.js~StructStructField.pack",
@@ -1794,18 +2172,6 @@ window.esdocSearchIndex = [
     "method"
   ],
   [
-    "src/struct_intern2.js~structstructfield.readjson",
-    "class/src/struct_intern2.js~StructStructField.html#static-method-readJSON",
-    "src/struct_intern2.js~StructStructField.readJSON",
-    "method"
-  ],
-  [
-    "src/struct_intern2.js~structstructfield.readjson",
-    "class/src/struct_intern2.js~StructStructField.html#static-method-readJSON",
-    "src/struct_intern2.js~StructStructField.readJSON",
-    "method"
-  ],
-  [
     "src/struct_intern2.js~structstructfield.tojson",
     "class/src/struct_intern2.js~StructStructField.html#static-method-toJSON",
     "src/struct_intern2.js~StructStructField.toJSON",
@@ -1827,6 +2193,18 @@ window.esdocSearchIndex = [
     "src/struct_intern2.js~structstructfield.unpack",
     "class/src/struct_intern2.js~StructStructField.html#static-method-unpack",
     "src/struct_intern2.js~StructStructField.unpack",
+    "method"
+  ],
+  [
+    "src/struct_intern2.js~structstructfield.unpackinto",
+    "class/src/struct_intern2.js~StructStructField.html#static-method-unpackInto",
+    "src/struct_intern2.js~StructStructField.unpackInto",
+    "method"
+  ],
+  [
+    "src/struct_intern2.js~structstructfield.unpackinto",
+    "class/src/struct_intern2.js~StructStructField.html#static-method-unpackInto",
+    "src/struct_intern2.js~StructStructField.unpackInto",
     "method"
   ],
   [
@@ -1860,6 +2238,18 @@ window.esdocSearchIndex = [
     "method"
   ],
   [
+    "src/struct_intern2.js~structtstructfield.fromjson",
+    "class/src/struct_intern2.js~StructTStructField.html#static-method-fromJSON",
+    "src/struct_intern2.js~StructTStructField.fromJSON",
+    "method"
+  ],
+  [
+    "src/struct_intern2.js~structtstructfield.fromjson",
+    "class/src/struct_intern2.js~StructTStructField.html#static-method-fromJSON",
+    "src/struct_intern2.js~StructTStructField.fromJSON",
+    "method"
+  ],
+  [
     "src/struct_intern2.js~structtstructfield.pack",
     "class/src/struct_intern2.js~StructTStructField.html#static-method-pack",
     "src/struct_intern2.js~StructTStructField.pack",
@@ -1884,18 +2274,6 @@ window.esdocSearchIndex = [
     "method"
   ],
   [
-    "src/struct_intern2.js~structtstructfield.readjson",
-    "class/src/struct_intern2.js~StructTStructField.html#static-method-readJSON",
-    "src/struct_intern2.js~StructTStructField.readJSON",
-    "method"
-  ],
-  [
-    "src/struct_intern2.js~structtstructfield.readjson",
-    "class/src/struct_intern2.js~StructTStructField.html#static-method-readJSON",
-    "src/struct_intern2.js~StructTStructField.readJSON",
-    "method"
-  ],
-  [
     "src/struct_intern2.js~structtstructfield.tojson",
     "class/src/struct_intern2.js~StructTStructField.html#static-method-toJSON",
     "src/struct_intern2.js~StructTStructField.toJSON",
@@ -1917,6 +2295,18 @@ window.esdocSearchIndex = [
     "src/struct_intern2.js~structtstructfield.unpack",
     "class/src/struct_intern2.js~StructTStructField.html#static-method-unpack",
     "src/struct_intern2.js~StructTStructField.unpack",
+    "method"
+  ],
+  [
+    "src/struct_intern2.js~structtstructfield.unpackinto",
+    "class/src/struct_intern2.js~StructTStructField.html#static-method-unpackInto",
+    "src/struct_intern2.js~StructTStructField.unpackInto",
+    "method"
+  ],
+  [
+    "src/struct_intern2.js~structtstructfield.unpackinto",
+    "class/src/struct_intern2.js~StructTStructField.html#static-method-unpackInto",
+    "src/struct_intern2.js~StructTStructField.unpackInto",
     "method"
   ],
   [
@@ -2004,10 +2394,88 @@ window.esdocSearchIndex = [
     "method"
   ],
   [
+    "src/struct_intern2.js~cachering",
+    "class/src/struct_intern2.js~cachering.html",
+    "src/struct_intern2.js~cachering",
+    "class"
+  ],
+  [
+    "src/struct_intern2.js~cachering#[i]",
+    "class/src/struct_intern2.js~cachering.html#instance-member-[i]",
+    "src/struct_intern2.js~cachering#[i]",
+    "member"
+  ],
+  [
+    "src/struct_intern2.js~cachering#constructor",
+    "class/src/struct_intern2.js~cachering.html#static-constructor-constructor",
+    "src/struct_intern2.js~cachering#constructor",
+    "method"
+  ],
+  [
+    "src/struct_intern2.js~cachering#cur",
+    "class/src/struct_intern2.js~cachering.html#instance-member-cur",
+    "src/struct_intern2.js~cachering#cur",
+    "member"
+  ],
+  [
+    "src/struct_intern2.js~cachering#length",
+    "class/src/struct_intern2.js~cachering.html#instance-member-length",
+    "src/struct_intern2.js~cachering#length",
+    "member"
+  ],
+  [
+    "src/struct_intern2.js~cachering#next",
+    "class/src/struct_intern2.js~cachering.html#static-method-next",
+    "src/struct_intern2.js~cachering#next",
+    "method"
+  ],
+  [
+    "src/struct_intern2.js~cachering.fromconstructor",
+    "class/src/struct_intern2.js~cachering.html#static-method-fromConstructor",
+    "src/struct_intern2.js~cachering.fromConstructor",
+    "method"
+  ],
+  [
+    "src/struct_intern2.js~cachering.fromconstructor",
+    "class/src/struct_intern2.js~cachering.html#static-method-fromConstructor",
+    "src/struct_intern2.js~cachering.fromConstructor",
+    "method"
+  ],
+  [
     "src/struct_parser.js",
     "file/src/struct_parser.js.html",
     "src/struct_parser.js",
     "file"
+  ],
+  [
+    "src/struct_parser.js~nstruct",
+    "class/src/struct_parser.js~NStruct.html",
+    "src/struct_parser.js~NStruct",
+    "class"
+  ],
+  [
+    "src/struct_parser.js~nstruct#constructor",
+    "class/src/struct_parser.js~NStruct.html#static-constructor-constructor",
+    "src/struct_parser.js~NStruct#constructor",
+    "method"
+  ],
+  [
+    "src/struct_parser.js~nstruct#fields",
+    "class/src/struct_parser.js~NStruct.html#instance-member-fields",
+    "src/struct_parser.js~NStruct#fields",
+    "member"
+  ],
+  [
+    "src/struct_parser.js~nstruct#id",
+    "class/src/struct_parser.js~NStruct.html#instance-member-id",
+    "src/struct_parser.js~NStruct#id",
+    "member"
+  ],
+  [
+    "src/struct_parser.js~nstruct#name",
+    "class/src/struct_parser.js~NStruct.html#instance-member-name",
+    "src/struct_parser.js~NStruct#name",
+    "member"
   ],
   [
     "src/struct_parseutil.js",
@@ -2016,10 +2484,22 @@ window.esdocSearchIndex = [
     "file"
   ],
   [
+    "src/struct_parseutil.js~putil_parseerror",
+    "class/src/struct_parseutil.js~PUTIL_ParseError.html",
+    "src/struct_parseutil.js~PUTIL_ParseError",
+    "class"
+  ],
+  [
     "src/struct_parseutil.js~putil_parseerror#constructor",
-    "class/src/struct_parseutil.js~PUTIL_ParseError.html#instance-constructor-constructor",
+    "class/src/struct_parseutil.js~PUTIL_ParseError.html#static-constructor-constructor",
     "src/struct_parseutil.js~PUTIL_ParseError#constructor",
     "method"
+  ],
+  [
+    "src/struct_parseutil.js~lexer",
+    "class/src/struct_parseutil.js~lexer.html",
+    "src/struct_parseutil.js~lexer",
+    "class"
   ],
   [
     "src/struct_parseutil.js~lexer#add_state",
@@ -2154,64 +2634,94 @@ window.esdocSearchIndex = [
     "member"
   ],
   [
+    "src/struct_parseutil.js~parser",
+    "class/src/struct_parseutil.js~parser.html",
+    "src/struct_parseutil.js~parser",
+    "class"
+  ],
+  [
     "src/struct_parseutil.js~parser#at_end",
-    "class/src/struct_parseutil.js~parser.html#instance-method-at_end",
+    "class/src/struct_parseutil.js~parser.html#static-method-at_end",
     "src/struct_parseutil.js~parser#at_end",
     "method"
   ],
   [
     "src/struct_parseutil.js~parser#constructor",
-    "class/src/struct_parseutil.js~parser.html#instance-constructor-constructor",
+    "class/src/struct_parseutil.js~parser.html#static-constructor-constructor",
     "src/struct_parseutil.js~parser#constructor",
     "method"
   ],
   [
+    "src/struct_parseutil.js~parser#errfunc",
+    "class/src/struct_parseutil.js~parser.html#instance-member-errfunc",
+    "src/struct_parseutil.js~parser#errfunc",
+    "member"
+  ],
+  [
     "src/struct_parseutil.js~parser#error",
-    "class/src/struct_parseutil.js~parser.html#instance-method-error",
+    "class/src/struct_parseutil.js~parser.html#static-method-error",
     "src/struct_parseutil.js~parser#error",
     "method"
   ],
   [
     "src/struct_parseutil.js~parser#expect",
-    "class/src/struct_parseutil.js~parser.html#instance-method-expect",
+    "class/src/struct_parseutil.js~parser.html#static-method-expect",
     "src/struct_parseutil.js~parser#expect",
     "method"
   ],
   [
     "src/struct_parseutil.js~parser#input",
-    "class/src/struct_parseutil.js~parser.html#instance-method-input",
+    "class/src/struct_parseutil.js~parser.html#static-method-input",
     "src/struct_parseutil.js~parser#input",
     "method"
   ],
   [
+    "src/struct_parseutil.js~parser#lexer",
+    "class/src/struct_parseutil.js~parser.html#instance-member-lexer",
+    "src/struct_parseutil.js~parser#lexer",
+    "member"
+  ],
+  [
     "src/struct_parseutil.js~parser#next",
-    "class/src/struct_parseutil.js~parser.html#instance-method-next",
+    "class/src/struct_parseutil.js~parser.html#static-method-next",
     "src/struct_parseutil.js~parser#next",
     "method"
   ],
   [
     "src/struct_parseutil.js~parser#optional",
-    "class/src/struct_parseutil.js~parser.html#instance-method-optional",
+    "class/src/struct_parseutil.js~parser.html#static-method-optional",
     "src/struct_parseutil.js~parser#optional",
     "method"
   ],
   [
     "src/struct_parseutil.js~parser#parse",
-    "class/src/struct_parseutil.js~parser.html#instance-method-parse",
+    "class/src/struct_parseutil.js~parser.html#static-method-parse",
     "src/struct_parseutil.js~parser#parse",
     "method"
   ],
   [
     "src/struct_parseutil.js~parser#peek",
-    "class/src/struct_parseutil.js~parser.html#instance-method-peek",
+    "class/src/struct_parseutil.js~parser.html#static-method-peek",
     "src/struct_parseutil.js~parser#peek",
     "method"
   ],
   [
     "src/struct_parseutil.js~parser#peeknext",
-    "class/src/struct_parseutil.js~parser.html#instance-method-peeknext",
+    "class/src/struct_parseutil.js~parser.html#static-method-peeknext",
     "src/struct_parseutil.js~parser#peeknext",
     "method"
+  ],
+  [
+    "src/struct_parseutil.js~parser#start",
+    "class/src/struct_parseutil.js~parser.html#instance-member-start",
+    "src/struct_parseutil.js~parser#start",
+    "member"
+  ],
+  [
+    "src/struct_parseutil.js~tokdef",
+    "class/src/struct_parseutil.js~tokdef.html",
+    "src/struct_parseutil.js~tokdef",
+    "class"
   ],
   [
     "src/struct_parseutil.js~tokdef#constructor",
@@ -2242,6 +2752,12 @@ window.esdocSearchIndex = [
     "class/src/struct_parseutil.js~tokdef.html#instance-member-re",
     "src/struct_parseutil.js~tokdef#re",
     "member"
+  ],
+  [
+    "src/struct_parseutil.js~token",
+    "class/src/struct_parseutil.js~token.html",
+    "src/struct_parseutil.js~token",
+    "class"
   ],
   [
     "src/struct_parseutil.js~token#constructor",
@@ -2302,138 +2818,6 @@ window.esdocSearchIndex = [
     "file/src/struct_util.js.html",
     "src/struct_util.js",
     "file"
-  ],
-  [
-    "src/struct_util.js~idgen#constructor",
-    "class/src/struct_util.js~IDGen.html#instance-constructor-constructor",
-    "src/struct_util.js~IDGen#constructor",
-    "method"
-  ],
-  [
-    "src/struct_util.js~idgen#gen_id",
-    "class/src/struct_util.js~IDGen.html#instance-method-gen_id",
-    "src/struct_util.js~IDGen#gen_id",
-    "method"
-  ],
-  [
-    "src/struct_util.js~idgen.fromstruct",
-    "class/src/struct_util.js~IDGen.html#static-method-fromSTRUCT",
-    "src/struct_util.js~IDGen.fromSTRUCT",
-    "method"
-  ],
-  [
-    "src/struct_util.js~cachering#[i]",
-    "class/src/struct_util.js~cachering.html#instance-member-[i]",
-    "src/struct_util.js~cachering#[i]",
-    "member"
-  ],
-  [
-    "src/struct_util.js~cachering#constructor",
-    "class/src/struct_util.js~cachering.html#static-constructor-constructor",
-    "src/struct_util.js~cachering#constructor",
-    "method"
-  ],
-  [
-    "src/struct_util.js~cachering#cur",
-    "class/src/struct_util.js~cachering.html#instance-member-cur",
-    "src/struct_util.js~cachering#cur",
-    "member"
-  ],
-  [
-    "src/struct_util.js~cachering#length",
-    "class/src/struct_util.js~cachering.html#instance-member-length",
-    "src/struct_util.js~cachering#length",
-    "member"
-  ],
-  [
-    "src/struct_util.js~cachering#next",
-    "class/src/struct_util.js~cachering.html#static-method-next",
-    "src/struct_util.js~cachering#next",
-    "method"
-  ],
-  [
-    "src/struct_util.js~cachering.fromconstructor",
-    "class/src/struct_util.js~cachering.html#static-method-fromConstructor",
-    "src/struct_util.js~cachering.fromConstructor",
-    "method"
-  ],
-  [
-    "src/struct_util.js~cachering.fromconstructor",
-    "class/src/struct_util.js~cachering.html#static-method-fromConstructor",
-    "src/struct_util.js~cachering.fromConstructor",
-    "method"
-  ],
-  [
-    "src/struct_util.js~set#[symbol.iterator]",
-    "class/src/struct_util.js~set.html#instance-method-[Symbol.iterator]",
-    "src/struct_util.js~set#[Symbol.iterator]",
-    "method"
-  ],
-  [
-    "src/struct_util.js~set#add",
-    "class/src/struct_util.js~set.html#instance-method-add",
-    "src/struct_util.js~set#add",
-    "method"
-  ],
-  [
-    "src/struct_util.js~set#clear",
-    "class/src/struct_util.js~set.html#instance-method-clear",
-    "src/struct_util.js~set#clear",
-    "method"
-  ],
-  [
-    "src/struct_util.js~set#constructor",
-    "class/src/struct_util.js~set.html#instance-constructor-constructor",
-    "src/struct_util.js~set#constructor",
-    "method"
-  ],
-  [
-    "src/struct_util.js~set#copy",
-    "class/src/struct_util.js~set.html#instance-method-copy",
-    "src/struct_util.js~set#copy",
-    "method"
-  ],
-  [
-    "src/struct_util.js~set#equals",
-    "class/src/struct_util.js~set.html#instance-method-equals",
-    "src/struct_util.js~set#equals",
-    "method"
-  ],
-  [
-    "src/struct_util.js~set#filter",
-    "class/src/struct_util.js~set.html#instance-method-filter",
-    "src/struct_util.js~set#filter",
-    "method"
-  ],
-  [
-    "src/struct_util.js~set#foreach",
-    "class/src/struct_util.js~set.html#instance-method-forEach",
-    "src/struct_util.js~set#forEach",
-    "method"
-  ],
-  [
-    "src/struct_util.js~set#has",
-    "class/src/struct_util.js~set.html#instance-method-has",
-    "src/struct_util.js~set#has",
-    "method"
-  ],
-  [
-    "src/struct_util.js~set#map",
-    "class/src/struct_util.js~set.html#instance-method-map",
-    "src/struct_util.js~set#map",
-    "method"
-  ],
-  [
-    "src/struct_util.js~set#reduce",
-    "class/src/struct_util.js~set.html#instance-method-reduce",
-    "src/struct_util.js~set#reduce",
-    "method"
-  ],
-  [
-    "src/struct_util.js~set#remove",
-    "class/src/struct_util.js~set.html#instance-method-remove",
-    "src/struct_util.js~set#remove",
-    "method"
   ],
   [
     "src/structjs.js",

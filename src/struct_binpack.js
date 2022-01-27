@@ -1,6 +1,10 @@
 "use strict";
 
-export const STRUCT_ENDIAN = true; //little endian
+export var STRUCT_ENDIAN = true; //little endian
+
+export function setEndian(mode) {
+  STRUCT_ENDIAN = !!mode;
+}
 
 let temp_dataview = new DataView(new ArrayBuffer(16));
 let uint8_view = new Uint8Array(temp_dataview.buffer);

@@ -1,5 +1,11 @@
-import acorn from "acorn";
-import walk from "acorn-walk";
+import * as acorn1 from "acorn";
+import * as walk1 from "acorn-walk";
+
+/* have to do this weirdness to make rollup happy */
+let acorn = acorn1;
+let walk = walk1;
+acorn = acorn.default ? acorn.default : acorn;
+walk = walk.default ? walk.default : walk;
 
 let exports = {acorn, walk};
 
