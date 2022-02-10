@@ -54,6 +54,7 @@ export function unregister(cls) {
 }
 
 export function inherit(child, parent, structName = child.name) {
+
   return STRUCT.inherit(...arguments);
 }
 

@@ -507,6 +507,63 @@ export class STRUCT {
     }
   }
 
+  /** adds all structs referenced by cls inside of srcSTRUCT
+   *  to this */
+  registerGraph(srcSTRUCT, cls) {
+    if (!cls.structName) {
+      console.warn("class was not in srcSTRUCT");
+      return this.register(cls);
+    }
+
+    let recStruct;
+
+    let recArray = (t) => {
+      switch (t.type) {
+        case StructEnum.T_ARRAY:
+          return recArray(t.data.type);
+        case StructEnum.T_ITERKEYS:
+          return recArray(t.data.type);
+        case StructEnum.T_STATIC_ARRAY:
+          return recArray(t.data.type);
+        case StructEnum.T_ITER:
+          return recArray(t.data.type);
+        case StructEnum.T_STRUCT:
+        case StructEnum.T_TSTRUCT: {
+          let st = srcSTRUCT.structs[t.data];
+          let cls = srcSTRUCT.struct_cls[st.name];
+
+          return recStruct(st, cls);
+        }
+      }
+    }
+
+    recStruct = (st, cls) => {
+      if (!(cls.structName in this.structs)) {
+        this.add_class(cls, cls.structName);
+      }
+
+      for (let f of st.fields) {
+        if (f.type.type === StructEnum.T_STRUCT || f.type.type === StructEnum.T_TSTRUCT) {
+          let st2 = srcSTRUCT.structs[f.type.data];
+          let cls2 = srcSTRUCT.struct_cls[st2.name];
+
+          recStruct(st2, cls2);
+        } else if (f.type.type === StructEnum.T_ARRAY) {
+          recArray(f.type);
+        } else if (f.type.type === StructEnum.T_ITER) {
+          recArray(f.type);
+        } else if (f.type.type === StructEnum.T_ITERKEYS) {
+          recArray(f.type);
+        } else if (f.type.type === StructEnum.T_STATIC_ARRAY) {
+          recArray(f.type);
+        }
+      }
+    }
+
+    let st = srcSTRUCT.structs[cls.structName];
+    recStruct(st, cls);
+  }
+
   register(cls, structName) {
     return this.add_class(cls, structName);
   }
