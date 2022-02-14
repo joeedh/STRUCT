@@ -2828,6 +2828,11 @@ class STRUCT {
   }
 
   add_class(cls, structName) {
+    //do not register Object
+    if (cls === Object) {
+      return;
+    }
+
     if (cls.STRUCT) {
       let bad = false;
 
@@ -3184,6 +3189,12 @@ class STRUCT {
       }
 
       obj.loadSTRUCT(load);
+
+      if (!was_run) {
+        console.warn(""+cls.structName + ".prototype.loadSTRUCT() did not execute its loader callback!");
+        load(obj);
+      }
+
       return obj;
     } else if (cls.fromSTRUCT !== undefined) {
       if (warninglvl$1 > 1)
