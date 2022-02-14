@@ -6,7 +6,7 @@ import * as struct_eval from './struct_eval.js';
 
 import {DEBUG} from './struct_global.js';
 
-import {StructFieldTypeMap} from './struct_intern2.js';
+import {_get_pack_debug, StructFieldTypeMap} from './struct_intern2.js';
 
 let warninglvl = 2;
 
@@ -66,8 +66,6 @@ import {
 } from './struct_parser.js';
 
 let _static_envcode_null = "";
-let debug_struct = 0;
-let packdebug_tablevel = 0;
 
 //truncate webpack-mangled names
 
@@ -83,32 +81,16 @@ function gen_tabstr(tot) {
 
 let packer_debug, packer_debug_start, packer_debug_end;
 
-if (debug_struct) {
-  packer_debug = function (msg) {
-    if (msg !== undefined) {
-      let t = gen_tabstr(packdebug_tablevel);
-      console.log(t + msg);
-    } else {
-      console.log("Warning: undefined msg");
-    }
-  };
-  packer_debug_start = function (funcname) {
-    packer_debug("Start " + funcname);
-    packdebug_tablevel++;
-  };
+function update_debug_data() {
+  let ret = _get_pack_debug();
 
-  packer_debug_end = function (funcname) {
-    packdebug_tablevel--;
-    packer_debug("Leave " + funcname);
-  };
-} else {
-  packer_debug = function () {
-  };
-  packer_debug_start = function () {
-  };
-  packer_debug_end = function () {
-  };
+  packer_debug = ret.packer_debug;
+  packer_debug_start = ret.packer_debug_start;
+  packer_debug_end = ret.packer_debug_end;
+  warninglvl = ret.warninglvl;
 }
+
+update_debug_data();
 
 export function setWarningMode(t) {
   sintern2.setWarningMode(t);
@@ -121,36 +103,8 @@ export function setWarningMode(t) {
 }
 
 export function setDebugMode(t) {
-  debug_struct = t;
-
   sintern2.setDebugMode(t);
-
-  if (debug_struct) {
-    packer_debug = function (msg) {
-      if (msg !== undefined) {
-        let t = gen_tabstr(packdebug_tablevel);
-        console.log(t + msg);
-      } else {
-        console.log("Warning: undefined msg");
-      }
-    };
-    packer_debug_start = function (funcname) {
-      packer_debug("Start " + funcname);
-      packdebug_tablevel++;
-    };
-
-    packer_debug_end = function (funcname) {
-      packdebug_tablevel--;
-      packer_debug("Leave " + funcname);
-    };
-  } else {
-    packer_debug = function () {
-    };
-    packer_debug_start = function () {
-    };
-    packer_debug_end = function () {
-    };
-  }
+  update_debug_data();
 }
 
 let _ws_env = [[undefined, undefined]];

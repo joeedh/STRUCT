@@ -6,8 +6,8 @@ export function setEndian(mode) {
   STRUCT_ENDIAN = !!mode;
 }
 
-let temp_dataview = new DataView(new ArrayBuffer(16));
-let uint8_view = new Uint8Array(temp_dataview.buffer);
+export let temp_dataview = new DataView(new ArrayBuffer(16));
+export let uint8_view = new Uint8Array(temp_dataview.buffer);
 
 export class unpack_context {
   constructor() {

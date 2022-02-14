@@ -1155,6 +1155,8 @@ var struct_binpack = /*#__PURE__*/Object.freeze({
   __proto__: null,
   get STRUCT_ENDIAN () { return STRUCT_ENDIAN; },
   setEndian: setEndian,
+  temp_dataview: temp_dataview,
+  uint8_view: uint8_view,
   unpack_context: unpack_context,
   pack_byte: pack_byte,
   pack_sbyte: pack_sbyte,
@@ -1183,12 +1185,19 @@ var struct_binpack = /*#__PURE__*/Object.freeze({
   unpack_static_string: unpack_static_string
 });
 
-let warninglvl = 1;
+let warninglvl = 2;
 let debug = 0;
 
 let _static_envcode_null = "";
 let packer_debug, packer_debug_start, packer_debug_end;
 let packdebug_tablevel = 0;
+
+function _get_pack_debug() {
+  return {
+    packer_debug, packer_debug_start, packer_debug_end,
+    debug, warninglvl
+  }
+}
 
 class cachering extends Array {
   constructor(cb, tot) {
@@ -1196,21 +1205,21 @@ class cachering extends Array {
     this.length = tot;
     this.cur = 0;
 
-    for (let i=0; i<tot; i++) {
+    for (let i = 0; i < tot; i++) {
       this[i] = cb();
     }
+  }
+
+  static fromConstructor(cls, tot) {
+    return new cachering(() => new cls(), tot);
   }
 
   next() {
     let ret = this[this.cur];
 
-    this.cur = (this.cur + 1) % this.length;
+    this.cur = (this.cur + 1)%this.length;
 
     return ret;
-  }
-
-  static fromConstructor(cls, tot) {
-    return new cachering(() => new cls(), tot);
   }
 }
 
@@ -1236,12 +1245,13 @@ function setDebugMode(t) {
   debug = t;
 
   if (debug) {
-    packer_debug = function (msg) {
-      if (msg !== undefined) {
-        let t = gen_tabstr$1(packdebug_tablevel);
-        console.log(t + msg);
+    packer_debug = function () {
+      let tab = gen_tabstr$1(packdebug_tablevel);
+
+      if (arguments.length > 0) {
+        console.warn(tab, ...arguments);
       } else {
-        console.log("Warning: undefined msg");
+        console.warn("Warning: undefined msg");
       }
     };
     packer_debug_start = function (funcname) {
@@ -1251,7 +1261,10 @@ function setDebugMode(t) {
 
     packer_debug_end = function (funcname) {
       packdebug_tablevel--;
-      packer_debug("Leave " + funcname);
+
+      if (funcname) {
+        packer_debug("Leave " + funcname);
+      }
     };
   } else {
     packer_debug = function () {
@@ -1285,13 +1298,13 @@ function unpack_field(manager, data, type, uctx) {
 
   if (debug) {
     name = StructFieldTypeMap[type.type].define().name;
-    packer_debug_start("R start " + name);
+    packer_debug_start("R " + name);
   }
 
   let ret = StructFieldTypeMap[type.type].unpack(manager, data, type, uctx);
 
   if (debug) {
-    packer_debug_end("R end " + name);
+    packer_debug_end();
   }
 
   return ret;
@@ -1310,7 +1323,7 @@ function do_pack(manager, data, val, obj, field, type) {
 
   if (debug) {
     name = StructFieldTypeMap[type.type].define().name;
-    packer_debug_start("W start " + name);
+    packer_debug_start("W " + name);
   }
 
   let typeid = type;
@@ -1321,7 +1334,7 @@ function do_pack(manager, data, val, obj, field, type) {
   let ret = StructFieldTypeMap[typeid].pack(manager, data, val, obj, field, type);
 
   if (debug) {
-    packer_debug_end("W end " + name);
+    packer_debug_end();
   }
 
   return ret;
@@ -1516,7 +1529,11 @@ StructFieldType.register(StructStaticStringField);
 
 class StructStructField extends StructFieldType {
   static pack(manager, data, val, obj, field, type) {
-    manager.write_struct(data, val, manager.get_struct(type.data));
+    let stt = manager.get_struct(type.data);
+
+    packer_debug("struct", stt.name);
+
+    manager.write_struct(data, val, stt);
   }
 
   static format(type) {
@@ -1536,11 +1553,15 @@ class StructStructField extends StructFieldType {
 
   static unpackInto(manager, data, type, uctx, dest) {
     let cls2 = manager.get_struct_cls(type.data);
+
+    packer_debug("struct", cls2 ? cls2.name : "(error)");
     return manager.read_object(data, cls2, uctx, dest);
   }
 
   static packNull(manager, data, field, type) {
     let stt = manager.get_struct(type.data);
+
+    packer_debug("struct", type);
 
     for (let field2 of stt.fields) {
       let type2 = field2.type;
@@ -1551,6 +1572,8 @@ class StructStructField extends StructFieldType {
 
   static unpack(manager, data, type, uctx) {
     let cls2 = manager.get_struct_cls(type.data);
+    packer_debug("struct", cls2 ? cls2.name : "(error)");
+
     return manager.read_object(data, cls2, uctx);
   }
 
@@ -1619,11 +1642,10 @@ class StructTStructField extends StructFieldType {
 
     packer_debug("-int " + id);
     if (!(id in manager.struct_ids)) {
-      packer_debug("struct id: " + id);
+      packer_debug("tstruct id: " + id);
       console.trace();
       console.log(id);
       console.log(manager.struct_ids);
-      packer_debug_end("tstruct");
       throw new Error("Unknown struct type " + id + ".");
     }
 
@@ -1642,11 +1664,10 @@ class StructTStructField extends StructFieldType {
 
     packer_debug("-int " + id);
     if (!(id in manager.struct_ids)) {
-      packer_debug("struct id: " + id);
+      packer_debug("tstruct id: " + id);
       console.trace();
       console.log(id);
       console.log(manager.struct_ids);
-      packer_debug_end("tstruct");
       throw new Error("Unknown struct type " + id + ".");
     }
 
@@ -1818,25 +1839,15 @@ class StructIterField extends StructFieldType {
       }
     }
 
-    let len = 0.0;
-    forEach(() => {
-      len++;
-    });
-
-    packer_debug("int " + len);
-    pack_int(data, len);
+    /* save space for length */
+    let starti = data.length;
+    data.length += 4;
 
     let d = type.data, itername = d.iname, type2 = d.type;
     let env = _ws_env;
 
     let i = 0;
     forEach(function (val2) {
-      if (i >= len) {
-        if (warninglvl > 0)
-          console.trace("Warning: iterator returned different length of list!", val, i);
-        return;
-      }
-
       if (itername !== "" && itername !== undefined && field.get) {
         env[0][0] = itername;
         env[0][1] = val2;
@@ -1850,6 +1861,14 @@ class StructIterField extends StructFieldType {
 
       i++;
     }, this);
+
+    /* write length */
+    temp_dataview.setInt32(0, i, STRUCT_ENDIAN);
+
+    data[starti++] = uint8_view[0];
+    data[starti++] = uint8_view[1];
+    data[starti++] = uint8_view[2];
+    data[starti++] = uint8_view[3];
   }
 
   static fromJSON() {
@@ -2016,8 +2035,6 @@ class StructIterKeysField extends StructFieldType {
       console.log("");
 
       pack_int(data, 0);
-
-      packer_debug_end("iterkeys");
       return;
     }
 
@@ -2334,8 +2351,6 @@ function unmangle(name) {
 }
 
 let _static_envcode_null$1 = "";
-let debug_struct = 0;
-let packdebug_tablevel$1 = 0;
 
 //truncate webpack-mangled names
 
@@ -2351,32 +2366,16 @@ function gen_tabstr$2(tot) {
 
 let packer_debug$1, packer_debug_start$1, packer_debug_end$1;
 
-if (debug_struct) {
-  packer_debug$1 = function (msg) {
-    if (msg !== undefined) {
-      let t = gen_tabstr$2(packdebug_tablevel$1);
-      console.log(t + msg);
-    } else {
-      console.log("Warning: undefined msg");
-    }
-  };
-  packer_debug_start$1 = function (funcname) {
-    packer_debug$1("Start " + funcname);
-    packdebug_tablevel$1++;
-  };
+function update_debug_data() {
+  let ret = _get_pack_debug();
 
-  packer_debug_end$1 = function (funcname) {
-    packdebug_tablevel$1--;
-    packer_debug$1("Leave " + funcname);
-  };
-} else {
-  packer_debug$1 = function () {
-  };
-  packer_debug_start$1 = function () {
-  };
-  packer_debug_end$1 = function () {
-  };
+  packer_debug$1 = ret.packer_debug;
+  packer_debug_start$1 = ret.packer_debug_start;
+  packer_debug_end$1 = ret.packer_debug_end;
+  warninglvl$1 = ret.warninglvl;
 }
+
+update_debug_data();
 
 function setWarningMode$1(t) {
   setWarningMode(t);
@@ -2389,36 +2388,8 @@ function setWarningMode$1(t) {
 }
 
 function setDebugMode$1(t) {
-  debug_struct = t;
-
   setDebugMode(t);
-
-  if (debug_struct) {
-    packer_debug$1 = function (msg) {
-      if (msg !== undefined) {
-        let t = gen_tabstr$2(packdebug_tablevel$1);
-        console.log(t + msg);
-      } else {
-        console.log("Warning: undefined msg");
-      }
-    };
-    packer_debug_start$1 = function (funcname) {
-      packer_debug$1("Start " + funcname);
-      packdebug_tablevel$1++;
-    };
-
-    packer_debug_end$1 = function (funcname) {
-      packdebug_tablevel$1--;
-      packer_debug$1("Leave " + funcname);
-    };
-  } else {
-    packer_debug$1 = function () {
-    };
-    packer_debug_start$1 = function () {
-    };
-    packer_debug_end$1 = function () {
-    };
-  }
+  update_debug_data();
 }
 
 let _ws_env$1 = [[undefined, undefined]];
