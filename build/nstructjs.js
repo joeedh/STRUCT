@@ -1634,7 +1634,7 @@ class StructTStructField extends StructFieldType {
   }
 
   static fromJSON(manager, val, obj, field, type, instance) {
-    let key = field.type.data.type.jsonKeyword;
+    let key = type.jsonKeyword;
 
     let stt = manager.get_struct(val[key]);
 
@@ -1647,7 +1647,7 @@ class StructTStructField extends StructFieldType {
     let stt = manager.get_struct(val.constructor[keywords.name]);
     let ret = manager.writeJSON(val, stt);
 
-    ret[field.type.data.type.jsonKeyword] = "" + stt.name;
+    ret[type.jsonKeyword] = "" + stt.name;
 
     return ret;
   }
