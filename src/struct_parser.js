@@ -107,6 +107,14 @@ function StructParser() {
     tk("OPEN", /\{/),
     tk("EQUALS", /=/),
     tk("CLOSE", /}/),
+    tk("STRLIT", /\"[^"]*\"/, t => {
+      t.value = t.value.slice(1, t.value.length - 1);
+      return t;
+    }),
+    tk("STRLIT", /\'[^']*\'/, t => {
+      t.value = t.value.slice(1, t.value.length - 1);
+      return t;
+    }),
     tk("COLON", /:/),
     tk("SOPEN", /\[/),
     tk("SCLOSE", /\]/),
@@ -242,8 +250,20 @@ function StructParser() {
     p.expect("ABSTRACT");
     p.expect("LPARAM");
     let type = p.expect("ID");
+
+    let jsonKeyword = "_structName";
+
+    if (p.optional("COMMA")) {
+      jsonKeyword = p.expect("STRLIT");
+    }
+
     p.expect("RPARAM");
-    return {type: StructEnum.T_TSTRUCT, data: type}
+
+    return {
+      type: StructEnum.T_TSTRUCT,
+      data: type,
+      jsonKeyword
+    }
   }
 
   function p_Type(p) {

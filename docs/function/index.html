@@ -92,10 +92,12 @@
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-versionToInt">versionToInt</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-updateDEBUG">updateDEBUG</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-_truncateDollarSign">_truncateDollarSign</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-deriveStructManager">deriveStructManager</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-setDebugMode">setDebugMode</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-setTruncateDollarSign">setTruncateDollarSign</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-setWarningMode">setWarningMode</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-write_scripts">write_scripts</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-_get_pack_debug">_get_pack_debug</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-fromJSON">fromJSON</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-packNull">packNull</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-setDebugMode">setDebugMode</a></span></span></li>
@@ -116,6 +118,8 @@
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-writeJSON">writeJSON</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-writeObject">writeObject</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-STRUCT_ENDIAN">STRUCT_ENDIAN</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-temp_dataview">temp_dataview</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-uint8_view">uint8_view</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-structEval">structEval</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-DEBUG">DEBUG</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-truncateDollarSign">truncateDollarSign</a></span></span></li>
@@ -151,6 +155,34 @@
           
           
           <span class="code" data-ice="name"><span><a href="function/index.html#static-function-decode_utf8">decode_utf8</a></span></span><span class="code" data-ice="signature">(arr: <span>*</span>): <span>*</span></span>
+        </p>
+      </div>
+      <div>
+        
+        
+        
+      </div>
+    </td>
+    <td>
+      
+      
+    </td>
+  </tr>
+<tr data-ice="target">
+    <td>
+      <span class="access" data-ice="access">public</span>
+      
+      
+      
+      <span class="override" data-ice="override"></span>
+    </td>
+    <td>
+      <div>
+        <p>
+          
+          
+          
+          <span class="code" data-ice="name"><span><a href="function/index.html#static-function-deriveStructManager">deriveStructManager</a></span></span><span class="code" data-ice="signature">(keywords: {&quot;script&quot;: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></span>, &quot;name&quot;: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/undefined">undefined</a></span>, &quot;load&quot;: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/undefined">undefined</a></span>, &quot;new&quot;: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/undefined">undefined</a></span>, &quot;from&quot;: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/undefined">undefined</a></span>}): <span>*</span></span>
         </p>
       </div>
       <div>
@@ -1672,6 +1704,34 @@
           
           
           
+          <span class="code" data-ice="name"><span><a href="function/index.html#static-function-_get_pack_debug">_get_pack_debug</a></span></span><span class="code" data-ice="signature">(): {&quot;packer_debug&quot;: <span>*</span>, &quot;packer_debug_start&quot;: <span>*</span>, &quot;packer_debug_end&quot;: <span>*</span>, &quot;debug&quot;: <span>*</span>, &quot;warninglvl&quot;: <span>*</span>}</span>
+        </p>
+      </div>
+      <div>
+        
+        
+        
+      </div>
+    </td>
+    <td>
+      
+      
+    </td>
+  </tr>
+<tr data-ice="target">
+    <td>
+      <span class="access" data-ice="access">private</span>
+      
+      
+      
+      <span class="override" data-ice="override"></span>
+    </td>
+    <td>
+      <div>
+        <p>
+          
+          
+          
           <span class="code" data-ice="name"><span><a href="function/index.html#static-function-_truncateDollarSign">_truncateDollarSign</a></span></span><span class="code" data-ice="signature">(s: <span>*</span>): <span>*</span></span>
         </p>
       </div>
@@ -1726,6 +1786,78 @@
       <td data-ice="name" class="code" data-depth="0">arr</td>
       <td data-ice="type" class="code"><span>*</span></td>
       <td data-ice="appendix"></td>
+      <td data-ice="description"></td>
+    </tr>
+</tbody>
+  </table>
+</div>
+</div>
+
+  <div class="return-params" data-ice="returnParams">
+    <h4>Return:</h4>
+    <table>
+      <tbody>
+        <tr>
+          <td class="return-type code" data-ice="returnType"><span>*</span></td>
+          
+        </tr>
+      </tbody>
+    </table>
+    <div data-ice="returnProperties">
+</div>
+  </div>
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+  
+</div>
+<div class="detail" data-ice="detail">
+  <h3 data-ice="anchor" id="static-function-deriveStructManager">
+    <span class="access" data-ice="access">public</span>
+    
+    
+    
+    
+    
+    <span class="code" data-ice="name">deriveStructManager</span><span class="code" data-ice="signature">(keywords: {&quot;script&quot;: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></span>, &quot;name&quot;: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/undefined">undefined</a></span>, &quot;load&quot;: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/undefined">undefined</a></span>, &quot;new&quot;: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/undefined">undefined</a></span>, &quot;from&quot;: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/undefined">undefined</a></span>}): <span>*</span></span>
+    <span class="right-info">
+      
+      
+      <span data-ice="source"><span><a href="file/src/struct_intern.js.html#lineNumber1072">source</a></span></span>
+    </span>
+  </h3>
+
+  <div data-ice="importPath" class="import-path"><pre class="prettyprint"><code data-ice="importPathCode">import {deriveStructManager} from &apos;<span><a href="file/src/struct_intern.js.html#lineNumber1072">nstructjs/src/struct_intern.js</a></span>&apos;</code></pre></div>
+  
+  
+  
+
+  
+
+  <div data-ice="properties"><div data-ice="properties">
+  <h4 data-ice="title">Params:</h4>
+  <table class="params">
+    <thead>
+    <tr><td>Name</td><td>Type</td><td>Attribute</td><td>Description</td></tr>
+    </thead>
+    <tbody>
+    
+    <tr data-ice="property" data-depth="0">
+      <td data-ice="name" class="code" data-depth="0">keywords</td>
+      <td data-ice="type" class="code">{&quot;script&quot;: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></span>, &quot;name&quot;: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/undefined">undefined</a></span>, &quot;load&quot;: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/undefined">undefined</a></span>, &quot;new&quot;: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/undefined">undefined</a></span>, &quot;from&quot;: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/undefined">undefined</a></span>}</td>
+      <td data-ice="appendix"><ul><li>optional</li>
+<li>default: {&quot;script&quot;:&quot;STRUCT&quot;}</li></ul></td>
       <td data-ice="description"></td>
     </tr>
 </tbody>
@@ -1839,11 +1971,11 @@
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/struct_intern2.js.html#lineNumber106">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/struct_intern2.js.html#lineNumber117">source</a></span></span>
     </span>
   </h3>
 
-  <div data-ice="importPath" class="import-path"><pre class="prettyprint"><code data-ice="importPathCode">import {fromJSON} from &apos;<span><a href="file/src/struct_intern2.js.html#lineNumber106">nstructjs/src/struct_intern2.js</a></span>&apos;</code></pre></div>
+  <div data-ice="importPath" class="import-path"><pre class="prettyprint"><code data-ice="importPathCode">import {fromJSON} from &apos;<span><a href="file/src/struct_intern2.js.html#lineNumber117">nstructjs/src/struct_intern2.js</a></span>&apos;</code></pre></div>
   
   
   
@@ -1940,11 +2072,11 @@
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/structjs.js.html#lineNumber35">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/structjs.js.html#lineNumber37">source</a></span></span>
     </span>
   </h3>
 
-  <div data-ice="importPath" class="import-path"><pre class="prettyprint"><code data-ice="importPathCode">import {getEndian} from &apos;<span><a href="file/src/structjs.js.html#lineNumber35">nstructjs/src/structjs.js</a></span>&apos;</code></pre></div>
+  <div data-ice="importPath" class="import-path"><pre class="prettyprint"><code data-ice="importPathCode">import {getEndian} from &apos;<span><a href="file/src/structjs.js.html#lineNumber37">nstructjs/src/structjs.js</a></span>&apos;</code></pre></div>
   
   
   
@@ -1995,11 +2127,11 @@
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/structjs.js.html#lineNumber56">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/structjs.js.html#lineNumber58">source</a></span></span>
     </span>
   </h3>
 
-  <div data-ice="importPath" class="import-path"><pre class="prettyprint"><code data-ice="importPathCode">import {inherit} from &apos;<span><a href="file/src/structjs.js.html#lineNumber56">nstructjs/src/structjs.js</a></span>&apos;</code></pre></div>
+  <div data-ice="importPath" class="import-path"><pre class="prettyprint"><code data-ice="importPathCode">import {inherit} from &apos;<span><a href="file/src/structjs.js.html#lineNumber58">nstructjs/src/structjs.js</a></span>&apos;</code></pre></div>
   
   
   
@@ -2078,11 +2210,11 @@
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/structjs.js.html#lineNumber43">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/structjs.js.html#lineNumber45">source</a></span></span>
     </span>
   </h3>
 
-  <div data-ice="importPath" class="import-path"><pre class="prettyprint"><code data-ice="importPathCode">import {isRegistered} from &apos;<span><a href="file/src/structjs.js.html#lineNumber43">nstructjs/src/structjs.js</a></span>&apos;</code></pre></div>
+  <div data-ice="importPath" class="import-path"><pre class="prettyprint"><code data-ice="importPathCode">import {isRegistered} from &apos;<span><a href="file/src/structjs.js.html#lineNumber45">nstructjs/src/structjs.js</a></span>&apos;</code></pre></div>
   
   
   
@@ -2149,11 +2281,11 @@
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/struct_intern2.js.html#lineNumber98">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/struct_intern2.js.html#lineNumber109">source</a></span></span>
     </span>
   </h3>
 
-  <div data-ice="importPath" class="import-path"><pre class="prettyprint"><code data-ice="importPathCode">import {packNull} from &apos;<span><a href="file/src/struct_intern2.js.html#lineNumber98">nstructjs/src/struct_intern2.js</a></span>&apos;</code></pre></div>
+  <div data-ice="importPath" class="import-path"><pre class="prettyprint"><code data-ice="importPathCode">import {packNull} from &apos;<span><a href="file/src/struct_intern2.js.html#lineNumber109">nstructjs/src/struct_intern2.js</a></span>&apos;</code></pre></div>
   
   
   
@@ -2947,11 +3079,11 @@
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/structjs.js.html#lineNumber78">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/structjs.js.html#lineNumber81">source</a></span></span>
     </span>
   </h3>
 
-  <div data-ice="importPath" class="import-path"><pre class="prettyprint"><code data-ice="importPathCode">import {readJSON} from &apos;<span><a href="file/src/structjs.js.html#lineNumber78">nstructjs/src/structjs.js</a></span>&apos;</code></pre></div>
+  <div data-ice="importPath" class="import-path"><pre class="prettyprint"><code data-ice="importPathCode">import {readJSON} from &apos;<span><a href="file/src/structjs.js.html#lineNumber81">nstructjs/src/structjs.js</a></span>&apos;</code></pre></div>
   
   
   
@@ -3024,11 +3156,11 @@
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/structjs.js.html#lineNumber63">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/structjs.js.html#lineNumber66">source</a></span></span>
     </span>
   </h3>
 
-  <div data-ice="importPath" class="import-path"><pre class="prettyprint"><code data-ice="importPathCode">import {readObject} from &apos;<span><a href="file/src/structjs.js.html#lineNumber63">nstructjs/src/structjs.js</a></span>&apos;</code></pre></div>
+  <div data-ice="importPath" class="import-path"><pre class="prettyprint"><code data-ice="importPathCode">import {readObject} from &apos;<span><a href="file/src/structjs.js.html#lineNumber66">nstructjs/src/structjs.js</a></span>&apos;</code></pre></div>
   
   
   
@@ -3096,11 +3228,11 @@
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/structjs.js.html#lineNumber48">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/structjs.js.html#lineNumber50">source</a></span></span>
     </span>
   </h3>
 
-  <div data-ice="importPath" class="import-path"><pre class="prettyprint"><code data-ice="importPathCode">import {register} from &apos;<span><a href="file/src/structjs.js.html#lineNumber48">nstructjs/src/structjs.js</a></span>&apos;</code></pre></div>
+  <div data-ice="importPath" class="import-path"><pre class="prettyprint"><code data-ice="importPathCode">import {register} from &apos;<span><a href="file/src/structjs.js.html#lineNumber50">nstructjs/src/structjs.js</a></span>&apos;</code></pre></div>
   
   
   <div data-ice="description"><p>Register a class with nstructjs *</p>
@@ -3174,11 +3306,11 @@
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/structjs.js.html#lineNumber39">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/structjs.js.html#lineNumber41">source</a></span></span>
     </span>
   </h3>
 
-  <div data-ice="importPath" class="import-path"><pre class="prettyprint"><code data-ice="importPathCode">import {setAllowOverriding} from &apos;<span><a href="file/src/structjs.js.html#lineNumber39">nstructjs/src/structjs.js</a></span>&apos;</code></pre></div>
+  <div data-ice="importPath" class="import-path"><pre class="prettyprint"><code data-ice="importPathCode">import {setAllowOverriding} from &apos;<span><a href="file/src/structjs.js.html#lineNumber41">nstructjs/src/structjs.js</a></span>&apos;</code></pre></div>
   
   
   
@@ -3245,11 +3377,11 @@
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/struct_intern.js.html#lineNumber123">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/struct_intern.js.html#lineNumber107">source</a></span></span>
     </span>
   </h3>
 
-  <div data-ice="importPath" class="import-path"><pre class="prettyprint"><code data-ice="importPathCode">import {setDebugMode} from &apos;<span><a href="file/src/struct_intern.js.html#lineNumber123">nstructjs/src/struct_intern.js</a></span>&apos;</code></pre></div>
+  <div data-ice="importPath" class="import-path"><pre class="prettyprint"><code data-ice="importPathCode">import {setDebugMode} from &apos;<span><a href="file/src/struct_intern.js.html#lineNumber107">nstructjs/src/struct_intern.js</a></span>&apos;</code></pre></div>
   
   
   
@@ -3304,11 +3436,11 @@
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/struct_intern2.js.html#lineNumber62">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/struct_intern2.js.html#lineNumber69">source</a></span></span>
     </span>
   </h3>
 
-  <div data-ice="importPath" class="import-path"><pre class="prettyprint"><code data-ice="importPathCode">import {setDebugMode} from &apos;<span><a href="file/src/struct_intern2.js.html#lineNumber62">nstructjs/src/struct_intern2.js</a></span>&apos;</code></pre></div>
+  <div data-ice="importPath" class="import-path"><pre class="prettyprint"><code data-ice="importPathCode">import {setDebugMode} from &apos;<span><a href="file/src/struct_intern2.js.html#lineNumber69">nstructjs/src/struct_intern2.js</a></span>&apos;</code></pre></div>
   
   
   
@@ -3553,11 +3685,11 @@
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/struct_intern.js.html#lineNumber16">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/struct_intern.js.html#lineNumber19">source</a></span></span>
     </span>
   </h3>
 
-  <div data-ice="importPath" class="import-path"><pre class="prettyprint"><code data-ice="importPathCode">import {setTruncateDollarSign} from &apos;<span><a href="file/src/struct_intern.js.html#lineNumber16">nstructjs/src/struct_intern.js</a></span>&apos;</code></pre></div>
+  <div data-ice="importPath" class="import-path"><pre class="prettyprint"><code data-ice="importPathCode">import {setTruncateDollarSign} from &apos;<span><a href="file/src/struct_intern.js.html#lineNumber19">nstructjs/src/struct_intern.js</a></span>&apos;</code></pre></div>
   
   
   
@@ -3612,11 +3744,11 @@
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/struct_intern.js.html#lineNumber113">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/struct_intern.js.html#lineNumber97">source</a></span></span>
     </span>
   </h3>
 
-  <div data-ice="importPath" class="import-path"><pre class="prettyprint"><code data-ice="importPathCode">import {setWarningMode} from &apos;<span><a href="file/src/struct_intern.js.html#lineNumber113">nstructjs/src/struct_intern.js</a></span>&apos;</code></pre></div>
+  <div data-ice="importPath" class="import-path"><pre class="prettyprint"><code data-ice="importPathCode">import {setWarningMode} from &apos;<span><a href="file/src/struct_intern.js.html#lineNumber97">nstructjs/src/struct_intern.js</a></span>&apos;</code></pre></div>
   
   
   
@@ -3671,11 +3803,11 @@
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/struct_intern2.js.html#lineNumber54">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/struct_intern2.js.html#lineNumber61">source</a></span></span>
     </span>
   </h3>
 
-  <div data-ice="importPath" class="import-path"><pre class="prettyprint"><code data-ice="importPathCode">import {setWarningMode} from &apos;<span><a href="file/src/struct_intern2.js.html#lineNumber54">nstructjs/src/struct_intern2.js</a></span>&apos;</code></pre></div>
+  <div data-ice="importPath" class="import-path"><pre class="prettyprint"><code data-ice="importPathCode">import {setWarningMode} from &apos;<span><a href="file/src/struct_intern2.js.html#lineNumber61">nstructjs/src/struct_intern2.js</a></span>&apos;</code></pre></div>
   
   
   
@@ -3785,11 +3917,11 @@
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/struct_intern2.js.html#lineNumber102">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/struct_intern2.js.html#lineNumber113">source</a></span></span>
     </span>
   </h3>
 
-  <div data-ice="importPath" class="import-path"><pre class="prettyprint"><code data-ice="importPathCode">import {toJSON} from &apos;<span><a href="file/src/struct_intern2.js.html#lineNumber102">nstructjs/src/struct_intern2.js</a></span>&apos;</code></pre></div>
+  <div data-ice="importPath" class="import-path"><pre class="prettyprint"><code data-ice="importPathCode">import {toJSON} from &apos;<span><a href="file/src/struct_intern2.js.html#lineNumber113">nstructjs/src/struct_intern2.js</a></span>&apos;</code></pre></div>
   
   
   
@@ -4801,11 +4933,11 @@
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/structjs.js.html#lineNumber52">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/structjs.js.html#lineNumber54">source</a></span></span>
     </span>
   </h3>
 
-  <div data-ice="importPath" class="import-path"><pre class="prettyprint"><code data-ice="importPathCode">import {unregister} from &apos;<span><a href="file/src/structjs.js.html#lineNumber52">nstructjs/src/structjs.js</a></span>&apos;</code></pre></div>
+  <div data-ice="importPath" class="import-path"><pre class="prettyprint"><code data-ice="importPathCode">import {unregister} from &apos;<span><a href="file/src/structjs.js.html#lineNumber54">nstructjs/src/structjs.js</a></span>&apos;</code></pre></div>
   
   
   
@@ -4903,11 +5035,11 @@
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/structjs.js.html#lineNumber90">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/structjs.js.html#lineNumber93">source</a></span></span>
     </span>
   </h3>
 
-  <div data-ice="importPath" class="import-path"><pre class="prettyprint"><code data-ice="importPathCode">import {useTinyEval} from &apos;<span><a href="file/src/structjs.js.html#lineNumber90">nstructjs/src/structjs.js</a></span>&apos;</code></pre></div>
+  <div data-ice="importPath" class="import-path"><pre class="prettyprint"><code data-ice="importPathCode">import {useTinyEval} from &apos;<span><a href="file/src/structjs.js.html#lineNumber93">nstructjs/src/structjs.js</a></span>&apos;</code></pre></div>
   
   
   
@@ -5236,11 +5368,11 @@
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/structjs.js.html#lineNumber74">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/structjs.js.html#lineNumber77">source</a></span></span>
     </span>
   </h3>
 
-  <div data-ice="importPath" class="import-path"><pre class="prettyprint"><code data-ice="importPathCode">import {writeJSON} from &apos;<span><a href="file/src/structjs.js.html#lineNumber74">nstructjs/src/structjs.js</a></span>&apos;</code></pre></div>
+  <div data-ice="importPath" class="import-path"><pre class="prettyprint"><code data-ice="importPathCode">import {writeJSON} from &apos;<span><a href="file/src/structjs.js.html#lineNumber77">nstructjs/src/structjs.js</a></span>&apos;</code></pre></div>
   
   
   
@@ -5307,11 +5439,11 @@
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/structjs.js.html#lineNumber70">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/structjs.js.html#lineNumber73">source</a></span></span>
     </span>
   </h3>
 
-  <div data-ice="importPath" class="import-path"><pre class="prettyprint"><code data-ice="importPathCode">import {writeObject} from &apos;<span><a href="file/src/structjs.js.html#lineNumber70">nstructjs/src/structjs.js</a></span>&apos;</code></pre></div>
+  <div data-ice="importPath" class="import-path"><pre class="prettyprint"><code data-ice="importPathCode">import {writeObject} from &apos;<span><a href="file/src/structjs.js.html#lineNumber73">nstructjs/src/structjs.js</a></span>&apos;</code></pre></div>
   
   
   
@@ -5379,11 +5511,11 @@
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/struct_intern.js.html#lineNumber1008">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/struct_intern.js.html#lineNumber1122">source</a></span></span>
     </span>
   </h3>
 
-  <div data-ice="importPath" class="import-path"><pre class="prettyprint"><code data-ice="importPathCode">import {write_scripts} from &apos;<span><a href="file/src/struct_intern.js.html#lineNumber1008">nstructjs/src/struct_intern.js</a></span>&apos;</code></pre></div>
+  <div data-ice="importPath" class="import-path"><pre class="prettyprint"><code data-ice="importPathCode">import {write_scripts} from &apos;<span><a href="file/src/struct_intern.js.html#lineNumber1122">nstructjs/src/struct_intern.js</a></span>&apos;</code></pre></div>
   
   
   <div data-ice="description"><p>Write all defined structs out to a string.</p>
@@ -5450,6 +5582,61 @@
 <h2 data-ice="title">Static Private </h2>
 
 <div class="detail" data-ice="detail">
+  <h3 data-ice="anchor" id="static-function-_get_pack_debug">
+    <span class="access" data-ice="access">private</span>
+    
+    
+    
+    
+    
+    <span class="code" data-ice="name">_get_pack_debug</span><span class="code" data-ice="signature">(): {&quot;packer_debug&quot;: <span>*</span>, &quot;packer_debug_start&quot;: <span>*</span>, &quot;packer_debug_end&quot;: <span>*</span>, &quot;debug&quot;: <span>*</span>, &quot;warninglvl&quot;: <span>*</span>}</span>
+    <span class="right-info">
+      
+      
+      <span data-ice="source"><span><a href="file/src/struct_intern2.js.html#lineNumber20">source</a></span></span>
+    </span>
+  </h3>
+
+  <div data-ice="importPath" class="import-path"><pre class="prettyprint"><code data-ice="importPathCode">import {_get_pack_debug} from &apos;<span><a href="file/src/struct_intern2.js.html#lineNumber20">nstructjs/src/struct_intern2.js</a></span>&apos;</code></pre></div>
+  
+  
+  
+
+  
+
+  <div data-ice="properties">
+</div>
+
+  <div class="return-params" data-ice="returnParams">
+    <h4>Return:</h4>
+    <table>
+      <tbody>
+        <tr>
+          <td class="return-type code" data-ice="returnType">{&quot;packer_debug&quot;: <span>*</span>, &quot;packer_debug_start&quot;: <span>*</span>, &quot;packer_debug_end&quot;: <span>*</span>, &quot;debug&quot;: <span>*</span>, &quot;warninglvl&quot;: <span>*</span>}</td>
+          
+        </tr>
+      </tbody>
+    </table>
+    <div data-ice="returnProperties">
+</div>
+  </div>
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+  
+</div>
+<div class="detail" data-ice="detail">
   <h3 data-ice="anchor" id="static-function-_truncateDollarSign">
     <span class="access" data-ice="access">private</span>
     
@@ -5461,11 +5648,11 @@
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/struct_intern.js.html#lineNumber20">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/struct_intern.js.html#lineNumber23">source</a></span></span>
     </span>
   </h3>
 
-  <div data-ice="importPath" class="import-path"><pre class="prettyprint"><code data-ice="importPathCode">import {_truncateDollarSign} from &apos;<span><a href="file/src/struct_intern.js.html#lineNumber20">nstructjs/src/struct_intern.js</a></span>&apos;</code></pre></div>
+  <div data-ice="importPath" class="import-path"><pre class="prettyprint"><code data-ice="importPathCode">import {_truncateDollarSign} from &apos;<span><a href="file/src/struct_intern.js.html#lineNumber23">nstructjs/src/struct_intern.js</a></span>&apos;</code></pre></div>
   
   
   

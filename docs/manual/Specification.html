@@ -46,6 +46,11 @@
 <div data-ice="manual">
     <ul class="manual-toc">
       
+    </ul>
+  </div>
+<div data-ice="manual">
+    <ul class="manual-toc">
+      
     <li data-ice="manualNav" class="indent-h1" data-link="manual/Reading-And-Writing.html"><a href="manual/Reading-And-Writing.html" data-ice="link">Handling data structure changes</a></li>
 <li data-ice="manualNav" class="indent-h2" data-link="manual/Reading-And-Writing.html"><a href="manual/Reading-And-Writing.html#writing-struct-scripts-with-file-data" data-ice="link">Writing STRUCT scripts with file data</a></li>
 <li data-ice="manualNav" class="indent-h3" data-link="manual/Reading-And-Writing.html"><a href="manual/Reading-And-Writing.html#file-writing-example" data-ice="link">File Writing Example</a></li>
@@ -96,6 +101,7 @@ type =&gt; int
         static_string [ NUMBER ]
         ID
         abstract(TYPE)
+        abstract(TYPE, STRING)
         array(TYPE)
         array(ITERNAME, TYPE)
         iter(TYPE)
@@ -112,8 +118,7 @@ STRUCT =&gt; header fieldlist }</code>
 </code></pre><h1 id="semantics">Semantics</h1><h2 id="endianness">Endianness</h2><p>Data shall be written in network (big) byte order.</p>
 <h2 id="type-definitions">Type definitions</h2><h3 id="int">int</h3><p>The &apos;int&apos; type is defined to be a signed 32-bit integer</p>
 <h2 id="byte">byte</h2><p>The &apos;byte&apos; type is defined to be an unsigned 8-bit integer.</p>
-<h2 id="bool">bool</h2><p>The &apos;bool&apos; type is defined to be an unsigned 8-bit integer.
-Is cast to a boolean when read from file.</p>
+<h2 id="bool">bool</h2><p>The &apos;bool&apos; type is defined to be an unsigned 8-bit integer. Is cast to a boolean when read from file.</p>
 <h3 id="float">float</h3><p>The &apos;float&apos; type is defined to be a signed 32-bit float</p>
 <h3 id="double">double</h3><p>The &apos;double&apos; type is defined to be a signed 64-bit float</p>
 <h3 id="short">short</h3><p>The &apos;short&apos; type is defined to be a signed 16-bit signed integer</p>
@@ -123,18 +128,23 @@ Is cast to a boolean when read from file.</p>
 <li>Write size of final, encoded byte array as a signed 32-bit integer.</li>
 <li>Write encoded byte array.</li>
 </ol>
-<h2 id="static-string">static_string</h2><p>The static_string type is a fixed-sized unsigned array of 8-bit integers.  String data that is too long must be truncated to fit within the array; data is too short must be padded with zeros.</p>
+<h2 id="static-string">static_string</h2><p>The static_string type is a fixed-sized unsigned array of 8-bit integers. String data that is too long must be truncated
+to fit within the array; data is too short must be padded with zeros.</p>
 <h2 id="object-type">Object type</h2><p>Object types declared without abstract() are written via their STRUCT definitions.</p>
-<h2 id="abstract-object-type">Abstract object type</h2><p>Object types saved with abstract() must save a signed integer ID referencing their struct definition within the STRUCT manager that created them, then write the object as above.</p>
-<h2 id="array">Array</h2><p>Arrays may be variable length, of any valid STRUCT type, including abstract types.  </p>
+<h2 id="abstract-object-type">Abstract object type</h2><p>Object types saved with abstract() must save a signed integer ID referencing their struct definition within the STRUCT
+manager that created them, then write the object as above.</p>
+<p>If the client passes an additional string, it will be used in JSON mode as the property key to store the struct name;
+otherwise &quot;_structName&quot; will be used.</p>
+<h2 id="array">Array</h2><p>Arrays may be variable length, of any valid STRUCT type, including abstract types.</p>
 <h3 id="semantics">Semantics</h3><p>To write an array:</p>
 <ol>
 <li>Write a 32-bit signed integer representing array length</li>
 <li>Write each array item according to STRUCT type rules.</li>
 </ol>
-<h2 id="iter">Iter</h2><p>The Iter type is written identically to Array, but relaxes the requirement for direct, contiguous arrays for whatever iterator protocol is appropriate for the language (which differs between ES5.1 and ES6).</p>
-<h2 id="iterkeys">IterKeys</h2><p>The IterKeys iterates over an object&apos;s own keys (using a for-in loop).  Like array and iter it takes 
-an optional iter key argument.</p>
+<h2 id="iter">Iter</h2><p>The Iter type is written identically to Array, but relaxes the requirement for direct, contiguous arrays for whatever
+iterator protocol is appropriate for the language (which differs between ES5.1 and ES6).</p>
+<h2 id="iterkeys">IterKeys</h2><p>The IterKeys iterates over an object&apos;s own keys (using a for-in loop). Like array and iter it takes an optional iter key
+argument.</p>
 <p>Example:</p>
 <pre><code><code class="source-code prettyprint">object : iterkeys(e, Something) | this.object[e].getSomething();</code>
 </code></pre></div>

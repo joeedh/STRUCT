@@ -2,22 +2,27 @@ import resolve from '@rollup/plugin-node-resolve';
 //import commonjs from '@rollup/plugin-commonjs';
 import cjs from "rollup-plugin-cjs-es";
 import replace from '@rollup/plugin-replace';
-import { terser } from "rollup-plugin-terser";
+import {terser} from "rollup-plugin-terser";
 
 export default {
-  input: 'src/structjs.js',
+  input    : 'src/structjs.js',
   treeshake: false,
-  output: {
-    file: 'build/nstructjs_es6.js',
+  output   : {
+    file  : 'build/nstructjs_es6.js',
     format: 'module',
-    name: "nstructjs"
+    name  : "nstructjs"
   },
-  plugins: [
+  plugins  : [
     replace({
-      '//$BUILD_TINYEVAL_START' : '/*',
-      '//$BUILD_TINYEVAL_END' : '*/',
-      changed: 'replaced',
-      delimiters: ['', '']
+      '[keywords.script]'      : '.STRUCT',
+      '[keywords.load]'        : '.loadSTRUCT',
+      '[keywords.new]'         : '.newSTRUCT',
+      '[keywords.from]'        : '.fromSTRUCT',
+      '[keywords.name]'        : '.structName',
+      '//$BUILD_TINYEVAL_START': '/*',
+      '//$BUILD_TINYEVAL_END'  : '*/',
+      changed                  : 'replaced',
+      delimiters               : ['', '']
     }),
     resolve(),
 //    terser()

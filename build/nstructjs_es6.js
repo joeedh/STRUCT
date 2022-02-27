@@ -564,6 +564,14 @@ function StructParser() {
     tk("OPEN", /\{/),
     tk("EQUALS", /=/),
     tk("CLOSE", /}/),
+    tk("STRLIT", /\"[^"]*\"/, t => {
+      t.value = t.value.slice(1, t.value.length - 1);
+      return t;
+    }),
+    tk("STRLIT", /\'[^']*\'/, t => {
+      t.value = t.value.slice(1, t.value.length - 1);
+      return t;
+    }),
     tk("COLON", /:/),
     tk("SOPEN", /\[/),
     tk("SCLOSE", /\]/),
@@ -699,8 +707,20 @@ function StructParser() {
     p.expect("ABSTRACT");
     p.expect("LPARAM");
     let type = p.expect("ID");
+
+    let jsonKeyword = "_structName";
+
+    if (p.optional("COMMA")) {
+      jsonKeyword = p.expect("STRLIT");
+    }
+
     p.expect("RPARAM");
-    return {type: StructEnum.T_TSTRUCT, data: type}
+
+    return {
+      type: StructEnum.T_TSTRUCT,
+      data: type,
+      jsonKeyword
+    }
   }
 
   function p_Type(p) {
@@ -1568,6 +1588,8 @@ class StructTStructField extends StructFieldType {
     let cls = manager.get_struct_cls(type.data);
     let stt = manager.get_struct(type.data);
 
+    const keywords = manager.constructor.keywords;
+    
     //make sure inheritance is correct
     if (val.constructor.structName !== type.data && (val instanceof cls)) {
       //if (DEBUG.Struct) {
@@ -1588,16 +1610,20 @@ class StructTStructField extends StructFieldType {
   }
 
   static fromJSON(manager, val, obj, field, type, instance) {
-    let stt = manager.get_struct(val._structName);
+    let key = field.type.data.type.jsonKeyword;
+
+    let stt = manager.get_struct(val[key]);
 
     return manager.readJSON(val, stt, instance);
   }
 
   static toJSON(manager, val, obj, field, type) {
+    const keywords = manager.constructor.keywords;
+
     let stt = manager.get_struct(val.constructor.structName);
     let ret = manager.writeJSON(val, stt);
 
-    ret._structName = "" + stt.name;
+    ret[field.type.data.type.jsonKeyword] = "" + stt.name;
 
     return ret;
   }
@@ -2264,6 +2290,19 @@ class StructStaticArrayField extends StructFieldType {
 
 StructFieldType.register(StructStaticArrayField);
 
+var _sintern2 = /*#__PURE__*/Object.freeze({
+  __proto__: null,
+  _get_pack_debug: _get_pack_debug,
+  setWarningMode: setWarningMode,
+  setDebugMode: setDebugMode,
+  StructFieldTypes: StructFieldTypes,
+  StructFieldTypeMap: StructFieldTypeMap,
+  packNull: packNull,
+  toJSON: toJSON,
+  fromJSON: fromJSON,
+  StructFieldType: StructFieldType
+});
+
 var structEval = eval;
 
 function setStructEval(val) {
@@ -2299,6 +2338,9 @@ function updateDEBUG() {
 }
 
 "use strict";
+
+//needed to avoid a rollup bug in configurable mode
+var sintern2 = _sintern2;
 
 let warninglvl$1 = 2;
 
@@ -2355,7 +2397,7 @@ function update_debug_data() {
 update_debug_data();
 
 function setWarningMode$1(t) {
-  setWarningMode(t);
+  sintern2.setWarningMode(t);
 
   if (typeof t !== "number" || isNaN(t)) {
     throw new Error("Expected a single number (>= 0) argument to setWarningMode");
@@ -2365,7 +2407,7 @@ function setWarningMode$1(t) {
 }
 
 function setDebugMode$1(t) {
-  setDebugMode(t);
+  sintern2.setDebugMode(t);
   update_debug_data();
 }
 
@@ -2375,12 +2417,14 @@ function do_pack$1(data, val, obj, thestruct, field, type) {
   StructFieldTypeMap[field.type.type].pack(manager, data, val, obj, field, type);
 }
 
-function define_empty_class(name) {
+function define_empty_class(scls, name) {
   let cls = function () {
   };
 
   cls.prototype = Object.create(Object.prototype);
   cls.constructor = cls.prototype.constructor = cls;
+
+  let keywords = scls.keywords;
 
   cls.STRUCT = name + " {\n  }\n";
   cls.structName = name;
@@ -2396,6 +2440,10 @@ function define_empty_class(name) {
   return cls;
 }
 
+let haveCodeGen = false;
+
+//$KEYWORD_CONFIG_START
+
 class STRUCT {
   constructor() {
     this.idgen = 0;
@@ -2408,24 +2456,12 @@ class STRUCT {
     this.compiled_code = {};
     this.null_natives = {};
 
-    function define_null_native(name, cls) {
-      let obj = define_empty_class(name);
-
-      let stt = struct_parse.parse(obj.STRUCT);
-
-      stt.id = this.idgen++;
-
-      this.structs[name] = stt;
-      this.struct_cls[name] = cls;
-      this.struct_ids[stt.id] = stt;
-
-      this.null_natives[name] = 1;
-    }
-
-    define_null_native.call(this, "Object", Object);
+    this.define_null_native("Object", Object);
   }
 
   static inherit(child, parent, structName = child.name) {
+    const keywords = this.keywords;
+
     if (!parent.STRUCT) {
       return structName + "{\n";
     }
@@ -2461,10 +2497,6 @@ class STRUCT {
       parent.prototype.loadSTRUCT.call(obj, reader2);
     }
   }
-
-  //defined_classes is an array of class constructors
-  //with STRUCT scripts, *OR* another STRUCT instance
-  //
 
   /** deprecated.  used with old fromSTRUCT interface. */
   static chain_fromSTRUCT(cls, reader) {
@@ -2502,6 +2534,10 @@ class STRUCT {
 
     return obj2;
   }
+
+  //defined_classes is an array of class constructors
+  //with STRUCT scripts, *OR* another STRUCT instance
+  //
 
   static formatStruct(stt, internal_only, no_helper_js) {
     return this.fmt_struct(stt, internal_only, no_helper_js);
@@ -2554,6 +2590,36 @@ class STRUCT {
     if (!internal_only)
       s += "}";
     return s;
+  }
+
+  static setClassKeyword(keyword, nameKeyword = undefined) {
+    if (!nameKeyword) {
+      nameKeyword = keyword.toLowerCase() + "Name";
+    }
+
+    this.keywords = {
+      script: keyword,
+      name  : nameKeyword,
+      load  : "load" + keyword,
+      new   : "new" + keyword,
+      after : "after" + keyword,
+      from  : "from" + keyword
+    };
+  }
+
+  define_null_native(name, cls) {
+    const keywords = this.constructor.keywords;
+    let obj = define_empty_class(this.constructor, name);
+
+    let stt = struct_parse.parse(obj.STRUCT);
+
+    stt.id = this.idgen++;
+
+    this.structs[name] = stt;
+    this.struct_cls[name] = cls;
+    this.struct_ids[stt.id] = stt;
+
+    this.null_natives[name] = 1;
   }
 
   validateStructs(onerror) {
@@ -2648,6 +2714,8 @@ class STRUCT {
 
   //defaults to structjs.manager
   parse_structs(buf, defined_classes) {
+    const keywords = this.constructor.keywords;
+
     if (defined_classes === undefined) {
       defined_classes = manager;
     }
@@ -2696,7 +2764,7 @@ class STRUCT {
           if (warninglvl$1 > 0)
             console.log("WARNING: struct " + stt.name + " is missing from class list.");
 
-        let dummy = define_empty_class(stt.name);
+        let dummy = define_empty_class(this.constructor, stt.name);
 
         dummy.STRUCT = STRUCT.fmt_struct(stt);
         dummy.structName = stt.name;
@@ -2785,6 +2853,8 @@ class STRUCT {
   }
 
   unregister(cls) {
+    const keywords = this.constructor.keywords;
+
     if (!cls || !cls.structName || !(cls.structName in this.struct_cls)) {
       console.warn("Class not registered with nstructjs", cls);
       return;
@@ -2804,6 +2874,7 @@ class STRUCT {
       return;
     }
 
+    const keywords = this.constructor.keywords;
     if (cls.STRUCT) {
       let bad = false;
 
@@ -2823,7 +2894,7 @@ class STRUCT {
           structName = unmangle(cls.name);
         }
 
-        cls.STRUCT = STRUCT.inherit(cls, p) + `\n}`;
+        cls.STRUCT = STRUCT.inherit(cls, p) + "\n}";
       }
     }
 
@@ -2871,6 +2942,8 @@ class STRUCT {
   }
 
   isRegistered(cls) {
+    const keywords = this.constructor.keywords;
+
     if (!cls.hasOwnProperty("structName")) {
       return false;
     }
@@ -2982,6 +3055,8 @@ class STRUCT {
    @param obj  : structable object
    */
   write_object(data, obj) {
+    const keywords = this.constructor.keywords;
+
     let cls = obj.constructor.structName;
     let stt = this.get_struct(cls);
 
@@ -3020,6 +3095,8 @@ class STRUCT {
   }
 
   writeJSON(obj, stt = undefined) {
+    const keywords = this.constructor.keywords;
+
     let cls = obj.constructor;
     stt = stt || this.get_struct(cls.structName);
 
@@ -3029,7 +3106,7 @@ class STRUCT {
       return cls.useHelperJS(field);
     }
 
-    let toJSON$1 = toJSON;
+    let toJSON = sintern2.toJSON;
 
     let fields = stt.fields;
     let thestruct = this;
@@ -3053,10 +3130,10 @@ class STRUCT {
           console.log("\n\n\n", f.get, "Helper JS Ret", val, "\n\n\n");
         }
 
-        json2 = toJSON$1(this, val, obj, f, t1);
+        json2 = toJSON(this, val, obj, f, t1);
       } else {
         val = f.name === "this" ? obj : obj[f.name];
-        json2 = toJSON$1(this, val, obj, f, t1);
+        json2 = toJSON(this, val, obj, f, t1);
       }
 
       if (f.name !== 'this') {
@@ -3087,6 +3164,7 @@ class STRUCT {
    @param uctx : internal parameter
    */
   read_object(data, cls_or_struct_id, uctx, objInstance) {
+    const keywords = this.constructor.keywords;
     let cls, stt;
 
     if (data instanceof Array) {
@@ -3162,7 +3240,7 @@ class STRUCT {
       obj.loadSTRUCT(load);
 
       if (!was_run) {
-        console.warn(""+cls.structName + ".prototype.loadSTRUCT() did not execute its loader callback!");
+        console.warn("" + cls.structName + ".prototype.loadSTRUCT() did not execute its loader callback!");
         load(obj);
       }
 
@@ -3187,6 +3265,8 @@ class STRUCT {
   }
 
   readJSON(json, cls_or_struct_id, objInstance = undefined) {
+    const keywords = this.constructor.keywords;
+
     let cls, stt;
 
     if (typeof cls_or_struct_id === "number") {
@@ -3207,7 +3287,7 @@ class STRUCT {
     let thestruct = this;
     let this2 = this;
     let was_run = false;
-    let fromJSON$1 = fromJSON;
+    let fromJSON = sintern2.fromJSON;
 
     function makeLoader(stt) {
       return function load(obj) {
@@ -3238,7 +3318,7 @@ class STRUCT {
 
           let instance = f.name === 'this' ? obj : objInstance;
 
-          let ret = fromJSON$1(this2, val, obj, f, f.type, instance);
+          let ret = fromJSON(this2, val, obj, f, f.type, instance);
 
           if (f.name !== 'this') {
             obj[f.name] = ret;
@@ -3279,6 +3359,58 @@ class STRUCT {
     }
   }
 };
+//$KEYWORD_CONFIG_END
+
+if (haveCodeGen) {
+  var StructClass;
+
+  eval(code);
+
+  STRUCT = StructClass;
+}
+
+STRUCT.setClassKeyword("STRUCT");
+
+function deriveStructManager(keywords = {
+  script: "STRUCT",
+  name  : undefined, //script.toLowerCase + "Name"
+  load  : undefined, //"load" + script
+  new   : undefined, //"new" + script
+  from  : undefined, //"from" + script
+}) {
+
+  if (!keywords.name) {
+    keywords.name = keywords.script.toLowerCase() + "Name";
+  }
+
+  if (!keywords.load) {
+    keywords.load = "load" + keywords.script;
+  }
+
+  if (!keywords.new) {
+    keywords.new = "new" + keywords.script;
+  }
+
+  if (!keywords.from) {
+    keywords.from = "from" + keywords.script;
+  }
+
+  if (haveCodeGen) {
+    class NewSTRUCT extends STRUCT {
+
+    }
+    NewSTRUCT.keywords = keywords;
+    return NewSTRUCT;
+  } else {
+    var StructClass;
+
+    let code2 = code;
+    code2 = code2.replace(/\[keywords.script\]/g, keywords.script);
+
+    eval(code2);
+    return StructClass;
+  }
+}
 
 //main struct script manager
 manager = new STRUCT();
@@ -3659,4 +3791,4 @@ function readJSON(json, class_or_struct_id) {
   return manager.readJSON(json, class_or_struct_id);
 }
 
-export { STRUCT, _truncateDollarSign, struct_binpack as binpack, struct_filehelper as filehelper, getEndian, inherit, isRegistered, manager, struct_parser as parser, struct_parseutil as parseutil, readJSON, readObject, register, setAllowOverriding, setDebugMode$1 as setDebugMode, setEndian$1 as setEndian, setTruncateDollarSign, setWarningMode$1 as setWarningMode, truncateDollarSign$1 as truncateDollarSign, struct_typesystem as typesystem, unpack_context, unregister, validateStructs, writeJSON, writeObject, write_scripts };
+export { STRUCT, _truncateDollarSign, struct_binpack as binpack, deriveStructManager, struct_filehelper as filehelper, getEndian, inherit, isRegistered, manager, struct_parser as parser, struct_parseutil as parseutil, readJSON, readObject, register, setAllowOverriding, setDebugMode$1 as setDebugMode, setEndian$1 as setEndian, setTruncateDollarSign, setWarningMode$1 as setWarningMode, truncateDollarSign$1 as truncateDollarSign, struct_typesystem as typesystem, unpack_context, unregister, validateStructs, writeJSON, writeObject, write_scripts };

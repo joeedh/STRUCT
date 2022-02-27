@@ -46,6 +46,11 @@
 <div data-ice="manual">
     <ul class="manual-toc">
       
+    </ul>
+  </div>
+<div data-ice="manual">
+    <ul class="manual-toc">
+      
     <li data-ice="manualNav" class="indent-h1" data-link="manual/Reading-And-Writing.html"><a href="manual/Reading-And-Writing.html" data-ice="link">Handling data structure changes</a></li>
 <li data-ice="manualNav" class="indent-h2" data-link="manual/Reading-And-Writing.html"><a href="manual/Reading-And-Writing.html#writing-struct-scripts-with-file-data" data-ice="link">Writing STRUCT scripts with file data</a></li>
 <li data-ice="manualNav" class="indent-h3" data-link="manual/Reading-And-Writing.html"><a href="manual/Reading-And-Writing.html#file-writing-example" data-ice="link">File Writing Example</a></li>
@@ -81,7 +86,10 @@
 </nav>
 
 <div class="content" data-ice="content"><div class="github-markdown">
-  <div class="manual-user-index" data-ice="manualUserIndex"><p><a href="manual/Intro-and-Examples.html">Intro and Examples</a></p>
+  <div class="manual-user-index" data-ice="manualUserIndex"><p><a href="manual/Intro-and-Examples.html">Intro and Examples</a>
+<a href="manual/Specification.html">Specification</a>
+<a href="manual/Reading-And-Writing.html">Reading-And-Writing</a>
+<a href="manual/JSON.html">JSON</a></p>
 </div>
 
   
@@ -117,15 +125,18 @@ var uctx = new nstructjs.binpack.unpack_ctx();</code>
     </div>
 <div class="manual-card-wrap" data-ice="cards">
       <div class="manual-card">
-        <div data-ice="card"><h1>Semantics</h1><h2>Endianness</h2><p>Data shall be written in network (big) byte order.</p><h2>Type definitions</h2><h3>int</h3><p>The &apos;int&apos; type is defined to be a signed 32-bit integer</p><h2>byte</h2><p>The &apos;byte&apos; type is defined to be an unsigned 8-bit integer.</p><h2>bool</h2><p>The &apos;bool&apos; type is defined to be an unsigned 8-bit integer.
-Is cast to a boolean when read from file.</p><h3>float</h3><p>The &apos;float&apos; type is defined to be a signed 32-bit float</p><h3>double</h3><p>The &apos;double&apos; type is defined to be a signed 64-bit float</p><h3>short</h3><p>The &apos;short&apos; type is defined to be a signed 16-bit signed integer</p><h3>string</h3><p>The string type is defined to be an unsigned array of 8-bit integers, encoded with UTF8.</p><h4>Semantics</h4><p>Strings shall be written in these steps:</p><ol>
+        <div data-ice="card"><h1>Semantics</h1><h2>Endianness</h2><p>Data shall be written in network (big) byte order.</p><h2>Type definitions</h2><h3>int</h3><p>The &apos;int&apos; type is defined to be a signed 32-bit integer</p><h2>byte</h2><p>The &apos;byte&apos; type is defined to be an unsigned 8-bit integer.</p><h2>bool</h2><p>The &apos;bool&apos; type is defined to be an unsigned 8-bit integer. Is cast to a boolean when read from file.</p><h3>float</h3><p>The &apos;float&apos; type is defined to be a signed 32-bit float</p><h3>double</h3><p>The &apos;double&apos; type is defined to be a signed 64-bit float</p><h3>short</h3><p>The &apos;short&apos; type is defined to be a signed 16-bit signed integer</p><h3>string</h3><p>The string type is defined to be an unsigned array of 8-bit integers, encoded with UTF8.</p><h4>Semantics</h4><p>Strings shall be written in these steps:</p><ol>
 <li>Write size of final, encoded byte array as a signed 32-bit integer.</li>
 <li>Write encoded byte array.</li>
-</ol><h2>static_string</h2><p>The static_string type is a fixed-sized unsigned array of 8-bit integers.  String data that is too long must be truncated to fit within the array; data is too short must be padded with zeros.</p><h2>Object type</h2><p>Object types declared without abstract() are written via their STRUCT definitions.</p><h2>Abstract object type</h2><p>Object types saved with abstract() must save a signed integer ID referencing their struct definition within the STRUCT manager that created them, then write the object as above.</p><h2>Array</h2><p>Arrays may be variable length, of any valid STRUCT type, including abstract types.  </p><h3>Semantics</h3><p>To write an array:</p><ol>
+</ol><h2>static_string</h2><p>The static_string type is a fixed-sized unsigned array of 8-bit integers. String data that is too long must be truncated
+to fit within the array; data is too short must be padded with zeros.</p><h2>Object type</h2><p>Object types declared without abstract() are written via their STRUCT definitions.</p><h2>Abstract object type</h2><p>Object types saved with abstract() must save a signed integer ID referencing their struct definition within the STRUCT
+manager that created them, then write the object as above.</p><p>If the client passes an additional string, it will be used in JSON mode as the property key to store the struct name;
+otherwise &quot;_structName&quot; will be used.</p><h2>Array</h2><p>Arrays may be variable length, of any valid STRUCT type, including abstract types.</p><h3>Semantics</h3><p>To write an array:</p><ol>
 <li>Write a 32-bit signed integer representing array length</li>
 <li>Write each array item according to STRUCT type rules.</li>
-</ol><h2>Iter</h2><p>The Iter type is written identically to Array, but relaxes the requirement for direct, contiguous arrays for whatever iterator protocol is appropriate for the language (which differs between ES5.1 and ES6).</p><h2>IterKeys</h2><p>The IterKeys iterates over an object&apos;s own keys (using a for-in loop).  Like array and iter it takes 
-an optional iter key argument.</p><p>Example:</p><pre><code><code class="source-code prettyprint">object : iterkeys(e, Something) | this.object[e].getSomething();</code>
+</ol><h2>Iter</h2><p>The Iter type is written identically to Array, but relaxes the requirement for direct, contiguous arrays for whatever
+iterator protocol is appropriate for the language (which differs between ES5.1 and ES6).</p><h2>IterKeys</h2><p>The IterKeys iterates over an object&apos;s own keys (using a for-in loop). Like array and iter it takes an optional iter key
+argument.</p><p>Example:</p><pre><code><code class="source-code prettyprint">object : iterkeys(e, Something) | this.object[e].getSomething();</code>
 </code></pre></div>
         <a data-ice="link" href="manual/Specification.html#semantics"></a>
       </div>

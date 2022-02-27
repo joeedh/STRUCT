@@ -32,6 +32,8 @@ export function setEndian(mode) {
   return ret;
 }
 
+export {deriveStructManager} from './struct_intern.js';
+
 export function getEndian() {
   return struct_binpack.STRUCT_ENDIAN;
 }

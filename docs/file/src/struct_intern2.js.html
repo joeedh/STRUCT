@@ -92,10 +92,12 @@
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-versionToInt">versionToInt</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-updateDEBUG">updateDEBUG</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-_truncateDollarSign">_truncateDollarSign</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-deriveStructManager">deriveStructManager</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-setDebugMode">setDebugMode</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-setTruncateDollarSign">setTruncateDollarSign</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-setWarningMode">setWarningMode</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-write_scripts">write_scripts</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-_get_pack_debug">_get_pack_debug</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-fromJSON">fromJSON</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-packNull">packNull</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-setDebugMode">setDebugMode</a></span></span></li>
@@ -116,6 +118,8 @@
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-writeJSON">writeJSON</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-writeObject">writeObject</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-STRUCT_ENDIAN">STRUCT_ENDIAN</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-temp_dataview">temp_dataview</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-uint8_view">uint8_view</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-structEval">structEval</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-DEBUG">DEBUG</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-truncateDollarSign">truncateDollarSign</a></span></span></li>
@@ -141,15 +145,22 @@ import {
   pack_bytes, unpack_byte, STRUCT_ENDIAN, unpack_int, decode_utf8,
   unpack_double, encode_utf8, test_utf8, unpack_bytes, unpack_float, unpack_sbyte,
   unpack_string, unpack_short, unpack_static_string, unpack_uint, unpack_ushort,
-  unpack_context
+  unpack_context, temp_dataview, uint8_view
 } from &apos;./struct_binpack.js&apos;
 
-let warninglvl = 1;
+let warninglvl = 2;
 let debug = 0;
 
 let _static_envcode_null = &quot;&quot;;
-let packer_debug, packer_debug_start, packer_debug_end;
+let packer_debug, packer_debug_start, packer_debug_end
 let packdebug_tablevel = 0;
+
+export function _get_pack_debug() {
+  return {
+    packer_debug, packer_debug_start, packer_debug_end,
+    debug, warninglvl
+  }
+}
 
 class cachering extends Array {
   constructor(cb, tot) {
@@ -157,21 +168,21 @@ class cachering extends Array {
     this.length = tot;
     this.cur = 0;
 
-    for (let i=0; i&lt;tot; i++) {
+    for (let i = 0; i &lt; tot; i++) {
       this[i] = cb();
     }
+  }
+
+  static fromConstructor(cls, tot) {
+    return new cachering(() =&gt; new cls(), tot);
   }
 
   next() {
     let ret = this[this.cur];
 
-    this.cur = (this.cur + 1) % this.length;
+    this.cur = (this.cur + 1)%this.length;
 
     return ret;
-  }
-
-  static fromConstructor(cls, tot) {
-    return new cachering(() =&gt; new cls(), tot);
   }
 }
 
@@ -197,12 +208,13 @@ export function setDebugMode(t) {
   debug = t;
 
   if (debug) {
-    packer_debug = function (msg) {
-      if (msg !== undefined) {
-        let t = gen_tabstr(packdebug_tablevel);
-        console.log(t + msg);
+    packer_debug = function () {
+      let tab = gen_tabstr(packdebug_tablevel);
+
+      if (arguments.length &gt; 0) {
+        console.warn(tab, ...arguments);
       } else {
-        console.log(&quot;Warning: undefined msg&quot;);
+        console.warn(&quot;Warning: undefined msg&quot;);
       }
     };
     packer_debug_start = function (funcname) {
@@ -212,7 +224,10 @@ export function setDebugMode(t) {
 
     packer_debug_end = function (funcname) {
       packdebug_tablevel--;
-      packer_debug(&quot;Leave &quot; + funcname);
+
+      if (funcname) {
+        packer_debug(&quot;Leave &quot; + funcname);
+      }
     };
   } else {
     packer_debug = function () {
@@ -246,13 +261,13 @@ function unpack_field(manager, data, type, uctx) {
 
   if (debug) {
     name = StructFieldTypeMap[type.type].define().name;
-    packer_debug_start(&quot;R start &quot; + name);
+    packer_debug_start(&quot;R &quot; + name);
   }
 
   let ret = StructFieldTypeMap[type.type].unpack(manager, data, type, uctx);
 
   if (debug) {
-    packer_debug_end(&quot;R end &quot; + name);
+    packer_debug_end();
   }
 
   return ret;
@@ -271,7 +286,7 @@ function do_pack(manager, data, val, obj, field, type) {
 
   if (debug) {
     name = StructFieldTypeMap[type.type].define().name;
-    packer_debug_start(&quot;W start &quot; + name);
+    packer_debug_start(&quot;W &quot; + name);
   }
 
   let typeid = type;
@@ -282,7 +297,7 @@ function do_pack(manager, data, val, obj, field, type) {
   let ret = StructFieldTypeMap[typeid].pack(manager, data, val, obj, field, type);
 
   if (debug) {
-    packer_debug_end(&quot;W end &quot; + name);
+    packer_debug_end();
   }
 
   return ret;
@@ -477,7 +492,11 @@ StructFieldType.register(StructStaticStringField);
 
 class StructStructField extends StructFieldType {
   static pack(manager, data, val, obj, field, type) {
-    manager.write_struct(data, val, manager.get_struct(type.data));
+    let stt = manager.get_struct(type.data);
+
+    packer_debug(&quot;struct&quot;, stt.name);
+
+    manager.write_struct(data, val, stt);
   }
 
   static format(type) {
@@ -497,11 +516,15 @@ class StructStructField extends StructFieldType {
 
   static unpackInto(manager, data, type, uctx, dest) {
     let cls2 = manager.get_struct_cls(type.data);
+
+    packer_debug(&quot;struct&quot;, cls2 ? cls2.name : &quot;(error)&quot;);
     return manager.read_object(data, cls2, uctx, dest);
   }
 
   static packNull(manager, data, field, type) {
     let stt = manager.get_struct(type.data);
+
+    packer_debug(&quot;struct&quot;, type);
 
     for (let field2 of stt.fields) {
       let type2 = field2.type;
@@ -512,6 +535,8 @@ class StructStructField extends StructFieldType {
 
   static unpack(manager, data, type, uctx) {
     let cls2 = manager.get_struct_cls(type.data);
+    packer_debug(&quot;struct&quot;, cls2 ? cls2.name : &quot;(error)&quot;);
+
     return manager.read_object(data, cls2, uctx);
   }
 
@@ -530,17 +555,19 @@ class StructTStructField extends StructFieldType {
     let cls = manager.get_struct_cls(type.data);
     let stt = manager.get_struct(type.data);
 
+    const keywords = manager.constructor.keywords;
+    
     //make sure inheritance is correct
-    if (val.constructor.structName !== type.data &amp;&amp; (val instanceof cls)) {
+    if (val.constructor[keywords.name] !== type.data &amp;&amp; (val instanceof cls)) {
       //if (DEBUG.Struct) {
-      //    console.log(val.constructor.structName+&quot; inherits from &quot;+cls.structName);
+      //    console.log(val.constructor[keywords.name]+&quot; inherits from &quot;+cls[keywords.name]);
       //}
-      stt = manager.get_struct(val.constructor.structName);
-    } else if (val.constructor.structName === type.data) {
+      stt = manager.get_struct(val.constructor[keywords.name]);
+    } else if (val.constructor[keywords.name] === type.data) {
       stt = manager.get_struct(type.data);
     } else {
       console.trace();
-      throw new Error(&quot;Bad struct &quot; + val.constructor.structName + &quot; passed to write_struct&quot;);
+      throw new Error(&quot;Bad struct &quot; + val.constructor[keywords.name] + &quot; passed to write_struct&quot;);
     }
 
     packer_debug(&quot;int &quot; + stt.id);
@@ -550,16 +577,20 @@ class StructTStructField extends StructFieldType {
   }
 
   static fromJSON(manager, val, obj, field, type, instance) {
-    let stt = manager.get_struct(val._structName);
+    let key = type.jsonKeyword;
+
+    let stt = manager.get_struct(val[key]);
 
     return manager.readJSON(val, stt, instance);
   }
 
   static toJSON(manager, val, obj, field, type) {
-    let stt = manager.get_struct(val.constructor.structName);
+    const keywords = manager.constructor.keywords;
+
+    let stt = manager.get_struct(val.constructor[keywords.name]);
     let ret = manager.writeJSON(val, stt);
 
-    ret._structName = &quot;&quot; + stt.name;
+    ret[type.jsonKeyword] = &quot;&quot; + stt.name;
 
     return ret;
   }
@@ -580,11 +611,10 @@ class StructTStructField extends StructFieldType {
 
     packer_debug(&quot;-int &quot; + id);
     if (!(id in manager.struct_ids)) {
-      packer_debug(&quot;struct id: &quot; + id);
+      packer_debug(&quot;tstruct id: &quot; + id);
       console.trace();
       console.log(id);
       console.log(manager.struct_ids);
-      packer_debug_end(&quot;tstruct&quot;);
       throw new Error(&quot;Unknown struct type &quot; + id + &quot;.&quot;);
     }
 
@@ -603,11 +633,10 @@ class StructTStructField extends StructFieldType {
 
     packer_debug(&quot;-int &quot; + id);
     if (!(id in manager.struct_ids)) {
-      packer_debug(&quot;struct id: &quot; + id);
+      packer_debug(&quot;tstruct id: &quot; + id);
       console.trace();
       console.log(id);
       console.log(manager.struct_ids);
-      packer_debug_end(&quot;tstruct&quot;);
       throw new Error(&quot;Unknown struct type &quot; + id + &quot;.&quot;);
     }
 
@@ -779,25 +808,15 @@ class StructIterField extends StructFieldType {
       }
     }
 
-    let len = 0.0;
-    forEach(() =&gt; {
-      len++;
-    });
-
-    packer_debug(&quot;int &quot; + len);
-    struct_binpack.pack_int(data, len);
+    /* save space for length */
+    let starti = data.length;
+    data.length += 4;
 
     let d = type.data, itername = d.iname, type2 = d.type;
     let env = _ws_env;
 
     let i = 0;
     forEach(function (val2) {
-      if (i &gt;= len) {
-        if (warninglvl &gt; 0)
-          console.trace(&quot;Warning: iterator returned different length of list!&quot;, val, i);
-        return;
-      }
-
       if (itername !== &quot;&quot; &amp;&amp; itername !== undefined &amp;&amp; field.get) {
         env[0][0] = itername;
         env[0][1] = val2;
@@ -811,6 +830,14 @@ class StructIterField extends StructFieldType {
 
       i++;
     }, this);
+
+    /* write length */
+    temp_dataview.setInt32(0, i, STRUCT_ENDIAN);
+
+    data[starti++] = uint8_view[0];
+    data[starti++] = uint8_view[1];
+    data[starti++] = uint8_view[2];
+    data[starti++] = uint8_view[3];
   }
 
   static fromJSON() {
@@ -977,8 +1004,6 @@ class StructIterKeysField extends StructFieldType {
       console.log(&quot;&quot;);
 
       struct_binpack.pack_int(data, 0);
-
-      packer_debug_end(&quot;iterkeys&quot;);
       return;
     }
 

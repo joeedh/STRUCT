@@ -48,6 +48,12 @@ window.esdocSearchIndex = [
     "variable"
   ],
   [
+    "nstructjs/src/struct_intern2.js~_get_pack_debug",
+    "function/index.html#static-function-_get_pack_debug",
+    "<span>_get_pack_debug</span> <span class=\"search-result-import-path\">nstructjs/src/struct_intern2.js</span>",
+    "function"
+  ],
+  [
     "nstructjs/src/struct_intern.js~_truncatedollarsign",
     "function/index.html#static-function-_truncateDollarSign",
     "<span>_truncateDollarSign</span> <span class=\"search-result-import-path\">nstructjs/src/struct_intern.js</span>",
@@ -57,6 +63,12 @@ window.esdocSearchIndex = [
     "nstructjs/src/struct_binpack.js~decode_utf8",
     "function/index.html#static-function-decode_utf8",
     "<span>decode_utf8</span> <span class=\"search-result-import-path\">nstructjs/src/struct_binpack.js</span>",
+    "function"
+  ],
+  [
+    "nstructjs/src/struct_intern.js~derivestructmanager",
+    "function/index.html#static-function-deriveStructManager",
+    "<span>deriveStructManager</span> <span class=\"search-result-import-path\">nstructjs/src/struct_intern.js</span>",
     "function"
   ],
   [
@@ -246,6 +258,12 @@ window.esdocSearchIndex = [
     "variable"
   ],
   [
+    "nstructjs/src/struct_binpack.js~temp_dataview",
+    "variable/index.html#static-variable-temp_dataview",
+    "<span>temp_dataview</span> <span class=\"search-result-import-path\">nstructjs/src/struct_binpack.js</span>",
+    "variable"
+  ],
+  [
     "nstructjs/src/struct_binpack.js~test_utf8",
     "function/index.html#static-function-test_utf8",
     "<span>test_utf8</span> <span class=\"search-result-import-path\">nstructjs/src/struct_binpack.js</span>",
@@ -274,6 +292,12 @@ window.esdocSearchIndex = [
     "function/index.html#static-function-truncateDollarSign",
     "<span>truncateDollarSign</span> <span class=\"search-result-import-path\">nstructjs/src/structjs.js</span>",
     "function"
+  ],
+  [
+    "nstructjs/src/struct_binpack.js~uint8_view",
+    "variable/index.html#static-variable-uint8_view",
+    "<span>uint8_view</span> <span class=\"search-result-import-path\">nstructjs/src/struct_binpack.js</span>",
+    "variable"
   ],
   [
     "nstructjs/src/struct_binpack.js~unpack_byte",
@@ -930,6 +954,12 @@ window.esdocSearchIndex = [
     "method"
   ],
   [
+    "src/struct_intern.js~struct#define_null_native",
+    "class/src/struct_intern.js~STRUCT.html#static-method-define_null_native",
+    "src/struct_intern.js~STRUCT#define_null_native",
+    "method"
+  ],
+  [
     "src/struct_intern.js~struct#foreach",
     "class/src/struct_intern.js~STRUCT.html#static-method-forEach",
     "src/struct_intern.js~STRUCT#forEach",
@@ -999,6 +1029,12 @@ window.esdocSearchIndex = [
     "src/struct_intern.js~struct#register",
     "class/src/struct_intern.js~STRUCT.html#static-method-register",
     "src/struct_intern.js~STRUCT#register",
+    "method"
+  ],
+  [
+    "src/struct_intern.js~struct#registergraph",
+    "class/src/struct_intern.js~STRUCT.html#static-method-registerGraph",
+    "src/struct_intern.js~STRUCT#registerGraph",
     "method"
   ],
   [
@@ -1113,6 +1149,24 @@ window.esdocSearchIndex = [
     "src/struct_intern.js~struct.inherit",
     "class/src/struct_intern.js~STRUCT.html#static-method-inherit",
     "src/struct_intern.js~STRUCT.inherit",
+    "method"
+  ],
+  [
+    "src/struct_intern.js~struct.keywords",
+    "class/src/struct_intern.js~STRUCT.html#static-member-keywords",
+    "src/struct_intern.js~STRUCT.keywords",
+    "member"
+  ],
+  [
+    "src/struct_intern.js~struct.setclasskeyword",
+    "class/src/struct_intern.js~STRUCT.html#static-method-setClassKeyword",
+    "src/struct_intern.js~STRUCT.setClassKeyword",
+    "method"
+  ],
+  [
+    "src/struct_intern.js~struct.setclasskeyword",
+    "class/src/struct_intern.js~STRUCT.html#static-method-setClassKeyword",
+    "src/struct_intern.js~STRUCT.setClassKeyword",
     "method"
   ],
   [

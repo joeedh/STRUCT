@@ -92,10 +92,12 @@
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-versionToInt">versionToInt</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-updateDEBUG">updateDEBUG</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-_truncateDollarSign">_truncateDollarSign</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-deriveStructManager">deriveStructManager</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-setDebugMode">setDebugMode</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-setTruncateDollarSign">setTruncateDollarSign</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-setWarningMode">setWarningMode</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-write_scripts">write_scripts</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-_get_pack_debug">_get_pack_debug</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-fromJSON">fromJSON</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-packNull">packNull</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-setDebugMode">setDebugMode</a></span></span></li>
@@ -116,6 +118,8 @@
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-writeJSON">writeJSON</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-writeObject">writeObject</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-STRUCT_ENDIAN">STRUCT_ENDIAN</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-temp_dataview">temp_dataview</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-uint8_view">uint8_view</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-structEval">structEval</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-DEBUG">DEBUG</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-truncateDollarSign">truncateDollarSign</a></span></span></li>
@@ -138,7 +142,7 @@
   
   
   
-  <span data-ice="source">| <span><a href="file/src/struct_intern.js.html#lineNumber183">source</a></span></span>
+  <span data-ice="source">| <span><a href="file/src/struct_intern.js.html#lineNumber145">source</a></span></span>
 </div>
 
 <div class="self-detail detail">
@@ -149,7 +153,7 @@
   
   
   
-  
+  <div class="flat-list" data-ice="directSubclass"><h4>Direct Subclass:</h4><div><span>src/struct_intern.js~NewSTRUCT</span></div></div>
   
   
   
@@ -158,7 +162,8 @@
 
   
   
-  
+  <div class="description" data-ice="description"><p><pre>$KEYWORD_CONFIG_START</pre></p>
+</div>
   
 
   
@@ -170,7 +175,41 @@
   
 </div>
 
-
+<div data-ice="staticMemberSummary"><h2>Static Member Summary</h2><table class="summary" data-ice="summary">
+  <thead><tr><td data-ice="title" colspan="3">Static Public Members</td></tr></thead>
+  <tbody>
+  
+  <tr data-ice="target">
+    <td>
+      <span class="access" data-ice="access">public</span>
+      <span data-ice="static">static</span>
+      
+      
+      <span class="override" data-ice="override"></span>
+    </td>
+    <td>
+      <div>
+        <p>
+          
+          
+          
+          <span class="code" data-ice="name"><span><a href="class/src/struct_intern.js~STRUCT.html#static-member-keywords">keywords</a></span></span><span class="code" data-ice="signature">: {&quot;script&quot;: <span>*</span>, &quot;name&quot;: <span>*</span>, &quot;load&quot;: <span>*</span>, &quot;new&quot;: <span>*</span>, &quot;after&quot;: <span>*</span>, &quot;from&quot;: <span>*</span>}</span>
+        </p>
+      </div>
+      <div>
+        
+        
+        
+      </div>
+    </td>
+    <td>
+      
+      
+    </td>
+  </tr>
+</tbody>
+</table>
+</div>
 <div data-ice="staticMethodSummary"><h2>Static Method Summary</h2><table class="summary" data-ice="summary">
   <thead><tr><td data-ice="title" colspan="3">Static Public Methods</td></tr></thead>
   <tbody>
@@ -312,6 +351,34 @@
         
         <div data-ice="description"><p><pre>* deprecated.</pre></p>
 </div>
+      </div>
+    </td>
+    <td>
+      
+      
+    </td>
+  </tr>
+<tr data-ice="target">
+    <td>
+      <span class="access" data-ice="access">public</span>
+      <span data-ice="static">static</span>
+      
+      
+      <span class="override" data-ice="override"></span>
+    </td>
+    <td>
+      <div>
+        <p>
+          
+          
+          
+          <span class="code" data-ice="name"><span><a href="class/src/struct_intern.js~STRUCT.html#static-method-define_null_native">define_null_native</a></span></span><span class="code" data-ice="signature">(name: <span>*</span>, cls: <span>*</span>)</span>
+        </p>
+      </div>
+      <div>
+        
+        
+        
       </div>
     </td>
     <td>
@@ -795,6 +862,92 @@
           
           
           
+          <span class="code" data-ice="name"><span><a href="class/src/struct_intern.js~STRUCT.html#static-method-registerGraph">registerGraph</a></span></span><span class="code" data-ice="signature">(srcSTRUCT: <span>*</span>, cls: <span>*</span>): <span>*</span></span>
+        </p>
+      </div>
+      <div>
+        
+        
+        <div data-ice="description"><p><pre><em> adds all structs referenced by cls inside of srcSTRUCT
+   </em>  to this </pre></p>
+</div>
+      </div>
+    </td>
+    <td>
+      
+      
+    </td>
+  </tr>
+<tr data-ice="target">
+    <td>
+      <span class="access" data-ice="access">public</span>
+      <span data-ice="static">static</span>
+      
+      
+      <span class="override" data-ice="override"></span>
+    </td>
+    <td>
+      <div>
+        <p>
+          
+          
+          
+          <span class="code" data-ice="name"><span><a href="class/src/struct_intern.js~STRUCT.html#static-method-setClassKeyword">setClassKeyword</a></span></span><span class="code" data-ice="signature">(keyword: <span>*</span>, nameKeyword: <span>*</span>)</span>
+        </p>
+      </div>
+      <div>
+        
+        
+        
+      </div>
+    </td>
+    <td>
+      
+      
+    </td>
+  </tr>
+<tr data-ice="target">
+    <td>
+      <span class="access" data-ice="access">public</span>
+      <span data-ice="static">static</span>
+      
+      
+      <span class="override" data-ice="override"></span>
+    </td>
+    <td>
+      <div>
+        <p>
+          
+          
+          
+          <span class="code" data-ice="name"><span><a href="class/src/struct_intern.js~STRUCT.html#static-method-setClassKeyword">setClassKeyword</a></span></span><span class="code" data-ice="signature">(keyword: <span>*</span>, nameKeyword: <span>*</span>)</span>
+        </p>
+      </div>
+      <div>
+        
+        
+        
+      </div>
+    </td>
+    <td>
+      
+      
+    </td>
+  </tr>
+<tr data-ice="target">
+    <td>
+      <span class="access" data-ice="access">public</span>
+      <span data-ice="static">static</span>
+      
+      
+      <span class="override" data-ice="override"></span>
+    </td>
+    <td>
+      <div>
+        <p>
+          
+          
+          
           <span class="code" data-ice="name"><span><a href="class/src/struct_intern.js~STRUCT.html#static-method-unregister">unregister</a></span></span><span class="code" data-ice="signature">(cls: <span>*</span>)</span>
         </p>
       </div>
@@ -1202,7 +1355,52 @@
 
 
 
+<div data-ice="staticMemberDetails"><h2 data-ice="title">Static Public Members</h2>
 
+<div class="detail" data-ice="detail">
+  <h3 data-ice="anchor" id="static-member-keywords">
+    <span class="access" data-ice="access">public</span>
+    <span data-ice="static">static</span>
+    
+    
+    
+    
+    <span class="code" data-ice="name">keywords</span><span class="code" data-ice="signature">: {&quot;script&quot;: <span>*</span>, &quot;name&quot;: <span>*</span>, &quot;load&quot;: <span>*</span>, &quot;new&quot;: <span>*</span>, &quot;after&quot;: <span>*</span>, &quot;from&quot;: <span>*</span>}</span>
+    <span class="right-info">
+      
+      
+      <span data-ice="source"><span><a href="file/src/struct_intern.js.html#lineNumber298">source</a></span></span>
+    </span>
+  </h3>
+
+  
+  
+  
+  
+
+  
+
+  <div data-ice="properties">
+</div>
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+  
+</div>
+</div>
 <div data-ice="staticMethodDetails"><h2 data-ice="title">Static Public Methods</h2>
 
 <div class="detail" data-ice="detail">
@@ -1217,7 +1415,7 @@
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/struct_intern.js.html#lineNumber225">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/struct_intern.js.html#lineNumber175">source</a></span></span>
     </span>
   </h3>
 
@@ -1284,7 +1482,7 @@ reader() is only called once.  it is called however.</p>
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/struct_intern.js.html#lineNumber225">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/struct_intern.js.html#lineNumber175">source</a></span></span>
     </span>
   </h3>
 
@@ -1416,7 +1614,7 @@ reader() is only called once.  it is called however.</p>
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/struct_intern.js.html#lineNumber254">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/struct_intern.js.html#lineNumber200">source</a></span></span>
     </span>
   </h3>
 
@@ -1494,7 +1692,7 @@ reader() is only called once.  it is called however.</p>
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/struct_intern.js.html#lineNumber254">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/struct_intern.js.html#lineNumber200">source</a></span></span>
     </span>
   </h3>
 
@@ -1561,6 +1759,71 @@ reader() is only called once.  it is called however.</p>
   
 </div>
 <div class="detail" data-ice="detail">
+  <h3 data-ice="anchor" id="static-method-define_null_native">
+    <span class="access" data-ice="access">public</span>
+    <span data-ice="static">static</span>
+    
+    
+    
+    
+    <span class="code" data-ice="name">define_null_native</span><span class="code" data-ice="signature">(name: <span>*</span>, cls: <span>*</span>)</span>
+    <span class="right-info">
+      
+      
+      <span data-ice="source"><span><a href="file/src/struct_intern.js.html#lineNumberundefined">source</a></span></span>
+    </span>
+  </h3>
+
+  
+  
+  
+  
+
+  
+
+  <div data-ice="properties"><div data-ice="properties">
+  <h4 data-ice="title">Params:</h4>
+  <table class="params">
+    <thead>
+    <tr><td>Name</td><td>Type</td><td>Attribute</td><td>Description</td></tr>
+    </thead>
+    <tbody>
+    
+    <tr data-ice="property" data-depth="0">
+      <td data-ice="name" class="code" data-depth="0">name</td>
+      <td data-ice="type" class="code"><span>*</span></td>
+      <td data-ice="appendix"></td>
+      <td data-ice="description"></td>
+    </tr>
+<tr data-ice="property" data-depth="0">
+      <td data-ice="name" class="code" data-depth="0">cls</td>
+      <td data-ice="type" class="code"><span>*</span></td>
+      <td data-ice="appendix"></td>
+      <td data-ice="description"></td>
+    </tr>
+</tbody>
+  </table>
+</div>
+</div>
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+  
+</div>
+<div class="detail" data-ice="detail">
   <h3 data-ice="anchor" id="static-method-fmt_struct">
     <span class="access" data-ice="access">public</span>
     <span data-ice="static">static</span>
@@ -1572,7 +1835,7 @@ reader() is only called once.  it is called however.</p>
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/struct_intern.js.html#lineNumber294">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/struct_intern.js.html#lineNumber244">source</a></span></span>
     </span>
   </h3>
 
@@ -1655,7 +1918,7 @@ reader() is only called once.  it is called however.</p>
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/struct_intern.js.html#lineNumber294">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/struct_intern.js.html#lineNumber244">source</a></span></span>
     </span>
   </h3>
 
@@ -1803,7 +2066,7 @@ reader() is only called once.  it is called however.</p>
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/struct_intern.js.html#lineNumber290">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/struct_intern.js.html#lineNumber240">source</a></span></span>
     </span>
   </h3>
 
@@ -1886,7 +2149,7 @@ reader() is only called once.  it is called however.</p>
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/struct_intern.js.html#lineNumber290">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/struct_intern.js.html#lineNumber240">source</a></span></span>
     </span>
   </h3>
 
@@ -2182,7 +2445,7 @@ reader() is only called once.  it is called however.</p>
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/struct_intern.js.html#lineNumber212">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/struct_intern.js.html#lineNumber160">source</a></span></span>
     </span>
   </h3>
 
@@ -2265,7 +2528,7 @@ reader() is only called once.  it is called however.</p>
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/struct_intern.js.html#lineNumber212">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/struct_intern.js.html#lineNumber160">source</a></span></span>
     </span>
   </h3>
 
@@ -2819,6 +3082,216 @@ reader() is only called once.  it is called however.</p>
   
 </div>
 <div class="detail" data-ice="detail">
+  <h3 data-ice="anchor" id="static-method-registerGraph">
+    <span class="access" data-ice="access">public</span>
+    <span data-ice="static">static</span>
+    
+    
+    
+    
+    <span class="code" data-ice="name">registerGraph</span><span class="code" data-ice="signature">(srcSTRUCT: <span>*</span>, cls: <span>*</span>): <span>*</span></span>
+    <span class="right-info">
+      
+      
+      <span data-ice="source"><span><a href="file/src/struct_intern.js.html#lineNumberundefined">source</a></span></span>
+    </span>
+  </h3>
+
+  
+  
+  
+  <div data-ice="description"><p><pre><em> adds all structs referenced by cls inside of srcSTRUCT
+   </em>  to this </pre></p>
+</div>
+
+  
+
+  <div data-ice="properties"><div data-ice="properties">
+  <h4 data-ice="title">Params:</h4>
+  <table class="params">
+    <thead>
+    <tr><td>Name</td><td>Type</td><td>Attribute</td><td>Description</td></tr>
+    </thead>
+    <tbody>
+    
+    <tr data-ice="property" data-depth="0">
+      <td data-ice="name" class="code" data-depth="0">srcSTRUCT</td>
+      <td data-ice="type" class="code"><span>*</span></td>
+      <td data-ice="appendix"></td>
+      <td data-ice="description"></td>
+    </tr>
+<tr data-ice="property" data-depth="0">
+      <td data-ice="name" class="code" data-depth="0">cls</td>
+      <td data-ice="type" class="code"><span>*</span></td>
+      <td data-ice="appendix"></td>
+      <td data-ice="description"></td>
+    </tr>
+</tbody>
+  </table>
+</div>
+</div>
+
+  <div class="return-params" data-ice="returnParams">
+    <h4>Return:</h4>
+    <table>
+      <tbody>
+        <tr>
+          <td class="return-type code" data-ice="returnType"><span>*</span></td>
+          
+        </tr>
+      </tbody>
+    </table>
+    <div data-ice="returnProperties">
+</div>
+  </div>
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+  
+</div>
+<div class="detail" data-ice="detail">
+  <h3 data-ice="anchor" id="static-method-setClassKeyword">
+    <span class="access" data-ice="access">public</span>
+    <span data-ice="static">static</span>
+    
+    
+    
+    
+    <span class="code" data-ice="name">setClassKeyword</span><span class="code" data-ice="signature">(keyword: <span>*</span>, nameKeyword: <span>*</span>)</span>
+    <span class="right-info">
+      
+      
+      <span data-ice="source"><span><a href="file/src/struct_intern.js.html#lineNumber293">source</a></span></span>
+    </span>
+  </h3>
+
+  
+  
+  
+  
+
+  
+
+  <div data-ice="properties"><div data-ice="properties">
+  <h4 data-ice="title">Params:</h4>
+  <table class="params">
+    <thead>
+    <tr><td>Name</td><td>Type</td><td>Attribute</td><td>Description</td></tr>
+    </thead>
+    <tbody>
+    
+    <tr data-ice="property" data-depth="0">
+      <td data-ice="name" class="code" data-depth="0">keyword</td>
+      <td data-ice="type" class="code"><span>*</span></td>
+      <td data-ice="appendix"></td>
+      <td data-ice="description"></td>
+    </tr>
+<tr data-ice="property" data-depth="0">
+      <td data-ice="name" class="code" data-depth="0">nameKeyword</td>
+      <td data-ice="type" class="code"><span>*</span></td>
+      <td data-ice="appendix"><ul><li>optional</li>
+<li>default: undefined</li></ul></td>
+      <td data-ice="description"></td>
+    </tr>
+</tbody>
+  </table>
+</div>
+</div>
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+  
+</div>
+<div class="detail" data-ice="detail">
+  <h3 data-ice="anchor" id="static-method-setClassKeyword">
+    <span class="access" data-ice="access">public</span>
+    <span data-ice="static">static</span>
+    
+    
+    
+    
+    <span class="code" data-ice="name">setClassKeyword</span><span class="code" data-ice="signature">(keyword: <span>*</span>, nameKeyword: <span>*</span>)</span>
+    <span class="right-info">
+      
+      
+      <span data-ice="source"><span><a href="file/src/struct_intern.js.html#lineNumber293">source</a></span></span>
+    </span>
+  </h3>
+
+  
+  
+  
+  
+
+  
+
+  <div data-ice="properties"><div data-ice="properties">
+  <h4 data-ice="title">Params:</h4>
+  <table class="params">
+    <thead>
+    <tr><td>Name</td><td>Type</td><td>Attribute</td><td>Description</td></tr>
+    </thead>
+    <tbody>
+    
+    <tr data-ice="property" data-depth="0">
+      <td data-ice="name" class="code" data-depth="0">keyword</td>
+      <td data-ice="type" class="code"><span>*</span></td>
+      <td data-ice="appendix"></td>
+      <td data-ice="description"></td>
+    </tr>
+<tr data-ice="property" data-depth="0">
+      <td data-ice="name" class="code" data-depth="0">nameKeyword</td>
+      <td data-ice="type" class="code"><span>*</span></td>
+      <td data-ice="appendix"><ul><li>optional</li></ul></td>
+      <td data-ice="description"></td>
+    </tr>
+</tbody>
+  </table>
+</div>
+</div>
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+  
+</div>
+<div class="detail" data-ice="detail">
   <h3 data-ice="anchor" id="static-method-unregister">
     <span class="access" data-ice="access">public</span>
     <span data-ice="static">static</span>
@@ -3347,7 +3820,7 @@ reader() is only called once.  it is called however.</p>
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/struct_intern.js.html#lineNumber186">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/struct_intern.js.html#lineNumber148">source</a></span></span>
     </span>
   </h3>
 
@@ -3390,7 +3863,7 @@ reader() is only called once.  it is called however.</p>
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/struct_intern.js.html#lineNumber192">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/struct_intern.js.html#lineNumber154">source</a></span></span>
     </span>
   </h3>
 
@@ -3433,7 +3906,7 @@ reader() is only called once.  it is called however.</p>
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/struct_intern.js.html#lineNumber185">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/struct_intern.js.html#lineNumber147">source</a></span></span>
     </span>
   </h3>
 
@@ -3476,7 +3949,7 @@ reader() is only called once.  it is called however.</p>
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/struct_intern.js.html#lineNumber193">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/struct_intern.js.html#lineNumber155">source</a></span></span>
     </span>
   </h3>
 
@@ -3519,7 +3992,7 @@ reader() is only called once.  it is called however.</p>
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/struct_intern.js.html#lineNumber189">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/struct_intern.js.html#lineNumber151">source</a></span></span>
     </span>
   </h3>
 
@@ -3562,7 +4035,7 @@ reader() is only called once.  it is called however.</p>
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/struct_intern.js.html#lineNumber190">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/struct_intern.js.html#lineNumber152">source</a></span></span>
     </span>
   </h3>
 
@@ -3605,7 +4078,7 @@ reader() is only called once.  it is called however.</p>
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/struct_intern.js.html#lineNumber188">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/struct_intern.js.html#lineNumber150">source</a></span></span>
     </span>
   </h3>
 

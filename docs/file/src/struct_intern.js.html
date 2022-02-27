@@ -92,10 +92,12 @@
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-versionToInt">versionToInt</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-updateDEBUG">updateDEBUG</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-_truncateDollarSign">_truncateDollarSign</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-deriveStructManager">deriveStructManager</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-setDebugMode">setDebugMode</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-setTruncateDollarSign">setTruncateDollarSign</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-setWarningMode">setWarningMode</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-write_scripts">write_scripts</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-_get_pack_debug">_get_pack_debug</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-fromJSON">fromJSON</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-packNull">packNull</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-setDebugMode">setDebugMode</a></span></span></li>
@@ -116,6 +118,8 @@
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-writeJSON">writeJSON</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-writeObject">writeObject</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-STRUCT_ENDIAN">STRUCT_ENDIAN</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-temp_dataview">temp_dataview</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-uint8_view">uint8_view</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-structEval">structEval</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-DEBUG">DEBUG</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-truncateDollarSign">truncateDollarSign</a></span></span></li>
@@ -135,12 +139,15 @@
 <pre class="source-code line-number raw-source-code"><code class="prettyprint linenums" data-ice="content">&quot;use strict&quot;;
 import * as struct_binpack from &apos;./struct_binpack.js&apos;;
 import * as struct_parser from &apos;./struct_parser.js&apos;;
-import * as sintern2 from &apos;./struct_intern2.js&apos;;
+import * as _sintern2 from &apos;./struct_intern2.js&apos;;
 import * as struct_eval from &apos;./struct_eval.js&apos;;
+
+//needed to avoid a rollup bug in configurable mode
+var sintern2 = _sintern2;
 
 import {DEBUG} from &apos;./struct_global.js&apos;;
 
-import {StructFieldTypeMap} from &apos;./struct_intern2.js&apos;;
+import {_get_pack_debug, StructFieldTypeMap} from &apos;./struct_intern2.js&apos;;
 
 let warninglvl = 2;
 
@@ -170,7 +177,6 @@ function unmangle(name) {
 }
 
 /*
-
 class SomeClass {
   static newSTRUCT() {
     //optional method, returns a new, empty instance of SomeClass
@@ -187,7 +193,7 @@ class SomeClass {
     return ret;
   }
 }
-SomeClass.STRUCT = `
+SomeClass[keywords.script] = `
 SomeClass {
 }
 `
@@ -200,8 +206,6 @@ import {
 } from &apos;./struct_parser.js&apos;;
 
 let _static_envcode_null = &quot;&quot;;
-let debug_struct = 0;
-let packdebug_tablevel = 0;
 
 //truncate webpack-mangled names
 
@@ -217,32 +221,16 @@ function gen_tabstr(tot) {
 
 let packer_debug, packer_debug_start, packer_debug_end;
 
-if (debug_struct) {
-  packer_debug = function (msg) {
-    if (msg !== undefined) {
-      let t = gen_tabstr(packdebug_tablevel);
-      console.log(t + msg);
-    } else {
-      console.log(&quot;Warning: undefined msg&quot;);
-    }
-  };
-  packer_debug_start = function (funcname) {
-    packer_debug(&quot;Start &quot; + funcname);
-    packdebug_tablevel++;
-  };
+function update_debug_data() {
+  let ret = _get_pack_debug();
 
-  packer_debug_end = function (funcname) {
-    packdebug_tablevel--;
-    packer_debug(&quot;Leave &quot; + funcname);
-  };
-} else {
-  packer_debug = function () {
-  };
-  packer_debug_start = function () {
-  };
-  packer_debug_end = function () {
-  };
+  packer_debug = ret.packer_debug;
+  packer_debug_start = ret.packer_debug_start;
+  packer_debug_end = ret.packer_debug_end;
+  warninglvl = ret.warninglvl;
 }
+
+update_debug_data();
 
 export function setWarningMode(t) {
   sintern2.setWarningMode(t);
@@ -255,36 +243,8 @@ export function setWarningMode(t) {
 }
 
 export function setDebugMode(t) {
-  debug_struct = t;
-
   sintern2.setDebugMode(t);
-
-  if (debug_struct) {
-    packer_debug = function (msg) {
-      if (msg !== undefined) {
-        let t = gen_tabstr(packdebug_tablevel);
-        console.log(t + msg);
-      } else {
-        console.log(&quot;Warning: undefined msg&quot;);
-      }
-    };
-    packer_debug_start = function (funcname) {
-      packer_debug(&quot;Start &quot; + funcname);
-      packdebug_tablevel++;
-    };
-
-    packer_debug_end = function (funcname) {
-      packdebug_tablevel--;
-      packer_debug(&quot;Leave &quot; + funcname);
-    };
-  } else {
-    packer_debug = function () {
-    };
-    packer_debug_start = function () {
-    };
-    packer_debug_end = function () {
-    };
-  }
+  update_debug_data();
 }
 
 let _ws_env = [[undefined, undefined]];
@@ -293,26 +253,32 @@ function do_pack(data, val, obj, thestruct, field, type) {
   StructFieldTypeMap[field.type.type].pack(manager, data, val, obj, field, type);
 }
 
-function define_empty_class(name) {
+function define_empty_class(scls, name) {
   let cls = function () {
   };
 
   cls.prototype = Object.create(Object.prototype);
   cls.constructor = cls.prototype.constructor = cls;
 
-  cls.STRUCT = name + &quot; {\n  }\n&quot;;
-  cls.structName = name;
+  let keywords = scls.keywords;
 
-  cls.prototype.loadSTRUCT = function (reader) {
+  cls[keywords.script] = name + &quot; {\n  }\n&quot;;
+  cls[keywords.name] = name;
+
+  cls.prototype[keywords.load] = function (reader) {
     reader(this);
   }
 
-  cls.newSTRUCT = function () {
+  cls[keywords.new] = function () {
     return new this();
   }
 
   return cls;
 }
+
+let haveCodeGen = false;
+
+//$KEYWORD_CONFIG_START
 
 export class STRUCT {
   constructor() {
@@ -326,29 +292,17 @@ export class STRUCT {
     this.compiled_code = {}
     this.null_natives = {}
 
-    function define_null_native(name, cls) {
-      let obj = define_empty_class(name);
-
-      let stt = struct_parse.parse(obj.STRUCT);
-
-      stt.id = this.idgen++;
-
-      this.structs[name] = stt;
-      this.struct_cls[name] = cls;
-      this.struct_ids[stt.id] = stt;
-
-      this.null_natives[name] = 1;
-    }
-
-    define_null_native.call(this, &quot;Object&quot;, Object);
+    this.define_null_native(&quot;Object&quot;, Object);
   }
 
   static inherit(child, parent, structName = child.name) {
-    if (!parent.STRUCT) {
+    const keywords = this.keywords;
+
+    if (!parent[keywords.script]) {
       return structName + &quot;{\n&quot;;
     }
 
-    let stt = struct_parse.parse(parent.STRUCT);
+    let stt = struct_parse.parse(parent[keywords.script]);
     let code = structName + &quot;{\n&quot;;
     code += STRUCT.fmt_struct(stt, true);
     return code;
@@ -375,14 +329,10 @@ export class STRUCT {
     let parent = cls.prototype.__proto__.constructor;
     bad = bad || parent === undefined;
 
-    if (!bad &amp;&amp; parent.prototype.loadSTRUCT &amp;&amp; parent.prototype.loadSTRUCT !== obj.loadSTRUCT) { //parent.prototype.hasOwnProperty(&quot;loadSTRUCT&quot;)) {
-      parent.prototype.loadSTRUCT.call(obj, reader2);
+    if (!bad &amp;&amp; parent.prototype[keywords.load] &amp;&amp; parent.prototype[keywords.load] !== obj[keywords.load]) { //parent.prototype.hasOwnProperty(&quot;loadSTRUCT&quot;)) {
+      parent.prototype[keywords.load].call(obj, reader2);
     }
   }
-
-  //defined_classes is an array of class constructors
-  //with STRUCT scripts, *OR* another STRUCT instance
-  //
 
   /** deprecated.  used with old fromSTRUCT interface. */
   static chain_fromSTRUCT(cls, reader) {
@@ -392,7 +342,7 @@ export class STRUCT {
     let proto = cls.prototype;
     let parent = cls.prototype.prototype.constructor;
 
-    let obj = parent.fromSTRUCT(reader);
+    let obj = parent[keywords.from](reader);
     let obj2 = new cls();
 
     let keys = Object.keys(obj).concat(Object.getOwnPropertySymbols(obj));
@@ -420,6 +370,10 @@ export class STRUCT {
 
     return obj2;
   }
+
+  //defined_classes is an array of class constructors
+  //with STRUCT scripts, *OR* another STRUCT instance
+  //
 
   static formatStruct(stt, internal_only, no_helper_js) {
     return this.fmt_struct(stt, internal_only, no_helper_js);
@@ -472,6 +426,36 @@ export class STRUCT {
     if (!internal_only)
       s += &quot;}&quot;;
     return s;
+  }
+
+  static setClassKeyword(keyword, nameKeyword = undefined) {
+    if (!nameKeyword) {
+      nameKeyword = keyword.toLowerCase() + &quot;Name&quot;;
+    }
+
+    this.keywords = {
+      script: keyword,
+      name  : nameKeyword,
+      load  : &quot;load&quot; + keyword,
+      new   : &quot;new&quot; + keyword,
+      after : &quot;after&quot; + keyword,
+      from  : &quot;from&quot; + keyword
+    };
+  }
+
+  define_null_native(name, cls) {
+    const keywords = this.constructor.keywords;
+    let obj = define_empty_class(this.constructor, name);
+
+    let stt = struct_parse.parse(obj[keywords.script]);
+
+    stt.id = this.idgen++;
+
+    this.structs[name] = stt;
+    this.struct_cls[name] = cls;
+    this.struct_ids[stt.id] = stt;
+
+    this.null_natives[name] = 1;
   }
 
   validateStructs(onerror) {
@@ -566,6 +550,8 @@ export class STRUCT {
 
   //defaults to structjs.manager
   parse_structs(buf, defined_classes) {
+    const keywords = this.constructor.keywords;
+
     if (defined_classes === undefined) {
       defined_classes = manager;
     }
@@ -592,16 +578,16 @@ export class STRUCT {
     for (let i = 0; i &lt; defined_classes.length; i++) {
       let cls = defined_classes[i];
 
-      if (!cls.structName &amp;&amp; cls.STRUCT) {
-        let stt = struct_parse.parse(cls.STRUCT.trim());
-        cls.structName = stt.name;
-      } else if (!cls.structName &amp;&amp; cls.name !== &quot;Object&quot;) {
+      if (!cls[keywords.name] &amp;&amp; cls[keywords.script]) {
+        let stt = struct_parse.parse(cls[keywords.script].trim());
+        cls[keywords.name] = stt.name;
+      } else if (!cls[keywords.name] &amp;&amp; cls.name !== &quot;Object&quot;) {
         if (warninglvl &gt; 0)
           console.log(&quot;Warning, bad class in registered class list&quot;, unmangle(cls.name), cls);
         continue;
       }
 
-      clsmap[cls.structName] = defined_classes[i];
+      clsmap[cls[keywords.name]] = defined_classes[i];
     }
 
     struct_parse.input(buf);
@@ -614,15 +600,15 @@ export class STRUCT {
           if (warninglvl &gt; 0)
             console.log(&quot;WARNING: struct &quot; + stt.name + &quot; is missing from class list.&quot;);
 
-        let dummy = define_empty_class(stt.name);
+        let dummy = define_empty_class(this.constructor, stt.name);
 
-        dummy.STRUCT = STRUCT.fmt_struct(stt);
-        dummy.structName = stt.name;
+        dummy[keywords.script] = STRUCT.fmt_struct(stt);
+        dummy[keywords.name] = stt.name;
 
-        dummy.prototype.structName = dummy.name;
+        dummy.prototype[keywords.name] = dummy.name;
 
-        this.struct_cls[dummy.structName] = dummy;
-        this.structs[dummy.structName] = stt;
+        this.struct_cls[dummy[keywords.name]] = dummy;
+        this.structs[dummy[keywords.name]] = stt;
 
         if (stt.id !== -1)
           this.struct_ids[stt.id] = stt;
@@ -641,33 +627,98 @@ export class STRUCT {
     }
   }
 
+  /** adds all structs referenced by cls inside of srcSTRUCT
+   *  to this */
+  registerGraph(srcSTRUCT, cls) {
+    if (!cls[keywords.name]) {
+      console.warn(&quot;class was not in srcSTRUCT&quot;);
+      return this.register(cls);
+    }
+
+    let recStruct;
+
+    let recArray = (t) =&gt; {
+      switch (t.type) {
+        case StructEnum.T_ARRAY:
+          return recArray(t.data.type);
+        case StructEnum.T_ITERKEYS:
+          return recArray(t.data.type);
+        case StructEnum.T_STATIC_ARRAY:
+          return recArray(t.data.type);
+        case StructEnum.T_ITER:
+          return recArray(t.data.type);
+        case StructEnum.T_STRUCT:
+        case StructEnum.T_TSTRUCT: {
+          let st = srcSTRUCT.structs[t.data];
+          let cls = srcSTRUCT.struct_cls[st.name];
+
+          return recStruct(st, cls);
+        }
+      }
+    }
+
+    recStruct = (st, cls) =&gt; {
+      if (!(cls[keywords.name] in this.structs)) {
+        this.add_class(cls, cls[keywords.name]);
+      }
+
+      for (let f of st.fields) {
+        if (f.type.type === StructEnum.T_STRUCT || f.type.type === StructEnum.T_TSTRUCT) {
+          let st2 = srcSTRUCT.structs[f.type.data];
+          let cls2 = srcSTRUCT.struct_cls[st2.name];
+
+          recStruct(st2, cls2);
+        } else if (f.type.type === StructEnum.T_ARRAY) {
+          recArray(f.type);
+        } else if (f.type.type === StructEnum.T_ITER) {
+          recArray(f.type);
+        } else if (f.type.type === StructEnum.T_ITERKEYS) {
+          recArray(f.type);
+        } else if (f.type.type === StructEnum.T_STATIC_ARRAY) {
+          recArray(f.type);
+        }
+      }
+    }
+
+    let st = srcSTRUCT.structs[cls[keywords.name]];
+    recStruct(st, cls);
+  }
+
   register(cls, structName) {
     return this.add_class(cls, structName);
   }
 
   unregister(cls) {
-    if (!cls || !cls.structName || !(cls.structName in this.struct_cls)) {
+    const keywords = this.constructor.keywords;
+
+    if (!cls || !cls[keywords.name] || !(cls[keywords.name] in this.struct_cls)) {
       console.warn(&quot;Class not registered with nstructjs&quot;, cls);
       return;
     }
 
 
-    let st = this.structs[cls.structName];
+    let st = this.structs[cls[keywords.name]];
 
-    delete this.structs[cls.structName];
-    delete this.struct_cls[cls.structName];
+    delete this.structs[cls[keywords.name]];
+    delete this.struct_cls[cls[keywords.name]];
     delete this.struct_ids[st.id];
   }
 
   add_class(cls, structName) {
-    if (cls.STRUCT) {
+    //do not register Object
+    if (cls === Object) {
+      return;
+    }
+
+    const keywords = this.constructor.keywords;
+    if (cls[keywords.script]) {
       let bad = false;
 
       let p = cls;
       while (p) {
         p = p.__proto__;
 
-        if (p &amp;&amp; p.STRUCT &amp;&amp; p.STRUCT === cls.STRUCT) {
+        if (p &amp;&amp; p[keywords.script] &amp;&amp; p[keywords.script] === cls[keywords.script]) {
           bad = true;
           break;
         }
@@ -679,40 +730,40 @@ export class STRUCT {
           structName = unmangle(cls.name);
         }
 
-        cls.STRUCT = STRUCT.inherit(cls, p) + `\n}`;
+        cls[keywords.script] = STRUCT.inherit(cls, p) + &quot;\n}&quot;;
       }
     }
 
-    if (!cls.STRUCT) {
+    if (!cls[keywords.script]) {
       throw new Error(&quot;class &quot; + unmangle(cls.name) + &quot; has no STRUCT script&quot;);
     }
 
-    let stt = struct_parse.parse(cls.STRUCT);
+    let stt = struct_parse.parse(cls[keywords.script]);
 
     stt.name = unmangle(stt.name);
 
-    cls.structName = stt.name;
+    cls[keywords.name] = stt.name;
 
     //create default newSTRUCT
-    if (cls.newSTRUCT === undefined) {
-      cls.newSTRUCT = function () {
+    if (cls[keywords.new] === undefined) {
+      cls[keywords.new] = function () {
         return new this();
       }
     }
 
     if (structName !== undefined) {
-      stt.name = cls.structName = structName;
-    } else if (cls.structName === undefined) {
-      cls.structName = stt.name;
+      stt.name = cls[keywords.name] = structName;
+    } else if (cls[keywords.name] === undefined) {
+      cls[keywords.name] = stt.name;
     } else {
-      stt.name = cls.structName;
+      stt.name = cls[keywords.name];
     }
 
-    if (cls.structName in this.structs) {
-      console.warn(&quot;Struct &quot; + unmangle(cls.structName) + &quot; is already registered&quot;, cls);
+    if (cls[keywords.name] in this.structs) {
+      console.warn(&quot;Struct &quot; + unmangle(cls[keywords.name]) + &quot; is already registered&quot;, cls);
 
       if (!this.allowOverriding) {
-        throw new Error(&quot;Struct &quot; + unmangle(cls.structName) + &quot; is already registered&quot;);
+        throw new Error(&quot;Struct &quot; + unmangle(cls[keywords.name]) + &quot; is already registered&quot;);
       }
 
       return;
@@ -721,17 +772,19 @@ export class STRUCT {
     if (stt.id === -1)
       stt.id = this.idgen++;
 
-    this.structs[cls.structName] = stt;
-    this.struct_cls[cls.structName] = cls;
+    this.structs[cls[keywords.name]] = stt;
+    this.struct_cls[cls[keywords.name]] = cls;
     this.struct_ids[stt.id] = stt;
   }
 
   isRegistered(cls) {
+    const keywords = this.constructor.keywords;
+
     if (!cls.hasOwnProperty(&quot;structName&quot;)) {
       return false;
     }
 
-    return cls === this.struct_cls[cls.structName];
+    return cls === this.struct_cls[cls[keywords.name]];
   }
 
   get_struct_id(id) {
@@ -838,7 +891,9 @@ export class STRUCT {
    @param obj  : structable object
    */
   write_object(data, obj) {
-    let cls = obj.constructor.structName;
+    const keywords = this.constructor.keywords;
+
+    let cls = obj.constructor[keywords.name];
     let stt = this.get_struct(cls);
 
     if (data === undefined) {
@@ -876,8 +931,10 @@ export class STRUCT {
   }
 
   writeJSON(obj, stt = undefined) {
+    const keywords = this.constructor.keywords;
+
     let cls = obj.constructor;
-    stt = stt || this.get_struct(cls.structName);
+    stt = stt || this.get_struct(cls[keywords.name]);
 
     function use_helper_js(field) {
       let type = field.type.type;
@@ -943,6 +1000,7 @@ export class STRUCT {
    @param uctx : internal parameter
    */
   read_object(data, cls_or_struct_id, uctx, objInstance) {
+    const keywords = this.constructor.keywords;
     let cls, stt;
 
     if (data instanceof Array) {
@@ -959,12 +1017,12 @@ export class STRUCT {
       throw new Error(&quot;bad cls_or_struct_id &quot; + cls_or_struct_id);
     }
 
-    stt = this.structs[cls.structName];
+    stt = this.structs[cls[keywords.name]];
 
     if (uctx === undefined) {
       uctx = new struct_binpack.unpack_context();
 
-      packer_debug(&quot;\n\n=Begin reading &quot; + cls.structName + &quot;=&quot;);
+      packer_debug(&quot;\n\n=Begin reading &quot; + cls[keywords.name] + &quot;=&quot;);
     }
     let thestruct = this;
 
@@ -1006,26 +1064,32 @@ export class STRUCT {
 
     let load = makeLoader(stt);
 
-    if (cls.prototype.loadSTRUCT !== undefined) {
+    if (cls.prototype[keywords.load] !== undefined) {
       let obj = objInstance;
 
-      if (!obj &amp;&amp; cls.newSTRUCT !== undefined) {
-        obj = cls.newSTRUCT(load);
+      if (!obj &amp;&amp; cls[keywords.new] !== undefined) {
+        obj = cls[keywords.new](load);
       } else if (!obj) {
         obj = new cls();
       }
 
-      obj.loadSTRUCT(load);
+      obj[keywords.load](load);
+
+      if (!was_run) {
+        console.warn(&quot;&quot; + cls[keywords.name] + &quot;.prototype[keywords.load]() did not execute its loader callback!&quot;);
+        load(obj);
+      }
+
       return obj;
-    } else if (cls.fromSTRUCT !== undefined) {
+    } else if (cls[keywords.from] !== undefined) {
       if (warninglvl &gt; 1)
         console.warn(&quot;Warning: class &quot; + unmangle(cls.name) + &quot; is using deprecated fromSTRUCT interface; use newSTRUCT/loadSTRUCT instead&quot;);
-      return cls.fromSTRUCT(load);
+      return cls[keywords.from](load);
     } else { //default case, make new instance and then call load() on it
       let obj = objInstance;
 
-      if (!obj &amp;&amp; cls.newSTRUCT !== undefined) {
-        obj = cls.newSTRUCT(load);
+      if (!obj &amp;&amp; cls[keywords.new] !== undefined) {
+        obj = cls[keywords.new](load);
       } else if (!obj) {
         obj = new cls();
       }
@@ -1037,6 +1101,8 @@ export class STRUCT {
   }
 
   readJSON(json, cls_or_struct_id, objInstance = undefined) {
+    const keywords = this.constructor.keywords;
+
     let cls, stt;
 
     if (typeof cls_or_struct_id === &quot;number&quot;) {
@@ -1051,9 +1117,9 @@ export class STRUCT {
       throw new Error(&quot;bad cls_or_struct_id &quot; + cls_or_struct_id);
     }
 
-    stt = this.structs[cls.structName];
+    stt = this.structs[cls[keywords.name]];
 
-    packer_debug(&quot;\n\n=Begin reading &quot; + cls.structName + &quot;=&quot;);
+    packer_debug(&quot;\n\n=Begin reading &quot; + cls[keywords.name] + &quot;=&quot;);
     let thestruct = this;
     let this2 = this;
     let was_run = false;
@@ -1099,26 +1165,26 @@ export class STRUCT {
 
     let load = makeLoader(stt);
 
-    if (cls.prototype.loadSTRUCT !== undefined) {
+    if (cls.prototype[keywords.load] !== undefined) {
       let obj = objInstance;
 
-      if (!obj &amp;&amp; cls.newSTRUCT !== undefined) {
-        obj = cls.newSTRUCT(load);
+      if (!obj &amp;&amp; cls[keywords.new] !== undefined) {
+        obj = cls[keywords.new](load);
       } else if (!obj) {
         obj = new cls();
       }
 
-      obj.loadSTRUCT(load);
+      obj[keywords.load](load);
       return obj;
-    } else if (cls.fromSTRUCT !== undefined) {
+    } else if (cls[keywords.from] !== undefined) {
       if (warninglvl &gt; 1)
         console.warn(&quot;Warning: class &quot; + unmangle(cls.name) + &quot; is using deprecated fromSTRUCT interface; use newSTRUCT/loadSTRUCT instead&quot;);
-      return cls.fromSTRUCT(load);
+      return cls[keywords.from](load);
     } else { //default case, make new instance and then call load() on it
       let obj = objInstance;
 
-      if (!obj &amp;&amp; cls.newSTRUCT !== undefined) {
-        obj = cls.newSTRUCT(load);
+      if (!obj &amp;&amp; cls[keywords.new] !== undefined) {
+        obj = cls[keywords.new](load);
       } else if (!obj) {
         obj = new cls();
       }
@@ -1129,6 +1195,58 @@ export class STRUCT {
     }
   }
 };
+//$KEYWORD_CONFIG_END
+
+if (haveCodeGen) {
+  var StructClass;
+
+  eval(code);
+
+  STRUCT = StructClass;
+}
+
+STRUCT.setClassKeyword(&quot;STRUCT&quot;);
+
+export function deriveStructManager(keywords = {
+  script: &quot;STRUCT&quot;,
+  name  : undefined, //script.toLowerCase + &quot;Name&quot;
+  load  : undefined, //&quot;load&quot; + script
+  new   : undefined, //&quot;new&quot; + script
+  from  : undefined, //&quot;from&quot; + script
+}) {
+
+  if (!keywords.name) {
+    keywords.name = keywords.script.toLowerCase() + &quot;Name&quot;;
+  }
+
+  if (!keywords.load) {
+    keywords.load = &quot;load&quot; + keywords.script;
+  }
+
+  if (!keywords.new) {
+    keywords.new = &quot;new&quot; + keywords.script;
+  }
+
+  if (!keywords.from) {
+    keywords.from = &quot;from&quot; + keywords.script;
+  }
+
+  if (haveCodeGen) {
+    class NewSTRUCT extends STRUCT {
+
+    }
+    NewSTRUCT.keywords = keywords;
+    return NewSTRUCT;
+  } else {
+    var StructClass;
+
+    let code2 = code;
+    code2 = code2.replace(/\[keywords.script\]/g, keywords.script)
+
+    eval(code2);
+    return StructClass;
+  }
+}
 
 //main struct script manager
 manager = new STRUCT();

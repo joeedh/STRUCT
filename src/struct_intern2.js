@@ -417,17 +417,19 @@ class StructTStructField extends StructFieldType {
     let cls = manager.get_struct_cls(type.data);
     let stt = manager.get_struct(type.data);
 
+    const keywords = manager.constructor.keywords;
+    
     //make sure inheritance is correct
-    if (val.constructor.structName !== type.data && (val instanceof cls)) {
+    if (val.constructor[keywords.name] !== type.data && (val instanceof cls)) {
       //if (DEBUG.Struct) {
-      //    console.log(val.constructor.structName+" inherits from "+cls.structName);
+      //    console.log(val.constructor[keywords.name]+" inherits from "+cls[keywords.name]);
       //}
-      stt = manager.get_struct(val.constructor.structName);
-    } else if (val.constructor.structName === type.data) {
+      stt = manager.get_struct(val.constructor[keywords.name]);
+    } else if (val.constructor[keywords.name] === type.data) {
       stt = manager.get_struct(type.data);
     } else {
       console.trace();
-      throw new Error("Bad struct " + val.constructor.structName + " passed to write_struct");
+      throw new Error("Bad struct " + val.constructor[keywords.name] + " passed to write_struct");
     }
 
     packer_debug("int " + stt.id);
@@ -437,16 +439,20 @@ class StructTStructField extends StructFieldType {
   }
 
   static fromJSON(manager, val, obj, field, type, instance) {
-    let stt = manager.get_struct(val._structName);
+    let key = type.jsonKeyword;
+
+    let stt = manager.get_struct(val[key]);
 
     return manager.readJSON(val, stt, instance);
   }
 
   static toJSON(manager, val, obj, field, type) {
-    let stt = manager.get_struct(val.constructor.structName);
+    const keywords = manager.constructor.keywords;
+
+    let stt = manager.get_struct(val.constructor[keywords.name]);
     let ret = manager.writeJSON(val, stt);
 
-    ret._structName = "" + stt.name;
+    ret[type.jsonKeyword] = "" + stt.name;
 
     return ret;
   }
