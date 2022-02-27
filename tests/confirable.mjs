@@ -85,3 +85,15 @@ let mesh2 = manager.readJSON(json, Mesh);
 json = manager.writeJSON(mesh2);
 
 console.log(JSON.stringify(json, undefined, 2));
+
+class Mat {
+
+}
+Mat.JSON = `
+mat4 {
+  mat      : array(float) | this.getAsArray();
+  isPersp  : int          | this.isPersp;
+}
+`;
+
+manager.register(Mat);

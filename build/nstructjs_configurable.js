@@ -241,7 +241,7 @@ class parser {
       let c = ld[i];
       if (c === '\n') {
         l++;
-        buf += "\\n" + l + "| ";
+        buf += "\n" + l + "| ";
       }
       else {
         buf += c;
@@ -331,7 +331,7 @@ function test_parser() {
     let lexer = t.lexer;
     while (lexer.lexpos < lexer.lexdata.length) {
       let c = lexer.lexdata[lexer.lexpos];
-      if (c === "\\n")
+      if (c === "\n")
         break;
       js += c;
       lexer.lexpos++;
@@ -580,7 +580,7 @@ function StructParser() {
       let lexer = t.lexer;
       while (lexer.lexpos < lexer.lexdata.length) {
         let c = lexer.lexdata[lexer.lexpos];
-        if (c === "\\n")
+        if (c === "\n")
           break;
         js += c;
         lexer.lexpos++;
@@ -1610,7 +1610,7 @@ class StructTStructField extends StructFieldType {
   }
 
   static fromJSON(manager, val, obj, field, type, instance) {
-    let key = field.type.data.type.jsonKeyword;
+    let key = type.jsonKeyword;
 
     let stt = manager.get_struct(val[key]);
 
@@ -1623,7 +1623,7 @@ class StructTStructField extends StructFieldType {
     let stt = manager.get_struct(val.constructor[keywords.name]);
     let ret = manager.writeJSON(val, stt);
 
-    ret[field.type.data.type.jsonKeyword] = "" + stt.name;
+    ret[type.jsonKeyword] = "" + stt.name;
 
     return ret;
   }
@@ -2055,7 +2055,7 @@ class StructIterKeysField extends StructFieldType {
     for (let val2 in val) {
       if (i >= len) {
         if (warninglvl > 0)
-          console.warn("Warning: object keys magically replaced on us", val, i);
+          console.warn("Warning: object keys magically changed on us", val, i);
         return;
       }
 

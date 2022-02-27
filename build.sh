@@ -21,3 +21,6 @@ echo "write build/tinyeval.js"
 
 echo "write build/nstructjs_es6.js"
 ./node_modules/.bin/rollup -c rollup_module.config.js
+
+echo "write build/nstructjs_configurable.js"
+./node_modules/.bin/rollup -c rollup_configurable.config.js
