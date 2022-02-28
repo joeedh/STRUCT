@@ -1313,8 +1313,8 @@ function fromJSON(manager, val, obj, field, type, instance) {
   return StructFieldTypeMap[type.type].fromJSON(manager, val, obj, field, type, instance);
 }
 
-function validateJSON(manager, val, obj, field, type, instance) {
-  return StructFieldTypeMap[type.type].validateJSON(manager, val, obj, field, type, instance);
+function validateJSON(manager, val, obj, field, type, instance, _abstractKey) {
+  return StructFieldTypeMap[type.type].validateJSON(manager, val, obj, field, type, instance, _abstractKey);
 }
 
 
@@ -1390,7 +1390,7 @@ class StructFieldType {
     return val;
   }
 
-  static validateJSON(manager, val, obj, field, type, instance) {
+  static validateJSON(manager, val, obj, field, type, instance, _abstractKey) {
     return true;
   }
 
@@ -1454,6 +1454,14 @@ class StructIntField extends StructFieldType {
     return unpack_int(data, uctx);
   }
 
+  static validateJSON(manager, val, obj, field, type, instance) {
+    if (typeof val !== "number" || val !== Math.floor(val)) {
+      return "" + val + " is not an integer";
+    }
+
+    return true;
+  }
+
   static define() {
     return {
       type: StructEnum.T_INT,
@@ -1473,10 +1481,12 @@ class StructFloatField extends StructFieldType {
     return unpack_float(data, uctx);
   }
 
-  static validateJSON(manager, val, obj, field, type, instance) {
+  static validateJSON(manager, val, obj, field, type, instance, _abstractKey) {
     if (typeof val !== "number") {
-      return false;
+      return "Not a float: " + val;
     }
+
+    return true;
   }
 
   static define() {
@@ -1500,8 +1510,10 @@ class StructDoubleField extends StructFieldType {
 
   static validateJSON(manager, val, obj, field, type, instance) {
     if (typeof val !== "number") {
-      return false;
+      return "Not a double: " + val;
     }
+
+    return true;
   }
 
   static define() {
@@ -1523,8 +1535,10 @@ class StructStringField extends StructFieldType {
 
   static validateJSON(manager, val, obj, field, type, instance) {
     if (typeof val !== "string") {
-      return false;
+      return "Not a string: " + val;
     }
+
+    return true;
   }
 
   static packNull(manager, data, field, type) {
@@ -1553,9 +1567,16 @@ class StructStaticStringField extends StructFieldType {
   }
 
   static validateJSON(manager, val, obj, field, type, instance) {
-    if (typeof val !== "string" || val.length > type.data.maxlength) {
-      return false;
+    if (typeof val !== "string") {
+      return "Not a string: " + val;
     }
+
+
+    if (val.length > type.data.maxlength) {
+      return "String is too big; limit is " + type.data.maxlength + "; string:" + val;
+    }
+
+    return true;
   }
 
   static format(type) {
@@ -1589,10 +1610,10 @@ class StructStructField extends StructFieldType {
     manager.write_struct(data, val, stt);
   }
 
-  static validateJSON(manager, val, obj, field, type, instance) {
+  static validateJSON(manager, val, obj, field, type, instance, _abstractKey) {
     let stt = manager.get_struct(type.data);
 
-    return manager.validateJSON(val, stt, instance);
+    return manager.validateJSONIntern(val, stt, _abstractKey);
   }
 
   static format(type) {
@@ -1672,7 +1693,7 @@ class StructTStructField extends StructFieldType {
     manager.write_struct(data, val, stt);
   }
 
-  static validateJSON(manager, val, obj, field, type, instance) {
+  static validateJSON(manager, val, obj, field, type, instance, _abstractKey) {
     let key = type.jsonKeyword;
 
     let stt = manager.get_struct(val[key]);
@@ -1691,11 +1712,10 @@ class StructTStructField extends StructFieldType {
     } while (cls && cls !== Object);
 
     if (!ok) {
-      console.error(stt.name + " is not a child class off " + type.data);
-      return false;
+      return stt.name + " is not a child class off " + type.data;
     }
 
-    return manager.validateJSON(val, stt, instance);
+    return manager.validateJSONIntern(val, stt, type.jsonKeyword);
   }
 
 
@@ -1835,14 +1855,16 @@ class StructArrayField extends StructFieldType {
     return !field.type.data.iname;
   }
 
-  static validateJSON(manager, val, obj, field, type, instance) {
-    let ret = true;
-
+  static validateJSON(manager, val, obj, field, type, instance, _abstractKey) {
     for (let i = 0; i < val.length; i++) {
-      ret = ret && validateJSON(manager, val[i], val, field, type.data.type, undefined);
+      let ret = validateJSON(manager, val[i], val, field, type.data.type, undefined, _abstractKey);
+
+      if (typeof ret === "string" || !ret) {
+        return ret;
+      }
     }
 
-    return ret;
+    return true;
   }
 
   static fromJSON(manager, val, obj, field, type, instance) {
@@ -2123,8 +2145,10 @@ class StructBoolField extends StructFieldType {
 
   static validateJSON(manager, val, obj, field, type, instance) {
     if (val === 0 || val === 1 || val === true || val === false || val === "true" || val === "false") {
-      return false;
+      return "" + val + " is not a bool";
     }
+
+    return true;
   }
 
   static fromJSON(manager, val, obj, field, type, instance) {
@@ -2290,8 +2314,10 @@ class StructUintField extends StructFieldType {
 
   static validateJSON(manager, val, obj, field, type, instance) {
     if (typeof val !== "number" || val !== Math.floor(val)) {
-      return false;
+      return "" + val + " is not an integer";
     }
+
+    return true;
   }
 
   static define() {
@@ -2316,8 +2342,10 @@ class StructUshortField extends StructFieldType {
 
   static validateJSON(manager, val, obj, field, type, instance) {
     if (typeof val !== "number" || val !== Math.floor(val)) {
-      return false;
+      return "" + val + " is not an integer";
     }
+
+    return true;
   }
 
   static define() {
@@ -2488,6 +2516,8 @@ var sintern2 = _sintern2;
 let warninglvl$1 = 2;
 
 var truncateDollarSign = true;
+
+class JSONError extends Error {};
 
 function setTruncateDollarSign(v) {
   truncateDollarSign = !!v;
@@ -3406,6 +3436,99 @@ class STRUCT {
     }
   }
 
+  validateJSON(json, cls_or_struct_id, _abstractKey="_structName") {
+    try {
+      this.validateJSONIntern(json, cls_or_struct_id, _abstractKey);
+    } catch (error) {
+      if (!error instanceof JSONError) {
+        console.error(error.stack);
+      }
+
+      console.error(error.message);
+      return false;
+    }
+
+    return true;
+  }
+
+  validateJSONIntern(json, cls_or_struct_id, _abstractKey="_structName") {
+    const keywords = this.constructor.keywords;
+
+    let cls, stt;
+
+    if (typeof cls_or_struct_id === "number") {
+      cls = this.struct_cls[this.struct_ids[cls_or_struct_id].name];
+    } else if (cls_or_struct_id instanceof NStruct) {
+      cls = this.get_struct_cls(cls_or_struct_id.name);
+    } else {
+      cls = cls_or_struct_id;
+    }
+
+    if (cls === undefined) {
+      throw new Error("bad cls_or_struct_id " + cls_or_struct_id);
+    }
+
+    stt = this.structs[cls[keywords.name]];
+
+    let fields = stt.fields;
+    let flen = fields.length;
+
+    let keys = new Set();
+    keys.add(_abstractKey);
+
+    let keyTestJson = json;
+
+    for (let i = 0; i < flen; i++) {
+      let f = fields[i];
+
+      let val;
+
+      if (f.name === 'this') {
+        val = json;
+        keyTestJson = {
+          "this" : json
+        };
+        keys.add("this");
+      } else {
+        val = json[f.name];
+        keys.add(f.name);
+      }
+
+      if (val === undefined) {
+        //console.warn("nstructjs.readJSON: Missing field " + f.name + " in struct " + stt.name);
+        //continue;
+      }
+
+      let instance = f.name === 'this' ? val : json;
+
+      let ret = sintern2.validateJSON(this, val, json, f, f.type, instance, _abstractKey);
+
+      if (!ret || typeof ret === "string") {
+        let msg = typeof ret === "string" ? ": " + ret : "";
+
+        console.error(cls.STRUCT);
+        throw new JSONError("Invalid json field " + f.name + msg);
+
+        return false;
+      }
+    }
+
+    for (let k in keyTestJson) {
+      if (typeof json[k] === "symbol") {
+        //ignore symbols
+        continue;
+      }
+
+      if (!keys.has(k)) {
+        console.error(cls.STRUCT);
+        throw new JSONError("Unknown json field " + k);
+        return false;
+      }
+    }
+
+    return true;
+  }
+
   readJSON(json, cls_or_struct_id, objInstance = undefined) {
     const keywords = this.constructor.keywords;
 
@@ -3541,6 +3664,7 @@ function deriveStructManager(keywords = {
     class NewSTRUCT extends STRUCT {
 
     }
+
     NewSTRUCT.keywords = keywords;
     return NewSTRUCT;
   } else {
@@ -10005,6 +10129,10 @@ function setEndian$1(mode) {
   return ret;
 }
 
+function validateJSON$1(json, cls) {
+  return exports.manager.validateJSON(json, cls);
+}
+
 function getEndian() {
   return STRUCT_ENDIAN;
 }
@@ -10060,6 +10188,7 @@ function useTinyEval() {
   });
 };
 
+exports.JSONError = JSONError;
 exports.STRUCT = STRUCT;
 exports._truncateDollarSign = _truncateDollarSign;
 exports.binpack = struct_binpack;
@@ -10084,6 +10213,7 @@ exports.typesystem = struct_typesystem;
 exports.unpack_context = unpack_context;
 exports.unregister = unregister;
 exports.useTinyEval = useTinyEval;
+exports.validateJSON = validateJSON$1;
 exports.validateStructs = validateStructs;
 exports.writeJSON = writeJSON;
 exports.writeObject = writeObject;
