@@ -2451,6 +2451,7 @@ var _sintern2 = /*#__PURE__*/Object.freeze({
   toJSON: toJSON,
   fromJSON: fromJSON,
   validateJSON: validateJSON,
+  do_pack: do_pack,
   StructFieldType: StructFieldType
 });
 
@@ -2565,10 +2566,6 @@ function setDebugMode$1(t) {
 }
 
 let _ws_env$1 = [[undefined, undefined]];
-
-function do_pack$1(manager, data, val, obj, thestruct, field, type) {
-  StructFieldTypeMap[field.type.type].pack(manager, data, val, obj, field, type);
-}
 
 function define_empty_class(scls, name) {
   let cls = function () {
@@ -3196,10 +3193,10 @@ StructClass = class StructClass {
           console.log("\\n\\n\\n", f.get, "Helper JS Ret", val, "\\n\\n\\n");
         }
 
-        do_pack(this, data, val, obj, thestruct, f, t1);
+        sintern2.do_pack(this, data, val, obj, f, t1);
       } else {
         let val = f.name === "this" ? obj : obj[f.name];
-        do_pack(this, data, val, obj, thestruct, f, t1);
+        sintern2.do_pack(this, data, val, obj, f, t1);
       }
     }
   }

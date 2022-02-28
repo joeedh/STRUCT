@@ -113,10 +113,6 @@ export function setDebugMode(t) {
 
 let _ws_env = [[undefined, undefined]];
 
-function do_pack(manager, data, val, obj, thestruct, field, type) {
-  StructFieldTypeMap[field.type.type].pack(manager, data, val, obj, field, type);
-}
-
 function define_empty_class(scls, name) {
   let cls = function () {
   };
@@ -742,10 +738,10 @@ export class STRUCT {
           console.log("\n\n\n", f.get, "Helper JS Ret", val, "\n\n\n");
         }
 
-        do_pack(this, data, val, obj, thestruct, f, t1);
+        sintern2.do_pack(this, data, val, obj, f, t1);
       } else {
         let val = f.name === "this" ? obj : obj[f.name];
-        do_pack(this, data, val, obj, thestruct, f, t1);
+        sintern2.do_pack(this, data, val, obj, f, t1);
       }
     }
   }

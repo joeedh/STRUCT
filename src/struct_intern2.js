@@ -148,7 +148,7 @@ function fmt_type(type) {
   return StructFieldTypeMap[type.type].format(type);
 }
 
-function do_pack(manager, data, val, obj, field, type) {
+export function do_pack(manager, data, val, obj, field, type) {
   let name;
 
   if (debug) {
