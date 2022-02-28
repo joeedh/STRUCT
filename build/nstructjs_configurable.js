@@ -2566,7 +2566,7 @@ function setDebugMode$1(t) {
 
 let _ws_env$1 = [[undefined, undefined]];
 
-function do_pack$1(data, val, obj, thestruct, field, type) {
+function do_pack$1(manager, data, val, obj, thestruct, field, type) {
   StructFieldTypeMap[field.type.type].pack(manager, data, val, obj, field, type);
 }
 
@@ -3196,10 +3196,10 @@ StructClass = class StructClass {
           console.log("\\n\\n\\n", f.get, "Helper JS Ret", val, "\\n\\n\\n");
         }
 
-        do_pack(data, val, obj, thestruct, f, t1);
+        do_pack(this, data, val, obj, thestruct, f, t1);
       } else {
         let val = f.name === "this" ? obj : obj[f.name];
-        do_pack(data, val, obj, thestruct, f, t1);
+        do_pack(this, data, val, obj, thestruct, f, t1);
       }
     }
   }
