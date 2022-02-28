@@ -2,10 +2,11 @@
 import * as struct_binpack from './struct_binpack.js';
 import * as struct_parser from './struct_parser.js';
 import * as _sintern2 from './struct_intern2.js';
-import * as struct_eval from './struct_eval.js';
+import * as _struct_eval from './struct_eval.js';
 
 //needed to avoid a rollup bug in configurable mode
 var sintern2 = _sintern2;
+var struct_eval = _struct_eval;
 
 import {DEBUG} from './struct_global.js';
 

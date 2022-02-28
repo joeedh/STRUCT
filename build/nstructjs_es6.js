@@ -2461,6 +2461,12 @@ function setStructEval(val) {
   structEval = val;
 }
 
+var _struct_eval = /*#__PURE__*/Object.freeze({
+  __proto__: null,
+  get structEval () { return structEval; },
+  setStructEval: setStructEval
+});
+
 var nGlobal;
 
 if (typeof globalThis !== "undefined") {
@@ -2493,6 +2499,7 @@ function updateDEBUG() {
 
 //needed to avoid a rollup bug in configurable mode
 var sintern2 = _sintern2;
+var struct_eval = _struct_eval;
 
 let warninglvl$1 = 2;
 
@@ -3141,7 +3148,7 @@ class STRUCT {
     if (!(fullcode in this.compiled_code)) {
       let code2 = "func = function(obj, env) { " + envcode + "return " + code + "}";
       try {
-        func = structEval(code2);
+        func = struct_eval.structEval(code2);
       } catch (err) {
         console.warn(err.stack);
 
