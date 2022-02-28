@@ -1832,6 +1832,10 @@ class StructArrayField extends StructFieldType {
   }
 
   static validateJSON(manager, val, obj, field, type, instance, _abstractKey) {
+    if (!val) {
+      return "not an array: " + val;
+    }
+
     for (let i = 0; i < val.length; i++) {
       let ret = validateJSON(manager, val[i], val, field, type.data.type, undefined, _abstractKey);
 
@@ -2121,10 +2125,10 @@ class StructBoolField extends StructFieldType {
 
   static validateJSON(manager, val, obj, field, type, instance) {
     if (val === 0 || val === 1 || val === true || val === false || val === "true" || val === "false") {
-      return "" + val + " is not a bool";
+      return true;
     }
 
-    return true;
+    return "" + val + " is not a bool";
   }
 
   static fromJSON(manager, val, obj, field, type, instance) {
@@ -3038,7 +3042,7 @@ class STRUCT {
       }
 
       if (bad) {
-        console.warn("Generating STRUCT script for derived class " + unmangle(cls.name));
+        console.warn("Generating " + keywords.script + " script for derived class " + unmangle(cls.name));
         if (!structName) {
           structName = unmangle(cls.name);
         }
@@ -3048,7 +3052,7 @@ class STRUCT {
     }
 
     if (!cls.STRUCT) {
-      throw new Error("class " + unmangle(cls.name) + " has no STRUCT script");
+      throw new Error("class " + unmangle(cls.name) + " has no " + keywords.script + " script");
     }
 
     let stt = struct_parse.parse(cls.STRUCT);
@@ -3417,7 +3421,7 @@ class STRUCT {
     try {
       this.validateJSONIntern(json, cls_or_struct_id, _abstractKey);
     } catch (error) {
-      if (!error instanceof JSONError) {
+      if (!(error instanceof JSONError)) {
         console.error(error.stack);
       }
 

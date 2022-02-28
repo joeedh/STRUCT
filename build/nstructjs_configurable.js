@@ -1832,6 +1832,10 @@ class StructArrayField extends StructFieldType {
   }
 
   static validateJSON(manager, val, obj, field, type, instance, _abstractKey) {
+    if (!val) {
+      return "not an array: " + val;
+    }
+
     for (let i = 0; i < val.length; i++) {
       let ret = validateJSON(manager, val[i], val, field, type.data.type, undefined, _abstractKey);
 
@@ -2121,10 +2125,10 @@ class StructBoolField extends StructFieldType {
 
   static validateJSON(manager, val, obj, field, type, instance) {
     if (val === 0 || val === 1 || val === true || val === false || val === "true" || val === "false") {
-      return "" + val + " is not a bool";
+      return true;
     }
 
-    return true;
+    return "" + val + " is not a bool";
   }
 
   static fromJSON(manager, val, obj, field, type, instance) {
@@ -3039,7 +3043,7 @@ StructClass = class StructClass {
       }
 
       if (bad) {
-        console.warn("Generating STRUCT script for derived class " + unmangle(cls.name));
+        console.warn("Generating " + keywords.script + " script for derived class " + unmangle(cls.name));
         if (!structName) {
           structName = unmangle(cls.name);
         }
@@ -3049,7 +3053,7 @@ StructClass = class StructClass {
     }
 
     if (!cls[keywords.script]) {
-      throw new Error("class " + unmangle(cls.name) + " has no STRUCT script");
+      throw new Error("class " + unmangle(cls.name) + " has no " + keywords.script + " script");
     }
 
     let stt = struct_parse.parse(cls[keywords.script]);
@@ -3418,7 +3422,7 @@ StructClass = class StructClass {
     try {
       this.validateJSONIntern(json, cls_or_struct_id, _abstractKey);
     } catch (error) {
-      if (!error instanceof JSONError) {
+      if (!(error instanceof JSONError)) {
         console.error(error.stack);
       }
 
@@ -3484,7 +3488,7 @@ StructClass = class StructClass {
       if (!ret || typeof ret === "string") {
         let msg = typeof ret === "string" ? ": " + ret : "";
 
-        console.error(cls.STRUCT);
+        console.error(cls[keywords.script]);
         throw new JSONError("Invalid json field " + f.name + msg);
 
         return false;
@@ -3498,7 +3502,7 @@ StructClass = class StructClass {
       }
 
       if (!keys.has(k)) {
-        console.error(cls.STRUCT);
+        console.error(cls[keywords.script]);
         throw new JSONError("Unknown json field " + k);
         return false;
       }

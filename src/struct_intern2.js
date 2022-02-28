@@ -661,6 +661,10 @@ class StructArrayField extends StructFieldType {
   }
 
   static validateJSON(manager, val, obj, field, type, instance, _abstractKey) {
+    if (!val) {
+      return "not an array: " + val;
+    }
+
     for (let i = 0; i < val.length; i++) {
       let ret = validateJSON(manager, val[i], val, field, type.data.type, undefined, _abstractKey);
 
@@ -950,10 +954,10 @@ class StructBoolField extends StructFieldType {
 
   static validateJSON(manager, val, obj, field, type, instance) {
     if (val === 0 || val === 1 || val === true || val === false || val === "true" || val === "false") {
-      return "" + val + " is not a bool";
+      return true;
     }
 
-    return true;
+    return "" + val + " is not a bool";
   }
 
   static fromJSON(manager, val, obj, field, type, instance) {

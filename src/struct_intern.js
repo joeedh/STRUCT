@@ -589,7 +589,7 @@ export class STRUCT {
       }
 
       if (bad) {
-        console.warn("Generating STRUCT script for derived class " + unmangle(cls.name));
+        console.warn("Generating " + keywords.script + " script for derived class " + unmangle(cls.name));
         if (!structName) {
           structName = unmangle(cls.name);
         }
@@ -599,7 +599,7 @@ export class STRUCT {
     }
 
     if (!cls[keywords.script]) {
-      throw new Error("class " + unmangle(cls.name) + " has no STRUCT script");
+      throw new Error("class " + unmangle(cls.name) + " has no " + keywords.script + " script");
     }
 
     let stt = struct_parse.parse(cls[keywords.script]);
@@ -968,7 +968,7 @@ export class STRUCT {
     try {
       this.validateJSONIntern(json, cls_or_struct_id, _abstractKey);
     } catch (error) {
-      if (!error instanceof JSONError) {
+      if (!(error instanceof JSONError)) {
         console.error(error.stack);
       }
 
@@ -1034,7 +1034,7 @@ export class STRUCT {
       if (!ret || typeof ret === "string") {
         let msg = typeof ret === "string" ? ": " + ret : "";
 
-        console.error(cls.STRUCT);
+        console.error(cls[keywords.script]);
         throw new JSONError("Invalid json field " + f.name + msg);
 
         return false;
@@ -1048,7 +1048,7 @@ export class STRUCT {
       }
 
       if (!keys.has(k)) {
-        console.error(cls.STRUCT);
+        console.error(cls[keywords.script]);
         throw new JSONError("Unknown json field " + k);
         return false;
       }
