@@ -1215,8 +1215,12 @@ manager = new STRUCT();
 export function write_scripts(nManager = manager, include_code = false) {
   let buf = "";
 
+  /* prevent code generation bugs in configurable mode */
+  let nl = String.fromCharCode(10);
+  let tab = String.fromCharCode(9);
+
   nManager.forEach(function (stt) {
-    buf += STRUCT.fmt_struct(stt, false, !include_code) + "\n";
+    buf += STRUCT.fmt_struct(stt, false, !include_code) + nl;
   });
 
   let buf2 = buf;
@@ -1224,10 +1228,10 @@ export function write_scripts(nManager = manager, include_code = false) {
 
   for (let i = 0; i < buf2.length; i++) {
     let c = buf2[i];
-    if (c === "\n") {
-      buf += "\n";
+    if (c === nl) {
+      buf += nl;
       let i2 = i;
-      while (i < buf2.length && (buf2[i] === " " || buf2[i] === "\t" || buf2[i] === "\n")) {
+      while (i < buf2.length && (buf2[i] === " " || buf2[i] === tab || buf2[i] === nl)) {
         i++;
       }
       if (i !== i2)
