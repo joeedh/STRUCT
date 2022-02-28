@@ -235,15 +235,13 @@ class Canvas {
   }
 }
 
-Canvas.STRUCT = [
-"node.Canvas {",
-"  idgen    : int;",
-"  points   : array(abstract(node.Point));",
-"  polygons : node.PolygonList;",
-"}"
-].join("\n");
+Canvas.STRUCT = `
+node.Canvas {
+  idgen    : int;
+  points   : array(abstract(node.Point, "type"));
+  polygons : node.PolygonList;
+}`;
 structjs.register(Canvas, "node.Canvas");
-//structjs.register(Canvas, "node.Canvas");
 
 function test_main() {
   structjs.validateStructs();
@@ -336,6 +334,11 @@ function test_main() {
   if (!passed) {
     process.exit(-1);
   }
+
+  let json = structjs.writeJSON(canvas);
+//  json.polygons[0].points[0] = "sdsdfds";
+
+  console.log(structjs.validateJSON(json, Canvas));
 }
 
 test_main();

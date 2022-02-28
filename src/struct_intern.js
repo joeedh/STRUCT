@@ -16,6 +16,8 @@ let warninglvl = 2;
 export var truncateDollarSign = true;
 export var manager;
 
+export class JSONError extends Error {};
+
 export function setTruncateDollarSign(v) {
   truncateDollarSign = !!v;
 }
@@ -962,6 +964,99 @@ export class STRUCT {
     }
   }
 
+  validateJSON(json, cls_or_struct_id, _abstractKey="_structName") {
+    try {
+      this.validateJSONIntern(json, cls_or_struct_id, _abstractKey);
+    } catch (error) {
+      if (!error instanceof JSONError) {
+        console.error(error.stack);
+      }
+
+      console.error(error.message);
+      return false;
+    }
+
+    return true;
+  }
+
+  validateJSONIntern(json, cls_or_struct_id, _abstractKey="_structName") {
+    const keywords = this.constructor.keywords;
+
+    let cls, stt;
+
+    if (typeof cls_or_struct_id === "number") {
+      cls = this.struct_cls[this.struct_ids[cls_or_struct_id].name];
+    } else if (cls_or_struct_id instanceof NStruct) {
+      cls = this.get_struct_cls(cls_or_struct_id.name);
+    } else {
+      cls = cls_or_struct_id;
+    }
+
+    if (cls === undefined) {
+      throw new Error("bad cls_or_struct_id " + cls_or_struct_id);
+    }
+
+    stt = this.structs[cls[keywords.name]];
+
+    let fields = stt.fields;
+    let flen = fields.length;
+
+    let keys = new Set();
+    keys.add(_abstractKey);
+
+    let keyTestJson = json;
+
+    for (let i = 0; i < flen; i++) {
+      let f = fields[i];
+
+      let val;
+
+      if (f.name === 'this') {
+        val = json;
+        keyTestJson = {
+          "this" : json
+        };
+        keys.add("this");
+      } else {
+        val = json[f.name];
+        keys.add(f.name);
+      }
+
+      if (val === undefined) {
+        //console.warn("nstructjs.readJSON: Missing field " + f.name + " in struct " + stt.name);
+        //continue;
+      }
+
+      let instance = f.name === 'this' ? val : json;
+
+      let ret = sintern2.validateJSON(this, val, json, f, f.type, instance, _abstractKey);
+
+      if (!ret || typeof ret === "string") {
+        let msg = typeof ret === "string" ? ": " + ret : "";
+
+        console.error(cls.STRUCT);
+        throw new JSONError("Invalid json field " + f.name + msg);
+
+        return false;
+      }
+    }
+
+    for (let k in keyTestJson) {
+      if (typeof json[k] === "symbol") {
+        //ignore symbols
+        continue;
+      }
+
+      if (!keys.has(k)) {
+        console.error(cls.STRUCT);
+        throw new JSONError("Unknown json field " + k);
+        return false;
+      }
+    }
+
+    return true;
+  }
+
   readJSON(json, cls_or_struct_id, objInstance = undefined) {
     const keywords = this.constructor.keywords;
 
@@ -1097,6 +1192,7 @@ export function deriveStructManager(keywords = {
     class NewSTRUCT extends STRUCT {
 
     }
+
     NewSTRUCT.keywords = keywords;
     return NewSTRUCT;
   } else {

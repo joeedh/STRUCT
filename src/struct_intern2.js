@@ -108,15 +108,20 @@ export const StructFieldTypeMap = {};
 
 export function packNull(manager, data, field, type) {
   StructFieldTypeMap[type.type].packNull(manager, data, field, type);
-};
+}
 
 export function toJSON(manager, val, obj, field, type) {
   return StructFieldTypeMap[type.type].toJSON(manager, val, obj, field, type);
-};
+}
 
 export function fromJSON(manager, val, obj, field, type, instance) {
   return StructFieldTypeMap[type.type].fromJSON(manager, val, obj, field, type, instance);
-};
+}
+
+export function validateJSON(manager, val, obj, field, type, instance, _abstractKey) {
+  return StructFieldTypeMap[type.type].validateJSON(manager, val, obj, field, type, instance, _abstractKey);
+}
+
 
 function unpack_field(manager, data, type, uctx) {
   let name;
@@ -190,6 +195,10 @@ export class StructFieldType {
     return val;
   }
 
+  static validateJSON(manager, val, obj, field, type, instance, _abstractKey) {
+    return true;
+  }
+
   /**
    return false to override default
    helper js for packing
@@ -250,6 +259,14 @@ class StructIntField extends StructFieldType {
     return unpack_int(data, uctx);
   }
 
+  static validateJSON(manager, val, obj, field, type, instance) {
+    if (typeof val !== "number" || val !== Math.floor(val)) {
+      return "" + val + " is not an integer";
+    }
+
+    return true;
+  }
+
   static define() {
     return {
       type: StructEnum.T_INT,
@@ -267,6 +284,14 @@ class StructFloatField extends StructFieldType {
 
   static unpack(manager, data, type, uctx) {
     return unpack_float(data, uctx);
+  }
+
+  static validateJSON(manager, val, obj, field, type, instance, _abstractKey) {
+    if (typeof val !== "number") {
+      return "Not a float: " + val;
+    }
+
+    return true;
   }
 
   static define() {
@@ -288,6 +313,14 @@ class StructDoubleField extends StructFieldType {
     return unpack_double(data, uctx);
   }
 
+  static validateJSON(manager, val, obj, field, type, instance) {
+    if (typeof val !== "number") {
+      return "Not a double: " + val;
+    }
+
+    return true;
+  }
+
   static define() {
     return {
       type: StructEnum.T_DOUBLE,
@@ -303,6 +336,14 @@ class StructStringField extends StructFieldType {
     val = !val ? "" : val;
 
     pack_string(data, val);
+  }
+
+  static validateJSON(manager, val, obj, field, type, instance) {
+    if (typeof val !== "string") {
+      return "Not a string: " + val;
+    }
+
+    return true;
   }
 
   static packNull(manager, data, field, type) {
@@ -328,6 +369,19 @@ class StructStaticStringField extends StructFieldType {
     val = !val ? "" : val;
 
     pack_static_string(data, val, type.data.maxlength);
+  }
+
+  static validateJSON(manager, val, obj, field, type, instance) {
+    if (typeof val !== "string") {
+      return "Not a string: " + val;
+    }
+
+
+    if (val.length > type.data.maxlength) {
+      return "String is too big; limit is " + type.data.maxlength + "; string:" + val;
+    }
+
+    return true;
   }
 
   static format(type) {
@@ -359,6 +413,12 @@ class StructStructField extends StructFieldType {
     packer_debug("struct", stt.name);
 
     manager.write_struct(data, val, stt);
+  }
+
+  static validateJSON(manager, val, obj, field, type, instance, _abstractKey) {
+    let stt = manager.get_struct(type.data);
+
+    return manager.validateJSONIntern(val, stt, _abstractKey);
   }
 
   static format(type) {
@@ -418,7 +478,7 @@ class StructTStructField extends StructFieldType {
     let stt = manager.get_struct(type.data);
 
     const keywords = manager.constructor.keywords;
-    
+
     //make sure inheritance is correct
     if (val.constructor[keywords.name] !== type.data && (val instanceof cls)) {
       //if (DEBUG.Struct) {
@@ -437,6 +497,32 @@ class StructTStructField extends StructFieldType {
     pack_int(data, stt.id);
     manager.write_struct(data, val, stt);
   }
+
+  static validateJSON(manager, val, obj, field, type, instance, _abstractKey) {
+    let key = type.jsonKeyword;
+
+    let stt = manager.get_struct(val[key]);
+    let cls = manager.get_struct_cls(stt.name);
+    let parentcls = manager.get_struct_cls(type.data);
+
+    let ok = false;
+
+    do {
+      if (cls === parentcls) {
+        ok = true;
+        break;
+      }
+
+      cls = cls.prototype.__proto__.constructor;
+    } while (cls && cls !== Object);
+
+    if (!ok) {
+      return stt.name + " is not a child class off " + type.data;
+    }
+
+    return manager.validateJSONIntern(val, stt, type.jsonKeyword);
+  }
+
 
   static fromJSON(manager, val, obj, field, type, instance) {
     let key = type.jsonKeyword;
@@ -574,6 +660,18 @@ class StructArrayField extends StructFieldType {
     return !field.type.data.iname;
   }
 
+  static validateJSON(manager, val, obj, field, type, instance, _abstractKey) {
+    for (let i = 0; i < val.length; i++) {
+      let ret = validateJSON(manager, val[i], val, field, type.data.type, undefined, _abstractKey);
+
+      if (typeof ret === "string" || !ret) {
+        return ret;
+      }
+    }
+
+    return true;
+  }
+
   static fromJSON(manager, val, obj, field, type, instance) {
     let ret = instance || [];
 
@@ -700,6 +798,10 @@ class StructIterField extends StructFieldType {
     data[starti++] = uint8_view[1];
     data[starti++] = uint8_view[2];
     data[starti++] = uint8_view[3];
+  }
+
+  static validateJSON(manager, val, obj, field, type, instance) {
+    return StructArrayField.validateJSON(...arguments);
   }
 
   static fromJSON() {
@@ -846,6 +948,26 @@ class StructBoolField extends StructFieldType {
     return !!unpack_byte(data, uctx);
   }
 
+  static validateJSON(manager, val, obj, field, type, instance) {
+    if (val === 0 || val === 1 || val === true || val === false || val === "true" || val === "false") {
+      return "" + val + " is not a bool";
+    }
+
+    return true;
+  }
+
+  static fromJSON(manager, val, obj, field, type, instance) {
+    if (val === "false") {
+      val = false;
+    }
+
+    return !!val;
+  }
+
+  static toJSON(manager, val, obj, field, type) {
+    return !!val;
+  }
+
   static define() {
     return {
       type: StructEnum.T_BOOL,
@@ -901,6 +1023,10 @@ class StructIterKeysField extends StructFieldType {
 
       i++;
     }
+  }
+
+  static validateJSON(manager, val, obj, field, type, instance) {
+    return StructArrayField.validateJSON(...arguments);
   }
 
   static fromJSON() {
@@ -991,6 +1117,14 @@ class StructUintField extends StructFieldType {
     return unpack_uint(data, uctx);
   }
 
+  static validateJSON(manager, val, obj, field, type, instance) {
+    if (typeof val !== "number" || val !== Math.floor(val)) {
+      return "" + val + " is not an integer";
+    }
+
+    return true;
+  }
+
   static define() {
     return {
       type: StructEnum.T_UINT,
@@ -1009,6 +1143,14 @@ class StructUshortField extends StructFieldType {
 
   static unpack(manager, data, type, uctx) {
     return unpack_ushort(data, uctx);
+  }
+
+  static validateJSON(manager, val, obj, field, type, instance) {
+    if (typeof val !== "number" || val !== Math.floor(val)) {
+      return "" + val + " is not an integer";
+    }
+
+    return true;
   }
 
   static define() {
@@ -1055,6 +1197,10 @@ class StructStaticArrayField extends StructFieldType {
 
   static useHelperJS(field) {
     return !field.type.data.iname;
+  }
+
+  static validateJSON() {
+    return StructArrayField.validateJSON(...arguments);
   }
 
   static fromJSON() {
