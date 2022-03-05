@@ -47,6 +47,7 @@ export default {
       '//$BUILD_TINYEVAL_END'  : '*/',
       changed                  : 'replaced',
       delimiters               : ['', ''],
+      'let haveCodeGen;'        : 'let haveCodeGen = !globalThis.DISABLE_STRUCT_CODEGEN;',
     }),
     resolve(),
 //    terser()

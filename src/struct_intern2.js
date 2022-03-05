@@ -418,6 +418,10 @@ class StructStructField extends StructFieldType {
   static validateJSON(manager, val, obj, field, type, instance, _abstractKey) {
     let stt = manager.get_struct(type.data);
 
+    if (!val) {
+      return "Expected " + stt.name + " object";
+    }
+
     return manager.validateJSONIntern(val, stt, _abstractKey);
   }
 
@@ -500,6 +504,10 @@ class StructTStructField extends StructFieldType {
 
   static validateJSON(manager, val, obj, field, type, instance, _abstractKey) {
     let key = type.jsonKeyword;
+
+    if (typeof val !== "object") {
+      return typeof val + " is not an object";
+    }
 
     let stt = manager.get_struct(val[key]);
     let cls = manager.get_struct_cls(stt.name);

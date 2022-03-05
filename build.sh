@@ -24,3 +24,6 @@ echo "write build/nstructjs_es6.js"
 
 echo "write build/nstructjs_configurable.js"
 ./node_modules/.bin/rollup -c rollup_configurable.config.js
+
+echo "write build/nstructjs_configurable_noeval.js"
+./node_modules/.bin/rollup -c rollup_configurable_noeval.config.js

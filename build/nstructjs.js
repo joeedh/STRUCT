@@ -22,19 +22,190 @@ let nexports = (function () {
 
 Object.defineProperty(exports, '__esModule', { value: true });
 
-"use strict";
-/*
-The lexical scanner in this module was inspired by PyPLY
+let colormap = {
+  "black"   : 30,
+  "red"     : 31,
+  "green"   : 32,
+  "yellow"  : 33,
+  "blue"    : 34,
+  "magenta" : 35,
+  "cyan"    : 36,
+  "white"   : 37,
+  "reset"   : 0,
+  "grey"    : 2,
+  "orange"  : 202,
+  "pink"    : 198,
+  "brown"   : 314,
+  "lightred": 91,
+  "peach"   : 210
+};
 
-http://www.dabeaz.com/ply/ply.html
-*/
+let termColorMap = {};
+for (let k in colormap) {
+  termColorMap[k] = colormap[k];
+  termColorMap[colormap[k]] = k;
+}
+
+function termColor(s, c) {
+  if (typeof s === "symbol") {
+    s = s.toString();
+  } else {
+    s = "" + s;
+  }
+
+  if (c in colormap)
+    c = colormap[c];
+
+  if (c > 107) {
+    let s2 = '\u001b[38;5;' + c + "m";
+    return s2 + s + '\u001b[0m'
+  }
+
+  return '\u001b[' + c + 'm' + s + '\u001b[0m'
+};
+
+function termPrint() {
+  //let console = window.console;
+
+  let s = '';
+  for (let i = 0; i < arguments.length; i++) {
+    if (i > 0) {
+      s += ' ';
+    }
+    s += arguments[i];
+  }
+
+  let re1a = /\u001b\[[1-9][0-9]?m/;
+  let re1b = /\u001b\[[1-9][0-9];[0-9][0-9]?;[0-9]+m/;
+  let re2 = /\u001b\[0m/;
+
+  let endtag = '\u001b[0m';
+
+  function tok(s, type) {
+    return {
+      type : type,
+      value: s
+    }
+  }
+
+  let tokdef = [
+    [re1a, "start"],
+    [re1b, "start"],
+    [re2, "end"]
+  ];
+
+  let s2 = s;
+
+  let i = 0;
+  let tokens = [];
+
+  while (s2.length > 0) {
+    let ok = false;
+
+    let mintk = undefined, mini = undefined;
+    let minslice = undefined, mintype = undefined;
+
+    for (let tk of tokdef) {
+      let i = s2.search(tk[0]);
+
+      if (i >= 0 && (mini === undefined || i < mini)) {
+        minslice = s2.slice(i, s2.length).match(tk[0])[0];
+        mini = i;
+        mintype = tk[1];
+        mintk = tk;
+        ok = true;
+      }
+    }
+
+    if (!ok) {
+      break;
+    }
+
+    if (mini > 0) {
+      let chunk = s2.slice(0, mini);
+      tokens.push(tok(chunk, "chunk"));
+    }
+
+    s2 = s2.slice(mini+minslice.length, s2.length);
+    let t = tok(minslice, mintype);
+
+    tokens.push(t);
+  }
+
+  if (s2.length > 0) {
+    tokens.push(tok(s2, "chunk"));
+  }
+
+  let stack = [];
+  let cur;
+
+  let out = '';
+
+  for (let t of tokens) {
+    if (t.type === "chunk") {
+      out += t.value;
+    } else if (t.type === "start") {
+      stack.push(cur);
+      cur = t.value;
+
+      out += t.value;
+    } else if (t.type === "end") {
+      cur = stack.pop();
+      if (cur) {
+        out += cur;
+      } else {
+        out += endtag;
+      }
+    }
+  }
+
+  return out;
+}
+
+"use strict";
+
+function print_lines(ld, lineno, col, printColors, token) {
+  let buf = '';
+  let lines = ld.split("\n");
+  let istart = Math.max(lineno - 5, 0);
+  let iend  = Math.min(lineno + 3, lines.length);
+
+  let color = printColors ? (c) => c : termColor;
+
+  for (let i=istart; i<iend; i++) {
+    let l = "" + (i + 1);
+    while (l.length < 3) {
+      l = " " + l;
+    }
+
+    l += `: ${lines[i]}\n`;
+
+    if (i === lineno && token && token.value.length === 1) {
+      l = l.slice(0, col+5) + color(l[col+5], "yellow") + l.slice(col+6, l.length);
+    }
+    buf += l;
+    if (i === lineno) {
+      let colstr = '     ';
+      for (let i=0; i<col; i++) {
+        colstr += ' ';
+      }
+      colstr += color("^", "red");
+
+      buf += colstr + "\n";
+    }
+  }
+
+  buf = "------------------\n" + buf + "\n==================\n";
+  return buf;
+}
 
 class token {
-  constructor(type, val, lexpos, lineno, lexer, parser) {
+  constructor(type, val, lexpos, lineno, lexer, parser, col) {
     this.type = type;
     this.value = val;
     this.lexpos = lexpos;
     this.lineno = lineno;
+    this.col = col;
     this.lexer = lexer;
     this.parser = parser;
   }
@@ -84,8 +255,12 @@ class lexer {
     this.tokens = new Array();
     this.lexpos = 0;
     this.lexdata = "";
+    this.colmap = undefined;
     this.lineno = 0;
+    this.printTokens = false;
+    this.linestart = 0;
     this.errfunc = errfunc;
+    this.linemap = undefined;
     this.tokints = {};
     for (let i = 0; i < tokdef.length; i++) {
       this.tokints[tokdef[i].name] = i;
@@ -93,6 +268,10 @@ class lexer {
     this.statestack = [["__main__", 0]];
     this.states = {"__main__": [tokdef, errfunc]};
     this.statedata = 0;
+
+    this.logger = function() {
+      console.log(...arguments);
+    };
   }
 
   add_state(name, tokdef, errfunc) {
@@ -124,6 +303,23 @@ class lexer {
   }
 
   input(str) {
+    let linemap = this.linemap = new Array(str.length);
+    let lineno = 0;
+    let col = 0;
+    let colmap = this.colmap = new Array(str.length);
+
+    for (let i=0; i<str.length; i++, col++) {
+      let c = str[i];
+
+      linemap[i] = lineno;
+      colmap[i] = col;
+
+      if (c === "\n") {
+        lineno++;
+        col = 0;
+      }
+    }
+
     while (this.statestack.length > 1) {
       this.pop_state();
     }
@@ -138,10 +334,16 @@ class lexer {
     if (this.errfunc !== undefined && !this.errfunc(this))
       return;
 
-    console.log("Syntax error near line " + this.lineno);
+    let safepos = Math.min(this.lexpos, this.lexdata.length-1);
+    let line = this.linemap[safepos];
+    let col = this.colmap[safepos];
+
+    let s = print_lines(this.lexdata, line, col, true);
+
+    this.logger("  " + s);
+    this.logger("Syntax error near line " + (this.lineno + 1));
 
     let next = Math.min(this.lexpos + 8, this.lexdata.length);
-    console.log("  " + this.lexdata.slice(this.lexpos, next));
 
     throw new PUTIL_ParseError("Parse error");
   }
@@ -171,6 +373,11 @@ class lexer {
     if (!ignore_peek && this.peeked_tokens.length > 0) {
       let tok = this.peeked_tokens[0];
       this.peeked_tokens.shift();
+
+      if (!ignore_peek && this.printTokens) {
+        this.logger(""+tok);
+      }
+
       return tok;
     }
 
@@ -208,7 +415,13 @@ class lexer {
     }
 
     let def = theres[0];
-    let tok = new token(def.name, theres[1][0], this.lexpos, this.lineno, this, undefined);
+    let col = this.colmap[Math.min(this.lexpos, this.lexdata.length-1)];
+
+    if (this.lexpos < this.lexdata.length) {
+      this.lineno = this.linemap[this.lexpos];
+    }
+
+    let tok = new token(def.name, theres[1][0], this.lexpos, this.lineno, this, undefined, col);
     this.lexpos += tok.value.length;
 
     if (def.func) {
@@ -218,6 +431,9 @@ class lexer {
       }
     }
 
+    if (!ignore_peek && this.printTokens) {
+      this.logger(""+tok);
+    }
     return tok;
   }
 }
@@ -227,6 +443,10 @@ class parser {
     this.lexer = lexer;
     this.errfunc = errfunc;
     this.start = undefined;
+
+    this.logger = function() {
+      console.log(...arguments);
+    };
   }
 
   parse(data, err_on_unconsumed) {
@@ -256,25 +476,18 @@ class parser {
     if (token === undefined)
       estr = "Parse error at end of input: " + msg;
     else
-      estr = "Parse error at line " + (token.lineno + 1) + ": " + msg;
+      estr = `Parse error at line ${token.lineno + 1}:${token.col+1}: ${msg}`;
 
-    let buf = "1| ";
+    let buf = "";
     let ld = this.lexer.lexdata;
-    let l = 1;
-    for (var i = 0; i < ld.length; i++) {
-      let c = ld[i];
-      if (c === '\n') {
-        l++;
-        buf += "\n" + l + "| ";
-      }
-      else {
-        buf += c;
-      }
-    }
-    console.log("------------------");
-    console.log(buf);
-    console.log("==================");
-    console.log(estr);
+    let lineno = token ? token.lineno : this.lexer.linemap[this.lexer.linemap.length-1];
+    let col = token ? token.col : 0;
+
+    ld = ld.replace(/\r/g, '');
+
+    this.logger(print_lines(ld, lineno, col, true, token));
+    this.logger(estr);
+
     if (this.errfunc && !this.errfunc(token)) {
       return;
     }
@@ -338,8 +551,8 @@ class parser {
 }
 
 function test_parser() {
-  let basic_types = new set(["int", "float", "double", "vec2", "vec3", "vec4", "mat4", "string"]);
-  let reserved_tokens = new set(["int", "float", "double", "vec2", "vec3", "vec4", "mat4", "string", "static_string", "array"]);
+  let basic_types = new Set(["int", "float", "double", "vec2", "vec3", "vec4", "mat4", "string"]);
+  let reserved_tokens = new Set(["int", "float", "double", "vec2", "vec3", "vec4", "mat4", "string", "static_string", "array"]);
 
   function tk(name, re, func) {
     return new tokdef(name, re, func);
@@ -370,17 +583,27 @@ function test_parser() {
     t.lexer.lineno += 1;
   }), tk("SPACE", / |\t/, function (t) {
   })];
-  let __iter_rt = __get_iter(reserved_tokens);
-  let rt;
-  while (1) {
-    let __ival_rt = __iter_rt.next();
-    if (__ival_rt.done) {
-      break;
-    }
-    rt = __ival_rt.value;
+
+  for (let rt of reserved_tokens) {
     tokens.push(tk(rt.toUpperCase()));
   }
-  let a = "\n  Loop {\n    eid : int;\n    flag : int;\n    index : int;\n    type : int;\n\n    co : vec3;\n    no : vec3;\n    loop : int | eid(loop);\n    edges : array(e, int) | e.eid;\n\n    loops : array(Loop);\n  }\n  ";
+
+  let a = `
+  Loop {
+    eid : int;
+    flag : int;
+    index : int;
+    type : int;
+
+    co : vec3;
+    no : vec3;
+    loop : int | eid(loop);
+    edges : array(e, int) | e.eid;
+
+    loops :, array(Loop);
+  }
+  `;
+
 
   function errfunc(lexer) {
     return true;
@@ -393,8 +616,8 @@ function test_parser() {
   while (token = lex.next()) {
     console.log(token.toString());
   }
-  let parser = new parser(lex);
-  parser.input(a);
+  let parse = new parser(lex);
+  parse.input(a);
 
   function p_Array(p) {
     p.expect("ARRAY");
@@ -468,9 +691,11 @@ function test_parser() {
     return st;
   }
 
-  let ret = p_Struct(parser);
+  let ret = p_Struct(parse);
   console.log(JSON.stringify(ret));
 }
+
+//test_parser();
 
 var struct_parseutil = /*#__PURE__*/Object.freeze({
   __proto__: null,
@@ -1613,6 +1838,10 @@ class StructStructField extends StructFieldType {
   static validateJSON(manager, val, obj, field, type, instance, _abstractKey) {
     let stt = manager.get_struct(type.data);
 
+    if (!val) {
+      return "Expected " + stt.name + " object";
+    }
+
     return manager.validateJSONIntern(val, stt, _abstractKey);
   }
 
@@ -1695,6 +1924,10 @@ class StructTStructField extends StructFieldType {
 
   static validateJSON(manager, val, obj, field, type, instance, _abstractKey) {
     let key = type.jsonKeyword;
+
+    if (typeof val !== "object") {
+      return typeof val + " is not an object";
+    }
 
     let stt = manager.get_struct(val[key]);
     let cls = manager.get_struct_cls(stt.name);
@@ -2491,6 +2724,224 @@ var _struct_eval = /*#__PURE__*/Object.freeze({
   setStructEval: setStructEval
 });
 
+const TokSymbol = Symbol("token-info");
+
+function buildJSONParser() {
+  let tk = (name, re, func, example) => new tokdef(name, re, func, example);
+
+  let parse;
+
+  let nint = "[+-]?[0-9]+";
+  let nhex = "[+-]?0x[0-9a-fA-F]+";
+  let nfloat1 = "[+-]?[0-9]+\\.[0-9]*";
+  let nfloat2 = "[+-]?[0-9]*\\.[0-9]+";
+  let nfloat3 = "[+-]?[0-9]+\\.[0-9]+";
+  let nfloatexp = "[+-]?[0-9]+\\.[0-9]+[eE][+-]?[0-9]+";
+
+  let nfloat = `(${nfloat1})|(${nfloat2})|(${nfloatexp})`;
+  let num = `(${nint})|(${nfloat})|(${nhex})`;
+  let numre = new RegExp(num);
+
+  let numreTest = new RegExp(`(${num})$`);
+
+  //nfloat3 has to be its own regexp, the parser
+  //always chooses the token handler that parses the most input,
+  //and we don't want the partial 0. and .0 handles to split
+  //e.g. 3.5 into 3 and 0.5
+  nfloat3 = new RegExp(nfloat3);
+
+  let tests = ["1.234234", ".23432", "-234.", "1e-17", "-0x23423ff", "+23423"];
+  for (let test of tests) {
+    if (!numreTest.test(test)) {
+      console.error("Error! Number regexp failed:", test);
+    }
+  }
+
+  let tokens = [
+    tk("BOOL", /true|false/),
+    tk("WS", /[ \r\t\n]/, t => undefined), //drop token
+    tk("STRLIT", /["']/, t => {
+      let lex = t.lexer;
+      let char = t.value;
+      let i = lex.lexpos;
+      let lexdata = lex.lexdata;
+
+      let escape = 0;
+      t.value = "";
+      let prev;
+
+      while (i < lexdata.length) {
+        let c = lexdata[i];
+
+        t.value += c;
+
+        if (c === "\\") {
+          escape ^= true;
+        } else if (!escape && c === char) {
+          break;
+        } else {
+          escape = false;
+        }
+
+        i++;
+      }
+
+      lex.lexpos = i + 1;
+
+      if (t.value.length > 0) {
+        t.value = t.value.slice(0, t.value.length - 1);
+      }
+
+      return t;
+    }),
+    tk("LSBRACKET", /\[/),
+    tk("RSBRACKET", /]/),
+    tk("LBRACE", /{/),
+    tk("RBRACE", /}/),
+    tk("NULL", /null/),
+    tk("COMMA", /,/),
+    tk("COLON", /:/),
+    tk("NUM", numre, t => (t.value = parseFloat(t.value), t)),
+    tk("NUM", nfloat3, t => (t.value = parseFloat(t.value), t)),
+  ];
+
+  function tokinfo(t) {
+    return {
+      lexpos: t.lexpos,
+      lineno: t.lineno,
+      col   : t.col,
+      fields: {},
+    };
+  }
+
+  function p_Array(p) {
+    p.expect("LSBRACKET");
+    let t = p.peeknext();
+    let first = true;
+
+    let ret = [];
+
+    ret[TokSymbol] = tokinfo(t);
+
+    while (t && t.type !== "RSBRACKET") {
+      if (!first) {
+        p.expect("COMMA");
+      }
+
+      ret[TokSymbol].fields[ret.length] = tokinfo(t);
+      ret.push(p_Start(p));
+
+      first = false;
+      t = p.peeknext();
+    }
+    p.expect("RSBRACKET");
+
+    return ret;
+  }
+
+  function p_Object(p) {
+    p.expect("LBRACE");
+
+    let obj = {};
+
+    let first = true;
+    let t = p.peeknext();
+
+    obj[TokSymbol] = tokinfo(t);
+    while (t && t.type !== "RBRACE") {
+      if (!first) {
+        p.expect("COMMA");
+      }
+
+      let key = p.expect("STRLIT");
+      p.expect("COLON");
+
+      let val = p_Start(p, true);
+
+      obj[key] = val;
+      first = false;
+
+      t = p.peeknext();
+      obj[TokSymbol].fields[key] = tokinfo(t);
+    }
+
+    p.expect("RBRACE");
+
+    return obj;
+  }
+
+  function p_Start(p, throwError = true) {
+    let t = p.peeknext();
+    if (t.type === "LSBRACKET") {
+      return p_Array(p);
+    } else if (t.type === "LBRACE") {
+      return p_Object(p);
+    } else if (t.type === "STRLIT" || t.type === "NUM" || t.type === "NULL" || t.type === "BOOL") {
+      return p.next().value;
+    } else {
+      p.error(t, "Unknown token");
+    }
+  }
+
+  function p_Error(token, msg) {
+    throw new PUTIL_ParseError("Parse Error");
+  }
+
+  let lex = new lexer(tokens);
+  lex.linestart = 0;
+  parse = new parser(lex, p_Error);
+  parse.start = p_Start;
+  lex.printTokens = true;
+
+  return parse;
+}
+
+var jsonParser = buildJSONParser();
+
+function printContext(buf, tokinfo, printColors=true) {
+  let lines = buf.split("\n");
+
+  let lineno = tokinfo.lineno;
+  let col = tokinfo.col;
+
+  let istart = Math.max(lineno-5, 0);
+  let iend = Math.min(lineno+2, lines.length-1);
+
+  let s = '';
+
+  if (printColors) {
+    s += termColor("  /* pretty-printed json */\n", "blue");
+  } else {
+    s += "/* pretty-printed json */\n";
+  }
+
+  for (let i=istart; i<iend; i++) {
+    let l = lines[i];
+
+    let idx = "" + i;
+    while (idx.length < 3) {
+      idx = " " + idx;
+    }
+
+    if (i === lineno && printColors) {
+      s += termColor(`${idx}: ${l}\n`, "yellow");
+    } else {
+      s += `${idx}: ${l}\n`;
+    }
+
+    if (i === lineno) {
+      let l2 = '';
+      for (let j=0; j<col+5; j++) {
+        l2 += " ";
+      }
+
+      s += l2 + "^\n";
+    }
+  }
+
+  return s;
+}
+
 var nGlobal;
 
 if (typeof globalThis !== "undefined") {
@@ -2620,7 +3071,7 @@ function define_empty_class(scls, name) {
   return cls;
 }
 
-let haveCodeGen = false;
+let haveCodeGen;
 
 //$KEYWORD_CONFIG_START
 
@@ -2637,6 +3088,9 @@ class STRUCT {
     this.null_natives = {};
 
     this.define_null_native("Object", Object);
+
+    this.jsonUseColors = true;
+    this.jsonBuf = '';
   }
 
   static inherit(child, parent, structName = child.name) {
@@ -3444,15 +3898,30 @@ class STRUCT {
     }
   }
 
-  validateJSON(json, cls_or_struct_id, _abstractKey="_structName") {
+  validateJSON(json, cls_or_struct_id, useColors=true, consoleLogger=function(){console.log(...arguments);}, _abstractKey="_structName") {
+    if (cls_or_struct_id === undefined) {
+      throw new Error(this.constructor.name + ".prototype.validateJSON: Expected at least two arguments");
+    }
+
     try {
+      json = JSON.stringify(json, undefined, 2);
+
+      this.jsonBuf = json;
+      this.jsonUseColors = useColors;
+      this.jsonLogger = consoleLogger;
+
+      //add token annotations
+      jsonParser.logger = this.jsonLogger;
+      json = jsonParser.parse(json);
+
       this.validateJSONIntern(json, cls_or_struct_id, _abstractKey);
+
     } catch (error) {
       if (!(error instanceof JSONError)) {
         console.error(error.stack);
       }
 
-      console.error(error.message);
+      this.jsonLogger(error.message);
       return false;
     }
 
@@ -3514,7 +3983,8 @@ class STRUCT {
       if (!ret || typeof ret === "string") {
         let msg = typeof ret === "string" ? ": " + ret : "";
 
-        console.error(cls[keywords.script]);
+        this.jsonLogger(printContext(this.jsonBuf, json[TokSymbol].fields[f.name], this.jsonUseColors));
+        //console.error(cls[keywords.script]);
         throw new JSONError("Invalid json field " + f.name + msg);
 
         return false;
@@ -3528,7 +3998,7 @@ class STRUCT {
       }
 
       if (!keys.has(k)) {
-        console.error(cls[keywords.script]);
+        this.jsonLogger(cls[keywords.script]);
         throw new JSONError("Unknown json field " + k);
         return false;
       }
@@ -3668,7 +4138,7 @@ function deriveStructManager(keywords = {
     keywords.from = "from" + keywords.script;
   }
 
-  if (haveCodeGen) {
+  if (!haveCodeGen) {
     class NewSTRUCT extends STRUCT {
 
     }
@@ -4021,8 +4491,12 @@ function setEndian$1(mode) {
   return ret;
 }
 
-function validateJSON$1(json, cls) {
-  return exports.manager.validateJSON(json, cls);
+function consoleLogger() {
+  console.log(...arguments);
+}
+
+function validateJSON$1(json, cls, printColors=true, logger=consoleLogger) {
+  return exports.manager.validateJSON(json, cls, printColors, logger);
 }
 
 function getEndian() {
@@ -4090,6 +4564,7 @@ exports.JSONError = JSONError;
 exports.STRUCT = STRUCT;
 exports._truncateDollarSign = _truncateDollarSign;
 exports.binpack = struct_binpack;
+exports.consoleLogger = consoleLogger;
 exports.deriveStructManager = deriveStructManager;
 exports.filehelper = struct_filehelper;
 exports.getEndian = getEndian;

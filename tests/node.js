@@ -2,7 +2,7 @@ global.DEBUG = {
   tinyeval : false
 };
 
-//let structjs = require('../build/nstructjs');
+//import * as structjs from '../build/nstructjs_es6.js';
 import * as structjs from '../src/structjs.js';
 
 /*

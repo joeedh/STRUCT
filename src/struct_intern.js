@@ -3,6 +3,7 @@ import * as struct_binpack from './struct_binpack.js';
 import * as struct_parser from './struct_parser.js';
 import * as _sintern2 from './struct_intern2.js';
 import * as _struct_eval from './struct_eval.js';
+import jsonParser, {printContext, TokSymbol} from './struct_json.js';
 
 //needed to avoid a rollup bug in configurable mode
 var sintern2 = _sintern2;
@@ -137,7 +138,7 @@ function define_empty_class(scls, name) {
   return cls;
 }
 
-let haveCodeGen = false;
+let haveCodeGen;
 
 //$KEYWORD_CONFIG_START
 
@@ -154,6 +155,9 @@ export class STRUCT {
     this.null_natives = {}
 
     this.define_null_native("Object", Object);
+
+    this.jsonUseColors = true;
+    this.jsonBuf = '';
   }
 
   static inherit(child, parent, structName = child.name) {
@@ -961,15 +965,30 @@ export class STRUCT {
     }
   }
 
-  validateJSON(json, cls_or_struct_id, _abstractKey="_structName") {
+  validateJSON(json, cls_or_struct_id, useColors=true, consoleLogger=function(){console.log(...arguments)}, _abstractKey="_structName") {
+    if (cls_or_struct_id === undefined) {
+      throw new Error(this.constructor.name + ".prototype.validateJSON: Expected at least two arguments");
+    }
+
     try {
+      json = JSON.stringify(json, undefined, 2);
+
+      this.jsonBuf = json;
+      this.jsonUseColors = useColors;
+      this.jsonLogger = consoleLogger;
+
+      //add token annotations
+      jsonParser.logger = this.jsonLogger;
+      json = jsonParser.parse(json);
+
       this.validateJSONIntern(json, cls_or_struct_id, _abstractKey);
+
     } catch (error) {
       if (!(error instanceof JSONError)) {
         console.error(error.stack);
       }
 
-      console.error(error.message);
+      this.jsonLogger(error.message);
       return false;
     }
 
@@ -1031,7 +1050,8 @@ export class STRUCT {
       if (!ret || typeof ret === "string") {
         let msg = typeof ret === "string" ? ": " + ret : "";
 
-        console.error(cls[keywords.script]);
+        this.jsonLogger(printContext(this.jsonBuf, json[TokSymbol].fields[f.name], this.jsonUseColors));
+        //console.error(cls[keywords.script]);
         throw new JSONError("Invalid json field " + f.name + msg);
 
         return false;
@@ -1045,7 +1065,7 @@ export class STRUCT {
       }
 
       if (!keys.has(k)) {
-        console.error(cls[keywords.script]);
+        this.jsonLogger(cls[keywords.script]);
         throw new JSONError("Unknown json field " + k);
         return false;
       }
@@ -1185,7 +1205,7 @@ export function deriveStructManager(keywords = {
     keywords.from = "from" + keywords.script;
   }
 
-  if (haveCodeGen) {
+  if (!haveCodeGen) {
     class NewSTRUCT extends STRUCT {
 
     }

@@ -40,4 +40,17 @@ Test {
 nstructjs.register(Test);
 
 let json = nstructjs.writeJSON(new Test());
+json.test.value = "wer";
+
+let s = '';
+function logger() {
+    for (let arg of arguments) {
+        s += arg + " ";
+    }
+
+    s += "\n"
+}
+nstructjs.validateJSON(json, Test,  true, logger);
+
+console.log(s)
 console.log(JSON.stringify(json, undefined, 2));

@@ -34,8 +34,12 @@ export function setEndian(mode) {
 
 export {deriveStructManager} from './struct_intern.js';
 
-export function validateJSON(json, cls) {
-  return manager.validateJSON(json, cls);
+export function consoleLogger() {
+  console.log(...arguments);
+}
+
+export function validateJSON(json, cls, printColors=true, logger=consoleLogger) {
+  return manager.validateJSON(json, cls, printColors, logger);
 }
 
 export function getEndian() {

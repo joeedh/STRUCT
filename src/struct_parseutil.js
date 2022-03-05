@@ -5,12 +5,50 @@ The lexical scanner in this module was inspired by PyPLY
 http://www.dabeaz.com/ply/ply.html
 */
 
+import {termColor} from './struct_util.js';
+
+function print_lines(ld, lineno, col, printColors, token) {
+  let buf = '';
+  let lines = ld.split("\n");
+  let istart = Math.max(lineno - 5, 0);
+  let iend  = Math.min(lineno + 3, lines.length);
+
+  let color = printColors ? (c) => c : termColor;
+
+  for (let i=istart; i<iend; i++) {
+    let l = "" + (i + 1);
+    while (l.length < 3) {
+      l = " " + l;
+    }
+
+    l += `: ${lines[i]}\n`;
+
+    if (i === lineno && token && token.value.length === 1) {
+      l = l.slice(0, col+5) + color(l[col+5], "yellow") + l.slice(col+6, l.length);
+    }
+    buf += l;
+    if (i === lineno) {
+      let colstr = '     ';
+      for (let i=0; i<col; i++) {
+        colstr += ' ';
+      }
+      colstr += color("^", "red");
+
+      buf += colstr + "\n";
+    }
+  }
+
+  buf = "------------------\n" + buf + "\n==================\n";
+  return buf;
+}
+
 export class token {
-  constructor(type, val, lexpos, lineno, lexer, parser) {
+  constructor(type, val, lexpos, lineno, lexer, parser, col) {
     this.type = type;
     this.value = val;
     this.lexpos = lexpos;
     this.lineno = lineno;
+    this.col = col;
     this.lexer = lexer;
     this.parser = parser;
   }
@@ -60,8 +98,12 @@ export class lexer {
     this.tokens = new Array();
     this.lexpos = 0;
     this.lexdata = "";
+    this.colmap = undefined;
     this.lineno = 0;
+    this.printTokens = false;
+    this.linestart = 0;
     this.errfunc = errfunc;
+    this.linemap = undefined;
     this.tokints = {}
     for (let i = 0; i < tokdef.length; i++) {
       this.tokints[tokdef[i].name] = i;
@@ -69,6 +111,10 @@ export class lexer {
     this.statestack = [["__main__", 0]];
     this.states = {"__main__": [tokdef, errfunc]}
     this.statedata = 0;
+
+    this.logger = function() {
+      console.log(...arguments);
+    }
   }
 
   add_state(name, tokdef, errfunc) {
@@ -100,6 +146,23 @@ export class lexer {
   }
 
   input(str) {
+    let linemap = this.linemap = new Array(str.length);
+    let lineno = 0;
+    let col = 0;
+    let colmap = this.colmap = new Array(str.length);
+
+    for (let i=0; i<str.length; i++, col++) {
+      let c = str[i];
+
+      linemap[i] = lineno;
+      colmap[i] = col;
+
+      if (c === "\n") {
+        lineno++;
+        col = 0;
+      }
+    }
+
     while (this.statestack.length > 1) {
       this.pop_state();
     }
@@ -114,10 +177,16 @@ export class lexer {
     if (this.errfunc !== undefined && !this.errfunc(this))
       return;
 
-    console.log("Syntax error near line " + this.lineno);
+    let safepos = Math.min(this.lexpos, this.lexdata.length-1);
+    let line = this.linemap[safepos];
+    let col = this.colmap[safepos];
+
+    let s = print_lines(this.lexdata, line, col, true);
+
+    this.logger("  " + s);
+    this.logger("Syntax error near line " + (this.lineno + 1));
 
     let next = Math.min(this.lexpos + 8, this.lexdata.length);
-    console.log("  " + this.lexdata.slice(this.lexpos, next));
 
     throw new PUTIL_ParseError("Parse error");
   }
@@ -147,6 +216,11 @@ export class lexer {
     if (!ignore_peek && this.peeked_tokens.length > 0) {
       let tok = this.peeked_tokens[0];
       this.peeked_tokens.shift();
+
+      if (!ignore_peek && this.printTokens) {
+        this.logger(""+tok);
+      }
+
       return tok;
     }
 
@@ -184,7 +258,13 @@ export class lexer {
     }
 
     let def = theres[0];
-    let tok = new token(def.name, theres[1][0], this.lexpos, this.lineno, this, undefined);
+    let col = this.colmap[Math.min(this.lexpos, this.lexdata.length-1)];
+
+    if (this.lexpos < this.lexdata.length) {
+      this.lineno = this.linemap[this.lexpos];
+    }
+
+    let tok = new token(def.name, theres[1][0], this.lexpos, this.lineno, this, undefined, col);
     this.lexpos += tok.value.length;
 
     if (def.func) {
@@ -194,6 +274,9 @@ export class lexer {
       }
     }
 
+    if (!ignore_peek && this.printTokens) {
+      this.logger(""+tok);
+    }
     return tok;
   }
 }
@@ -203,6 +286,10 @@ export class parser {
     this.lexer = lexer;
     this.errfunc = errfunc;
     this.start = undefined;
+
+    this.logger = function() {
+      console.log(...arguments);
+    }
   }
 
   parse(data, err_on_unconsumed) {
@@ -232,25 +319,18 @@ export class parser {
     if (token === undefined)
       estr = "Parse error at end of input: " + msg;
     else
-      estr = "Parse error at line " + (token.lineno + 1) + ": " + msg;
+      estr = `Parse error at line ${token.lineno + 1}:${token.col+1}: ${msg}`;
 
-    let buf = "1| ";
+    let buf = "";
     let ld = this.lexer.lexdata;
-    let l = 1;
-    for (var i = 0; i < ld.length; i++) {
-      let c = ld[i];
-      if (c === '\n') {
-        l++;
-        buf += "\n" + l + "| ";
-      }
-      else {
-        buf += c;
-      }
-    }
-    console.log("------------------");
-    console.log(buf);
-    console.log("==================");
-    console.log(estr);
+    let lineno = token ? token.lineno : this.lexer.linemap[this.lexer.linemap.length-1];
+    let col = token ? token.col : 0;
+
+    ld = ld.replace(/\r/g, '');
+
+    this.logger(print_lines(ld, lineno, col, true, token));
+    this.logger(estr);
+
     if (this.errfunc && !this.errfunc(token)) {
       return;
     }
@@ -314,8 +394,8 @@ export class parser {
 }
 
 function test_parser() {
-  let basic_types = new set(["int", "float", "double", "vec2", "vec3", "vec4", "mat4", "string"]);
-  let reserved_tokens = new set(["int", "float", "double", "vec2", "vec3", "vec4", "mat4", "string", "static_string", "array"]);
+  let basic_types = new Set(["int", "float", "double", "vec2", "vec3", "vec4", "mat4", "string"]);
+  let reserved_tokens = new Set(["int", "float", "double", "vec2", "vec3", "vec4", "mat4", "string", "static_string", "array"]);
 
   function tk(name, re, func) {
     return new tokdef(name, re, func);
@@ -346,17 +426,27 @@ function test_parser() {
     t.lexer.lineno += 1;
   }), tk("SPACE", / |\t/, function (t) {
   })];
-  let __iter_rt = __get_iter(reserved_tokens);
-  let rt;
-  while (1) {
-    let __ival_rt = __iter_rt.next();
-    if (__ival_rt.done) {
-      break;
-    }
-    rt = __ival_rt.value;
+
+  for (let rt of reserved_tokens) {
     tokens.push(tk(rt.toUpperCase()));
   }
-  let a = "\n  Loop {\n    eid : int;\n    flag : int;\n    index : int;\n    type : int;\n\n    co : vec3;\n    no : vec3;\n    loop : int | eid(loop);\n    edges : array(e, int) | e.eid;\n\n    loops : array(Loop);\n  }\n  ";
+
+  let a = `
+  Loop {
+    eid : int;
+    flag : int;
+    index : int;
+    type : int;
+
+    co : vec3;
+    no : vec3;
+    loop : int | eid(loop);
+    edges : array(e, int) | e.eid;
+
+    loops :, array(Loop);
+  }
+  `;
+
 
   function errfunc(lexer) {
     return true;
@@ -369,8 +459,8 @@ function test_parser() {
   while (token = lex.next()) {
     console.log(token.toString());
   }
-  let parser = new parser(lex);
-  parser.input(a);
+  let parse = new parser(lex);
+  parse.input(a);
 
   function p_Array(p) {
     p.expect("ARRAY");
@@ -444,6 +534,8 @@ function test_parser() {
     return st;
   }
 
-  let ret = p_Struct(parser);
+  let ret = p_Struct(parse);
   console.log(JSON.stringify(ret));
 }
+
+//test_parser();
