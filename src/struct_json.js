@@ -169,7 +169,7 @@ export function buildJSONParser() {
   lex.linestart = 0;
   parse = new parser(lex, p_Error);
   parse.start = p_Start;
-  lex.printTokens = true;
+  //lex.printTokens = true;
 
   return parse;
 }
@@ -178,6 +178,10 @@ export default buildJSONParser();
 
 export function printContext(buf, tokinfo, printColors=true) {
   let lines = buf.split("\n");
+
+  if (!tokinfo) {
+    return '';
+  }
 
   let lineno = tokinfo.lineno;
   let col = tokinfo.col;
