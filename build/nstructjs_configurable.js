@@ -2884,7 +2884,7 @@ function printContext(buf, tokinfo, printColors=true) {
   let lineno = tokinfo.lineno;
   let col = tokinfo.col;
 
-  let istart = Math.max(lineno-5, 0);
+  let istart = Math.max(lineno-50, 0);
   let iend = Math.min(lineno+2, lines.length-1);
 
   let s = '';
@@ -3942,15 +3942,29 @@ StructClass = class StructClass {
 
       let val;
 
+      let tokinfo;
+
       if (f.name === 'this') {
         val = json;
         keyTestJson = {
           "this" : json
         };
+
         keys.add("this");
+        tokinfo = json[TokSymbol];
       } else {
         val = json[f.name];
         keys.add(f.name);
+
+        tokinfo = json[TokSymbol].fields[f.name];
+        if (!tokinfo) {
+          let f2 = fields[Math.max(i-1, 0)];
+          tokinfo = json[TokSymbol].fields[f2.name];
+        }
+
+        if (!tokinfo) {
+          tokinfo = json[TokSymbol];
+        }
       }
 
       if (val === undefined) {
@@ -3965,9 +3979,15 @@ StructClass = class StructClass {
       if (!ret || typeof ret === "string") {
         let msg = typeof ret === "string" ? ": " + ret : "";
 
-        this.jsonLogger(printContext(this.jsonBuf, json[TokSymbol].fields[f.name], this.jsonUseColors));
+
+        this.jsonLogger(printContext(this.jsonBuf, tokinfo, this.jsonUseColors));
         //console.error(cls[keywords.script]);
-        throw new JSONError("Invalid json field " + f.name + msg);
+
+        if (val === undefined) {
+          throw new JSONError("Missing json field " + f.name + msg);
+        } else {
+          throw new JSONError("Invalid json field " + f.name + msg);
+        }
 
         return false;
       }

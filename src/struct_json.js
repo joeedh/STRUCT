@@ -186,7 +186,7 @@ export function printContext(buf, tokinfo, printColors=true) {
   let lineno = tokinfo.lineno;
   let col = tokinfo.col;
 
-  let istart = Math.max(lineno-5, 0);
+  let istart = Math.max(lineno-50, 0);
   let iend = Math.min(lineno+2, lines.length-1);
 
   let s = '';

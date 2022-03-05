@@ -68,7 +68,7 @@ nstructjs.register(SomeClass);
 */
 import {
   StructTypes, StructTypeMap, StructEnum, NStruct,
-  struct_parse
+  struct_parse, ValueTypes
 } from './struct_parser.js';
 
 let _static_envcode_null = "";
@@ -1027,15 +1027,29 @@ export class STRUCT {
 
       let val;
 
+      let tokinfo;
+
       if (f.name === 'this') {
         val = json;
         keyTestJson = {
           "this" : json
         };
+
         keys.add("this");
+        tokinfo = json[TokSymbol];
       } else {
         val = json[f.name];
         keys.add(f.name);
+
+        tokinfo = json[TokSymbol].fields[f.name];
+        if (!tokinfo) {
+          let f2 = fields[Math.max(i-1, 0)];
+          tokinfo = json[TokSymbol].fields[f2.name];
+        }
+
+        if (!tokinfo) {
+          tokinfo = json[TokSymbol];
+        }
       }
 
       if (val === undefined) {
@@ -1050,9 +1064,15 @@ export class STRUCT {
       if (!ret || typeof ret === "string") {
         let msg = typeof ret === "string" ? ": " + ret : "";
 
-        this.jsonLogger(printContext(this.jsonBuf, json[TokSymbol].fields[f.name], this.jsonUseColors));
+
+        this.jsonLogger(printContext(this.jsonBuf, tokinfo, this.jsonUseColors));
         //console.error(cls[keywords.script]);
-        throw new JSONError("Invalid json field " + f.name + msg);
+
+        if (val === undefined) {
+          throw new JSONError("Missing json field " + f.name + msg);
+        } else {
+          throw new JSONError("Invalid json field " + f.name + msg);
+        }
 
         return false;
       }
