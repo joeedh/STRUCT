@@ -54,3 +54,4 @@ nstructjs.validateJSON(json, Test,  true, logger);
 
 console.log(s)
 console.log(JSON.stringify(json, undefined, 2));
+

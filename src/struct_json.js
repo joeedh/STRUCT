@@ -27,8 +27,9 @@ export function buildJSONParser() {
   //and we don't want the partial 0. and .0 handles to split
   //e.g. 3.5 into 3 and 0.5
   nfloat3 = new RegExp(nfloat3);
+  nfloatexp = new RegExp(nfloatexp);
 
-  let tests = ["1.234234", ".23432", "-234.", "1e-17", "-0x23423ff", "+23423"];
+  let tests = ["1.234234", ".23432", "-234.", "1e-17", "-0x23423ff", "+23423", "-4.263256414560601e-14"];
   for (let test of tests) {
     if (!numreTest.test(test)) {
       console.error("Error! Number regexp failed:", test);
@@ -81,6 +82,7 @@ export function buildJSONParser() {
     tk("COLON", /:/),
     tk("NUM", numre, t => (t.value = parseFloat(t.value), t)),
     tk("NUM", nfloat3, t => (t.value = parseFloat(t.value), t)),
+    tk("NUM", nfloatexp, t => (t.value = parseFloat(t.value), t)),
   ]
 
   function tokinfo(t) {
@@ -175,6 +177,15 @@ export function buildJSONParser() {
 }
 
 export default buildJSONParser();
+
+/*
+buildJSONParser().parse(`
+{
+                "alteredX": -110.95731659202336,
+                "alteredY": -359.9154922611667,
+                "alteredZ": -4.263256414560601e-14
+}
+`.trim()) //*/
 
 export function printContext(buf, tokinfo, printColors=true) {
   let lines = buf.split("\n");
