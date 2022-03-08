@@ -14,57 +14,57 @@ export class NStruct {
 //the version I originally wrote (which had a few application-specific types)
 //and this one do not become totally incompatible.
 export const StructEnum = {
-  T_INT          : 0,
-  T_FLOAT        : 1,
-  T_DOUBLE       : 2,
-  T_STRING       : 7,
-  T_STATIC_STRING: 8, //fixed-length string
-  T_STRUCT       : 9,
-  T_TSTRUCT      : 10,
-  T_ARRAY        : 11,
-  T_ITER         : 12,
-  T_SHORT        : 13,
-  T_BYTE         : 14,
-  T_BOOL         : 15,
-  T_ITERKEYS     : 16,
-  T_UINT         : 17,
-  T_USHORT       : 18,
-  T_STATIC_ARRAY : 19,
-  T_SIGNED_BYTE  : 20
+  INT          : 0,
+  FLOAT        : 1,
+  DOUBLE       : 2,
+  STRING       : 7,
+  STATIC_STRING: 8, //fixed-length string
+  STRUCT       : 9,
+  TSTRUCT      : 10,
+  ARRAY        : 11,
+  ITER         : 12,
+  SHORT        : 13,
+  BYTE         : 14,
+  BOOL         : 15,
+  ITERKEYS     : 16,
+  UINT         : 17,
+  USHORT       : 18,
+  STATIC_ARRAY : 19,
+  SIGNED_BYTE  : 20
 };
 
 export const ValueTypes = new Set([
-  StructEnum.T_INT,
-  StructEnum.T_FLOAT,
-  StructEnum.T_DOUBLE,
-  StructEnum.T_STRING,
-  StructEnum.T_STATIC_STRING,
-  StructEnum.T_SHORT,
-  StructEnum.T_BYTE,
-  StructEnum.T_BOOL,
-  StructEnum.T_UINT,
-  StructEnum.T_USHORT,
-  StructEnum.T_SIGNED_BYTE
+  StructEnum.INT,
+  StructEnum.FLOAT,
+  StructEnum.DOUBLE,
+  StructEnum.STRING,
+  StructEnum.STATIC_STRING,
+  StructEnum.SHORT,
+  StructEnum.BYTE,
+  StructEnum.BOOL,
+  StructEnum.UINT,
+  StructEnum.USHORT,
+  StructEnum.SIGNED_BYTE
 
 ])
 
 export let StructTypes = {
-  "int"          : StructEnum.T_INT,
-  "uint"         : StructEnum.T_UINT,
-  "ushort"       : StructEnum.T_USHORT,
-  "float"        : StructEnum.T_FLOAT,
-  "double"       : StructEnum.T_DOUBLE,
-  "string"       : StructEnum.T_STRING,
-  "static_string": StructEnum.T_STATIC_STRING,
-  "struct"       : StructEnum.T_STRUCT,
-  "abstract"     : StructEnum.T_TSTRUCT,
-  "array"        : StructEnum.T_ARRAY,
-  "iter"         : StructEnum.T_ITER,
-  "short"        : StructEnum.T_SHORT,
-  "byte"         : StructEnum.T_BYTE,
-  "bool"         : StructEnum.T_BOOL,
-  "iterkeys"     : StructEnum.T_ITERKEYS,
-  "sbyte"        : StructEnum.T_SIGNED_BYTE
+  "int"          : StructEnum.INT,
+  "uint"         : StructEnum.UINT,
+  "ushort"       : StructEnum.USHORT,
+  "float"        : StructEnum.FLOAT,
+  "double"       : StructEnum.DOUBLE,
+  "string"       : StructEnum.STRING,
+  "static_string": StructEnum.STATIC_STRING,
+  "struct"       : StructEnum.STRUCT,
+  "abstract"     : StructEnum.TSTRUCT,
+  "array"        : StructEnum.ARRAY,
+  "iter"         : StructEnum.ITER,
+  "short"        : StructEnum.SHORT,
+  "byte"         : StructEnum.BYTE,
+  "bool"         : StructEnum.BOOL,
+  "iterkeys"     : StructEnum.ITERKEYS,
+  "sbyte"        : StructEnum.SIGNED_BYTE
 };
 
 export let StructTypeMap = {};
@@ -164,7 +164,7 @@ function StructParser() {
     p.expect("SOPEN");
     let num = p.expect("NUM");
     p.expect("SCLOSE");
-    return {type: StructEnum.T_STATIC_STRING, data: {maxlength: num}}
+    return {type: StructEnum.STATIC_STRING, data: {maxlength: num}}
   }
 
   function p_DataRef(p) {
@@ -172,7 +172,7 @@ function StructParser() {
     p.expect("LPARAM");
     let tname = p.expect("ID");
     p.expect("RPARAM");
-    return {type: StructEnum.T_DATAREF, data: tname}
+    return {type: StructEnum.DATAREF, data: tname}
   }
 
   function p_Array(p) {
@@ -187,7 +187,7 @@ function StructParser() {
     }
 
     p.expect("RPARAM");
-    return {type: StructEnum.T_ARRAY, data: {type: arraytype, iname: itername}}
+    return {type: StructEnum.ARRAY, data: {type: arraytype, iname: itername}}
   }
 
   function p_Iter(p) {
@@ -203,7 +203,7 @@ function StructParser() {
     }
 
     p.expect("RPARAM");
-    return {type: StructEnum.T_ITER, data: {type: arraytype, iname: itername}}
+    return {type: StructEnum.ITER, data: {type: arraytype, iname: itername}}
   }
 
   function p_StaticArray(p) {
@@ -227,7 +227,7 @@ function StructParser() {
     }
 
     p.expect("SCLOSE");
-    return {type: StructEnum.T_STATIC_ARRAY, data: {type: arraytype, size: size, iname: itername}}
+    return {type: StructEnum.STATIC_ARRAY, data: {type: arraytype, size: size, iname: itername}}
   }
 
   function p_IterKeys(p) {
@@ -243,7 +243,7 @@ function StructParser() {
     }
 
     p.expect("RPARAM");
-    return {type: StructEnum.T_ITERKEYS, data: {type: arraytype, iname: itername}}
+    return {type: StructEnum.ITERKEYS, data: {type: arraytype, iname: itername}}
   }
 
   function p_Abstract(p) {
@@ -260,7 +260,7 @@ function StructParser() {
     p.expect("RPARAM");
 
     return {
-      type: StructEnum.T_TSTRUCT,
+      type: StructEnum.TSTRUCT,
       data: type,
       jsonKeyword
     }
@@ -271,7 +271,7 @@ function StructParser() {
 
     if (tok.type === "ID") {
       p.next();
-      return {type: StructEnum.T_STRUCT, data: tok.value}
+      return {type: StructEnum.STRUCT, data: tok.value}
     } else if (basic_types.has(tok.type.toLowerCase())) {
       p.next();
       return {type: StructTypes[tok.type.toLowerCase()]}

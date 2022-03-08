@@ -213,7 +213,7 @@ export class StructFieldType {
    Example:
    <pre>
    static define() {return {
-    type : StructEnum.T_INT,
+    type : StructEnum.INT,
     name : "int"
   }}
    </pre>
@@ -269,7 +269,7 @@ class StructIntField extends StructFieldType {
 
   static define() {
     return {
-      type: StructEnum.T_INT,
+      type: StructEnum.INT,
       name: "int"
     }
   }
@@ -296,7 +296,7 @@ class StructFloatField extends StructFieldType {
 
   static define() {
     return {
-      type: StructEnum.T_FLOAT,
+      type: StructEnum.FLOAT,
       name: "float"
     }
   }
@@ -323,7 +323,7 @@ class StructDoubleField extends StructFieldType {
 
   static define() {
     return {
-      type: StructEnum.T_DOUBLE,
+      type: StructEnum.DOUBLE,
       name: "double"
     }
   }
@@ -356,7 +356,7 @@ class StructStringField extends StructFieldType {
 
   static define() {
     return {
-      type: StructEnum.T_STRING,
+      type: StructEnum.STRING,
       name: "string"
     }
   }
@@ -398,7 +398,7 @@ class StructStaticStringField extends StructFieldType {
 
   static define() {
     return {
-      type: StructEnum.T_STATIC_STRING,
+      type: StructEnum.STATIC_STRING,
       name: "static_string"
     }
   }
@@ -468,7 +468,7 @@ class StructStructField extends StructFieldType {
 
   static define() {
     return {
-      type: StructEnum.T_STRUCT,
+      type: StructEnum.STRUCT,
       name: "struct"
     }
   }
@@ -555,7 +555,7 @@ class StructTStructField extends StructFieldType {
     let stt = manager.get_struct(type.data);
 
     pack_int(data, stt.id);
-    packNull(manager, data, field, {type: StructEnum.T_STRUCT, data: type.data});
+    packNull(manager, data, field, {type: StructEnum.STRUCT, data: type.data});
   }
 
   static format(type) {
@@ -607,7 +607,7 @@ class StructTStructField extends StructFieldType {
 
   static define() {
     return {
-      type: StructEnum.T_TSTRUCT,
+      type: StructEnum.TSTRUCT,
       name: "tstruct"
     }
   }
@@ -751,7 +751,7 @@ class StructArrayField extends StructFieldType {
 
   static define() {
     return {
-      type: StructEnum.T_ARRAY,
+      type: StructEnum.ARRAY,
       name: "array"
     }
   }
@@ -886,7 +886,7 @@ class StructIterField extends StructFieldType {
 
   static define() {
     return {
-      type: StructEnum.T_ITER,
+      type: StructEnum.ITER,
       name: "iter"
     }
   }
@@ -905,7 +905,7 @@ class StructShortField extends StructFieldType {
 
   static define() {
     return {
-      type: StructEnum.T_SHORT,
+      type: StructEnum.SHORT,
       name: "short"
     }
   }
@@ -924,7 +924,7 @@ class StructByteField extends StructFieldType {
 
   static define() {
     return {
-      type: StructEnum.T_BYTE,
+      type: StructEnum.BYTE,
       name: "byte"
     }
   }
@@ -943,7 +943,7 @@ class StructSignedByteField extends StructFieldType {
 
   static define() {
     return {
-      type: StructEnum.T_SIGNED_BYTE,
+      type: StructEnum.SIGNED_BYTE,
       name: "sbyte"
     }
   }
@@ -982,7 +982,7 @@ class StructBoolField extends StructFieldType {
 
   static define() {
     return {
-      type: StructEnum.T_BOOL,
+      type: StructEnum.BOOL,
       name: "bool"
     }
   }
@@ -1112,7 +1112,7 @@ class StructIterKeysField extends StructFieldType {
 
   static define() {
     return {
-      type: StructEnum.T_ITERKEYS,
+      type: StructEnum.ITERKEYS,
       name: "iterkeys"
     }
   }
@@ -1139,7 +1139,7 @@ class StructUintField extends StructFieldType {
 
   static define() {
     return {
-      type: StructEnum.T_UINT,
+      type: StructEnum.UINT,
       name: "uint"
     }
   }
@@ -1167,7 +1167,7 @@ class StructUshortField extends StructFieldType {
 
   static define() {
     return {
-      type: StructEnum.T_USHORT,
+      type: StructEnum.USHORT,
       name: "ushort"
     }
   }
@@ -1269,7 +1269,7 @@ class StructStaticArrayField extends StructFieldType {
 
   static define() {
     return {
-      type: StructEnum.T_STATIC_ARRAY,
+      type: StructEnum.STATIC_ARRAY,
       name: "static_array"
     }
   }

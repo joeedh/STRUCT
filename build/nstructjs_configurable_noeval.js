@@ -696,57 +696,57 @@ class NStruct {
 //the version I originally wrote (which had a few application-specific types)
 //and this one do not become totally incompatible.
 const StructEnum = {
-  T_INT          : 0,
-  T_FLOAT        : 1,
-  T_DOUBLE       : 2,
-  T_STRING       : 7,
-  T_STATIC_STRING: 8, //fixed-length string
-  T_STRUCT       : 9,
-  T_TSTRUCT      : 10,
-  T_ARRAY        : 11,
-  T_ITER         : 12,
-  T_SHORT        : 13,
-  T_BYTE         : 14,
-  T_BOOL         : 15,
-  T_ITERKEYS     : 16,
-  T_UINT         : 17,
-  T_USHORT       : 18,
-  T_STATIC_ARRAY : 19,
-  T_SIGNED_BYTE  : 20
+  INT          : 0,
+  FLOAT        : 1,
+  DOUBLE       : 2,
+  STRING       : 7,
+  STATIC_STRING: 8, //fixed-length string
+  STRUCT       : 9,
+  TSTRUCT      : 10,
+  ARRAY        : 11,
+  ITER         : 12,
+  SHORT        : 13,
+  BYTE         : 14,
+  BOOL         : 15,
+  ITERKEYS     : 16,
+  UINT         : 17,
+  USHORT       : 18,
+  STATIC_ARRAY : 19,
+  SIGNED_BYTE  : 20
 };
 
 const ValueTypes = new Set([
-  StructEnum.T_INT,
-  StructEnum.T_FLOAT,
-  StructEnum.T_DOUBLE,
-  StructEnum.T_STRING,
-  StructEnum.T_STATIC_STRING,
-  StructEnum.T_SHORT,
-  StructEnum.T_BYTE,
-  StructEnum.T_BOOL,
-  StructEnum.T_UINT,
-  StructEnum.T_USHORT,
-  StructEnum.T_SIGNED_BYTE
+  StructEnum.INT,
+  StructEnum.FLOAT,
+  StructEnum.DOUBLE,
+  StructEnum.STRING,
+  StructEnum.STATIC_STRING,
+  StructEnum.SHORT,
+  StructEnum.BYTE,
+  StructEnum.BOOL,
+  StructEnum.UINT,
+  StructEnum.USHORT,
+  StructEnum.SIGNED_BYTE
 
 ]);
 
 let StructTypes = {
-  "int"          : StructEnum.T_INT,
-  "uint"         : StructEnum.T_UINT,
-  "ushort"       : StructEnum.T_USHORT,
-  "float"        : StructEnum.T_FLOAT,
-  "double"       : StructEnum.T_DOUBLE,
-  "string"       : StructEnum.T_STRING,
-  "static_string": StructEnum.T_STATIC_STRING,
-  "struct"       : StructEnum.T_STRUCT,
-  "abstract"     : StructEnum.T_TSTRUCT,
-  "array"        : StructEnum.T_ARRAY,
-  "iter"         : StructEnum.T_ITER,
-  "short"        : StructEnum.T_SHORT,
-  "byte"         : StructEnum.T_BYTE,
-  "bool"         : StructEnum.T_BOOL,
-  "iterkeys"     : StructEnum.T_ITERKEYS,
-  "sbyte"        : StructEnum.T_SIGNED_BYTE
+  "int"          : StructEnum.INT,
+  "uint"         : StructEnum.UINT,
+  "ushort"       : StructEnum.USHORT,
+  "float"        : StructEnum.FLOAT,
+  "double"       : StructEnum.DOUBLE,
+  "string"       : StructEnum.STRING,
+  "static_string": StructEnum.STATIC_STRING,
+  "struct"       : StructEnum.STRUCT,
+  "abstract"     : StructEnum.TSTRUCT,
+  "array"        : StructEnum.ARRAY,
+  "iter"         : StructEnum.ITER,
+  "short"        : StructEnum.SHORT,
+  "byte"         : StructEnum.BYTE,
+  "bool"         : StructEnum.BOOL,
+  "iterkeys"     : StructEnum.ITERKEYS,
+  "sbyte"        : StructEnum.SIGNED_BYTE
 };
 
 let StructTypeMap = {};
@@ -846,7 +846,7 @@ function StructParser() {
     p.expect("SOPEN");
     let num = p.expect("NUM");
     p.expect("SCLOSE");
-    return {type: StructEnum.T_STATIC_STRING, data: {maxlength: num}}
+    return {type: StructEnum.STATIC_STRING, data: {maxlength: num}}
   }
 
   function p_DataRef(p) {
@@ -854,7 +854,7 @@ function StructParser() {
     p.expect("LPARAM");
     let tname = p.expect("ID");
     p.expect("RPARAM");
-    return {type: StructEnum.T_DATAREF, data: tname}
+    return {type: StructEnum.DATAREF, data: tname}
   }
 
   function p_Array(p) {
@@ -869,7 +869,7 @@ function StructParser() {
     }
 
     p.expect("RPARAM");
-    return {type: StructEnum.T_ARRAY, data: {type: arraytype, iname: itername}}
+    return {type: StructEnum.ARRAY, data: {type: arraytype, iname: itername}}
   }
 
   function p_Iter(p) {
@@ -885,7 +885,7 @@ function StructParser() {
     }
 
     p.expect("RPARAM");
-    return {type: StructEnum.T_ITER, data: {type: arraytype, iname: itername}}
+    return {type: StructEnum.ITER, data: {type: arraytype, iname: itername}}
   }
 
   function p_StaticArray(p) {
@@ -909,7 +909,7 @@ function StructParser() {
     }
 
     p.expect("SCLOSE");
-    return {type: StructEnum.T_STATIC_ARRAY, data: {type: arraytype, size: size, iname: itername}}
+    return {type: StructEnum.STATIC_ARRAY, data: {type: arraytype, size: size, iname: itername}}
   }
 
   function p_IterKeys(p) {
@@ -925,7 +925,7 @@ function StructParser() {
     }
 
     p.expect("RPARAM");
-    return {type: StructEnum.T_ITERKEYS, data: {type: arraytype, iname: itername}}
+    return {type: StructEnum.ITERKEYS, data: {type: arraytype, iname: itername}}
   }
 
   function p_Abstract(p) {
@@ -942,7 +942,7 @@ function StructParser() {
     p.expect("RPARAM");
 
     return {
-      type: StructEnum.T_TSTRUCT,
+      type: StructEnum.TSTRUCT,
       data: type,
       jsonKeyword
     }
@@ -953,7 +953,7 @@ function StructParser() {
 
     if (tok.type === "ID") {
       p.next();
-      return {type: StructEnum.T_STRUCT, data: tok.value}
+      return {type: StructEnum.STRUCT, data: tok.value}
     } else if (basic_types.has(tok.type.toLowerCase())) {
       p.next();
       return {type: StructTypes[tok.type.toLowerCase()]}
@@ -1609,7 +1609,7 @@ class StructFieldType {
    Example:
    <pre>
    static define() {return {
-    type : StructEnum.T_INT,
+    type : StructEnum.INT,
     name : "int"
   }}
    </pre>
@@ -1665,7 +1665,7 @@ class StructIntField extends StructFieldType {
 
   static define() {
     return {
-      type: StructEnum.T_INT,
+      type: StructEnum.INT,
       name: "int"
     }
   }
@@ -1692,7 +1692,7 @@ class StructFloatField extends StructFieldType {
 
   static define() {
     return {
-      type: StructEnum.T_FLOAT,
+      type: StructEnum.FLOAT,
       name: "float"
     }
   }
@@ -1719,7 +1719,7 @@ class StructDoubleField extends StructFieldType {
 
   static define() {
     return {
-      type: StructEnum.T_DOUBLE,
+      type: StructEnum.DOUBLE,
       name: "double"
     }
   }
@@ -1752,7 +1752,7 @@ class StructStringField extends StructFieldType {
 
   static define() {
     return {
-      type: StructEnum.T_STRING,
+      type: StructEnum.STRING,
       name: "string"
     }
   }
@@ -1794,7 +1794,7 @@ class StructStaticStringField extends StructFieldType {
 
   static define() {
     return {
-      type: StructEnum.T_STATIC_STRING,
+      type: StructEnum.STATIC_STRING,
       name: "static_string"
     }
   }
@@ -1864,7 +1864,7 @@ class StructStructField extends StructFieldType {
 
   static define() {
     return {
-      type: StructEnum.T_STRUCT,
+      type: StructEnum.STRUCT,
       name: "struct"
     }
   }
@@ -1951,7 +1951,7 @@ class StructTStructField extends StructFieldType {
     let stt = manager.get_struct(type.data);
 
     pack_int(data, stt.id);
-    packNull(manager, data, field, {type: StructEnum.T_STRUCT, data: type.data});
+    packNull(manager, data, field, {type: StructEnum.STRUCT, data: type.data});
   }
 
   static format(type) {
@@ -2003,7 +2003,7 @@ class StructTStructField extends StructFieldType {
 
   static define() {
     return {
-      type: StructEnum.T_TSTRUCT,
+      type: StructEnum.TSTRUCT,
       name: "tstruct"
     }
   }
@@ -2147,7 +2147,7 @@ class StructArrayField extends StructFieldType {
 
   static define() {
     return {
-      type: StructEnum.T_ARRAY,
+      type: StructEnum.ARRAY,
       name: "array"
     }
   }
@@ -2282,7 +2282,7 @@ class StructIterField extends StructFieldType {
 
   static define() {
     return {
-      type: StructEnum.T_ITER,
+      type: StructEnum.ITER,
       name: "iter"
     }
   }
@@ -2301,7 +2301,7 @@ class StructShortField extends StructFieldType {
 
   static define() {
     return {
-      type: StructEnum.T_SHORT,
+      type: StructEnum.SHORT,
       name: "short"
     }
   }
@@ -2320,7 +2320,7 @@ class StructByteField extends StructFieldType {
 
   static define() {
     return {
-      type: StructEnum.T_BYTE,
+      type: StructEnum.BYTE,
       name: "byte"
     }
   }
@@ -2339,7 +2339,7 @@ class StructSignedByteField extends StructFieldType {
 
   static define() {
     return {
-      type: StructEnum.T_SIGNED_BYTE,
+      type: StructEnum.SIGNED_BYTE,
       name: "sbyte"
     }
   }
@@ -2378,7 +2378,7 @@ class StructBoolField extends StructFieldType {
 
   static define() {
     return {
-      type: StructEnum.T_BOOL,
+      type: StructEnum.BOOL,
       name: "bool"
     }
   }
@@ -2508,7 +2508,7 @@ class StructIterKeysField extends StructFieldType {
 
   static define() {
     return {
-      type: StructEnum.T_ITERKEYS,
+      type: StructEnum.ITERKEYS,
       name: "iterkeys"
     }
   }
@@ -2535,7 +2535,7 @@ class StructUintField extends StructFieldType {
 
   static define() {
     return {
-      type: StructEnum.T_UINT,
+      type: StructEnum.UINT,
       name: "uint"
     }
   }
@@ -2563,7 +2563,7 @@ class StructUshortField extends StructFieldType {
 
   static define() {
     return {
-      type: StructEnum.T_USHORT,
+      type: StructEnum.USHORT,
       name: "ushort"
     }
   }
@@ -2665,7 +2665,7 @@ class StructStaticArrayField extends StructFieldType {
 
   static define() {
     return {
-      type: StructEnum.T_STATIC_ARRAY,
+      type: StructEnum.STATIC_ARRAY,
       name: "static_array"
     }
   }
@@ -3187,17 +3187,17 @@ class STRUCT {
     function fmt_type(type) {
       return StructFieldTypeMap[type.type].format(type);
 
-      if (type.type === StructEnum.T_ARRAY || type.type === StructEnum.T_ITER || type.type === StructEnum.T_ITERKEYS) {
+      if (type.type === StructEnum.ARRAY || type.type === StructEnum.ITER || type.type === StructEnum.ITERKEYS) {
         if (type.data.iname !== "" && type.data.iname !== undefined) {
           return "array(" + type.data.iname + ", " + fmt_type(type.data.type) + ")";
         } else {
           return "array(" + fmt_type(type.data.type) + ")";
         }
-      } else if (type.type === StructEnum.T_STATIC_STRING) {
+      } else if (type.type === StructEnum.STATIC_STRING) {
         return "static_string[" + type.data.maxlength + "]";
-      } else if (type.type === StructEnum.T_STRUCT) {
+      } else if (type.type === StructEnum.STRUCT) {
         return type.data;
-      } else if (type.type === StructEnum.T_TSTRUCT) {
+      } else if (type.type === StructEnum.TSTRUCT) {
         return "abstract(" + type.data + ")";
       } else {
         return StructTypeMap[type.type];
@@ -3251,14 +3251,14 @@ class STRUCT {
   validateStructs(onerror) {
     function getType(type) {
       switch (type.type) {
-        case StructEnum.T_ITERKEYS:
-        case StructEnum.T_ITER:
-        case StructEnum.T_STATIC_ARRAY:
-        case StructEnum.T_ARRAY:
+        case StructEnum.ITERKEYS:
+        case StructEnum.ITER:
+        case StructEnum.STATIC_ARRAY:
+        case StructEnum.ARRAY:
           return getType(type.data.type);
-        case StructEnum.T_TSTRUCT:
+        case StructEnum.TSTRUCT:
           return type;
-        case StructEnum.T_STRUCT:
+        case StructEnum.STRUCT:
         default:
           return type;
       }
@@ -3315,7 +3315,7 @@ class STRUCT {
 
         let type = getType(field.type);
 
-        if (type.type !== StructEnum.T_STRUCT && type.type !== StructEnum.T_TSTRUCT) {
+        if (type.type !== StructEnum.STRUCT && type.type !== StructEnum.TSTRUCT) {
           continue;
         }
 
@@ -3429,16 +3429,16 @@ class STRUCT {
 
     let recArray = (t) => {
       switch (t.type) {
-        case StructEnum.T_ARRAY:
+        case StructEnum.ARRAY:
           return recArray(t.data.type);
-        case StructEnum.T_ITERKEYS:
+        case StructEnum.ITERKEYS:
           return recArray(t.data.type);
-        case StructEnum.T_STATIC_ARRAY:
+        case StructEnum.STATIC_ARRAY:
           return recArray(t.data.type);
-        case StructEnum.T_ITER:
+        case StructEnum.ITER:
           return recArray(t.data.type);
-        case StructEnum.T_STRUCT:
-        case StructEnum.T_TSTRUCT: {
+        case StructEnum.STRUCT:
+        case StructEnum.TSTRUCT: {
           let st = srcSTRUCT.structs[t.data];
           let cls = srcSTRUCT.struct_cls[st.name];
 
@@ -3453,18 +3453,18 @@ class STRUCT {
       }
 
       for (let f of st.fields) {
-        if (f.type.type === StructEnum.T_STRUCT || f.type.type === StructEnum.T_TSTRUCT) {
+        if (f.type.type === StructEnum.STRUCT || f.type.type === StructEnum.TSTRUCT) {
           let st2 = srcSTRUCT.structs[f.type.data];
           let cls2 = srcSTRUCT.struct_cls[st2.name];
 
           recStruct(st2, cls2);
-        } else if (f.type.type === StructEnum.T_ARRAY) {
+        } else if (f.type.type === StructEnum.ARRAY) {
           recArray(f.type);
-        } else if (f.type.type === StructEnum.T_ITER) {
+        } else if (f.type.type === StructEnum.ITER) {
           recArray(f.type);
-        } else if (f.type.type === StructEnum.T_ITERKEYS) {
+        } else if (f.type.type === StructEnum.ITERKEYS) {
           recArray(f.type);
-        } else if (f.type.type === StructEnum.T_STATIC_ARRAY) {
+        } else if (f.type.type === StructEnum.STATIC_ARRAY) {
           recArray(f.type);
         }
       }
@@ -3766,8 +3766,8 @@ class STRUCT {
         json[f.name] = json2;
       } else { //f.name was 'this'?
         let isArray = Array.isArray(json2);
-        isArray = isArray || f.type.type === StructTypes.T_ARRAY;
-        isArray = isArray || f.type.type === StructTypes.T_STATIC_ARRAY;
+        isArray = isArray || f.type.type === StructTypes.ARRAY;
+        isArray = isArray || f.type.type === StructTypes.STATIC_ARRAY;
 
         if (isArray) {
           json.length = json2.length;

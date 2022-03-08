@@ -262,17 +262,17 @@ export class STRUCT {
     function fmt_type(type) {
       return StructFieldTypeMap[type.type].format(type);
 
-      if (type.type === StructEnum.T_ARRAY || type.type === StructEnum.T_ITER || type.type === StructEnum.T_ITERKEYS) {
+      if (type.type === StructEnum.ARRAY || type.type === StructEnum.ITER || type.type === StructEnum.ITERKEYS) {
         if (type.data.iname !== "" && type.data.iname !== undefined) {
           return "array(" + type.data.iname + ", " + fmt_type(type.data.type) + ")";
         } else {
           return "array(" + fmt_type(type.data.type) + ")";
         }
-      } else if (type.type === StructEnum.T_STATIC_STRING) {
+      } else if (type.type === StructEnum.STATIC_STRING) {
         return "static_string[" + type.data.maxlength + "]";
-      } else if (type.type === StructEnum.T_STRUCT) {
+      } else if (type.type === StructEnum.STRUCT) {
         return type.data;
-      } else if (type.type === StructEnum.T_TSTRUCT) {
+      } else if (type.type === StructEnum.TSTRUCT) {
         return "abstract(" + type.data + ")";
       } else {
         return StructTypeMap[type.type];
@@ -326,14 +326,14 @@ export class STRUCT {
   validateStructs(onerror) {
     function getType(type) {
       switch (type.type) {
-        case StructEnum.T_ITERKEYS:
-        case StructEnum.T_ITER:
-        case StructEnum.T_STATIC_ARRAY:
-        case StructEnum.T_ARRAY:
+        case StructEnum.ITERKEYS:
+        case StructEnum.ITER:
+        case StructEnum.STATIC_ARRAY:
+        case StructEnum.ARRAY:
           return getType(type.data.type);
-        case StructEnum.T_TSTRUCT:
+        case StructEnum.TSTRUCT:
           return type;
-        case StructEnum.T_STRUCT:
+        case StructEnum.STRUCT:
         default:
           return type;
       }
@@ -390,7 +390,7 @@ export class STRUCT {
 
         let type = getType(field.type);
 
-        if (type.type !== StructEnum.T_STRUCT && type.type !== StructEnum.T_TSTRUCT) {
+        if (type.type !== StructEnum.STRUCT && type.type !== StructEnum.TSTRUCT) {
           continue;
         }
 
@@ -504,16 +504,16 @@ export class STRUCT {
 
     let recArray = (t) => {
       switch (t.type) {
-        case StructEnum.T_ARRAY:
+        case StructEnum.ARRAY:
           return recArray(t.data.type);
-        case StructEnum.T_ITERKEYS:
+        case StructEnum.ITERKEYS:
           return recArray(t.data.type);
-        case StructEnum.T_STATIC_ARRAY:
+        case StructEnum.STATIC_ARRAY:
           return recArray(t.data.type);
-        case StructEnum.T_ITER:
+        case StructEnum.ITER:
           return recArray(t.data.type);
-        case StructEnum.T_STRUCT:
-        case StructEnum.T_TSTRUCT: {
+        case StructEnum.STRUCT:
+        case StructEnum.TSTRUCT: {
           let st = srcSTRUCT.structs[t.data];
           let cls = srcSTRUCT.struct_cls[st.name];
 
@@ -528,18 +528,18 @@ export class STRUCT {
       }
 
       for (let f of st.fields) {
-        if (f.type.type === StructEnum.T_STRUCT || f.type.type === StructEnum.T_TSTRUCT) {
+        if (f.type.type === StructEnum.STRUCT || f.type.type === StructEnum.TSTRUCT) {
           let st2 = srcSTRUCT.structs[f.type.data];
           let cls2 = srcSTRUCT.struct_cls[st2.name];
 
           recStruct(st2, cls2);
-        } else if (f.type.type === StructEnum.T_ARRAY) {
+        } else if (f.type.type === StructEnum.ARRAY) {
           recArray(f.type);
-        } else if (f.type.type === StructEnum.T_ITER) {
+        } else if (f.type.type === StructEnum.ITER) {
           recArray(f.type);
-        } else if (f.type.type === StructEnum.T_ITERKEYS) {
+        } else if (f.type.type === StructEnum.ITERKEYS) {
           recArray(f.type);
-        } else if (f.type.type === StructEnum.T_STATIC_ARRAY) {
+        } else if (f.type.type === StructEnum.STATIC_ARRAY) {
           recArray(f.type);
         }
       }
@@ -841,8 +841,8 @@ export class STRUCT {
         json[f.name] = json2;
       } else { //f.name was 'this'?
         let isArray = Array.isArray(json2);
-        isArray = isArray || f.type.type === StructTypes.T_ARRAY;
-        isArray = isArray || f.type.type === StructTypes.T_STATIC_ARRAY;
+        isArray = isArray || f.type.type === StructTypes.ARRAY;
+        isArray = isArray || f.type.type === StructTypes.STATIC_ARRAY;
 
         if (isArray) {
           json.length = json2.length;
