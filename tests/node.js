@@ -150,10 +150,10 @@ node.Polygon {
   id        : int;
   uid       : uint;
   usid      : ushort;
-  flag      : int;
+  flag      : int; //comment
   pointmap  : iterkeys(e, int);
   pointmap2 : iterkeys(int);
-  points3   : static_array[short, 32] | this.points3.map(v => v.id);
+  points3   : static_array[short, 32] | this.points3.map(v => v.id); //comment
   str       : static_string[32] | "asdsa";
   points2   : iter(node.Point) | this.points;
   points    : array(e, int) | e.id;

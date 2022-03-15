@@ -787,6 +787,61 @@ function gen_tabstr(t) {
   return s;
 }
 
+function stripComments(buf) {
+  let s = '';
+
+  const MAIN = 0, COMMENT = 1, STR = 2;
+
+  let p, n;
+  let strs = new Set(["'", '"', "`"]);
+  let mode = MAIN;
+  let strlit;
+  let escape = false;
+
+  for (let i = 0; i < buf.length; i++) {
+    let p = i > 0 ? buf[i - 1] : undefined;
+    let c = buf[i];
+    let n = i < buf.length - 1 ? buf[i + 1] : undefined;
+
+    switch (mode) {
+      case MAIN:
+        if (c === "/" && n === "/") {
+          mode = COMMENT;
+          continue;
+        }
+
+        if (strs.has(c)) {
+          strlit = c;
+          mode = STR;
+        }
+
+        s += c;
+
+        break;
+      case COMMENT:
+        if (n === "\n") {
+          mode = MAIN;
+        }
+        break;
+      case STR:
+        if (c === strlit && !escape) {
+          mode = MAIN;
+        }
+
+        s += c;
+        break;
+    }
+
+    if (c === "\\") {
+      escape ^= true;
+    } else {
+      escape = false;
+    }
+  }
+
+  return s;
+}
+
 function StructParser() {
   let basic_types = new Set([
     "int", "float", "double", "string", "short", "byte", "sbyte", "bool", "uint", "ushort"
@@ -862,7 +917,14 @@ function StructParser() {
     return true;
   }
 
-  let lex = new lexer(tokens, errfunc);
+  class Lexer extends lexer {
+    input(str) {
+      str = stripComments(str);
+      return super.input(str);
+    }
+  }
+
+  let lex = new Lexer(tokens, errfunc);
   let parser$1 = new parser(lex);
 
   function p_Static_String(p) {
@@ -1083,6 +1145,7 @@ var struct_parser = /*#__PURE__*/Object.freeze({
   ValueTypes: ValueTypes,
   StructTypes: StructTypes,
   StructTypeMap: StructTypeMap,
+  stripComments: stripComments,
   struct_parse: struct_parse
 });
 
