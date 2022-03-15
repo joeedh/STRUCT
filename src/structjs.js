@@ -38,8 +38,17 @@ export function consoleLogger() {
   console.log(...arguments);
 }
 
-export function validateJSON(json, cls, printColors=true, logger=consoleLogger) {
-  return manager.validateJSON(json, cls, printColors, logger);
+/** Validate json
+ *
+ * @param json
+ * @param cls
+ * @param useInternalParser If true (the default) an internal parser will be used that generates nicer error messages
+ * @param printColors
+ * @param logger
+ * @returns {*}
+ */
+export function validateJSON(json, cls, useInternalParser, printColors=true, logger=consoleLogger) {
+  return manager.validateJSON(json, cls, useInternalParser, printColors, logger);
 }
 
 export function getEndian() {

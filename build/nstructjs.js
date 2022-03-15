@@ -3976,7 +3976,7 @@ class STRUCT {
     }
   }
 
-  validateJSON(json, cls_or_struct_id, useColors=true, consoleLogger=function(){console.log(...arguments);}, _abstractKey="_structName") {
+  validateJSON(json, cls_or_struct_id, useInternalParser=true, useColors=true, consoleLogger=function(){console.log(...arguments);}, _abstractKey="_structName") {
     if (cls_or_struct_id === undefined) {
       throw new Error(this.constructor.name + ".prototype.validateJSON: Expected at least two arguments");
     }
@@ -3990,7 +3990,12 @@ class STRUCT {
 
       //add token annotations
       jsonParser.logger = this.jsonLogger;
-      json = jsonParser.parse(json);
+
+      if (useInternalParser) {
+        json = jsonParser.parse(json);
+      } else {
+        json = JSON.parse(json);
+      }
 
       this.validateJSONIntern(json, cls_or_struct_id, _abstractKey);
 
@@ -4052,10 +4057,10 @@ class STRUCT {
         val = json[f.name];
         keys.add(f.name);
 
-        tokinfo = json[TokSymbol].fields[f.name];
+        tokinfo = json[TokSymbol] ? json[TokSymbol].fields[f.name] : undefined;
         if (!tokinfo) {
           let f2 = fields[Math.max(i-1, 0)];
-          tokinfo = json[TokSymbol].fields[f2.name];
+          tokinfo = TokSymbol[TokSymbol] ? json[TokSymbol].fields[f2.name] : undefined;
         }
 
         if (!tokinfo) {
@@ -4075,8 +4080,10 @@ class STRUCT {
       if (!ret || typeof ret === "string") {
         let msg = typeof ret === "string" ? ": " + ret : "";
 
-
-        this.jsonLogger(printContext(this.jsonBuf, tokinfo, this.jsonUseColors));
+        if (tokinfo) {
+          this.jsonLogger(printContext(this.jsonBuf, tokinfo, this.jsonUseColors));
+        }
+        
         //console.error(cls[keywords.script]);
 
         if (val === undefined) {
@@ -4593,8 +4600,17 @@ function consoleLogger() {
   console.log(...arguments);
 }
 
-function validateJSON$1(json, cls, printColors=true, logger=consoleLogger) {
-  return exports.manager.validateJSON(json, cls, printColors, logger);
+/** Validate json
+ *
+ * @param json
+ * @param cls
+ * @param useInternalParser If true (the default) an internal parser will be used that generates nicer error messages
+ * @param printColors
+ * @param logger
+ * @returns {*}
+ */
+function validateJSON$1(json, cls, useInternalParser, printColors=true, logger=consoleLogger) {
+  return exports.manager.validateJSON(json, cls, useInternalParser, printColors, logger);
 }
 
 function getEndian() {
