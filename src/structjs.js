@@ -27,7 +27,7 @@ export function validateStructs(onerror) {
 export function setEndian(mode) {
   let ret = struct_binpack.STRUCT_ENDIAN;
 
-  struct_binpack.setEndian(mode);
+  struct_binpack.setBinaryEndian(mode);
 
   return ret;
 }

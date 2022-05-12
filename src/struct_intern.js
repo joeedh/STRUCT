@@ -99,7 +99,7 @@ function update_debug_data() {
 update_debug_data();
 
 export function setWarningMode(t) {
-  sintern2.setWarningMode(t);
+  sintern2.setWarningMode2(t);
 
   if (typeof t !== "number" || isNaN(t)) {
     throw new Error("Expected a single number (>= 0) argument to setWarningMode");
@@ -109,7 +109,7 @@ export function setWarningMode(t) {
 }
 
 export function setDebugMode(t) {
-  sintern2.setDebugMode(t);
+  sintern2.setDebugMode2(t);
   update_debug_data();
 }
 

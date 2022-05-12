@@ -2,7 +2,7 @@
 
 export var STRUCT_ENDIAN = true; //little endian
 
-export function setEndian(mode) {
+export function setBinaryEndian(mode) {
   STRUCT_ENDIAN = !!mode;
 }
 

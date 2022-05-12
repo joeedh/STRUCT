@@ -58,7 +58,7 @@ function gen_tabstr(tot) {
   return ret;
 }
 
-export function setWarningMode(t) {
+export function setWarningMode2(t) {
   if (typeof t !== "number" || isNaN(t)) {
     throw new Error("Expected a single number (>= 0) argument to setWarningMode");
   }
@@ -66,7 +66,7 @@ export function setWarningMode(t) {
   warninglvl = t;
 }
 
-export function setDebugMode(t) {
+export function setDebugMode2(t) {
   debug = t;
 
   if (debug) {
@@ -101,7 +101,7 @@ export function setDebugMode(t) {
   }
 }
 
-setDebugMode(debug);
+setDebugMode2(debug);
 
 export const StructFieldTypes = [];
 export const StructFieldTypeMap = {};

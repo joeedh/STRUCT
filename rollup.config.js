@@ -18,7 +18,7 @@ export default {
     resolve(),
     replace({
       '//$BUILD_TINYEVAL_START' : '/*',
-      '//$BUILD_TINYEVAL_END' : '*/\n   _module_exports_.useTinyEval = () => {};',
+      '//$BUILD_TINYEVAL_END' : '*/\n   exports.useTinyEval = () => {};',
       changed: 'replaced',
       delimiters: ['', '']
     })

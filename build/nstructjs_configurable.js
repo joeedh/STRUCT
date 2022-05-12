@@ -1135,7 +1135,7 @@ var struct_typesystem = /*#__PURE__*/Object.freeze({
 
 var STRUCT_ENDIAN = true; //little endian
 
-function setEndian(mode) {
+function setBinaryEndian(mode) {
   STRUCT_ENDIAN = !!mode;
 }
 
@@ -1438,7 +1438,7 @@ function unpack_static_string(data, uctx, length) {
 var struct_binpack = /*#__PURE__*/Object.freeze({
   __proto__: null,
   get STRUCT_ENDIAN () { return STRUCT_ENDIAN; },
-  setEndian: setEndian,
+  setBinaryEndian: setBinaryEndian,
   temp_dataview: temp_dataview,
   uint8_view: uint8_view,
   unpack_context: unpack_context,
@@ -1517,7 +1517,7 @@ function gen_tabstr$1(tot) {
   return ret;
 }
 
-function setWarningMode(t) {
+function setWarningMode2(t) {
   if (typeof t !== "number" || isNaN(t)) {
     throw new Error("Expected a single number (>= 0) argument to setWarningMode");
   }
@@ -1525,7 +1525,7 @@ function setWarningMode(t) {
   warninglvl = t;
 }
 
-function setDebugMode(t) {
+function setDebugMode2(t) {
   debug = t;
 
   if (debug) {
@@ -1560,7 +1560,7 @@ function setDebugMode(t) {
   }
 }
 
-setDebugMode(debug);
+setDebugMode2(debug);
 
 const StructFieldTypes = [];
 const StructFieldTypeMap = {};
@@ -2739,8 +2739,8 @@ StructFieldType.register(StructStaticArrayField);
 var _sintern2 = /*#__PURE__*/Object.freeze({
   __proto__: null,
   _get_pack_debug: _get_pack_debug,
-  setWarningMode: setWarningMode,
-  setDebugMode: setDebugMode,
+  setWarningMode2: setWarningMode2,
+  setDebugMode2: setDebugMode2,
   StructFieldTypes: StructFieldTypes,
   StructFieldTypeMap: StructFieldTypeMap,
   packNull: packNull,
@@ -3086,8 +3086,8 @@ function update_debug_data() {
 
 update_debug_data();
 
-function setWarningMode$1(t) {
-  sintern2.setWarningMode(t);
+function setWarningMode(t) {
+  sintern2.setWarningMode2(t);
 
   if (typeof t !== "number" || isNaN(t)) {
     throw new Error("Expected a single number (>= 0) argument to setWarningMode");
@@ -3096,8 +3096,8 @@ function setWarningMode$1(t) {
   warninglvl$1 = t;
 }
 
-function setDebugMode$1(t) {
-  sintern2.setDebugMode(t);
+function setDebugMode(t) {
+  sintern2.setDebugMode2(t);
   update_debug_data();
 }
 
@@ -4061,7 +4061,7 @@ StructClass = class StructClass {
         if (tokinfo) {
           this.jsonLogger(printContext(this.jsonBuf, tokinfo, this.jsonUseColors));
         }
-        
+
         //console.error(cls[keywords.script]);
 
         if (val === undefined) {
@@ -4568,10 +4568,10 @@ function validateStructs(onerror) {
 /**
  true means little endian, false means big endian
  */
-function setEndian$1(mode) {
+function setEndian(mode) {
   let ret = STRUCT_ENDIAN;
 
-  setEndian(mode);
+  setBinaryEndian(mode);
 
   return ret;
 }
@@ -4641,4 +4641,4 @@ function readJSON(json, class_or_struct_id) {
   return manager.readJSON(json, class_or_struct_id);
 }
 
-export { JSONError, STRUCT, _truncateDollarSign, struct_binpack as binpack, consoleLogger, deriveStructManager, struct_filehelper as filehelper, getEndian, inherit, isRegistered, manager, struct_parser as parser, struct_parseutil as parseutil, readJSON, readObject, register, setAllowOverriding, setDebugMode$1 as setDebugMode, setEndian$1 as setEndian, setTruncateDollarSign, setWarningMode$1 as setWarningMode, truncateDollarSign$1 as truncateDollarSign, struct_typesystem as typesystem, unpack_context, unregister, validateJSON$1 as validateJSON, validateStructs, writeJSON, writeObject, write_scripts };
+export { JSONError, STRUCT, _truncateDollarSign, struct_binpack as binpack, consoleLogger, deriveStructManager, struct_filehelper as filehelper, getEndian, inherit, isRegistered, manager, struct_parser as parser, struct_parseutil as parseutil, readJSON, readObject, register, setAllowOverriding, setDebugMode, setEndian, setTruncateDollarSign, setWarningMode, truncateDollarSign$1 as truncateDollarSign, struct_typesystem as typesystem, unpack_context, unregister, validateJSON$1 as validateJSON, validateStructs, writeJSON, writeObject, write_scripts };
