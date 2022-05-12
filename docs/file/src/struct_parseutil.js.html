@@ -34,6 +34,7 @@
 <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/struct_filehelper.js~FileHelper.html">FileHelper</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/struct_filehelper.js~FileParams.html">FileParams</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/struct_filehelper.js~FileeError.html">FileeError</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/struct_intern.js~JSONError.html">JSONError</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/struct_intern.js~STRUCT.html">STRUCT</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/struct_intern2.js~StructArrayField.html">StructArrayField</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/struct_intern2.js~StructBoolField.html">StructBoolField</a></span></span></li>
@@ -73,7 +74,7 @@
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-pack_string">pack_string</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-pack_uint">pack_uint</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-pack_ushort">pack_ushort</a></span></span></li>
-<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-setEndian">setEndian</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-setBinaryEndian">setBinaryEndian</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-test_utf8">test_utf8</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-unpack_byte">unpack_byte</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-unpack_bytes">unpack_bytes</a></span></span></li>
@@ -98,11 +99,17 @@
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-setWarningMode">setWarningMode</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-write_scripts">write_scripts</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-_get_pack_debug">_get_pack_debug</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-do_pack">do_pack</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-fromJSON">fromJSON</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-packNull">packNull</a></span></span></li>
-<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-setDebugMode">setDebugMode</a></span></span></li>
-<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-setWarningMode">setWarningMode</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-setDebugMode2">setDebugMode2</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-setWarningMode2">setWarningMode2</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-toJSON">toJSON</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-validateJSON">validateJSON</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-stripComments">stripComments</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-termColor">termColor</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-termPrint">termPrint</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-consoleLogger">consoleLogger</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-getEndian">getEndian</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-inherit">inherit</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-isRegistered">isRegistered</a></span></span></li>
@@ -114,6 +121,7 @@
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-truncateDollarSign">truncateDollarSign</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-unregister">unregister</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-useTinyEval">useTinyEval</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-validateJSON">validateJSON</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-validateStructs">validateStructs</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-writeJSON">writeJSON</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-writeObject">writeObject</a></span></span></li>
@@ -130,6 +138,7 @@
 <li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-StructTypes">StructTypes</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-ValueTypes">ValueTypes</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-struct_parse">struct_parse</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-termColorMap">termColorMap</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-tinyeval">tinyeval</a></span></span></li>
 </ul>
 </div>
@@ -143,12 +152,50 @@ The lexical scanner in this module was inspired by PyPLY
 http://www.dabeaz.com/ply/ply.html
 */
 
+import {termColor} from &apos;./struct_util.js&apos;;
+
+function print_lines(ld, lineno, col, printColors, token) {
+  let buf = &apos;&apos;;
+  let lines = ld.split(&quot;\n&quot;);
+  let istart = Math.max(lineno - 5, 0);
+  let iend  = Math.min(lineno + 3, lines.length);
+
+  let color = printColors ? (c) =&gt; c : termColor;
+
+  for (let i=istart; i&lt;iend; i++) {
+    let l = &quot;&quot; + (i + 1);
+    while (l.length &lt; 3) {
+      l = &quot; &quot; + l;
+    }
+
+    l += `: ${lines[i]}\n`;
+
+    if (i === lineno &amp;&amp; token &amp;&amp; token.value.length === 1) {
+      l = l.slice(0, col+5) + color(l[col+5], &quot;yellow&quot;) + l.slice(col+6, l.length);
+    }
+    buf += l;
+    if (i === lineno) {
+      let colstr = &apos;     &apos;;
+      for (let i=0; i&lt;col; i++) {
+        colstr += &apos; &apos;;
+      }
+      colstr += color(&quot;^&quot;, &quot;red&quot;);
+
+      buf += colstr + &quot;\n&quot;;
+    }
+  }
+
+  buf = &quot;------------------\n&quot; + buf + &quot;\n==================\n&quot;;
+  return buf;
+}
+
 export class token {
-  constructor(type, val, lexpos, lineno, lexer, parser) {
+  constructor(type, val, lexpos, lineno, lexer, parser, col) {
     this.type = type;
     this.value = val;
     this.lexpos = lexpos;
     this.lineno = lineno;
+    this.col = col;
     this.lexer = lexer;
     this.parser = parser;
   }
@@ -198,8 +245,12 @@ export class lexer {
     this.tokens = new Array();
     this.lexpos = 0;
     this.lexdata = &quot;&quot;;
+    this.colmap = undefined;
     this.lineno = 0;
+    this.printTokens = false;
+    this.linestart = 0;
     this.errfunc = errfunc;
+    this.linemap = undefined;
     this.tokints = {}
     for (let i = 0; i &lt; tokdef.length; i++) {
       this.tokints[tokdef[i].name] = i;
@@ -207,6 +258,10 @@ export class lexer {
     this.statestack = [[&quot;__main__&quot;, 0]];
     this.states = {&quot;__main__&quot;: [tokdef, errfunc]}
     this.statedata = 0;
+
+    this.logger = function() {
+      console.log(...arguments);
+    }
   }
 
   add_state(name, tokdef, errfunc) {
@@ -238,6 +293,23 @@ export class lexer {
   }
 
   input(str) {
+    let linemap = this.linemap = new Array(str.length);
+    let lineno = 0;
+    let col = 0;
+    let colmap = this.colmap = new Array(str.length);
+
+    for (let i=0; i&lt;str.length; i++, col++) {
+      let c = str[i];
+
+      linemap[i] = lineno;
+      colmap[i] = col;
+
+      if (c === &quot;\n&quot;) {
+        lineno++;
+        col = 0;
+      }
+    }
+
     while (this.statestack.length &gt; 1) {
       this.pop_state();
     }
@@ -252,10 +324,16 @@ export class lexer {
     if (this.errfunc !== undefined &amp;&amp; !this.errfunc(this))
       return;
 
-    console.log(&quot;Syntax error near line &quot; + this.lineno);
+    let safepos = Math.min(this.lexpos, this.lexdata.length-1);
+    let line = this.linemap[safepos];
+    let col = this.colmap[safepos];
+
+    let s = print_lines(this.lexdata, line, col, true);
+
+    this.logger(&quot;  &quot; + s);
+    this.logger(&quot;Syntax error near line &quot; + (this.lineno + 1));
 
     let next = Math.min(this.lexpos + 8, this.lexdata.length);
-    console.log(&quot;  &quot; + this.lexdata.slice(this.lexpos, next));
 
     throw new PUTIL_ParseError(&quot;Parse error&quot;);
   }
@@ -285,6 +363,11 @@ export class lexer {
     if (!ignore_peek &amp;&amp; this.peeked_tokens.length &gt; 0) {
       let tok = this.peeked_tokens[0];
       this.peeked_tokens.shift();
+
+      if (!ignore_peek &amp;&amp; this.printTokens) {
+        this.logger(&quot;&quot;+tok);
+      }
+
       return tok;
     }
 
@@ -322,7 +405,13 @@ export class lexer {
     }
 
     let def = theres[0];
-    let tok = new token(def.name, theres[1][0], this.lexpos, this.lineno, this, undefined);
+    let col = this.colmap[Math.min(this.lexpos, this.lexdata.length-1)];
+
+    if (this.lexpos &lt; this.lexdata.length) {
+      this.lineno = this.linemap[this.lexpos];
+    }
+
+    let tok = new token(def.name, theres[1][0], this.lexpos, this.lineno, this, undefined, col);
     this.lexpos += tok.value.length;
 
     if (def.func) {
@@ -332,6 +421,9 @@ export class lexer {
       }
     }
 
+    if (!ignore_peek &amp;&amp; this.printTokens) {
+      this.logger(&quot;&quot;+tok);
+    }
     return tok;
   }
 }
@@ -341,6 +433,10 @@ export class parser {
     this.lexer = lexer;
     this.errfunc = errfunc;
     this.start = undefined;
+
+    this.logger = function() {
+      console.log(...arguments);
+    }
   }
 
   parse(data, err_on_unconsumed) {
@@ -370,25 +466,18 @@ export class parser {
     if (token === undefined)
       estr = &quot;Parse error at end of input: &quot; + msg;
     else
-      estr = &quot;Parse error at line &quot; + (token.lineno + 1) + &quot;: &quot; + msg;
+      estr = `Parse error at line ${token.lineno + 1}:${token.col+1}: ${msg}`;
 
-    let buf = &quot;1| &quot;;
+    let buf = &quot;&quot;;
     let ld = this.lexer.lexdata;
-    let l = 1;
-    for (var i = 0; i &lt; ld.length; i++) {
-      let c = ld[i];
-      if (c === &apos;\n&apos;) {
-        l++;
-        buf += &quot;\n&quot; + l + &quot;| &quot;;
-      }
-      else {
-        buf += c;
-      }
-    }
-    console.log(&quot;------------------&quot;);
-    console.log(buf);
-    console.log(&quot;==================&quot;);
-    console.log(estr);
+    let lineno = token ? token.lineno : this.lexer.linemap[this.lexer.linemap.length-1];
+    let col = token ? token.col : 0;
+
+    ld = ld.replace(/\r/g, &apos;&apos;);
+
+    this.logger(print_lines(ld, lineno, col, true, token));
+    this.logger(estr);
+
     if (this.errfunc &amp;&amp; !this.errfunc(token)) {
       return;
     }
@@ -452,8 +541,8 @@ export class parser {
 }
 
 function test_parser() {
-  let basic_types = new set([&quot;int&quot;, &quot;float&quot;, &quot;double&quot;, &quot;vec2&quot;, &quot;vec3&quot;, &quot;vec4&quot;, &quot;mat4&quot;, &quot;string&quot;]);
-  let reserved_tokens = new set([&quot;int&quot;, &quot;float&quot;, &quot;double&quot;, &quot;vec2&quot;, &quot;vec3&quot;, &quot;vec4&quot;, &quot;mat4&quot;, &quot;string&quot;, &quot;static_string&quot;, &quot;array&quot;]);
+  let basic_types = new Set([&quot;int&quot;, &quot;float&quot;, &quot;double&quot;, &quot;vec2&quot;, &quot;vec3&quot;, &quot;vec4&quot;, &quot;mat4&quot;, &quot;string&quot;]);
+  let reserved_tokens = new Set([&quot;int&quot;, &quot;float&quot;, &quot;double&quot;, &quot;vec2&quot;, &quot;vec3&quot;, &quot;vec4&quot;, &quot;mat4&quot;, &quot;string&quot;, &quot;static_string&quot;, &quot;array&quot;]);
 
   function tk(name, re, func) {
     return new tokdef(name, re, func);
@@ -484,17 +573,27 @@ function test_parser() {
     t.lexer.lineno += 1;
   }), tk(&quot;SPACE&quot;, / |\t/, function (t) {
   })];
-  let __iter_rt = __get_iter(reserved_tokens);
-  let rt;
-  while (1) {
-    let __ival_rt = __iter_rt.next();
-    if (__ival_rt.done) {
-      break;
-    }
-    rt = __ival_rt.value;
+
+  for (let rt of reserved_tokens) {
     tokens.push(tk(rt.toUpperCase()));
   }
-  let a = &quot;\n  Loop {\n    eid : int;\n    flag : int;\n    index : int;\n    type : int;\n\n    co : vec3;\n    no : vec3;\n    loop : int | eid(loop);\n    edges : array(e, int) | e.eid;\n\n    loops : array(Loop);\n  }\n  &quot;;
+
+  let a = `
+  Loop {
+    eid : int;
+    flag : int;
+    index : int;
+    type : int;
+
+    co : vec3;
+    no : vec3;
+    loop : int | eid(loop);
+    edges : array(e, int) | e.eid;
+
+    loops :, array(Loop);
+  }
+  `;
+
 
   function errfunc(lexer) {
     return true;
@@ -507,8 +606,8 @@ function test_parser() {
   while (token = lex.next()) {
     console.log(token.toString());
   }
-  let parser = new parser(lex);
-  parser.input(a);
+  let parse = new parser(lex);
+  parse.input(a);
 
   function p_Array(p) {
     p.expect(&quot;ARRAY&quot;);
@@ -582,9 +681,11 @@ function test_parser() {
     return st;
   }
 
-  let ret = p_Struct(parser);
+  let ret = p_Struct(parse);
   console.log(JSON.stringify(ret));
 }
+
+//test_parser();
 </code></pre>
 
 </div>

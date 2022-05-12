@@ -34,6 +34,7 @@
 <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/struct_filehelper.js~FileHelper.html">FileHelper</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/struct_filehelper.js~FileParams.html">FileParams</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/struct_filehelper.js~FileeError.html">FileeError</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/struct_intern.js~JSONError.html">JSONError</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/struct_intern.js~STRUCT.html">STRUCT</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/struct_intern2.js~StructArrayField.html">StructArrayField</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/struct_intern2.js~StructBoolField.html">StructBoolField</a></span></span></li>
@@ -73,7 +74,7 @@
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-pack_string">pack_string</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-pack_uint">pack_uint</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-pack_ushort">pack_ushort</a></span></span></li>
-<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-setEndian">setEndian</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-setBinaryEndian">setBinaryEndian</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-test_utf8">test_utf8</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-unpack_byte">unpack_byte</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-unpack_bytes">unpack_bytes</a></span></span></li>
@@ -98,11 +99,17 @@
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-setWarningMode">setWarningMode</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-write_scripts">write_scripts</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-_get_pack_debug">_get_pack_debug</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-do_pack">do_pack</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-fromJSON">fromJSON</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-packNull">packNull</a></span></span></li>
-<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-setDebugMode">setDebugMode</a></span></span></li>
-<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-setWarningMode">setWarningMode</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-setDebugMode2">setDebugMode2</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-setWarningMode2">setWarningMode2</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-toJSON">toJSON</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-validateJSON">validateJSON</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-stripComments">stripComments</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-termColor">termColor</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-termPrint">termPrint</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-consoleLogger">consoleLogger</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-getEndian">getEndian</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-inherit">inherit</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-isRegistered">isRegistered</a></span></span></li>
@@ -114,6 +121,7 @@
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-truncateDollarSign">truncateDollarSign</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-unregister">unregister</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-useTinyEval">useTinyEval</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-validateJSON">validateJSON</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-validateStructs">validateStructs</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-writeJSON">writeJSON</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-writeObject">writeObject</a></span></span></li>
@@ -130,12 +138,13 @@
 <li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-StructTypes">StructTypes</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-ValueTypes">ValueTypes</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-struct_parse">struct_parse</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-termColorMap">termColorMap</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-tinyeval">tinyeval</a></span></span></li>
 </ul>
 </div>
 </nav>
 
-<div class="content" data-ice="content"><h1>Source <img data-ice="coverageBadge" src="./badge.svg"><span data-ice="totalCoverageCount" class="total-coverage-count">206/451</span></h1>
+<div class="content" data-ice="content"><h1>Source <img data-ice="coverageBadge" src="./badge.svg"><span data-ice="totalCoverageCount" class="total-coverage-count">229/503</span></h1>
 
 <table class="files-summary" data-ice="files" data-use-coverage="true">
   <thead>
@@ -174,7 +183,7 @@
 <span><a href="function/index.html#static-function-pack_string">pack_string</a></span>
 <span><a href="function/index.html#static-function-pack_uint">pack_uint</a></span>
 <span><a href="function/index.html#static-function-pack_ushort">pack_ushort</a></span>
-<span><a href="function/index.html#static-function-setEndian">setEndian</a></span>
+<span><a href="function/index.html#static-function-setBinaryEndian">setBinaryEndian</a></span>
 <span><a href="variable/index.html#static-variable-temp_dataview">temp_dataview</a></span>
 <span><a href="function/index.html#static-function-test_utf8">test_utf8</a></span>
 <span><a href="variable/index.html#static-variable-uint8_view">uint8_view</a></span>
@@ -191,9 +200,9 @@
 <span><a href="function/index.html#static-function-unpack_uint">unpack_uint</a></span>
 <span><a href="function/index.html#static-function-unpack_ushort">unpack_ushort</a></span></td>
       <td class="coverage"><span data-ice="coverage">5 %</span><span data-ice="coverageCount" class="coverage-count">2/37</span></td>
-      <td style="display: none;" data-ice="size">6264 byte</td>
+      <td style="display: none;" data-ice="size">6270 byte</td>
       <td style="display: none;" data-ice="lines">303</td>
-      <td style="display: none;" data-ice="updated">2022-02-02 21:38:26 (UTC)</td>
+      <td style="display: none;" data-ice="updated">2022-05-05 21:02:49 (UTC)</td>
     </tr>
 <tr data-ice="file">
       <td data-ice="filePath"><span><a href="file/src/struct_eval.js.html#errorLines=1,3">src/struct_eval.js</a></span></td>
@@ -228,8 +237,9 @@
       <td style="display: none;" data-ice="updated">2022-02-01 21:36:50 (UTC)</td>
     </tr>
 <tr data-ice="file">
-      <td data-ice="filePath"><span><a href="file/src/struct_intern.js.html#errorLines=107,1072,112,114,118,14,141,147,148,150,151,152,154,155,16,160,19,23,240,244,293,298,33,70,74,8,86,97">src/struct_intern.js</a></span></td>
-      <td data-ice="identifier" class="identifiers"><span><a href="class/src/struct_intern.js~STRUCT.html">STRUCT</a></span>
+      <td data-ice="filePath"><span><a href="file/src/struct_intern.js.html#errorLines=10,101,111,116,118,1211,147,148,150,151,152,154,155,16,163,18,23,243,247,27,296,301,37,74,78,9,90">src/struct_intern.js</a></span></td>
+      <td data-ice="identifier" class="identifiers"><span><a href="class/src/struct_intern.js~JSONError.html">JSONError</a></span>
+<span><a href="class/src/struct_intern.js~STRUCT.html">STRUCT</a></span>
 <span><a href="function/index.html#static-function-_truncateDollarSign">_truncateDollarSign</a></span>
 <span><a href="function/index.html#static-function-deriveStructManager">deriveStructManager</a></span>
 <span><a href="function/index.html#static-function-setDebugMode">setDebugMode</a></span>
@@ -237,13 +247,13 @@
 <span><a href="function/index.html#static-function-setWarningMode">setWarningMode</a></span>
 <span><a href="variable/index.html#static-variable-truncateDollarSign">truncateDollarSign</a></span>
 <span><a href="function/index.html#static-function-write_scripts">write_scripts</a></span></td>
-      <td class="coverage"><span data-ice="coverage">53 %</span><span data-ice="coverageCount" class="coverage-count">32/60</span></td>
-      <td style="display: none;" data-ice="size">29379 byte</td>
-      <td style="display: none;" data-ice="lines">1148</td>
-      <td style="display: none;" data-ice="updated">2022-02-01 22:41:15 (UTC)</td>
+      <td class="coverage"><span data-ice="coverage">56 %</span><span data-ice="coverageCount" class="coverage-count">35/62</span></td>
+      <td style="display: none;" data-ice="size">33154 byte</td>
+      <td style="display: none;" data-ice="lines">1292</td>
+      <td style="display: none;" data-ice="updated">2022-05-05 21:41:00 (UTC)</td>
     </tr>
 <tr data-ice="file">
-      <td data-ice="filePath"><span><a href="file/src/struct_intern2.js.html#errorLines=1006,1010,1014,1028,1056,106,1060,1064,107,1071,1075,1088,109,1100,1112,113,117,121,13,138,14,142,146,16,168,171,174,177,18,181,185,189,20,245,249,253,264,268,272,283,287,291,30,302,308,31,312,316,327,333,337,34,341,345,356,364,368,374,379,38,386,398,405,416,441,449,460,467,471,493,51,514,525,561,565,573,577,597,61,621,630,642,653,69,705,709,732,736,740,748,761,773,784,788,792,803,807,811,822,826,830,841,845,849,860,906,910,934,938,942,950,963,975,986,990,994">src/struct_intern2.js</a></span></td>
+      <td data-ice="filePath"><span><a href="file/src/struct_intern2.js.html#errorLines=1040,1044,1048,106,107,1072,1076,1080,1088,109,1101,1113,1124,1128,113,1132,1140,1152,1156,1160,1168,117,1182,121,1210,1214,1218,1222,1229,1233,1246,1258,126,1270,13,14,143,147,151,16,173,176,179,18,182,186,190,194,198,20,254,258,262,270,281,285,289,297,30,308,31,312,316,324,335,34,341,349,353,357,368,374,38,387,391,395,399,410,418,428,432,438,443,450,462,469,480,505,51,535,543,554,561,565,587,608,61,619,655,659,667,671,687,69,707,731,740,752,763,815,819,823,846,850,854,862,875,887,898,902,906,917,921,925,936,940,944,955,959,963,971,979,983,994">src/struct_intern2.js</a></span></td>
       <td data-ice="identifier" class="identifiers"><span><a href="class/src/struct_intern2.js~StructArrayField.html">StructArrayField</a></span>
 <span><a href="class/src/struct_intern2.js~StructBoolField.html">StructBoolField</a></span>
 <span><a href="class/src/struct_intern2.js~StructByteField.html">StructByteField</a></span>
@@ -266,40 +276,51 @@
 <span><a href="class/src/struct_intern2.js~StructUshortField.html">StructUshortField</a></span>
 <span><a href="function/index.html#static-function-_get_pack_debug">_get_pack_debug</a></span>
 <span><a href="class/src/struct_intern2.js~cachering.html">cachering</a></span>
+<span><a href="function/index.html#static-function-do_pack">do_pack</a></span>
 <span><a href="function/index.html#static-function-fromJSON">fromJSON</a></span>
 <span><a href="function/index.html#static-function-packNull">packNull</a></span>
-<span><a href="function/index.html#static-function-setDebugMode">setDebugMode</a></span>
-<span><a href="function/index.html#static-function-setWarningMode">setWarningMode</a></span>
-<span><a href="function/index.html#static-function-toJSON">toJSON</a></span></td>
-      <td class="coverage"><span data-ice="coverage">51 %</span><span data-ice="coverageCount" class="coverage-count">122/238</span></td>
-      <td style="display: none;" data-ice="size">26985 byte</td>
-      <td style="display: none;" data-ice="lines">1121</td>
-      <td style="display: none;" data-ice="updated">2022-02-01 23:06:02 (UTC)</td>
+<span><a href="function/index.html#static-function-setDebugMode2">setDebugMode2</a></span>
+<span><a href="function/index.html#static-function-setWarningMode2">setWarningMode2</a></span>
+<span><a href="function/index.html#static-function-toJSON">toJSON</a></span>
+<span><a href="function/index.html#static-function-validateJSON">validateJSON</a></span></td>
+      <td class="coverage"><span data-ice="coverage">50 %</span><span data-ice="coverageCount" class="coverage-count">139/273</span></td>
+      <td style="display: none;" data-ice="size">30986 byte</td>
+      <td style="display: none;" data-ice="lines">1279</td>
+      <td style="display: none;" data-ice="updated">2022-05-05 21:40:57 (UTC)</td>
     </tr>
 <tr data-ice="file">
-      <td data-ice="filePath"><span><a href="file/src/struct_parser.js.html#errorLines=16,36,371,51,7,70,76,8,84,9">src/struct_parser.js</a></span></td>
+      <td data-ice="filePath"><span><a href="file/src/struct_json.js.html">src/struct_json.js</a></span></td>
+      <td data-ice="identifier" class="identifiers">-</td>
+      <td class="coverage"><span data-ice="coverage">-</span></td>
+      <td style="display: none;" data-ice="size">5415 byte</td>
+      <td style="display: none;" data-ice="lines">236</td>
+      <td style="display: none;" data-ice="updated">2022-03-03 17:49:57 (UTC)</td>
+    </tr>
+<tr data-ice="file">
+      <td data-ice="filePath"><span><a href="file/src/struct_parser.js.html#errorLines=139,16,36,433,51,7,70,76,8,84,9">src/struct_parser.js</a></span></td>
       <td data-ice="identifier" class="identifiers"><span><a href="class/src/struct_parser.js~NStruct.html">NStruct</a></span>
 <span><a href="variable/index.html#static-variable-StructEnum">StructEnum</a></span>
 <span><a href="variable/index.html#static-variable-StructTypeMap">StructTypeMap</a></span>
 <span><a href="variable/index.html#static-variable-StructTypes">StructTypes</a></span>
 <span><a href="variable/index.html#static-variable-ValueTypes">ValueTypes</a></span>
+<span><a href="function/index.html#static-function-stripComments">stripComments</a></span>
 <span><a href="variable/index.html#static-variable-struct_parse">struct_parse</a></span></td>
-      <td class="coverage"><span data-ice="coverage">16 %</span><span data-ice="coverageCount" class="coverage-count">2/12</span></td>
-      <td style="display: none;" data-ice="size">8889 byte</td>
-      <td style="display: none;" data-ice="lines">372</td>
-      <td style="display: none;" data-ice="updated">2022-02-01 22:50:17 (UTC)</td>
+      <td class="coverage"><span data-ice="coverage">26 %</span><span data-ice="coverageCount" class="coverage-count">4/15</span></td>
+      <td style="display: none;" data-ice="size">9905 byte</td>
+      <td style="display: none;" data-ice="lines">435</td>
+      <td style="display: none;" data-ice="updated">2022-03-03 18:13:18 (UTC)</td>
     </tr>
 <tr data-ice="file">
-      <td data-ice="filePath"><span><a href="file/src/struct_parseutil.js.html#errorLines=10,11,110,12,13,14,15,203,204,205,28,29,30,31,316,59,60,61,62,63,64,65,69,70,71">src/struct_parseutil.js</a></span></td>
+      <td data-ice="filePath"><span><a href="file/src/struct_parseutil.js.html#errorLines=10,100,101,102,103,104,105,106,107,111,112,113,173,286,287,288,396,47,48,49,50,51,52,53,66,67,68,69,97,98,99">src/struct_parseutil.js</a></span></td>
       <td data-ice="identifier" class="identifiers"><span><a href="class/src/struct_parseutil.js~PUTIL_ParseError.html">PUTIL_ParseError</a></span>
 <span><a href="class/src/struct_parseutil.js~lexer.html">lexer</a></span>
 <span><a href="class/src/struct_parseutil.js~parser.html">parser</a></span>
 <span><a href="class/src/struct_parseutil.js~tokdef.html">tokdef</a></span>
 <span><a href="class/src/struct_parseutil.js~token.html">token</a></span></td>
-      <td class="coverage"><span data-ice="coverage">54 %</span><span data-ice="coverageCount" class="coverage-count">30/55</span></td>
-      <td style="display: none;" data-ice="size">10664 byte</td>
-      <td style="display: none;" data-ice="lines">449</td>
-      <td style="display: none;" data-ice="updated">2022-01-05 22:42:48 (UTC)</td>
+      <td class="coverage"><span data-ice="coverage">49 %</span><span data-ice="coverageCount" class="coverage-count">30/61</span></td>
+      <td style="display: none;" data-ice="size">12547 byte</td>
+      <td style="display: none;" data-ice="lines">541</td>
+      <td style="display: none;" data-ice="updated">2022-03-07 09:26:51 (UTC)</td>
     </tr>
 <tr data-ice="file">
       <td data-ice="filePath"><span><a href="file/src/struct_typesystem.js.html">src/struct_typesystem.js</a></span></td>
@@ -310,16 +331,19 @@
       <td style="display: none;" data-ice="updated">2022-01-05 22:55:31 (UTC)</td>
     </tr>
 <tr data-ice="file">
-      <td data-ice="filePath"><span><a href="file/src/struct_util.js.html">src/struct_util.js</a></span></td>
-      <td data-ice="identifier" class="identifiers">-</td>
-      <td class="coverage"><span data-ice="coverage">-</span></td>
-      <td style="display: none;" data-ice="size">18 byte</td>
-      <td style="display: none;" data-ice="lines">1</td>
-      <td style="display: none;" data-ice="updated">2022-01-05 22:55:27 (UTC)</td>
+      <td data-ice="filePath"><span><a href="file/src/struct_util.js.html#errorLines=1,19,25,43">src/struct_util.js</a></span></td>
+      <td data-ice="identifier" class="identifiers"><span><a href="function/index.html#static-function-termColor">termColor</a></span>
+<span><a href="variable/index.html#static-variable-termColorMap">termColorMap</a></span>
+<span><a href="function/index.html#static-function-termPrint">termPrint</a></span></td>
+      <td class="coverage"><span data-ice="coverage">0 %</span><span data-ice="coverageCount" class="coverage-count">0/4</span></td>
+      <td style="display: none;" data-ice="size">2546 byte</td>
+      <td style="display: none;" data-ice="lines">139</td>
+      <td style="display: none;" data-ice="updated">2022-03-07 08:03:45 (UTC)</td>
     </tr>
 <tr data-ice="file">
-      <td data-ice="filePath"><span><a href="file/src/structjs.js.html#errorLines=20,37,41,45,54,58,77,81,90,93">src/structjs.js</a></span></td>
-      <td data-ice="identifier" class="identifiers"><span><a href="function/index.html#static-function-getEndian">getEndian</a></span>
+      <td data-ice="filePath"><span><a href="file/src/structjs.js.html#errorLines=107,110,20,37,54,58,62,71,75,94,98">src/structjs.js</a></span></td>
+      <td data-ice="identifier" class="identifiers"><span><a href="function/index.html#static-function-consoleLogger">consoleLogger</a></span>
+<span><a href="function/index.html#static-function-getEndian">getEndian</a></span>
 <span><a href="function/index.html#static-function-inherit">inherit</a></span>
 <span><a href="function/index.html#static-function-isRegistered">isRegistered</a></span>
 <span><a href="function/index.html#static-function-readJSON">readJSON</a></span>
@@ -331,13 +355,14 @@
 <span><a href="function/index.html#static-function-truncateDollarSign">truncateDollarSign</a></span>
 <span><a href="function/index.html#static-function-unregister">unregister</a></span>
 <span><a href="function/index.html#static-function-useTinyEval">useTinyEval</a></span>
+<span><a href="function/index.html#static-function-validateJSON">validateJSON</a></span>
 <span><a href="function/index.html#static-function-validateStructs">validateStructs</a></span>
 <span><a href="function/index.html#static-function-writeJSON">writeJSON</a></span>
 <span><a href="function/index.html#static-function-writeObject">writeObject</a></span></td>
-      <td class="coverage"><span data-ice="coverage">33 %</span><span data-ice="coverageCount" class="coverage-count">5/15</span></td>
-      <td style="display: none;" data-ice="size">2776 byte</td>
-      <td style="display: none;" data-ice="lines">107</td>
-      <td style="display: none;" data-ice="updated">2022-02-01 22:32:51 (UTC)</td>
+      <td class="coverage"><span data-ice="coverage">35 %</span><span data-ice="coverageCount" class="coverage-count">6/17</span></td>
+      <td style="display: none;" data-ice="size">3278 byte</td>
+      <td style="display: none;" data-ice="lines">124</td>
+      <td style="display: none;" data-ice="updated">2022-05-05 21:02:49 (UTC)</td>
     </tr>
 </tbody>
 </table>

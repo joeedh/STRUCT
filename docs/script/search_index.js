@@ -60,6 +60,12 @@ window.esdocSearchIndex = [
     "function"
   ],
   [
+    "nstructjs/src/structjs.js~consolelogger",
+    "function/index.html#static-function-consoleLogger",
+    "<span>consoleLogger</span> <span class=\"search-result-import-path\">nstructjs/src/structjs.js</span>",
+    "function"
+  ],
+  [
     "nstructjs/src/struct_binpack.js~decode_utf8",
     "function/index.html#static-function-decode_utf8",
     "<span>decode_utf8</span> <span class=\"search-result-import-path\">nstructjs/src/struct_binpack.js</span>",
@@ -69,6 +75,12 @@ window.esdocSearchIndex = [
     "nstructjs/src/struct_intern.js~derivestructmanager",
     "function/index.html#static-function-deriveStructManager",
     "<span>deriveStructManager</span> <span class=\"search-result-import-path\">nstructjs/src/struct_intern.js</span>",
+    "function"
+  ],
+  [
+    "nstructjs/src/struct_intern2.js~do_pack",
+    "function/index.html#static-function-do_pack",
+    "<span>do_pack</span> <span class=\"search-result-import-path\">nstructjs/src/struct_intern2.js</span>",
     "function"
   ],
   [
@@ -198,21 +210,21 @@ window.esdocSearchIndex = [
     "function"
   ],
   [
+    "nstructjs/src/struct_binpack.js~setbinaryendian",
+    "function/index.html#static-function-setBinaryEndian",
+    "<span>setBinaryEndian</span> <span class=\"search-result-import-path\">nstructjs/src/struct_binpack.js</span>",
+    "function"
+  ],
+  [
+    "nstructjs/src/struct_intern2.js~setdebugmode2",
+    "function/index.html#static-function-setDebugMode2",
+    "<span>setDebugMode2</span> <span class=\"search-result-import-path\">nstructjs/src/struct_intern2.js</span>",
+    "function"
+  ],
+  [
     "nstructjs/src/struct_intern.js~setdebugmode",
     "function/index.html#static-function-setDebugMode",
     "<span>setDebugMode</span> <span class=\"search-result-import-path\">nstructjs/src/struct_intern.js</span>",
-    "function"
-  ],
-  [
-    "nstructjs/src/struct_intern2.js~setdebugmode",
-    "function/index.html#static-function-setDebugMode",
-    "<span>setDebugMode</span> <span class=\"search-result-import-path\">nstructjs/src/struct_intern2.js</span>",
-    "function"
-  ],
-  [
-    "nstructjs/src/struct_binpack.js~setendian",
-    "function/index.html#static-function-setEndian",
-    "<span>setEndian</span> <span class=\"search-result-import-path\">nstructjs/src/struct_binpack.js</span>",
     "function"
   ],
   [
@@ -234,15 +246,21 @@ window.esdocSearchIndex = [
     "function"
   ],
   [
+    "nstructjs/src/struct_intern2.js~setwarningmode2",
+    "function/index.html#static-function-setWarningMode2",
+    "<span>setWarningMode2</span> <span class=\"search-result-import-path\">nstructjs/src/struct_intern2.js</span>",
+    "function"
+  ],
+  [
     "nstructjs/src/struct_intern.js~setwarningmode",
     "function/index.html#static-function-setWarningMode",
     "<span>setWarningMode</span> <span class=\"search-result-import-path\">nstructjs/src/struct_intern.js</span>",
     "function"
   ],
   [
-    "nstructjs/src/struct_intern2.js~setwarningmode",
-    "function/index.html#static-function-setWarningMode",
-    "<span>setWarningMode</span> <span class=\"search-result-import-path\">nstructjs/src/struct_intern2.js</span>",
+    "nstructjs/src/struct_parser.js~stripcomments",
+    "function/index.html#static-function-stripComments",
+    "<span>stripComments</span> <span class=\"search-result-import-path\">nstructjs/src/struct_parser.js</span>",
     "function"
   ],
   [
@@ -262,6 +280,24 @@ window.esdocSearchIndex = [
     "variable/index.html#static-variable-temp_dataview",
     "<span>temp_dataview</span> <span class=\"search-result-import-path\">nstructjs/src/struct_binpack.js</span>",
     "variable"
+  ],
+  [
+    "nstructjs/src/struct_util.js~termcolor",
+    "function/index.html#static-function-termColor",
+    "<span>termColor</span> <span class=\"search-result-import-path\">nstructjs/src/struct_util.js</span>",
+    "function"
+  ],
+  [
+    "nstructjs/src/struct_util.js~termcolormap",
+    "variable/index.html#static-variable-termColorMap",
+    "<span>termColorMap</span> <span class=\"search-result-import-path\">nstructjs/src/struct_util.js</span>",
+    "variable"
+  ],
+  [
+    "nstructjs/src/struct_util.js~termprint",
+    "function/index.html#static-function-termPrint",
+    "<span>termPrint</span> <span class=\"search-result-import-path\">nstructjs/src/struct_util.js</span>",
+    "function"
   ],
   [
     "nstructjs/src/struct_binpack.js~test_utf8",
@@ -381,6 +417,18 @@ window.esdocSearchIndex = [
     "nstructjs/src/structjs.js~usetinyeval",
     "function/index.html#static-function-useTinyEval",
     "<span>useTinyEval</span> <span class=\"search-result-import-path\">nstructjs/src/structjs.js</span>",
+    "function"
+  ],
+  [
+    "nstructjs/src/struct_intern2.js~validatejson",
+    "function/index.html#static-function-validateJSON",
+    "<span>validateJSON</span> <span class=\"search-result-import-path\">nstructjs/src/struct_intern2.js</span>",
+    "function"
+  ],
+  [
+    "nstructjs/src/structjs.js~validatejson",
+    "function/index.html#static-function-validateJSON",
+    "<span>validateJSON</span> <span class=\"search-result-import-path\">nstructjs/src/structjs.js</span>",
     "function"
   ],
   [
@@ -918,6 +966,12 @@ window.esdocSearchIndex = [
     "file"
   ],
   [
+    "src/struct_intern.js~jsonerror",
+    "class/src/struct_intern.js~JSONError.html",
+    "src/struct_intern.js~JSONError",
+    "class"
+  ],
+  [
     "src/struct_intern.js~struct",
     "class/src/struct_intern.js~STRUCT.html",
     "src/struct_intern.js~STRUCT",
@@ -1059,6 +1113,18 @@ window.esdocSearchIndex = [
     "src/struct_intern.js~struct#unregister",
     "class/src/struct_intern.js~STRUCT.html#static-method-unregister",
     "src/struct_intern.js~STRUCT#unregister",
+    "method"
+  ],
+  [
+    "src/struct_intern.js~struct#validatejson",
+    "class/src/struct_intern.js~STRUCT.html#static-method-validateJSON",
+    "src/struct_intern.js~STRUCT#validateJSON",
+    "method"
+  ],
+  [
+    "src/struct_intern.js~struct#validatejsonintern",
+    "class/src/struct_intern.js~STRUCT.html#static-method-validateJSONIntern",
+    "src/struct_intern.js~STRUCT#validateJSONIntern",
     "method"
   ],
   [
@@ -1290,6 +1356,18 @@ window.esdocSearchIndex = [
     "method"
   ],
   [
+    "src/struct_intern2.js~structarrayfield.validatejson",
+    "class/src/struct_intern2.js~StructArrayField.html#static-method-validateJSON",
+    "src/struct_intern2.js~StructArrayField.validateJSON",
+    "method"
+  ],
+  [
+    "src/struct_intern2.js~structarrayfield.validatejson",
+    "class/src/struct_intern2.js~StructArrayField.html#static-method-validateJSON",
+    "src/struct_intern2.js~StructArrayField.validateJSON",
+    "method"
+  ],
+  [
     "src/struct_intern2.js~structboolfield",
     "class/src/struct_intern2.js~StructBoolField.html",
     "src/struct_intern2.js~StructBoolField",
@@ -1308,6 +1386,18 @@ window.esdocSearchIndex = [
     "method"
   ],
   [
+    "src/struct_intern2.js~structboolfield.fromjson",
+    "class/src/struct_intern2.js~StructBoolField.html#static-method-fromJSON",
+    "src/struct_intern2.js~StructBoolField.fromJSON",
+    "method"
+  ],
+  [
+    "src/struct_intern2.js~structboolfield.fromjson",
+    "class/src/struct_intern2.js~StructBoolField.html#static-method-fromJSON",
+    "src/struct_intern2.js~StructBoolField.fromJSON",
+    "method"
+  ],
+  [
     "src/struct_intern2.js~structboolfield.pack",
     "class/src/struct_intern2.js~StructBoolField.html#static-method-pack",
     "src/struct_intern2.js~StructBoolField.pack",
@@ -1317,6 +1407,18 @@ window.esdocSearchIndex = [
     "src/struct_intern2.js~structboolfield.pack",
     "class/src/struct_intern2.js~StructBoolField.html#static-method-pack",
     "src/struct_intern2.js~StructBoolField.pack",
+    "method"
+  ],
+  [
+    "src/struct_intern2.js~structboolfield.tojson",
+    "class/src/struct_intern2.js~StructBoolField.html#static-method-toJSON",
+    "src/struct_intern2.js~StructBoolField.toJSON",
+    "method"
+  ],
+  [
+    "src/struct_intern2.js~structboolfield.tojson",
+    "class/src/struct_intern2.js~StructBoolField.html#static-method-toJSON",
+    "src/struct_intern2.js~StructBoolField.toJSON",
     "method"
   ],
   [
@@ -1329,6 +1431,18 @@ window.esdocSearchIndex = [
     "src/struct_intern2.js~structboolfield.unpack",
     "class/src/struct_intern2.js~StructBoolField.html#static-method-unpack",
     "src/struct_intern2.js~StructBoolField.unpack",
+    "method"
+  ],
+  [
+    "src/struct_intern2.js~structboolfield.validatejson",
+    "class/src/struct_intern2.js~StructBoolField.html#static-method-validateJSON",
+    "src/struct_intern2.js~StructBoolField.validateJSON",
+    "method"
+  ],
+  [
+    "src/struct_intern2.js~structboolfield.validatejson",
+    "class/src/struct_intern2.js~StructBoolField.html#static-method-validateJSON",
+    "src/struct_intern2.js~StructBoolField.validateJSON",
     "method"
   ],
   [
@@ -1413,6 +1527,18 @@ window.esdocSearchIndex = [
     "src/struct_intern2.js~structdoublefield.unpack",
     "class/src/struct_intern2.js~StructDoubleField.html#static-method-unpack",
     "src/struct_intern2.js~StructDoubleField.unpack",
+    "method"
+  ],
+  [
+    "src/struct_intern2.js~structdoublefield.validatejson",
+    "class/src/struct_intern2.js~StructDoubleField.html#static-method-validateJSON",
+    "src/struct_intern2.js~StructDoubleField.validateJSON",
+    "method"
+  ],
+  [
+    "src/struct_intern2.js~structdoublefield.validatejson",
+    "class/src/struct_intern2.js~StructDoubleField.html#static-method-validateJSON",
+    "src/struct_intern2.js~StructDoubleField.validateJSON",
     "method"
   ],
   [
@@ -1530,6 +1656,18 @@ window.esdocSearchIndex = [
     "method"
   ],
   [
+    "src/struct_intern2.js~structfieldtype.validatejson",
+    "class/src/struct_intern2.js~StructFieldType.html#static-method-validateJSON",
+    "src/struct_intern2.js~StructFieldType.validateJSON",
+    "method"
+  ],
+  [
+    "src/struct_intern2.js~structfieldtype.validatejson",
+    "class/src/struct_intern2.js~StructFieldType.html#static-method-validateJSON",
+    "src/struct_intern2.js~StructFieldType.validateJSON",
+    "method"
+  ],
+  [
     "src/struct_intern2.js~structfloatfield",
     "class/src/struct_intern2.js~StructFloatField.html",
     "src/struct_intern2.js~StructFloatField",
@@ -1572,6 +1710,18 @@ window.esdocSearchIndex = [
     "method"
   ],
   [
+    "src/struct_intern2.js~structfloatfield.validatejson",
+    "class/src/struct_intern2.js~StructFloatField.html#static-method-validateJSON",
+    "src/struct_intern2.js~StructFloatField.validateJSON",
+    "method"
+  ],
+  [
+    "src/struct_intern2.js~structfloatfield.validatejson",
+    "class/src/struct_intern2.js~StructFloatField.html#static-method-validateJSON",
+    "src/struct_intern2.js~StructFloatField.validateJSON",
+    "method"
+  ],
+  [
     "src/struct_intern2.js~structintfield",
     "class/src/struct_intern2.js~StructIntField.html",
     "src/struct_intern2.js~StructIntField",
@@ -1611,6 +1761,18 @@ window.esdocSearchIndex = [
     "src/struct_intern2.js~structintfield.unpack",
     "class/src/struct_intern2.js~StructIntField.html#static-method-unpack",
     "src/struct_intern2.js~StructIntField.unpack",
+    "method"
+  ],
+  [
+    "src/struct_intern2.js~structintfield.validatejson",
+    "class/src/struct_intern2.js~StructIntField.html#static-method-validateJSON",
+    "src/struct_intern2.js~StructIntField.validateJSON",
+    "method"
+  ],
+  [
+    "src/struct_intern2.js~structintfield.validatejson",
+    "class/src/struct_intern2.js~StructIntField.html#static-method-validateJSON",
+    "src/struct_intern2.js~StructIntField.validateJSON",
     "method"
   ],
   [
@@ -1728,6 +1890,18 @@ window.esdocSearchIndex = [
     "method"
   ],
   [
+    "src/struct_intern2.js~structiterfield.validatejson",
+    "class/src/struct_intern2.js~StructIterField.html#static-method-validateJSON",
+    "src/struct_intern2.js~StructIterField.validateJSON",
+    "method"
+  ],
+  [
+    "src/struct_intern2.js~structiterfield.validatejson",
+    "class/src/struct_intern2.js~StructIterField.html#static-method-validateJSON",
+    "src/struct_intern2.js~StructIterField.validateJSON",
+    "method"
+  ],
+  [
     "src/struct_intern2.js~structiterkeysfield",
     "class/src/struct_intern2.js~StructIterKeysField.html",
     "src/struct_intern2.js~StructIterKeysField",
@@ -1839,6 +2013,18 @@ window.esdocSearchIndex = [
     "src/struct_intern2.js~structiterkeysfield.usehelperjs",
     "class/src/struct_intern2.js~StructIterKeysField.html#static-method-useHelperJS",
     "src/struct_intern2.js~StructIterKeysField.useHelperJS",
+    "method"
+  ],
+  [
+    "src/struct_intern2.js~structiterkeysfield.validatejson",
+    "class/src/struct_intern2.js~StructIterKeysField.html#static-method-validateJSON",
+    "src/struct_intern2.js~StructIterKeysField.validateJSON",
+    "method"
+  ],
+  [
+    "src/struct_intern2.js~structiterkeysfield.validatejson",
+    "class/src/struct_intern2.js~StructIterKeysField.html#static-method-validateJSON",
+    "src/struct_intern2.js~StructIterKeysField.validateJSON",
     "method"
   ],
   [
@@ -2040,6 +2226,18 @@ window.esdocSearchIndex = [
     "method"
   ],
   [
+    "src/struct_intern2.js~structstaticarrayfield.validatejson",
+    "class/src/struct_intern2.js~StructStaticArrayField.html#static-method-validateJSON",
+    "src/struct_intern2.js~StructStaticArrayField.validateJSON",
+    "method"
+  ],
+  [
+    "src/struct_intern2.js~structstaticarrayfield.validatejson",
+    "class/src/struct_intern2.js~StructStaticArrayField.html#static-method-validateJSON",
+    "src/struct_intern2.js~StructStaticArrayField.validateJSON",
+    "method"
+  ],
+  [
     "src/struct_intern2.js~structstaticstringfield",
     "class/src/struct_intern2.js~StructStaticStringField.html",
     "src/struct_intern2.js~StructStaticStringField",
@@ -2106,6 +2304,18 @@ window.esdocSearchIndex = [
     "method"
   ],
   [
+    "src/struct_intern2.js~structstaticstringfield.validatejson",
+    "class/src/struct_intern2.js~StructStaticStringField.html#static-method-validateJSON",
+    "src/struct_intern2.js~StructStaticStringField.validateJSON",
+    "method"
+  ],
+  [
+    "src/struct_intern2.js~structstaticstringfield.validatejson",
+    "class/src/struct_intern2.js~StructStaticStringField.html#static-method-validateJSON",
+    "src/struct_intern2.js~StructStaticStringField.validateJSON",
+    "method"
+  ],
+  [
     "src/struct_intern2.js~structstringfield",
     "class/src/struct_intern2.js~StructStringField.html",
     "src/struct_intern2.js~StructStringField",
@@ -2157,6 +2367,18 @@ window.esdocSearchIndex = [
     "src/struct_intern2.js~structstringfield.unpack",
     "class/src/struct_intern2.js~StructStringField.html#static-method-unpack",
     "src/struct_intern2.js~StructStringField.unpack",
+    "method"
+  ],
+  [
+    "src/struct_intern2.js~structstringfield.validatejson",
+    "class/src/struct_intern2.js~StructStringField.html#static-method-validateJSON",
+    "src/struct_intern2.js~StructStringField.validateJSON",
+    "method"
+  ],
+  [
+    "src/struct_intern2.js~structstringfield.validatejson",
+    "class/src/struct_intern2.js~StructStringField.html#static-method-validateJSON",
+    "src/struct_intern2.js~StructStringField.validateJSON",
     "method"
   ],
   [
@@ -2262,6 +2484,18 @@ window.esdocSearchIndex = [
     "method"
   ],
   [
+    "src/struct_intern2.js~structstructfield.validatejson",
+    "class/src/struct_intern2.js~StructStructField.html#static-method-validateJSON",
+    "src/struct_intern2.js~StructStructField.validateJSON",
+    "method"
+  ],
+  [
+    "src/struct_intern2.js~structstructfield.validatejson",
+    "class/src/struct_intern2.js~StructStructField.html#static-method-validateJSON",
+    "src/struct_intern2.js~StructStructField.validateJSON",
+    "method"
+  ],
+  [
     "src/struct_intern2.js~structtstructfield",
     "class/src/struct_intern2.js~StructTStructField.html",
     "src/struct_intern2.js~StructTStructField",
@@ -2364,6 +2598,18 @@ window.esdocSearchIndex = [
     "method"
   ],
   [
+    "src/struct_intern2.js~structtstructfield.validatejson",
+    "class/src/struct_intern2.js~StructTStructField.html#static-method-validateJSON",
+    "src/struct_intern2.js~StructTStructField.validateJSON",
+    "method"
+  ],
+  [
+    "src/struct_intern2.js~structtstructfield.validatejson",
+    "class/src/struct_intern2.js~StructTStructField.html#static-method-validateJSON",
+    "src/struct_intern2.js~StructTStructField.validateJSON",
+    "method"
+  ],
+  [
     "src/struct_intern2.js~structuintfield",
     "class/src/struct_intern2.js~StructUintField.html",
     "src/struct_intern2.js~StructUintField",
@@ -2406,6 +2652,18 @@ window.esdocSearchIndex = [
     "method"
   ],
   [
+    "src/struct_intern2.js~structuintfield.validatejson",
+    "class/src/struct_intern2.js~StructUintField.html#static-method-validateJSON",
+    "src/struct_intern2.js~StructUintField.validateJSON",
+    "method"
+  ],
+  [
+    "src/struct_intern2.js~structuintfield.validatejson",
+    "class/src/struct_intern2.js~StructUintField.html#static-method-validateJSON",
+    "src/struct_intern2.js~StructUintField.validateJSON",
+    "method"
+  ],
+  [
     "src/struct_intern2.js~structushortfield",
     "class/src/struct_intern2.js~StructUshortField.html",
     "src/struct_intern2.js~StructUshortField",
@@ -2445,6 +2703,18 @@ window.esdocSearchIndex = [
     "src/struct_intern2.js~structushortfield.unpack",
     "class/src/struct_intern2.js~StructUshortField.html#static-method-unpack",
     "src/struct_intern2.js~StructUshortField.unpack",
+    "method"
+  ],
+  [
+    "src/struct_intern2.js~structushortfield.validatejson",
+    "class/src/struct_intern2.js~StructUshortField.html#static-method-validateJSON",
+    "src/struct_intern2.js~StructUshortField.validateJSON",
+    "method"
+  ],
+  [
+    "src/struct_intern2.js~structushortfield.validatejson",
+    "class/src/struct_intern2.js~StructUshortField.html#static-method-validateJSON",
+    "src/struct_intern2.js~StructUshortField.validateJSON",
     "method"
   ],
   [
@@ -2494,6 +2764,12 @@ window.esdocSearchIndex = [
     "class/src/struct_intern2.js~cachering.html#static-method-fromConstructor",
     "src/struct_intern2.js~cachering.fromConstructor",
     "method"
+  ],
+  [
+    "src/struct_json.js",
+    "file/src/struct_json.js.html",
+    "src/struct_json.js",
+    "file"
   ],
   [
     "src/struct_parser.js",
@@ -2568,6 +2844,12 @@ window.esdocSearchIndex = [
     "method"
   ],
   [
+    "src/struct_parseutil.js~lexer#colmap",
+    "class/src/struct_parseutil.js~lexer.html#instance-member-colmap",
+    "src/struct_parseutil.js~lexer#colmap",
+    "member"
+  ],
+  [
     "src/struct_parseutil.js~lexer#constructor",
     "class/src/struct_parseutil.js~lexer.html#static-constructor-constructor",
     "src/struct_parseutil.js~lexer#constructor",
@@ -2604,9 +2886,21 @@ window.esdocSearchIndex = [
     "member"
   ],
   [
+    "src/struct_parseutil.js~lexer#linemap",
+    "class/src/struct_parseutil.js~lexer.html#instance-member-linemap",
+    "src/struct_parseutil.js~lexer#linemap",
+    "member"
+  ],
+  [
     "src/struct_parseutil.js~lexer#lineno",
     "class/src/struct_parseutil.js~lexer.html#instance-member-lineno",
     "src/struct_parseutil.js~lexer#lineno",
+    "member"
+  ],
+  [
+    "src/struct_parseutil.js~lexer#linestart",
+    "class/src/struct_parseutil.js~lexer.html#instance-member-linestart",
+    "src/struct_parseutil.js~lexer#linestart",
     "member"
   ],
   [
@@ -2638,6 +2932,12 @@ window.esdocSearchIndex = [
     "class/src/struct_parseutil.js~lexer.html#static-method-pop_state",
     "src/struct_parseutil.js~lexer#pop_state",
     "method"
+  ],
+  [
+    "src/struct_parseutil.js~lexer#printtokens",
+    "class/src/struct_parseutil.js~lexer.html#instance-member-printTokens",
+    "src/struct_parseutil.js~lexer#printTokens",
+    "member"
   ],
   [
     "src/struct_parseutil.js~lexer#push_state",
@@ -2812,6 +3112,12 @@ window.esdocSearchIndex = [
     "class/src/struct_parseutil.js~token.html",
     "src/struct_parseutil.js~token",
     "class"
+  ],
+  [
+    "src/struct_parseutil.js~token#col",
+    "class/src/struct_parseutil.js~token.html#instance-member-col",
+    "src/struct_parseutil.js~token#col",
+    "member"
   ],
   [
     "src/struct_parseutil.js~token#constructor",

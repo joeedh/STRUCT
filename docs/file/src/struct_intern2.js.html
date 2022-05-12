@@ -34,6 +34,7 @@
 <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/struct_filehelper.js~FileHelper.html">FileHelper</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/struct_filehelper.js~FileParams.html">FileParams</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/struct_filehelper.js~FileeError.html">FileeError</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/struct_intern.js~JSONError.html">JSONError</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/struct_intern.js~STRUCT.html">STRUCT</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/struct_intern2.js~StructArrayField.html">StructArrayField</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/struct_intern2.js~StructBoolField.html">StructBoolField</a></span></span></li>
@@ -73,7 +74,7 @@
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-pack_string">pack_string</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-pack_uint">pack_uint</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-pack_ushort">pack_ushort</a></span></span></li>
-<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-setEndian">setEndian</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-setBinaryEndian">setBinaryEndian</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-test_utf8">test_utf8</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-unpack_byte">unpack_byte</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-unpack_bytes">unpack_bytes</a></span></span></li>
@@ -98,11 +99,17 @@
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-setWarningMode">setWarningMode</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-write_scripts">write_scripts</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-_get_pack_debug">_get_pack_debug</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-do_pack">do_pack</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-fromJSON">fromJSON</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-packNull">packNull</a></span></span></li>
-<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-setDebugMode">setDebugMode</a></span></span></li>
-<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-setWarningMode">setWarningMode</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-setDebugMode2">setDebugMode2</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-setWarningMode2">setWarningMode2</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-toJSON">toJSON</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-validateJSON">validateJSON</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-stripComments">stripComments</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-termColor">termColor</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-termPrint">termPrint</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-consoleLogger">consoleLogger</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-getEndian">getEndian</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-inherit">inherit</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-isRegistered">isRegistered</a></span></span></li>
@@ -114,6 +121,7 @@
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-truncateDollarSign">truncateDollarSign</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-unregister">unregister</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-useTinyEval">useTinyEval</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-validateJSON">validateJSON</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-validateStructs">validateStructs</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-writeJSON">writeJSON</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-writeObject">writeObject</a></span></span></li>
@@ -130,6 +138,7 @@
 <li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-StructTypes">StructTypes</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-ValueTypes">ValueTypes</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-struct_parse">struct_parse</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-termColorMap">termColorMap</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-tinyeval">tinyeval</a></span></span></li>
 </ul>
 </div>
@@ -196,7 +205,7 @@ function gen_tabstr(tot) {
   return ret;
 }
 
-export function setWarningMode(t) {
+export function setWarningMode2(t) {
   if (typeof t !== &quot;number&quot; || isNaN(t)) {
     throw new Error(&quot;Expected a single number (&gt;= 0) argument to setWarningMode&quot;);
   }
@@ -204,7 +213,7 @@ export function setWarningMode(t) {
   warninglvl = t;
 }
 
-export function setDebugMode(t) {
+export function setDebugMode2(t) {
   debug = t;
 
   if (debug) {
@@ -239,22 +248,27 @@ export function setDebugMode(t) {
   }
 }
 
-setDebugMode(debug);
+setDebugMode2(debug);
 
 export const StructFieldTypes = [];
 export const StructFieldTypeMap = {};
 
 export function packNull(manager, data, field, type) {
   StructFieldTypeMap[type.type].packNull(manager, data, field, type);
-};
+}
 
 export function toJSON(manager, val, obj, field, type) {
   return StructFieldTypeMap[type.type].toJSON(manager, val, obj, field, type);
-};
+}
 
 export function fromJSON(manager, val, obj, field, type, instance) {
   return StructFieldTypeMap[type.type].fromJSON(manager, val, obj, field, type, instance);
-};
+}
+
+export function validateJSON(manager, val, obj, field, type, instance, _abstractKey) {
+  return StructFieldTypeMap[type.type].validateJSON(manager, val, obj, field, type, instance, _abstractKey);
+}
+
 
 function unpack_field(manager, data, type, uctx) {
   let name;
@@ -281,7 +295,7 @@ function fmt_type(type) {
   return StructFieldTypeMap[type.type].format(type);
 }
 
-function do_pack(manager, data, val, obj, field, type) {
+export function do_pack(manager, data, val, obj, field, type) {
   let name;
 
   if (debug) {
@@ -328,6 +342,10 @@ export class StructFieldType {
     return val;
   }
 
+  static validateJSON(manager, val, obj, field, type, instance, _abstractKey) {
+    return true;
+  }
+
   /**
    return false to override default
    helper js for packing
@@ -342,7 +360,7 @@ export class StructFieldType {
    Example:
    &lt;pre&gt;
    static define() {return {
-    type : StructEnum.T_INT,
+    type : StructEnum.INT,
     name : &quot;int&quot;
   }}
    &lt;/pre&gt;
@@ -388,9 +406,17 @@ class StructIntField extends StructFieldType {
     return unpack_int(data, uctx);
   }
 
+  static validateJSON(manager, val, obj, field, type, instance) {
+    if (typeof val !== &quot;number&quot; || val !== Math.floor(val)) {
+      return &quot;&quot; + val + &quot; is not an integer&quot;;
+    }
+
+    return true;
+  }
+
   static define() {
     return {
-      type: StructEnum.T_INT,
+      type: StructEnum.INT,
       name: &quot;int&quot;
     }
   }
@@ -407,9 +433,17 @@ class StructFloatField extends StructFieldType {
     return unpack_float(data, uctx);
   }
 
+  static validateJSON(manager, val, obj, field, type, instance, _abstractKey) {
+    if (typeof val !== &quot;number&quot;) {
+      return &quot;Not a float: &quot; + val;
+    }
+
+    return true;
+  }
+
   static define() {
     return {
-      type: StructEnum.T_FLOAT,
+      type: StructEnum.FLOAT,
       name: &quot;float&quot;
     }
   }
@@ -426,9 +460,17 @@ class StructDoubleField extends StructFieldType {
     return unpack_double(data, uctx);
   }
 
+  static validateJSON(manager, val, obj, field, type, instance) {
+    if (typeof val !== &quot;number&quot;) {
+      return &quot;Not a double: &quot; + val;
+    }
+
+    return true;
+  }
+
   static define() {
     return {
-      type: StructEnum.T_DOUBLE,
+      type: StructEnum.DOUBLE,
       name: &quot;double&quot;
     }
   }
@@ -443,6 +485,14 @@ class StructStringField extends StructFieldType {
     pack_string(data, val);
   }
 
+  static validateJSON(manager, val, obj, field, type, instance) {
+    if (typeof val !== &quot;string&quot;) {
+      return &quot;Not a string: &quot; + val;
+    }
+
+    return true;
+  }
+
   static packNull(manager, data, field, type) {
     this.pack(manager, data, &quot;&quot;, 0, field, type);
   }
@@ -453,7 +503,7 @@ class StructStringField extends StructFieldType {
 
   static define() {
     return {
-      type: StructEnum.T_STRING,
+      type: StructEnum.STRING,
       name: &quot;string&quot;
     }
   }
@@ -466,6 +516,19 @@ class StructStaticStringField extends StructFieldType {
     val = !val ? &quot;&quot; : val;
 
     pack_static_string(data, val, type.data.maxlength);
+  }
+
+  static validateJSON(manager, val, obj, field, type, instance) {
+    if (typeof val !== &quot;string&quot;) {
+      return &quot;Not a string: &quot; + val;
+    }
+
+
+    if (val.length &gt; type.data.maxlength) {
+      return &quot;String is too big; limit is &quot; + type.data.maxlength + &quot;; string:&quot; + val;
+    }
+
+    return true;
   }
 
   static format(type) {
@@ -482,7 +545,7 @@ class StructStaticStringField extends StructFieldType {
 
   static define() {
     return {
-      type: StructEnum.T_STATIC_STRING,
+      type: StructEnum.STATIC_STRING,
       name: &quot;static_string&quot;
     }
   }
@@ -497,6 +560,16 @@ class StructStructField extends StructFieldType {
     packer_debug(&quot;struct&quot;, stt.name);
 
     manager.write_struct(data, val, stt);
+  }
+
+  static validateJSON(manager, val, obj, field, type, instance, _abstractKey) {
+    let stt = manager.get_struct(type.data);
+
+    if (!val) {
+      return &quot;Expected &quot; + stt.name + &quot; object&quot;;
+    }
+
+    return manager.validateJSONIntern(val, stt, _abstractKey);
   }
 
   static format(type) {
@@ -542,7 +615,7 @@ class StructStructField extends StructFieldType {
 
   static define() {
     return {
-      type: StructEnum.T_STRUCT,
+      type: StructEnum.STRUCT,
       name: &quot;struct&quot;
     }
   }
@@ -556,7 +629,7 @@ class StructTStructField extends StructFieldType {
     let stt = manager.get_struct(type.data);
 
     const keywords = manager.constructor.keywords;
-    
+
     //make sure inheritance is correct
     if (val.constructor[keywords.name] !== type.data &amp;&amp; (val instanceof cls)) {
       //if (DEBUG.Struct) {
@@ -575,6 +648,36 @@ class StructTStructField extends StructFieldType {
     pack_int(data, stt.id);
     manager.write_struct(data, val, stt);
   }
+
+  static validateJSON(manager, val, obj, field, type, instance, _abstractKey) {
+    let key = type.jsonKeyword;
+
+    if (typeof val !== &quot;object&quot;) {
+      return typeof val + &quot; is not an object&quot;;
+    }
+
+    let stt = manager.get_struct(val[key]);
+    let cls = manager.get_struct_cls(stt.name);
+    let parentcls = manager.get_struct_cls(type.data);
+
+    let ok = false;
+
+    do {
+      if (cls === parentcls) {
+        ok = true;
+        break;
+      }
+
+      cls = cls.prototype.__proto__.constructor;
+    } while (cls &amp;&amp; cls !== Object);
+
+    if (!ok) {
+      return stt.name + &quot; is not a child class off &quot; + type.data;
+    }
+
+    return manager.validateJSONIntern(val, stt, type.jsonKeyword);
+  }
+
 
   static fromJSON(manager, val, obj, field, type, instance) {
     let key = type.jsonKeyword;
@@ -599,7 +702,7 @@ class StructTStructField extends StructFieldType {
     let stt = manager.get_struct(type.data);
 
     pack_int(data, stt.id);
-    packNull(manager, data, field, {type: StructEnum.T_STRUCT, data: type.data});
+    packNull(manager, data, field, {type: StructEnum.STRUCT, data: type.data});
   }
 
   static format(type) {
@@ -651,7 +754,7 @@ class StructTStructField extends StructFieldType {
 
   static define() {
     return {
-      type: StructEnum.T_TSTRUCT,
+      type: StructEnum.TSTRUCT,
       name: &quot;tstruct&quot;
     }
   }
@@ -710,6 +813,22 @@ class StructArrayField extends StructFieldType {
 
   static useHelperJS(field) {
     return !field.type.data.iname;
+  }
+
+  static validateJSON(manager, val, obj, field, type, instance, _abstractKey) {
+    if (!val) {
+      return &quot;not an array: &quot; + val;
+    }
+
+    for (let i = 0; i &lt; val.length; i++) {
+      let ret = validateJSON(manager, val[i], val, field, type.data.type, undefined, _abstractKey);
+
+      if (typeof ret === &quot;string&quot; || !ret) {
+        return ret;
+      }
+    }
+
+    return true;
   }
 
   static fromJSON(manager, val, obj, field, type, instance) {
@@ -779,7 +898,7 @@ class StructArrayField extends StructFieldType {
 
   static define() {
     return {
-      type: StructEnum.T_ARRAY,
+      type: StructEnum.ARRAY,
       name: &quot;array&quot;
     }
   }
@@ -838,6 +957,10 @@ class StructIterField extends StructFieldType {
     data[starti++] = uint8_view[1];
     data[starti++] = uint8_view[2];
     data[starti++] = uint8_view[3];
+  }
+
+  static validateJSON(manager, val, obj, field, type, instance) {
+    return StructArrayField.validateJSON(...arguments);
   }
 
   static fromJSON() {
@@ -910,7 +1033,7 @@ class StructIterField extends StructFieldType {
 
   static define() {
     return {
-      type: StructEnum.T_ITER,
+      type: StructEnum.ITER,
       name: &quot;iter&quot;
     }
   }
@@ -929,7 +1052,7 @@ class StructShortField extends StructFieldType {
 
   static define() {
     return {
-      type: StructEnum.T_SHORT,
+      type: StructEnum.SHORT,
       name: &quot;short&quot;
     }
   }
@@ -948,7 +1071,7 @@ class StructByteField extends StructFieldType {
 
   static define() {
     return {
-      type: StructEnum.T_BYTE,
+      type: StructEnum.BYTE,
       name: &quot;byte&quot;
     }
   }
@@ -967,7 +1090,7 @@ class StructSignedByteField extends StructFieldType {
 
   static define() {
     return {
-      type: StructEnum.T_SIGNED_BYTE,
+      type: StructEnum.SIGNED_BYTE,
       name: &quot;sbyte&quot;
     }
   }
@@ -984,9 +1107,29 @@ class StructBoolField extends StructFieldType {
     return !!unpack_byte(data, uctx);
   }
 
+  static validateJSON(manager, val, obj, field, type, instance) {
+    if (val === 0 || val === 1 || val === true || val === false || val === &quot;true&quot; || val === &quot;false&quot;) {
+      return true;
+    }
+
+    return &quot;&quot; + val + &quot; is not a bool&quot;;
+  }
+
+  static fromJSON(manager, val, obj, field, type, instance) {
+    if (val === &quot;false&quot;) {
+      val = false;
+    }
+
+    return !!val;
+  }
+
+  static toJSON(manager, val, obj, field, type) {
+    return !!val;
+  }
+
   static define() {
     return {
-      type: StructEnum.T_BOOL,
+      type: StructEnum.BOOL,
       name: &quot;bool&quot;
     }
   }
@@ -1039,6 +1182,10 @@ class StructIterKeysField extends StructFieldType {
 
       i++;
     }
+  }
+
+  static validateJSON(manager, val, obj, field, type, instance) {
+    return StructArrayField.validateJSON(...arguments);
   }
 
   static fromJSON() {
@@ -1112,7 +1259,7 @@ class StructIterKeysField extends StructFieldType {
 
   static define() {
     return {
-      type: StructEnum.T_ITERKEYS,
+      type: StructEnum.ITERKEYS,
       name: &quot;iterkeys&quot;
     }
   }
@@ -1129,9 +1276,17 @@ class StructUintField extends StructFieldType {
     return unpack_uint(data, uctx);
   }
 
+  static validateJSON(manager, val, obj, field, type, instance) {
+    if (typeof val !== &quot;number&quot; || val !== Math.floor(val)) {
+      return &quot;&quot; + val + &quot; is not an integer&quot;;
+    }
+
+    return true;
+  }
+
   static define() {
     return {
-      type: StructEnum.T_UINT,
+      type: StructEnum.UINT,
       name: &quot;uint&quot;
     }
   }
@@ -1149,9 +1304,17 @@ class StructUshortField extends StructFieldType {
     return unpack_ushort(data, uctx);
   }
 
+  static validateJSON(manager, val, obj, field, type, instance) {
+    if (typeof val !== &quot;number&quot; || val !== Math.floor(val)) {
+      return &quot;&quot; + val + &quot; is not an integer&quot;;
+    }
+
+    return true;
+  }
+
   static define() {
     return {
-      type: StructEnum.T_USHORT,
+      type: StructEnum.USHORT,
       name: &quot;ushort&quot;
     }
   }
@@ -1193,6 +1356,10 @@ class StructStaticArrayField extends StructFieldType {
 
   static useHelperJS(field) {
     return !field.type.data.iname;
+  }
+
+  static validateJSON() {
+    return StructArrayField.validateJSON(...arguments);
   }
 
   static fromJSON() {
@@ -1249,7 +1416,7 @@ class StructStaticArrayField extends StructFieldType {
 
   static define() {
     return {
-      type: StructEnum.T_STATIC_ARRAY,
+      type: StructEnum.STATIC_ARRAY,
       name: &quot;static_array&quot;
     }
   }

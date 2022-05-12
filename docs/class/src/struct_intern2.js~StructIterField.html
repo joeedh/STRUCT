@@ -34,6 +34,7 @@
 <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/struct_filehelper.js~FileHelper.html">FileHelper</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/struct_filehelper.js~FileParams.html">FileParams</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/struct_filehelper.js~FileeError.html">FileeError</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/struct_intern.js~JSONError.html">JSONError</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/struct_intern.js~STRUCT.html">STRUCT</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/struct_intern2.js~StructArrayField.html">StructArrayField</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/struct_intern2.js~StructBoolField.html">StructBoolField</a></span></span></li>
@@ -73,7 +74,7 @@
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-pack_string">pack_string</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-pack_uint">pack_uint</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-pack_ushort">pack_ushort</a></span></span></li>
-<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-setEndian">setEndian</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-setBinaryEndian">setBinaryEndian</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-test_utf8">test_utf8</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-unpack_byte">unpack_byte</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-unpack_bytes">unpack_bytes</a></span></span></li>
@@ -98,11 +99,17 @@
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-setWarningMode">setWarningMode</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-write_scripts">write_scripts</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-_get_pack_debug">_get_pack_debug</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-do_pack">do_pack</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-fromJSON">fromJSON</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-packNull">packNull</a></span></span></li>
-<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-setDebugMode">setDebugMode</a></span></span></li>
-<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-setWarningMode">setWarningMode</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-setDebugMode2">setDebugMode2</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-setWarningMode2">setWarningMode2</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-toJSON">toJSON</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-validateJSON">validateJSON</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-stripComments">stripComments</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-termColor">termColor</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-termPrint">termPrint</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-consoleLogger">consoleLogger</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-getEndian">getEndian</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-inherit">inherit</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-isRegistered">isRegistered</a></span></span></li>
@@ -114,6 +121,7 @@
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-truncateDollarSign">truncateDollarSign</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-unregister">unregister</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-useTinyEval">useTinyEval</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-validateJSON">validateJSON</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-validateStructs">validateStructs</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-writeJSON">writeJSON</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-writeObject">writeObject</a></span></span></li>
@@ -130,6 +138,7 @@
 <li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-StructTypes">StructTypes</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-ValueTypes">ValueTypes</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-struct_parse">struct_parse</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-termColorMap">termColorMap</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-tinyeval">tinyeval</a></span></span></li>
 </ul>
 </div>
@@ -142,7 +151,7 @@
   
   
   
-  <span data-ice="source">| <span><a href="file/src/struct_intern2.js.html#lineNumber652">source</a></span></span>
+  <span data-ice="source">| <span><a href="file/src/struct_intern2.js.html#lineNumber762">source</a></span></span>
 </div>
 
 <div class="self-detail detail">
@@ -683,6 +692,62 @@
       
     </td>
   </tr>
+<tr data-ice="target">
+    <td>
+      <span class="access" data-ice="access">public</span>
+      <span data-ice="static">static</span>
+      
+      
+      <span class="override" data-ice="override"></span>
+    </td>
+    <td>
+      <div>
+        <p>
+          
+          
+          
+          <span class="code" data-ice="name"><span><a href="class/src/struct_intern2.js~StructIterField.html#static-method-validateJSON">validateJSON</a></span></span><span class="code" data-ice="signature">(manager: <span>*</span>, val: <span>*</span>, obj: <span>*</span>, field: <span>*</span>, type: <span>*</span>, instance: <span>*</span>): <span>*</span></span>
+        </p>
+      </div>
+      <div>
+        
+        
+        
+      </div>
+    </td>
+    <td>
+      
+      
+    </td>
+  </tr>
+<tr data-ice="target">
+    <td>
+      <span class="access" data-ice="access">public</span>
+      <span data-ice="static">static</span>
+      
+      
+      <span class="override" data-ice="override"></span>
+    </td>
+    <td>
+      <div>
+        <p>
+          
+          
+          
+          <span class="code" data-ice="name"><span><a href="class/src/struct_intern2.js~StructIterField.html#static-method-validateJSON">validateJSON</a></span></span><span class="code" data-ice="signature">(manager: <span>*</span>, val: <span>*</span>, obj: <span>*</span>, field: <span>*</span>, type: <span>*</span>, instance: <span>*</span>): <span>*</span></span>
+        </p>
+      </div>
+      <div>
+        
+        
+        
+      </div>
+    </td>
+    <td>
+      
+      
+    </td>
+  </tr>
 </tbody>
 </table>
 </div>
@@ -707,7 +772,7 @@
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/struct_intern2.js.html#lineNumber773">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/struct_intern2.js.html#lineNumber887">source</a></span></span>
     </span>
   </h3>
 
@@ -762,7 +827,7 @@
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/struct_intern2.js.html#lineNumber773">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/struct_intern2.js.html#lineNumber887">source</a></span></span>
     </span>
   </h3>
 
@@ -817,7 +882,7 @@
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/struct_intern2.js.html#lineNumber740">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/struct_intern2.js.html#lineNumber854">source</a></span></span>
     </span>
   </h3>
 
@@ -888,7 +953,7 @@
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/struct_intern2.js.html#lineNumber740">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/struct_intern2.js.html#lineNumber854">source</a></span></span>
     </span>
   </h3>
 
@@ -959,7 +1024,7 @@
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/struct_intern2.js.html#lineNumber705">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/struct_intern2.js.html#lineNumber819">source</a></span></span>
     </span>
   </h3>
 
@@ -1014,7 +1079,7 @@
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/struct_intern2.js.html#lineNumber705">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/struct_intern2.js.html#lineNumber819">source</a></span></span>
     </span>
   </h3>
 
@@ -1069,7 +1134,7 @@
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/struct_intern2.js.html#lineNumber653">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/struct_intern2.js.html#lineNumber763">source</a></span></span>
     </span>
   </h3>
 
@@ -1158,7 +1223,7 @@
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/struct_intern2.js.html#lineNumber653">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/struct_intern2.js.html#lineNumber763">source</a></span></span>
     </span>
   </h3>
 
@@ -1247,7 +1312,7 @@
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/struct_intern2.js.html#lineNumber732">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/struct_intern2.js.html#lineNumber846">source</a></span></span>
     </span>
   </h3>
 
@@ -1324,7 +1389,7 @@
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/struct_intern2.js.html#lineNumber732">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/struct_intern2.js.html#lineNumber846">source</a></span></span>
     </span>
   </h3>
 
@@ -1401,7 +1466,7 @@
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/struct_intern2.js.html#lineNumber709">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/struct_intern2.js.html#lineNumber823">source</a></span></span>
     </span>
   </h3>
 
@@ -1496,7 +1561,7 @@
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/struct_intern2.js.html#lineNumber709">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/struct_intern2.js.html#lineNumber823">source</a></span></span>
     </span>
   </h3>
 
@@ -1591,7 +1656,7 @@
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/struct_intern2.js.html#lineNumber761">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/struct_intern2.js.html#lineNumber875">source</a></span></span>
     </span>
   </h3>
 
@@ -1680,7 +1745,7 @@
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/struct_intern2.js.html#lineNumber761">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/struct_intern2.js.html#lineNumber875">source</a></span></span>
     </span>
   </h3>
 
@@ -1769,7 +1834,7 @@
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/struct_intern2.js.html#lineNumber748">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/struct_intern2.js.html#lineNumber862">source</a></span></span>
     </span>
   </h3>
 
@@ -1864,7 +1929,7 @@
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/struct_intern2.js.html#lineNumber748">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/struct_intern2.js.html#lineNumber862">source</a></span></span>
     </span>
   </h3>
 
@@ -1959,7 +2024,7 @@
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/struct_intern2.js.html#lineNumber736">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/struct_intern2.js.html#lineNumber850">source</a></span></span>
     </span>
   </h3>
 
@@ -2030,7 +2095,7 @@
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/struct_intern2.js.html#lineNumber736">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/struct_intern2.js.html#lineNumber850">source</a></span></span>
     </span>
   </h3>
 
@@ -2051,6 +2116,208 @@
     
     <tr data-ice="property" data-depth="0">
       <td data-ice="name" class="code" data-depth="0">field</td>
+      <td data-ice="type" class="code"><span>*</span></td>
+      <td data-ice="appendix"></td>
+      <td data-ice="description"></td>
+    </tr>
+</tbody>
+  </table>
+</div>
+</div>
+
+  <div class="return-params" data-ice="returnParams">
+    <h4>Return:</h4>
+    <table>
+      <tbody>
+        <tr>
+          <td class="return-type code" data-ice="returnType"><span>*</span></td>
+          
+        </tr>
+      </tbody>
+    </table>
+    <div data-ice="returnProperties">
+</div>
+  </div>
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+  
+</div>
+<div class="detail" data-ice="detail">
+  <h3 data-ice="anchor" id="static-method-validateJSON">
+    <span class="access" data-ice="access">public</span>
+    <span data-ice="static">static</span>
+    
+    
+    
+    
+    <span class="code" data-ice="name">validateJSON</span><span class="code" data-ice="signature">(manager: <span>*</span>, val: <span>*</span>, obj: <span>*</span>, field: <span>*</span>, type: <span>*</span>, instance: <span>*</span>): <span>*</span></span>
+    <span class="right-info">
+      
+      
+      <span data-ice="source"><span><a href="file/src/struct_intern2.js.html#lineNumber815">source</a></span></span>
+    </span>
+  </h3>
+
+  
+  
+  
+  
+
+  
+
+  <div data-ice="properties"><div data-ice="properties">
+  <h4 data-ice="title">Params:</h4>
+  <table class="params">
+    <thead>
+    <tr><td>Name</td><td>Type</td><td>Attribute</td><td>Description</td></tr>
+    </thead>
+    <tbody>
+    
+    <tr data-ice="property" data-depth="0">
+      <td data-ice="name" class="code" data-depth="0">manager</td>
+      <td data-ice="type" class="code"><span>*</span></td>
+      <td data-ice="appendix"></td>
+      <td data-ice="description"></td>
+    </tr>
+<tr data-ice="property" data-depth="0">
+      <td data-ice="name" class="code" data-depth="0">val</td>
+      <td data-ice="type" class="code"><span>*</span></td>
+      <td data-ice="appendix"></td>
+      <td data-ice="description"></td>
+    </tr>
+<tr data-ice="property" data-depth="0">
+      <td data-ice="name" class="code" data-depth="0">obj</td>
+      <td data-ice="type" class="code"><span>*</span></td>
+      <td data-ice="appendix"></td>
+      <td data-ice="description"></td>
+    </tr>
+<tr data-ice="property" data-depth="0">
+      <td data-ice="name" class="code" data-depth="0">field</td>
+      <td data-ice="type" class="code"><span>*</span></td>
+      <td data-ice="appendix"></td>
+      <td data-ice="description"></td>
+    </tr>
+<tr data-ice="property" data-depth="0">
+      <td data-ice="name" class="code" data-depth="0">type</td>
+      <td data-ice="type" class="code"><span>*</span></td>
+      <td data-ice="appendix"></td>
+      <td data-ice="description"></td>
+    </tr>
+<tr data-ice="property" data-depth="0">
+      <td data-ice="name" class="code" data-depth="0">instance</td>
+      <td data-ice="type" class="code"><span>*</span></td>
+      <td data-ice="appendix"></td>
+      <td data-ice="description"></td>
+    </tr>
+</tbody>
+  </table>
+</div>
+</div>
+
+  <div class="return-params" data-ice="returnParams">
+    <h4>Return:</h4>
+    <table>
+      <tbody>
+        <tr>
+          <td class="return-type code" data-ice="returnType"><span>*</span></td>
+          
+        </tr>
+      </tbody>
+    </table>
+    <div data-ice="returnProperties">
+</div>
+  </div>
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+  
+</div>
+<div class="detail" data-ice="detail">
+  <h3 data-ice="anchor" id="static-method-validateJSON">
+    <span class="access" data-ice="access">public</span>
+    <span data-ice="static">static</span>
+    
+    
+    
+    
+    <span class="code" data-ice="name">validateJSON</span><span class="code" data-ice="signature">(manager: <span>*</span>, val: <span>*</span>, obj: <span>*</span>, field: <span>*</span>, type: <span>*</span>, instance: <span>*</span>): <span>*</span></span>
+    <span class="right-info">
+      
+      
+      <span data-ice="source"><span><a href="file/src/struct_intern2.js.html#lineNumber815">source</a></span></span>
+    </span>
+  </h3>
+
+  
+  
+  
+  
+
+  
+
+  <div data-ice="properties"><div data-ice="properties">
+  <h4 data-ice="title">Params:</h4>
+  <table class="params">
+    <thead>
+    <tr><td>Name</td><td>Type</td><td>Attribute</td><td>Description</td></tr>
+    </thead>
+    <tbody>
+    
+    <tr data-ice="property" data-depth="0">
+      <td data-ice="name" class="code" data-depth="0">manager</td>
+      <td data-ice="type" class="code"><span>*</span></td>
+      <td data-ice="appendix"></td>
+      <td data-ice="description"></td>
+    </tr>
+<tr data-ice="property" data-depth="0">
+      <td data-ice="name" class="code" data-depth="0">val</td>
+      <td data-ice="type" class="code"><span>*</span></td>
+      <td data-ice="appendix"></td>
+      <td data-ice="description"></td>
+    </tr>
+<tr data-ice="property" data-depth="0">
+      <td data-ice="name" class="code" data-depth="0">obj</td>
+      <td data-ice="type" class="code"><span>*</span></td>
+      <td data-ice="appendix"></td>
+      <td data-ice="description"></td>
+    </tr>
+<tr data-ice="property" data-depth="0">
+      <td data-ice="name" class="code" data-depth="0">field</td>
+      <td data-ice="type" class="code"><span>*</span></td>
+      <td data-ice="appendix"></td>
+      <td data-ice="description"></td>
+    </tr>
+<tr data-ice="property" data-depth="0">
+      <td data-ice="name" class="code" data-depth="0">type</td>
+      <td data-ice="type" class="code"><span>*</span></td>
+      <td data-ice="appendix"></td>
+      <td data-ice="description"></td>
+    </tr>
+<tr data-ice="property" data-depth="0">
+      <td data-ice="name" class="code" data-depth="0">instance</td>
       <td data-ice="type" class="code"><span>*</span></td>
       <td data-ice="appendix"></td>
       <td data-ice="description"></td>

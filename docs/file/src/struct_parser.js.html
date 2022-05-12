@@ -34,6 +34,7 @@
 <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/struct_filehelper.js~FileHelper.html">FileHelper</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/struct_filehelper.js~FileParams.html">FileParams</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/struct_filehelper.js~FileeError.html">FileeError</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/struct_intern.js~JSONError.html">JSONError</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/struct_intern.js~STRUCT.html">STRUCT</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/struct_intern2.js~StructArrayField.html">StructArrayField</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/struct_intern2.js~StructBoolField.html">StructBoolField</a></span></span></li>
@@ -73,7 +74,7 @@
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-pack_string">pack_string</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-pack_uint">pack_uint</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-pack_ushort">pack_ushort</a></span></span></li>
-<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-setEndian">setEndian</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-setBinaryEndian">setBinaryEndian</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-test_utf8">test_utf8</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-unpack_byte">unpack_byte</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-unpack_bytes">unpack_bytes</a></span></span></li>
@@ -98,11 +99,17 @@
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-setWarningMode">setWarningMode</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-write_scripts">write_scripts</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-_get_pack_debug">_get_pack_debug</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-do_pack">do_pack</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-fromJSON">fromJSON</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-packNull">packNull</a></span></span></li>
-<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-setDebugMode">setDebugMode</a></span></span></li>
-<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-setWarningMode">setWarningMode</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-setDebugMode2">setDebugMode2</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-setWarningMode2">setWarningMode2</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-toJSON">toJSON</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-validateJSON">validateJSON</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-stripComments">stripComments</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-termColor">termColor</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-termPrint">termPrint</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-consoleLogger">consoleLogger</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-getEndian">getEndian</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-inherit">inherit</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-isRegistered">isRegistered</a></span></span></li>
@@ -114,6 +121,7 @@
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-truncateDollarSign">truncateDollarSign</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-unregister">unregister</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-useTinyEval">useTinyEval</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-validateJSON">validateJSON</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-validateStructs">validateStructs</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-writeJSON">writeJSON</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-writeObject">writeObject</a></span></span></li>
@@ -130,6 +138,7 @@
 <li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-StructTypes">StructTypes</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-ValueTypes">ValueTypes</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-struct_parse">struct_parse</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-termColorMap">termColorMap</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-tinyeval">tinyeval</a></span></span></li>
 </ul>
 </div>
@@ -152,57 +161,57 @@ export class NStruct {
 //the version I originally wrote (which had a few application-specific types)
 //and this one do not become totally incompatible.
 export const StructEnum = {
-  T_INT          : 0,
-  T_FLOAT        : 1,
-  T_DOUBLE       : 2,
-  T_STRING       : 7,
-  T_STATIC_STRING: 8, //fixed-length string
-  T_STRUCT       : 9,
-  T_TSTRUCT      : 10,
-  T_ARRAY        : 11,
-  T_ITER         : 12,
-  T_SHORT        : 13,
-  T_BYTE         : 14,
-  T_BOOL         : 15,
-  T_ITERKEYS     : 16,
-  T_UINT         : 17,
-  T_USHORT       : 18,
-  T_STATIC_ARRAY : 19,
-  T_SIGNED_BYTE  : 20
+  INT          : 0,
+  FLOAT        : 1,
+  DOUBLE       : 2,
+  STRING       : 7,
+  STATIC_STRING: 8, //fixed-length string
+  STRUCT       : 9,
+  TSTRUCT      : 10,
+  ARRAY        : 11,
+  ITER         : 12,
+  SHORT        : 13,
+  BYTE         : 14,
+  BOOL         : 15,
+  ITERKEYS     : 16,
+  UINT         : 17,
+  USHORT       : 18,
+  STATIC_ARRAY : 19,
+  SIGNED_BYTE  : 20
 };
 
 export const ValueTypes = new Set([
-  StructEnum.T_INT,
-  StructEnum.T_FLOAT,
-  StructEnum.T_DOUBLE,
-  StructEnum.T_STRING,
-  StructEnum.T_STATIC_STRING,
-  StructEnum.T_SHORT,
-  StructEnum.T_BYTE,
-  StructEnum.T_BOOL,
-  StructEnum.T_UINT,
-  StructEnum.T_USHORT,
-  StructEnum.T_SIGNED_BYTE
+  StructEnum.INT,
+  StructEnum.FLOAT,
+  StructEnum.DOUBLE,
+  StructEnum.STRING,
+  StructEnum.STATIC_STRING,
+  StructEnum.SHORT,
+  StructEnum.BYTE,
+  StructEnum.BOOL,
+  StructEnum.UINT,
+  StructEnum.USHORT,
+  StructEnum.SIGNED_BYTE
 
 ])
 
 export let StructTypes = {
-  &quot;int&quot;          : StructEnum.T_INT,
-  &quot;uint&quot;         : StructEnum.T_UINT,
-  &quot;ushort&quot;       : StructEnum.T_USHORT,
-  &quot;float&quot;        : StructEnum.T_FLOAT,
-  &quot;double&quot;       : StructEnum.T_DOUBLE,
-  &quot;string&quot;       : StructEnum.T_STRING,
-  &quot;static_string&quot;: StructEnum.T_STATIC_STRING,
-  &quot;struct&quot;       : StructEnum.T_STRUCT,
-  &quot;abstract&quot;     : StructEnum.T_TSTRUCT,
-  &quot;array&quot;        : StructEnum.T_ARRAY,
-  &quot;iter&quot;         : StructEnum.T_ITER,
-  &quot;short&quot;        : StructEnum.T_SHORT,
-  &quot;byte&quot;         : StructEnum.T_BYTE,
-  &quot;bool&quot;         : StructEnum.T_BOOL,
-  &quot;iterkeys&quot;     : StructEnum.T_ITERKEYS,
-  &quot;sbyte&quot;        : StructEnum.T_SIGNED_BYTE
+  &quot;int&quot;          : StructEnum.INT,
+  &quot;uint&quot;         : StructEnum.UINT,
+  &quot;ushort&quot;       : StructEnum.USHORT,
+  &quot;float&quot;        : StructEnum.FLOAT,
+  &quot;double&quot;       : StructEnum.DOUBLE,
+  &quot;string&quot;       : StructEnum.STRING,
+  &quot;static_string&quot;: StructEnum.STATIC_STRING,
+  &quot;struct&quot;       : StructEnum.STRUCT,
+  &quot;abstract&quot;     : StructEnum.TSTRUCT,
+  &quot;array&quot;        : StructEnum.ARRAY,
+  &quot;iter&quot;         : StructEnum.ITER,
+  &quot;short&quot;        : StructEnum.SHORT,
+  &quot;byte&quot;         : StructEnum.BYTE,
+  &quot;bool&quot;         : StructEnum.BOOL,
+  &quot;iterkeys&quot;     : StructEnum.ITERKEYS,
+  &quot;sbyte&quot;        : StructEnum.SIGNED_BYTE
 };
 
 export let StructTypeMap = {};
@@ -216,6 +225,61 @@ function gen_tabstr(t) {
   for (let i = 0; i &lt; t; i++) {
     s += &quot;  &quot;;
   }
+  return s;
+}
+
+export function stripComments(buf) {
+  let s = &apos;&apos;;
+
+  const MAIN = 0, COMMENT = 1, STR = 2;
+
+  let p, n;
+  let strs = new Set([&quot;&apos;&quot;, &apos;&quot;&apos;, &quot;`&quot;]);
+  let mode = MAIN;
+  let strlit;
+  let escape = false;
+
+  for (let i = 0; i &lt; buf.length; i++) {
+    let p = i &gt; 0 ? buf[i - 1] : undefined;
+    let c = buf[i];
+    let n = i &lt; buf.length - 1 ? buf[i + 1] : undefined;
+
+    switch (mode) {
+      case MAIN:
+        if (c === &quot;/&quot; &amp;&amp; n === &quot;/&quot;) {
+          mode = COMMENT;
+          continue;
+        }
+
+        if (strs.has(c)) {
+          strlit = c;
+          mode = STR;
+        }
+
+        s += c;
+
+        break;
+      case COMMENT:
+        if (n === &quot;\n&quot;) {
+          mode = MAIN;
+        }
+        break;
+      case STR:
+        if (c === strlit &amp;&amp; !escape) {
+          mode = MAIN;
+        }
+
+        s += c;
+        break;
+    }
+
+    if (c === &quot;\\&quot;) {
+      escape ^= true;
+    } else {
+      escape = false;
+    }
+  }
+
   return s;
 }
 
@@ -294,7 +358,14 @@ function StructParser() {
     return true;
   }
 
-  let lex = new struct_parseutil.lexer(tokens, errfunc);
+  class Lexer extends struct_parseutil.lexer {
+    input(str) {
+      str = stripComments(str);
+      return super.input(str);
+    }
+  }
+
+  let lex = new Lexer(tokens, errfunc);
   let parser = new struct_parseutil.parser(lex);
 
   function p_Static_String(p) {
@@ -302,7 +373,7 @@ function StructParser() {
     p.expect(&quot;SOPEN&quot;);
     let num = p.expect(&quot;NUM&quot;);
     p.expect(&quot;SCLOSE&quot;);
-    return {type: StructEnum.T_STATIC_STRING, data: {maxlength: num}}
+    return {type: StructEnum.STATIC_STRING, data: {maxlength: num}}
   }
 
   function p_DataRef(p) {
@@ -310,7 +381,7 @@ function StructParser() {
     p.expect(&quot;LPARAM&quot;);
     let tname = p.expect(&quot;ID&quot;);
     p.expect(&quot;RPARAM&quot;);
-    return {type: StructEnum.T_DATAREF, data: tname}
+    return {type: StructEnum.DATAREF, data: tname}
   }
 
   function p_Array(p) {
@@ -325,7 +396,7 @@ function StructParser() {
     }
 
     p.expect(&quot;RPARAM&quot;);
-    return {type: StructEnum.T_ARRAY, data: {type: arraytype, iname: itername}}
+    return {type: StructEnum.ARRAY, data: {type: arraytype, iname: itername}}
   }
 
   function p_Iter(p) {
@@ -341,7 +412,7 @@ function StructParser() {
     }
 
     p.expect(&quot;RPARAM&quot;);
-    return {type: StructEnum.T_ITER, data: {type: arraytype, iname: itername}}
+    return {type: StructEnum.ITER, data: {type: arraytype, iname: itername}}
   }
 
   function p_StaticArray(p) {
@@ -365,7 +436,7 @@ function StructParser() {
     }
 
     p.expect(&quot;SCLOSE&quot;);
-    return {type: StructEnum.T_STATIC_ARRAY, data: {type: arraytype, size: size, iname: itername}}
+    return {type: StructEnum.STATIC_ARRAY, data: {type: arraytype, size: size, iname: itername}}
   }
 
   function p_IterKeys(p) {
@@ -381,7 +452,7 @@ function StructParser() {
     }
 
     p.expect(&quot;RPARAM&quot;);
-    return {type: StructEnum.T_ITERKEYS, data: {type: arraytype, iname: itername}}
+    return {type: StructEnum.ITERKEYS, data: {type: arraytype, iname: itername}}
   }
 
   function p_Abstract(p) {
@@ -398,7 +469,7 @@ function StructParser() {
     p.expect(&quot;RPARAM&quot;);
 
     return {
-      type: StructEnum.T_TSTRUCT,
+      type: StructEnum.TSTRUCT,
       data: type,
       jsonKeyword
     }
@@ -409,7 +480,7 @@ function StructParser() {
 
     if (tok.type === &quot;ID&quot;) {
       p.next();
-      return {type: StructEnum.T_STRUCT, data: tok.value}
+      return {type: StructEnum.STRUCT, data: tok.value}
     } else if (basic_types.has(tok.type.toLowerCase())) {
       p.next();
       return {type: StructTypes[tok.type.toLowerCase()]}
@@ -507,6 +578,7 @@ function StructParser() {
 }
 
 export const struct_parse = StructParser();
+
 
 </code></pre>
 
