@@ -11,11 +11,11 @@ function print_lines(ld, lineno, col, printColors, token) {
   let buf = '';
   let lines = ld.split("\n");
   let istart = Math.max(lineno - 5, 0);
-  let iend  = Math.min(lineno + 3, lines.length);
+  let iend = Math.min(lineno + 3, lines.length);
 
   let color = printColors ? (c) => c : termColor;
 
-  for (let i=istart; i<iend; i++) {
+  for (let i = istart; i < iend; i++) {
     let l = "" + (i + 1);
     while (l.length < 3) {
       l = " " + l;
@@ -24,12 +24,12 @@ function print_lines(ld, lineno, col, printColors, token) {
     l += `: ${lines[i]}\n`;
 
     if (i === lineno && token && token.value.length === 1) {
-      l = l.slice(0, col+5) + color(l[col+5], "yellow") + l.slice(col+6, l.length);
+      l = l.slice(0, col + 5) + color(l[col + 5], "yellow") + l.slice(col + 6, l.length);
     }
     buf += l;
     if (i === lineno) {
       let colstr = '     ';
-      for (let i=0; i<col; i++) {
+      for (let i = 0; i < col; i++) {
         colstr += ' ';
       }
       colstr += color("^", "red");
@@ -67,18 +67,18 @@ export class tokdef {
     this.re = regexpr;
     this.func = func;
     this.example = example;
-    
+
     if (example === undefined && regexpr) {
       let s = "" + regexpr;
       if (s.startsWith("/") && s.endsWith("/")) {
-        s = s.slice(1, s.length-1);
+        s = s.slice(1, s.length - 1);
       }
-      
+
       if (s.startsWith("\\")) {
         s = s.slice(1, s.length);
       }
       s = s.trim();
-      
+
       if (s.length === 1) {
         this.example = s;
       }
@@ -112,7 +112,7 @@ export class lexer {
     this.states = {"__main__": [tokdef, errfunc]}
     this.statedata = 0;
 
-    this.logger = function() {
+    this.logger = function () {
       console.log(...arguments);
     }
   }
@@ -151,7 +151,7 @@ export class lexer {
     let col = 0;
     let colmap = this.colmap = new Array(str.length);
 
-    for (let i=0; i<str.length; i++, col++) {
+    for (let i = 0; i < str.length; i++, col++) {
       let c = str[i];
 
       linemap[i] = lineno;
@@ -177,7 +177,7 @@ export class lexer {
     if (this.errfunc !== undefined && !this.errfunc(this))
       return;
 
-    let safepos = Math.min(this.lexpos, this.lexdata.length-1);
+    let safepos = Math.min(this.lexpos, this.lexdata.length - 1);
     let line = this.linemap[safepos];
     let col = this.colmap[safepos];
 
@@ -218,7 +218,7 @@ export class lexer {
       this.peeked_tokens.shift();
 
       if (!ignore_peek && this.printTokens) {
-        this.logger(""+tok);
+        this.logger("" + tok);
       }
 
       return tok;
@@ -258,7 +258,7 @@ export class lexer {
     }
 
     let def = theres[0];
-    let col = this.colmap[Math.min(this.lexpos, this.lexdata.length-1)];
+    let col = this.colmap[Math.min(this.lexpos, this.lexdata.length - 1)];
 
     if (this.lexpos < this.lexdata.length) {
       this.lineno = this.linemap[this.lexpos];
@@ -275,7 +275,7 @@ export class lexer {
     }
 
     if (!ignore_peek && this.printTokens) {
-      this.logger(""+tok);
+      this.logger("" + tok);
     }
     return tok;
   }
@@ -287,7 +287,7 @@ export class parser {
     this.errfunc = errfunc;
     this.start = undefined;
 
-    this.logger = function() {
+    this.logger = function () {
       console.log(...arguments);
     }
   }
@@ -319,11 +319,11 @@ export class parser {
     if (token === undefined)
       estr = "Parse error at end of input: " + msg;
     else
-      estr = `Parse error at line ${token.lineno + 1}:${token.col+1}: ${msg}`;
+      estr = `Parse error at line ${token.lineno + 1}:${token.col + 1}: ${msg}`;
 
     let buf = "";
     let ld = this.lexer.lexdata;
-    let lineno = token ? token.lineno : this.lexer.linemap[this.lexer.linemap.length-1];
+    let lineno = token ? token.lineno : this.lexer.linemap[this.lexer.linemap.length - 1];
     let col = token ? token.col : 0;
 
     ld = ld.replace(/\r/g, '');
@@ -353,13 +353,14 @@ export class parser {
 
   next() {
     let tok = this.lexer.next();
+
     if (tok !== undefined)
       tok.parser = this;
     return tok;
   }
 
   optional(type) {
-    let tok = this.peek();
+    let tok = this.peeknext();
     if (tok === undefined)
       return false;
     if (tok.type === type) {
@@ -375,17 +376,17 @@ export class parser {
 
   expect(type, msg) {
     let tok = this.next();
-    
+
     if (msg === undefined) {
       msg = type;
-      
+
       for (let tk of this.lexer.tokdef) {
         if (tk.name === type && tk.example) {
           msg = tk.example;
         }
       }
     }
-    
+
     if (tok === undefined || tok.type !== type) {
       this.error(tok, "Expected " + msg);
     }
@@ -395,7 +396,8 @@ export class parser {
 
 function test_parser() {
   let basic_types = new Set(["int", "float", "double", "vec2", "vec3", "vec4", "mat4", "string"]);
-  let reserved_tokens = new Set(["int", "float", "double", "vec2", "vec3", "vec4", "mat4", "string", "static_string", "array"]);
+  let reserved_tokens = new Set(["int", "float", "double", "vec2", "vec3", "vec4", "mat4", "string", "static_string",
+                                 "array"]);
 
   function tk(name, re, func) {
     return new tokdef(name, re, func);
@@ -422,10 +424,11 @@ function test_parser() {
     }
     t.value = js;
     return t;
-  }), tk("LPARAM", /\(/), tk("RPARAM", /\)/), tk("COMMA", /,/), tk("NUM", /[0-9]/), tk("SEMI", /;/), tk("NEWLINE", /\n/, function (t) {
-    t.lexer.lineno += 1;
-  }), tk("SPACE", / |\t/, function (t) {
-  })];
+  }), tk("LPARAM", /\(/), tk("RPARAM", /\)/), tk("COMMA", /,/), tk("NUM", /[0-9]/), tk("SEMI", /;/),
+                tk("NEWLINE", /\n/, function (t) {
+                  t.lexer.lineno += 1;
+                }), tk("SPACE", / |\t/, function (t) {
+    })];
 
   for (let rt of reserved_tokens) {
     tokens.push(tk(rt.toUpperCase()));
@@ -480,15 +483,12 @@ function test_parser() {
     if (tok.type === "ID") {
       p.next();
       return {type: "struct", data: "\"" + tok.value + "\""}
-    }
-    else if (basic_types.has(tok.type.toLowerCase())) {
+    } else if (basic_types.has(tok.type.toLowerCase())) {
       p.next();
       return {type: tok.type.toLowerCase()}
-    }
-    else if (tok.type === "ARRAY") {
+    } else if (tok.type === "ARRAY") {
       return p_Array(p);
-    }
-    else {
+    } else {
       p.error(tok, "invalid type " + tok.type);
     }
   }
@@ -523,11 +523,9 @@ function test_parser() {
     while (1) {
       if (p.at_end()) {
         p.error(undefined);
-      }
-      else if (p.optional("CLOSE")) {
+      } else if (p.optional("CLOSE")) {
         break;
-      }
-      else {
+      } else {
         st.fields.push(p_Field(p));
       }
     }

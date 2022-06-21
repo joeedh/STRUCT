@@ -40,6 +40,16 @@ let colormap = {
   "peach"   : 210
 };
 
+function tab(n, chr = ' ') {
+  let t = '';
+
+  for (let i = 0; i < n; i++) {
+    t += chr;
+  }
+
+  return t;
+}
+
 let termColorMap = {};
 for (let k in colormap) {
   termColorMap[k] = colormap[k];
@@ -162,17 +172,36 @@ function termPrint() {
   return out;
 }
 
+function list(iter) {
+  let ret = [];
+
+  for (let item of iter) {
+    ret.push(item);
+  }
+
+  return ret;
+}
+
+var util = /*#__PURE__*/Object.freeze({
+  __proto__: null,
+  tab: tab,
+  termColorMap: termColorMap,
+  termColor: termColor,
+  termPrint: termPrint,
+  list: list
+});
+
 "use strict";
 
 function print_lines(ld, lineno, col, printColors, token) {
   let buf = '';
   let lines = ld.split("\n");
   let istart = Math.max(lineno - 5, 0);
-  let iend  = Math.min(lineno + 3, lines.length);
+  let iend = Math.min(lineno + 3, lines.length);
 
   let color = printColors ? (c) => c : termColor;
 
-  for (let i=istart; i<iend; i++) {
+  for (let i = istart; i < iend; i++) {
     let l = "" + (i + 1);
     while (l.length < 3) {
       l = " " + l;
@@ -181,12 +210,12 @@ function print_lines(ld, lineno, col, printColors, token) {
     l += `: ${lines[i]}\n`;
 
     if (i === lineno && token && token.value.length === 1) {
-      l = l.slice(0, col+5) + color(l[col+5], "yellow") + l.slice(col+6, l.length);
+      l = l.slice(0, col + 5) + color(l[col + 5], "yellow") + l.slice(col + 6, l.length);
     }
     buf += l;
     if (i === lineno) {
       let colstr = '     ';
-      for (let i=0; i<col; i++) {
+      for (let i = 0; i < col; i++) {
         colstr += ' ';
       }
       colstr += color("^", "red");
@@ -224,18 +253,18 @@ class tokdef {
     this.re = regexpr;
     this.func = func;
     this.example = example;
-    
+
     if (example === undefined && regexpr) {
       let s = "" + regexpr;
       if (s.startsWith("/") && s.endsWith("/")) {
-        s = s.slice(1, s.length-1);
+        s = s.slice(1, s.length - 1);
       }
-      
+
       if (s.startsWith("\\")) {
         s = s.slice(1, s.length);
       }
       s = s.trim();
-      
+
       if (s.length === 1) {
         this.example = s;
       }
@@ -269,7 +298,7 @@ class lexer {
     this.states = {"__main__": [tokdef, errfunc]};
     this.statedata = 0;
 
-    this.logger = function() {
+    this.logger = function () {
       console.log(...arguments);
     };
   }
@@ -308,7 +337,7 @@ class lexer {
     let col = 0;
     let colmap = this.colmap = new Array(str.length);
 
-    for (let i=0; i<str.length; i++, col++) {
+    for (let i = 0; i < str.length; i++, col++) {
       let c = str[i];
 
       linemap[i] = lineno;
@@ -334,7 +363,7 @@ class lexer {
     if (this.errfunc !== undefined && !this.errfunc(this))
       return;
 
-    let safepos = Math.min(this.lexpos, this.lexdata.length-1);
+    let safepos = Math.min(this.lexpos, this.lexdata.length - 1);
     let line = this.linemap[safepos];
     let col = this.colmap[safepos];
 
@@ -375,7 +404,7 @@ class lexer {
       this.peeked_tokens.shift();
 
       if (!ignore_peek && this.printTokens) {
-        this.logger(""+tok);
+        this.logger("" + tok);
       }
 
       return tok;
@@ -415,7 +444,7 @@ class lexer {
     }
 
     let def = theres[0];
-    let col = this.colmap[Math.min(this.lexpos, this.lexdata.length-1)];
+    let col = this.colmap[Math.min(this.lexpos, this.lexdata.length - 1)];
 
     if (this.lexpos < this.lexdata.length) {
       this.lineno = this.linemap[this.lexpos];
@@ -432,7 +461,7 @@ class lexer {
     }
 
     if (!ignore_peek && this.printTokens) {
-      this.logger(""+tok);
+      this.logger("" + tok);
     }
     return tok;
   }
@@ -444,7 +473,7 @@ class parser {
     this.errfunc = errfunc;
     this.start = undefined;
 
-    this.logger = function() {
+    this.logger = function () {
       console.log(...arguments);
     };
   }
@@ -476,11 +505,11 @@ class parser {
     if (token === undefined)
       estr = "Parse error at end of input: " + msg;
     else
-      estr = `Parse error at line ${token.lineno + 1}:${token.col+1}: ${msg}`;
+      estr = `Parse error at line ${token.lineno + 1}:${token.col + 1}: ${msg}`;
 
     let buf = "";
     let ld = this.lexer.lexdata;
-    let lineno = token ? token.lineno : this.lexer.linemap[this.lexer.linemap.length-1];
+    let lineno = token ? token.lineno : this.lexer.linemap[this.lexer.linemap.length - 1];
     let col = token ? token.col : 0;
 
     ld = ld.replace(/\r/g, '');
@@ -510,13 +539,14 @@ class parser {
 
   next() {
     let tok = this.lexer.next();
+
     if (tok !== undefined)
       tok.parser = this;
     return tok;
   }
 
   optional(type) {
-    let tok = this.peek();
+    let tok = this.peeknext();
     if (tok === undefined)
       return false;
     if (tok.type === type) {
@@ -532,17 +562,17 @@ class parser {
 
   expect(type, msg) {
     let tok = this.next();
-    
+
     if (msg === undefined) {
       msg = type;
-      
+
       for (let tk of this.lexer.tokdef) {
         if (tk.name === type && tk.example) {
           msg = tk.example;
         }
       }
     }
-    
+
     if (tok === undefined || tok.type !== type) {
       this.error(tok, "Expected " + msg);
     }
@@ -552,7 +582,8 @@ class parser {
 
 function test_parser() {
   let basic_types = new Set(["int", "float", "double", "vec2", "vec3", "vec4", "mat4", "string"]);
-  let reserved_tokens = new Set(["int", "float", "double", "vec2", "vec3", "vec4", "mat4", "string", "static_string", "array"]);
+  let reserved_tokens = new Set(["int", "float", "double", "vec2", "vec3", "vec4", "mat4", "string", "static_string",
+                                 "array"]);
 
   function tk(name, re, func) {
     return new tokdef(name, re, func);
@@ -579,10 +610,11 @@ function test_parser() {
     }
     t.value = js;
     return t;
-  }), tk("LPARAM", /\(/), tk("RPARAM", /\)/), tk("COMMA", /,/), tk("NUM", /[0-9]/), tk("SEMI", /;/), tk("NEWLINE", /\n/, function (t) {
-    t.lexer.lineno += 1;
-  }), tk("SPACE", / |\t/, function (t) {
-  })];
+  }), tk("LPARAM", /\(/), tk("RPARAM", /\)/), tk("COMMA", /,/), tk("NUM", /[0-9]/), tk("SEMI", /;/),
+                tk("NEWLINE", /\n/, function (t) {
+                  t.lexer.lineno += 1;
+                }), tk("SPACE", / |\t/, function (t) {
+    })];
 
   for (let rt of reserved_tokens) {
     tokens.push(tk(rt.toUpperCase()));
@@ -637,15 +669,12 @@ function test_parser() {
     if (tok.type === "ID") {
       p.next();
       return {type: "struct", data: "\"" + tok.value + "\""}
-    }
-    else if (basic_types.has(tok.type.toLowerCase())) {
+    } else if (basic_types.has(tok.type.toLowerCase())) {
       p.next();
       return {type: tok.type.toLowerCase()}
-    }
-    else if (tok.type === "ARRAY") {
+    } else if (tok.type === "ARRAY") {
       return p_Array(p);
-    }
-    else {
+    } else {
       p.error(tok, "invalid type " + tok.type);
     }
   }
@@ -680,11 +709,9 @@ function test_parser() {
     while (1) {
       if (p.at_end()) {
         p.error(undefined);
-      }
-      else if (p.optional("CLOSE")) {
+      } else if (p.optional("CLOSE")) {
         break;
-      }
-      else {
+      } else {
         st.fields.push(p_Field(p));
       }
     }
@@ -738,6 +765,10 @@ const StructEnum = {
   STATIC_ARRAY : 19,
   SIGNED_BYTE  : 20
 };
+
+const ArrayTypes = new Set([
+  StructEnum.STATIC_ARRAY, StructEnum.ARRAY, StructEnum.ITERKEYS, StructEnum.ITER
+]);
 
 const ValueTypes = new Set([
   StructEnum.INT,
@@ -882,12 +913,23 @@ function StructParser() {
     tk("JSCRIPT", /\|/, function (t) {
       let js = "";
       let lexer = t.lexer;
+      let p;
+
       while (lexer.lexpos < lexer.lexdata.length) {
         let c = lexer.lexdata[lexer.lexpos];
         if (c === "\n")
           break;
+
+        if (c === "/" && p === "/") {
+          js = js.slice(0, js.length - 1);
+          lexer.lexpos--;
+
+          break;
+        }
+
         js += c;
         lexer.lexpos++;
+        p = c;
       }
 
       while (js.trim().endsWith(";")) {
@@ -897,6 +939,7 @@ function StructParser() {
       t.value = js.trim();
       return t;
     }),
+    tk("COMMENT", /\/\/.*[\n\r]/),
     tk("LPARAM", /\(/),
     tk("RPARAM", /\)/),
     tk("COMMA", /,/),
@@ -919,7 +962,7 @@ function StructParser() {
 
   class Lexer extends lexer {
     input(str) {
-      str = stripComments(str);
+      //str = stripComments(str);
       return super.input(str);
     }
   }
@@ -1035,7 +1078,7 @@ function StructParser() {
   }
 
   function p_Type(p) {
-    let tok = p.peek();
+    let tok = p.peeknext();
 
     if (tok.type === "ID") {
       p.next();
@@ -1085,21 +1128,33 @@ function StructParser() {
 
     let check = 0;
 
-    let tok = p.peek();
-    if (tok.type === "JSCRIPT") {
+    let tok = p.peeknext();
+
+    if (tok && tok.type === "JSCRIPT") {
       field.get = tok.value;
       check = 1;
+
       p.next();
+      tok = p.peeknext();
     }
 
-    tok = p.peek();
-    if (tok.type === "JSCRIPT") {
+    if (tok && tok.type === "JSCRIPT") {
       check = 1;
       field.set = tok.value;
+
       p.next();
     }
 
     p.expect("SEMI");
+
+    tok = p.peeknext();
+
+    if (tok && tok.type === "COMMENT") {
+      field.comment = tok.value;
+      p.next();
+    } else {
+      field.comment = "";
+    }
 
     return field;
   }
@@ -1109,7 +1164,7 @@ function StructParser() {
 
     let st = new NStruct(name);
 
-    let tok = p.peek();
+    let tok = p.peeknext();
     let id = -1;
 
     if (tok.type === "ID" && tok.value === "id") {
@@ -1142,6 +1197,7 @@ var struct_parser = /*#__PURE__*/Object.freeze({
   __proto__: null,
   NStruct: NStruct,
   StructEnum: StructEnum,
+  ArrayTypes: ArrayTypes,
   ValueTypes: ValueTypes,
   StructTypes: StructTypes,
   StructTypeMap: StructTypeMap,
@@ -1601,6 +1657,10 @@ function fromJSON(manager, val, obj, field, type, instance) {
   return StructFieldTypeMap[type.type].fromJSON(manager, val, obj, field, type, instance);
 }
 
+function formatJSON(manager, val, obj, field, type, instance, tlvl = 0) {
+  return StructFieldTypeMap[type.type].formatJSON(manager, val, obj, field, type, instance, tlvl);
+}
+
 function validateJSON(manager, val, obj, field, type, instance, _abstractKey) {
   return StructFieldTypeMap[type.type].validateJSON(manager, val, obj, field, type, instance, _abstractKey);
 }
@@ -1676,6 +1736,10 @@ class StructFieldType {
 
   static fromJSON(manager, val, obj, field, type, instance) {
     return val;
+  }
+
+  static formatJSON(manager, val, obj, field, type, instance, tlvl) {
+    return JSON.stringify(val);
   }
 
   static validateJSON(manager, val, obj, field, type, instance, _abstractKey) {
@@ -1918,6 +1982,12 @@ class StructStructField extends StructFieldType {
     return manager.readJSON(val, stt, instance);
   }
 
+  static formatJSON(manager, val, obj, field, type, instance, tlvl) {
+    let stt = manager.get_struct(type.data);
+
+    return manager.formatJSON_intern(val, stt, field, tlvl);
+  }
+
   static toJSON(manager, val, obj, field, type) {
     let stt = manager.get_struct(type.data);
     return manager.writeJSON(val, stt);
@@ -2023,6 +2093,14 @@ class StructTStructField extends StructFieldType {
     return manager.readJSON(val, stt, instance);
   }
 
+  static formatJSON(manager, val, obj, field, type, instance, tlvl) {
+    let key = type.jsonKeyword;
+
+    let stt = manager.get_struct(val[key]);
+
+    return manager.formatJSON_intern(val, stt, field, tlvl);
+  }
+
   static toJSON(manager, val, obj, field, type) {
     const keywords = manager.constructor.keywords;
 
@@ -2097,6 +2175,34 @@ class StructTStructField extends StructFieldType {
 }
 
 StructFieldType.register(StructTStructField);
+
+/** out is just a [string], an array of dimen 1 whose sole entry is the output string. */
+function formatArrayJson(manager, val, obj, field, type, type2, instance, tlvl, array = val) {
+  if (array === undefined || array === null || typeof array !== "object" || !array[Symbol.iterator]) {
+    console.log(obj);
+    console.log(array);
+    throw new Error(`Expected an array for ${field.name}`);
+  }
+
+  if (ValueTypes.has(type2.type)) {
+    return JSON.stringify(array);
+  }
+
+  let s = '[';
+  if (manager.formatCtx.addComments && field.comment.trim()) {
+    s += " " + field.comment.trim();
+  }
+
+  s += "\n";
+
+  for (let item of array) {
+    s += tab(tlvl + 1) + formatJSON(manager, item, val, field, type2, instance, tlvl + 1) + ",\n";
+  }
+
+  s += tab(tlvl) + "]";
+
+  return s;
+}
 
 class StructArrayField extends StructFieldType {
   static pack(manager, data, val, obj, field, type) {
@@ -2185,6 +2291,12 @@ class StructArrayField extends StructFieldType {
     }
 
     return ret;
+  }
+
+  static formatJSON(manager, val, obj, field, type, instance, tlvl) {
+    //export function formatArrayJson(manager, val, obj, field, type, type2, instance, tlvl, array=val) {
+
+    return formatArrayJson(manager, val, obj, field, type, type.data.type, instance, tlvl);
   }
 
   static toJSON(manager, val, obj, field, type) {
@@ -2293,6 +2405,10 @@ class StructIterField extends StructFieldType {
     data[starti++] = uint8_view[1];
     data[starti++] = uint8_view[2];
     data[starti++] = uint8_view[3];
+  }
+
+  static formatJSON(manager, val, obj, field, type, instance, tlvl) {
+    return formatArrayJson(manager, val, obj, field, type, type.data.type, instance, tlvl, list(val));
   }
 
   static validateJSON(manager, val, obj, field, type, instance) {
@@ -2528,6 +2644,10 @@ class StructIterKeysField extends StructFieldType {
     return StructArrayField.fromJSON(...arguments);
   }
 
+  static formatJSON(manager, val, obj, field, type, instance, tlvl) {
+    return formatArrayJson(manager, val, obj, field, type, type.data.type, instance, tlvl, list(val));
+  }
+
   static toJSON(manager, val, obj, field, type) {
     val = val || [];
     let json = [];
@@ -2702,6 +2822,10 @@ class StructStaticArrayField extends StructFieldType {
     return StructArrayField.fromJSON(...arguments);
   }
 
+  static formatJSON(manager, val, obj, field, type, instance, tlvl) {
+    return formatArrayJson(manager, val, obj, field, type, type.data.type, instance, tlvl, list(val));
+  }
+
   static packNull(manager, data, field, type) {
     let size = type.data.size;
     for (let i = 0; i < size; i++) {
@@ -2770,9 +2894,11 @@ var _sintern2 = /*#__PURE__*/Object.freeze({
   packNull: packNull,
   toJSON: toJSON,
   fromJSON: fromJSON,
+  formatJSON: formatJSON,
   validateJSON: validateJSON,
   do_pack: do_pack,
-  StructFieldType: StructFieldType
+  StructFieldType: StructFieldType,
+  formatArrayJson: formatArrayJson
 });
 
 var structEval = eval;
@@ -3060,6 +3186,34 @@ var truncateDollarSign = true;
 
 class JSONError extends Error {};
 
+function printCodeLines(code) {
+  let lines = code.split(String.fromCharCode(10));
+  let buf = '';
+
+  for (let i = 0; i < lines.length; i++) {
+    let line = "" + (i + 1) + ":";
+
+    while (line.length < 3) {
+      line += " ";
+    }
+
+    line += " " + lines[i];
+    buf += line + String.fromCharCode(10);
+  }
+
+  return buf;
+}
+
+function printEvalError(code) {
+  console.log("== CODE ==");
+  console.log(printCodeLines(code));
+
+  /* Node suppresses the real error line number in error.stack for some reason.
+   * Get it by retriggering the error for real.
+   */
+  eval(code);
+}
+
 function setTruncateDollarSign(v) {
   truncateDollarSign = !!v;
 }
@@ -3169,6 +3323,7 @@ class STRUCT {
 
     this.jsonUseColors = true;
     this.jsonBuf = '';
+    this.formatCtx = {};
   }
 
   static inherit(child, parent, structName = child.name) {
@@ -3180,7 +3335,7 @@ class STRUCT {
 
     let stt = struct_parse.parse(parent[keywords.script]);
     let code = structName + "{\n";
-    code += STRUCT.fmt_struct(stt, true);
+    code += STRUCT.fmt_struct(stt, true, false, true);
     return code;
   }
 
@@ -3255,7 +3410,7 @@ class STRUCT {
     return this.fmt_struct(stt, internal_only, no_helper_js);
   }
 
-  static fmt_struct(stt, internal_only, no_helper_js) {
+  static fmt_struct(stt, internal_only, no_helper_js, addComments) {
     if (internal_only === undefined)
       internal_only = false;
     if (no_helper_js === undefined)
@@ -3297,7 +3452,13 @@ class STRUCT {
       if (!no_helper_js && f.get !== undefined) {
         s += " | " + f.get.trim();
       }
-      s += ";\n";
+      s += ";";
+
+      if (addComments && f.comment.trim()) {
+        s += f.comment.trim();
+      }
+
+      s += "\n";
     }
     if (!internal_only)
       s += "}";
@@ -3976,7 +4137,9 @@ class STRUCT {
     }
   }
 
-  validateJSON(json, cls_or_struct_id, useInternalParser=true, useColors=true, consoleLogger=function(){console.log(...arguments);}, _abstractKey="_structName") {
+  validateJSON(json, cls_or_struct_id, useInternalParser = true, useColors = true, consoleLogger = function () {
+    console.log(...arguments);
+  }, _abstractKey                                        = "_structName") {
     if (cls_or_struct_id === undefined) {
       throw new Error(this.constructor.name + ".prototype.validateJSON: Expected at least two arguments");
     }
@@ -4011,7 +4174,7 @@ class STRUCT {
     return true;
   }
 
-  validateJSONIntern(json, cls_or_struct_id, _abstractKey="_structName") {
+  validateJSONIntern(json, cls_or_struct_id, _abstractKey = "_structName") {
     const keywords = this.constructor.keywords;
 
     let cls, stt;
@@ -4029,6 +4192,10 @@ class STRUCT {
     }
 
     stt = this.structs[cls[keywords.name]];
+
+    if (stt === undefined) {
+      throw new Error("unknown class " + cls);
+    }
 
     let fields = stt.fields;
     let flen = fields.length;
@@ -4048,7 +4215,7 @@ class STRUCT {
       if (f.name === 'this') {
         val = json;
         keyTestJson = {
-          "this" : json
+          "this": json
         };
 
         keys.add("this");
@@ -4059,7 +4226,7 @@ class STRUCT {
 
         tokinfo = json[TokSymbol] ? json[TokSymbol].fields[f.name] : undefined;
         if (!tokinfo) {
-          let f2 = fields[Math.max(i-1, 0)];
+          let f2 = fields[Math.max(i - 1, 0)];
           tokinfo = TokSymbol[TokSymbol] ? json[TokSymbol].fields[f2.name] : undefined;
         }
 
@@ -4206,13 +4373,83 @@ class STRUCT {
       return obj;
     }
   }
+
+  formatJSON_intern(json, stt, field, tlvl = 0) {
+    const keywords = this.constructor.keywords;
+    const addComments = this.formatCtx.addComments;
+
+    let s = '{';
+
+    if (addComments && field && field.comment.trim()) {
+      s += " " + field.comment.trim();
+    }
+
+    s += "\n";
+
+    for (let f of stt.fields) {
+      let value = json[f.name];
+
+      s += tab(tlvl + 1) + f.name + ": ";
+
+      s += sintern2.formatJSON(this, value, json, f, f.type, undefined, tlvl + 1);
+      s += ",";
+
+      let basetype = f.type.type;
+
+      if (ArrayTypes.has(basetype)) {
+        basetype = f.type.data.type.type;
+      }
+
+      const addComment = ValueTypes.has(basetype) && addComments && f.comment.trim();
+
+      if (addComment) {
+        s += " " + f.comment.trim();
+      }
+
+      s += "\n";
+    }
+
+    s += tab(tlvl) + "}";
+    return s;
+  }
+
+  formatJSON(json, cls, addComments = true, validate = true) {
+    const keywords = this.constructor.keywords;
+
+    let s = '';
+
+    if (validate) {
+      this.validateJSON(json, cls);
+    }
+
+    let stt = this.structs[cls[keywords.name]];
+
+    this.formatCtx = {
+      addComments,
+      validate
+    };
+
+    return this.formatJSON_intern(json, stt);
+  }
 };
 //$KEYWORD_CONFIG_END
 
 if (haveCodeGen) {
   var StructClass;
 
-  eval(code);
+  try {
+    eval(code);
+  } catch (error) {
+    printEvalError(code);
+  }
+
+  StructClass.keywords = {
+    name  : "structName",
+    script: "STRUCT",
+    load  : "loadSTRUCT",
+    from  : "fromSTRUCT",
+    new   : "newSTRUCT",
+  };
 
   STRUCT = StructClass;
 }
@@ -4252,11 +4489,26 @@ function deriveStructManager(keywords = {
     return NewSTRUCT;
   } else {
     var StructClass;
+    var _json_parser = jsonParser;
+    var _util = util;
 
     let code2 = code;
-    code2 = code2.replace(/\[keywords.script\]/g, keywords.script);
+    code2 = code2.replace(/\[keywords.script\]/g, "." + keywords.script);
+    code2 = code2.replace(/\[keywords.name\]/g, "." + keywords.name);
+    code2 = code2.replace(/\bjsonParser\b/g, "_json_parser");
+    code2 = code2.replace(/\butil\b/g, "_util");
 
-    eval(code2);
+    //console.log("\n\n");
+    //console.log(printCodeLines(code2));
+    //console.log("\n\n");
+
+    try {
+      eval(code2);
+    } catch (error) {
+      printEvalError(code2);
+    }
+
+    StructClass.keywords = keywords;
     return StructClass;
   }
 }
@@ -10729,7 +10981,7 @@ function consoleLogger() {
  * @param logger
  * @returns {*}
  */
-function validateJSON$1(json, cls, useInternalParser, printColors=true, logger=consoleLogger) {
+function validateJSON$1(json, cls, useInternalParser, printColors = true, logger = consoleLogger) {
   return exports.manager.validateJSON(json, cls, useInternalParser, printColors, logger);
 }
 
@@ -10777,9 +11029,14 @@ function writeJSON(obj) {
   return exports.manager.writeJSON(obj);
 }
 
+function formatJSON$1(json, cls, addComments = true, validate = true) {
+  return exports.manager.formatJSON(json, cls, addComments, validate);
+}
+
 function readJSON(json, class_or_struct_id) {
   return exports.manager.readJSON(json, class_or_struct_id);
 }
+
 const tinyeval = exports$1;
 
 function useTinyEval() {
@@ -10795,6 +11052,7 @@ exports.binpack = struct_binpack;
 exports.consoleLogger = consoleLogger;
 exports.deriveStructManager = deriveStructManager;
 exports.filehelper = struct_filehelper;
+exports.formatJSON = formatJSON$1;
 exports.getEndian = getEndian;
 exports.inherit = inherit;
 exports.isRegistered = isRegistered;

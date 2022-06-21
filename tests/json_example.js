@@ -3,12 +3,14 @@ import * as nstructjs from '../src/structjs.js';
 class AbstractClass {
   constructor() {
     this.value = 1;
+    this.farray = [0, 1, 2, 3];
   }
 }
 
 AbstractClass.STRUCT = `
 AbstractClass {
-  value : int;
+  value : int; //value field
+  farray : array(float); //float values
 }
 `;
 nstructjs.register(AbstractClass);
@@ -34,18 +36,27 @@ nstructjs.register(C);
 class Test {
   constructor() {
     this.test = new C();
+    this.tarray = [
+      new C(),
+      new C(),
+      new C()
+    ];
   }
 }
 
 Test.STRUCT = `
 Test {
-  test : abstract(AbstractClass, "type");
+  test : abstract(AbstractClass, "type"); //comment 2
+  tarray : array(abstract(AbstractClass, "type")); //array comment 2
+  iarray : iter(abstract(AbstractClass, "type")) | this.tarray; //array comment 2
 }
 `;
 nstructjs.register(Test);
 
 let json = nstructjs.writeJSON(new Test());
-json.test.value = "wer";
+//json.test.value = "wer";
+
+console.log("TEST:", nstructjs.formatJSON(json, Test, true));
 
 let s = '';
 

@@ -1,5 +1,6 @@
 import * as struct_binpack from './struct_binpack.js';
-import {StructEnum} from './struct_parser.js';
+import {StructEnum, ValueTypes} from './struct_parser.js';
+import * as util from './struct_util.js';
 
 import {
   pack_int, pack_byte, pack_float, pack_sbyte, pack_short,
@@ -118,6 +119,10 @@ export function fromJSON(manager, val, obj, field, type, instance) {
   return StructFieldTypeMap[type.type].fromJSON(manager, val, obj, field, type, instance);
 }
 
+export function formatJSON(manager, val, obj, field, type, instance, tlvl = 0) {
+  return StructFieldTypeMap[type.type].formatJSON(manager, val, obj, field, type, instance, tlvl);
+}
+
 export function validateJSON(manager, val, obj, field, type, instance, _abstractKey) {
   return StructFieldTypeMap[type.type].validateJSON(manager, val, obj, field, type, instance, _abstractKey);
 }
@@ -193,6 +198,10 @@ export class StructFieldType {
 
   static fromJSON(manager, val, obj, field, type, instance) {
     return val;
+  }
+
+  static formatJSON(manager, val, obj, field, type, instance, tlvl) {
+    return JSON.stringify(val);
   }
 
   static validateJSON(manager, val, obj, field, type, instance, _abstractKey) {
@@ -435,6 +444,12 @@ class StructStructField extends StructFieldType {
     return manager.readJSON(val, stt, instance);
   }
 
+  static formatJSON(manager, val, obj, field, type, instance, tlvl) {
+    let stt = manager.get_struct(type.data);
+
+    return manager.formatJSON_intern(val, stt, field, tlvl);
+  }
+
   static toJSON(manager, val, obj, field, type) {
     let stt = manager.get_struct(type.data);
     return manager.writeJSON(val, stt);
@@ -540,6 +555,14 @@ class StructTStructField extends StructFieldType {
     return manager.readJSON(val, stt, instance);
   }
 
+  static formatJSON(manager, val, obj, field, type, instance, tlvl) {
+    let key = type.jsonKeyword;
+
+    let stt = manager.get_struct(val[key]);
+
+    return manager.formatJSON_intern(val, stt, field, tlvl);
+  }
+
   static toJSON(manager, val, obj, field, type) {
     const keywords = manager.constructor.keywords;
 
@@ -614,6 +637,34 @@ class StructTStructField extends StructFieldType {
 }
 
 StructFieldType.register(StructTStructField);
+
+/** out is just a [string], an array of dimen 1 whose sole entry is the output string. */
+export function formatArrayJson(manager, val, obj, field, type, type2, instance, tlvl, array = val) {
+  if (array === undefined || array === null || typeof array !== "object" || !array[Symbol.iterator]) {
+    console.log(obj);
+    console.log(array);
+    throw new Error(`Expected an array for ${field.name}`);
+  }
+
+  if (ValueTypes.has(type2.type)) {
+    return JSON.stringify(array);
+  }
+
+  let s = '[';
+  if (manager.formatCtx.addComments && field.comment.trim()) {
+    s += " " + field.comment.trim();
+  }
+
+  s += "\n";
+
+  for (let item of array) {
+    s += util.tab(tlvl + 1) + formatJSON(manager, item, val, field, type2, instance, tlvl + 1) + ",\n";
+  }
+
+  s += util.tab(tlvl) + "]";
+
+  return s;
+}
 
 class StructArrayField extends StructFieldType {
   static pack(manager, data, val, obj, field, type) {
@@ -702,6 +753,12 @@ class StructArrayField extends StructFieldType {
     }
 
     return ret;
+  }
+
+  static formatJSON(manager, val, obj, field, type, instance, tlvl) {
+    //export function formatArrayJson(manager, val, obj, field, type, type2, instance, tlvl, array=val) {
+
+    return formatArrayJson(manager, val, obj, field, type, type.data.type, instance, tlvl);
   }
 
   static toJSON(manager, val, obj, field, type) {
@@ -810,6 +867,10 @@ class StructIterField extends StructFieldType {
     data[starti++] = uint8_view[1];
     data[starti++] = uint8_view[2];
     data[starti++] = uint8_view[3];
+  }
+
+  static formatJSON(manager, val, obj, field, type, instance, tlvl) {
+    return formatArrayJson(manager, val, obj, field, type, type.data.type, instance, tlvl, util.list(val));
   }
 
   static validateJSON(manager, val, obj, field, type, instance) {
@@ -1045,6 +1106,10 @@ class StructIterKeysField extends StructFieldType {
     return StructArrayField.fromJSON(...arguments);
   }
 
+  static formatJSON(manager, val, obj, field, type, instance, tlvl) {
+    return formatArrayJson(manager, val, obj, field, type, type.data.type, instance, tlvl, util.list(val));
+  }
+
   static toJSON(manager, val, obj, field, type) {
     val = val || [];
     let json = [];
@@ -1217,6 +1282,10 @@ class StructStaticArrayField extends StructFieldType {
 
   static fromJSON() {
     return StructArrayField.fromJSON(...arguments);
+  }
+
+  static formatJSON(manager, val, obj, field, type, instance, tlvl) {
+    return formatArrayJson(manager, val, obj, field, type, type.data.type, instance, tlvl, util.list(val));
   }
 
   static packNull(manager, data, field, type) {

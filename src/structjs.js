@@ -47,7 +47,7 @@ export function consoleLogger() {
  * @param logger
  * @returns {*}
  */
-export function validateJSON(json, cls, useInternalParser, printColors=true, logger=consoleLogger) {
+export function validateJSON(json, cls, useInternalParser, printColors = true, logger = consoleLogger) {
   return manager.validateJSON(json, cls, useInternalParser, printColors, logger);
 }
 
@@ -95,6 +95,10 @@ export function writeJSON(obj) {
   return manager.writeJSON(obj);
 }
 
+export function formatJSON(json, cls, addComments = true, validate = true) {
+  return manager.formatJSON(json, cls, addComments, validate);
+}
+
 export function readJSON(json, class_or_struct_id) {
   return manager.readJSON(json, class_or_struct_id);
 }
@@ -104,6 +108,7 @@ export {setWarningMode} from './struct_intern.js';
 
 //$BUILD_TINYEVAL_START
 import tinyeval1 from "../tinyeval/tinyeval.js";
+
 export const tinyeval = tinyeval1;
 import {nGlobal} from './struct_global.js';
 

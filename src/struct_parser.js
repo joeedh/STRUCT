@@ -33,6 +33,10 @@ export const StructEnum = {
   SIGNED_BYTE  : 20
 };
 
+export const ArrayTypes = new Set([
+  StructEnum.STATIC_ARRAY, StructEnum.ARRAY, StructEnum.ITERKEYS, StructEnum.ITER
+]);
+
 export const ValueTypes = new Set([
   StructEnum.INT,
   StructEnum.FLOAT,
@@ -176,12 +180,23 @@ function StructParser() {
     tk("JSCRIPT", /\|/, function (t) {
       let js = "";
       let lexer = t.lexer;
+      let p;
+
       while (lexer.lexpos < lexer.lexdata.length) {
         let c = lexer.lexdata[lexer.lexpos];
         if (c === "\n")
           break;
+
+        if (c === "/" && p === "/") {
+          js = js.slice(0, js.length - 1);
+          lexer.lexpos--;
+
+          break;
+        }
+
         js += c;
         lexer.lexpos++;
+        p = c;
       }
 
       while (js.trim().endsWith(";")) {
@@ -191,6 +206,7 @@ function StructParser() {
       t.value = js.trim();
       return t;
     }),
+    tk("COMMENT", /\/\/.*[\n\r]/),
     tk("LPARAM", /\(/),
     tk("RPARAM", /\)/),
     tk("COMMA", /,/),
@@ -213,7 +229,7 @@ function StructParser() {
 
   class Lexer extends struct_parseutil.lexer {
     input(str) {
-      str = stripComments(str);
+      //str = stripComments(str);
       return super.input(str);
     }
   }
@@ -329,7 +345,7 @@ function StructParser() {
   }
 
   function p_Type(p) {
-    let tok = p.peek();
+    let tok = p.peeknext();
 
     if (tok.type === "ID") {
       p.next();
@@ -379,21 +395,33 @@ function StructParser() {
 
     let check = 0;
 
-    let tok = p.peek();
-    if (tok.type === "JSCRIPT") {
+    let tok = p.peeknext();
+
+    if (tok && tok.type === "JSCRIPT") {
       field.get = tok.value;
       check = 1;
+
       p.next();
+      tok = p.peeknext();
     }
 
-    tok = p.peek();
-    if (tok.type === "JSCRIPT") {
+    if (tok && tok.type === "JSCRIPT") {
       check = 1;
       field.set = tok.value;
+
       p.next();
     }
 
     p.expect("SEMI");
+
+    tok = p.peeknext();
+
+    if (tok && tok.type === "COMMENT") {
+      field.comment = tok.value;
+      p.next();
+    } else {
+      field.comment = "";
+    }
 
     return field;
   }
@@ -403,7 +431,7 @@ function StructParser() {
 
     let st = new NStruct(name);
 
-    let tok = p.peek();
+    let tok = p.peeknext();
     let id = -1;
 
     if (tok.type === "ID" && tok.value === "id") {

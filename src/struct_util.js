@@ -16,6 +16,16 @@ let colormap = {
   "peach"   : 210
 }
 
+export function tab(n, chr = ' ') {
+  let t = '';
+
+  for (let i = 0; i < n; i++) {
+    t += chr;
+  }
+
+  return t;
+}
+
 export let termColorMap = {};
 for (let k in colormap) {
   termColorMap[k] = colormap[k];
@@ -136,4 +146,14 @@ export function termPrint() {
   }
 
   return out;
+}
+
+export function list(iter) {
+  let ret = [];
+
+  for (let item of iter) {
+    ret.push(item);
+  }
+
+  return ret;
 }

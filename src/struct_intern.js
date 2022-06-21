@@ -4,6 +4,7 @@ import * as struct_parser from './struct_parser.js';
 import * as _sintern2 from './struct_intern2.js';
 import * as _struct_eval from './struct_eval.js';
 import jsonParser, {printContext, TokSymbol} from './struct_json.js';
+import * as util from './struct_util.js';
 
 //needed to avoid a rollup bug in configurable mode
 var sintern2 = _sintern2;
@@ -19,6 +20,34 @@ export var truncateDollarSign = true;
 export var manager;
 
 export class JSONError extends Error {};
+
+function printCodeLines(code) {
+  let lines = code.split(String.fromCharCode(10));
+  let buf = '';
+
+  for (let i = 0; i < lines.length; i++) {
+    let line = "" + (i + 1) + ":";
+
+    while (line.length < 3) {
+      line += " ";
+    }
+
+    line += " " + lines[i];
+    buf += line + String.fromCharCode(10);
+  }
+
+  return buf;
+}
+
+function printEvalError(code) {
+  console.log("== CODE ==");
+  console.log(printCodeLines(code));
+
+  /* Node suppresses the real error line number in error.stack for some reason.
+   * Get it by retriggering the error for real.
+   */
+  eval(code);
+}
 
 export function setTruncateDollarSign(v) {
   truncateDollarSign = !!v;
@@ -68,7 +97,7 @@ nstructjs.register(SomeClass);
 */
 import {
   StructTypes, StructTypeMap, StructEnum, NStruct,
-  struct_parse, ValueTypes
+  struct_parse, ValueTypes, ArrayTypes
 } from './struct_parser.js';
 
 let _static_envcode_null = "";
@@ -158,6 +187,7 @@ export class STRUCT {
 
     this.jsonUseColors = true;
     this.jsonBuf = '';
+    this.formatCtx = {};
   }
 
   static inherit(child, parent, structName = child.name) {
@@ -169,7 +199,7 @@ export class STRUCT {
 
     let stt = struct_parse.parse(parent[keywords.script]);
     let code = structName + "{\n";
-    code += STRUCT.fmt_struct(stt, true);
+    code += STRUCT.fmt_struct(stt, true, false, true);
     return code;
   }
 
@@ -244,7 +274,7 @@ export class STRUCT {
     return this.fmt_struct(stt, internal_only, no_helper_js);
   }
 
-  static fmt_struct(stt, internal_only, no_helper_js) {
+  static fmt_struct(stt, internal_only, no_helper_js, addComments) {
     if (internal_only === undefined)
       internal_only = false;
     if (no_helper_js === undefined)
@@ -286,7 +316,13 @@ export class STRUCT {
       if (!no_helper_js && f.get !== undefined) {
         s += " | " + f.get.trim();
       }
-      s += ";\n";
+      s += ";";
+
+      if (addComments && f.comment.trim()) {
+        s += f.comment.trim();
+      }
+
+      s += "\n";
     }
     if (!internal_only)
       s += "}";
@@ -965,7 +1001,9 @@ export class STRUCT {
     }
   }
 
-  validateJSON(json, cls_or_struct_id, useInternalParser=true, useColors=true, consoleLogger=function(){console.log(...arguments)}, _abstractKey="_structName") {
+  validateJSON(json, cls_or_struct_id, useInternalParser = true, useColors = true, consoleLogger = function () {
+    console.log(...arguments)
+  }, _abstractKey                                        = "_structName") {
     if (cls_or_struct_id === undefined) {
       throw new Error(this.constructor.name + ".prototype.validateJSON: Expected at least two arguments");
     }
@@ -1000,7 +1038,7 @@ export class STRUCT {
     return true;
   }
 
-  validateJSONIntern(json, cls_or_struct_id, _abstractKey="_structName") {
+  validateJSONIntern(json, cls_or_struct_id, _abstractKey = "_structName") {
     const keywords = this.constructor.keywords;
 
     let cls, stt;
@@ -1018,6 +1056,10 @@ export class STRUCT {
     }
 
     stt = this.structs[cls[keywords.name]];
+
+    if (stt === undefined) {
+      throw new Error("unknown class " + cls);
+    }
 
     let fields = stt.fields;
     let flen = fields.length;
@@ -1037,7 +1079,7 @@ export class STRUCT {
       if (f.name === 'this') {
         val = json;
         keyTestJson = {
-          "this" : json
+          "this": json
         };
 
         keys.add("this");
@@ -1048,7 +1090,7 @@ export class STRUCT {
 
         tokinfo = json[TokSymbol] ? json[TokSymbol].fields[f.name] : undefined;
         if (!tokinfo) {
-          let f2 = fields[Math.max(i-1, 0)];
+          let f2 = fields[Math.max(i - 1, 0)];
           tokinfo = TokSymbol[TokSymbol] ? json[TokSymbol].fields[f2.name] : undefined;
         }
 
@@ -1195,13 +1237,83 @@ export class STRUCT {
       return obj;
     }
   }
+
+  formatJSON_intern(json, stt, field, tlvl = 0) {
+    const keywords = this.constructor.keywords;
+    const addComments = this.formatCtx.addComments;
+
+    let s = '{';
+
+    if (addComments && field && field.comment.trim()) {
+      s += " " + field.comment.trim();
+    }
+
+    s += "\n";
+
+    for (let f of stt.fields) {
+      let value = json[f.name];
+
+      s += util.tab(tlvl + 1) + f.name + ": ";
+
+      s += sintern2.formatJSON(this, value, json, f, f.type, undefined, tlvl + 1);
+      s += ",";
+
+      let basetype = f.type.type;
+
+      if (ArrayTypes.has(basetype)) {
+        basetype = f.type.data.type.type;
+      }
+
+      const addComment = ValueTypes.has(basetype) && addComments && f.comment.trim();
+
+      if (addComment) {
+        s += " " + f.comment.trim();
+      }
+
+      s += "\n";
+    }
+
+    s += util.tab(tlvl) + "}";
+    return s;
+  }
+
+  formatJSON(json, cls, addComments = true, validate = true) {
+    const keywords = this.constructor.keywords;
+
+    let s = '';
+
+    if (validate) {
+      this.validateJSON(json, cls);
+    }
+
+    let stt = this.structs[cls[keywords.name]];
+
+    this.formatCtx = {
+      addComments,
+      validate
+    };
+
+    return this.formatJSON_intern(json, stt);
+  }
 };
 //$KEYWORD_CONFIG_END
 
 if (haveCodeGen) {
   var StructClass;
 
-  eval(code);
+  try {
+    eval(code);
+  } catch (error) {
+    printEvalError(code);
+  }
+
+  StructClass.keywords = {
+    name  : "structName",
+    script: "STRUCT",
+    load  : "loadSTRUCT",
+    from  : "fromSTRUCT",
+    new   : "newSTRUCT",
+  }
 
   STRUCT = StructClass;
 }
@@ -1241,11 +1353,26 @@ export function deriveStructManager(keywords = {
     return NewSTRUCT;
   } else {
     var StructClass;
+    var _json_parser = jsonParser;
+    var _util = util;
 
     let code2 = code;
-    code2 = code2.replace(/\[keywords.script\]/g, keywords.script)
+    code2 = code2.replace(/\[keywords.script\]/g, "." + keywords.script)
+    code2 = code2.replace(/\[keywords.name\]/g, "." + keywords.name)
+    code2 = code2.replace(/\bjsonParser\b/g, "_json_parser");
+    code2 = code2.replace(/\butil\b/g, "_util");
 
-    eval(code2);
+    //console.log("\n\n");
+    //console.log(printCodeLines(code2));
+    //console.log("\n\n");
+
+    try {
+      eval(code2);
+    } catch (error) {
+      printEvalError(code2);
+    }
+
+    StructClass.keywords = keywords;
     return StructClass;
   }
 }
