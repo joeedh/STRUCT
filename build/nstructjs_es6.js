@@ -2171,9 +2171,9 @@ function formatArrayJson(manager, val, obj, field, type, type2, instance, tlvl, 
 
   s += "\n";
 
-  for (let i=0; i<array.length; i++) {
+  for (let i = 0; i < array.length; i++) {
     let item = array[i];
-    
+
     s += tab(tlvl + 1) + formatJSON(manager, item, val, field, type2, instance, tlvl + 1) + ",\n";
   }
 
