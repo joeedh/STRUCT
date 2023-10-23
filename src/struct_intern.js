@@ -1118,9 +1118,9 @@ export class STRUCT {
         //console.error(cls[keywords.script]);
 
         if (val === undefined) {
-          throw new JSONError("Missing json field " + f.name + msg);
+          throw new JSONError(stt.name + ": Missing json field " + f.name + msg);
         } else {
-          throw new JSONError("Invalid json field " + f.name + msg);
+          throw new JSONError(stt.name + ": Invalid json field " + f.name + msg);
         }
 
         return false;
@@ -1135,7 +1135,7 @@ export class STRUCT {
 
       if (!keys.has(k)) {
         this.jsonLogger(cls[keywords.script]);
-        throw new JSONError("Unknown json field " + k);
+        throw new JSONError(stt.name + ": Unknown json field " + k);
         return false;
       }
     }

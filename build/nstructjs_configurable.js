@@ -1781,7 +1781,7 @@ class StructIntField extends StructFieldType {
   static unpack(manager, data, type, uctx) {
     return unpack_int(data, uctx);
   }
-
+3
   static validateJSON(manager, val, obj, field, type, instance) {
     if (typeof val !== "number" || val !== Math.floor(val)) {
       return "" + val + " is not an integer";
@@ -4234,9 +4234,9 @@ StructClass = class StructClass {
         //console.error(cls[keywords.script]);
 
         if (val === undefined) {
-          throw new JSONError("Missing json field " + f.name + msg);
+          throw new JSONError(stt.name + ": Missing json field " + f.name + msg);
         } else {
-          throw new JSONError("Invalid json field " + f.name + msg);
+          throw new JSONError(stt.name + ": Invalid json field " + f.name + msg);
         }
 
         return false;
@@ -4251,7 +4251,7 @@ StructClass = class StructClass {
 
       if (!keys.has(k)) {
         this.jsonLogger(cls[keywords.script]);
-        throw new JSONError("Unknown json field " + k);
+        throw new JSONError(stt.name + ": Unknown json field " + k);
         return false;
       }
     }
