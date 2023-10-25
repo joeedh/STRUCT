@@ -1080,8 +1080,9 @@ class StructIterKeysField extends StructFieldType {
     let i = 0;
     for (let val2 in val) {
       if (i >= len) {
-        if (warninglvl > 0)
-          console.warn("Warning: object keys magically changed on us", val, i);
+        if (warninglvl > 0) {
+          console.warn("Warning: object keys magically changed during iteration", val, i);
+        }
         return;
       }
 
