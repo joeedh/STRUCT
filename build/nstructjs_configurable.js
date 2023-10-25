@@ -2594,8 +2594,9 @@ class StructIterKeysField extends StructFieldType {
     let i = 0;
     for (let val2 in val) {
       if (i >= len) {
-        if (warninglvl > 0)
-          console.warn("Warning: object keys magically changed on us", val, i);
+        if (warninglvl > 0) {
+          console.warn("Warning: object keys magically changed during iteration", val, i);
+        }
         return;
       }
 
@@ -3322,8 +3323,9 @@ StructClass = class StructClass {
   /** invoke loadSTRUCT methods on parent objects.  note that
    reader() is only called once.  it is called however.*/
   static Super(obj, reader) {
-    if (warninglvl > 0)
+    if (warninglvl > 0) {
       console.warn("deprecated");
+    }
 
     reader(obj);
 
@@ -3347,8 +3349,9 @@ StructClass = class StructClass {
 
   /** deprecated.  used with old fromSTRUCT interface. */
   static chain_fromSTRUCT(cls, reader) {
-    if (warninglvl > 0)
+    if (warninglvl > 0) {
       console.warn("Using deprecated (and evil) chain_fromSTRUCT method, eek!");
+    }
 
     let proto = cls.prototype;
     let parent = cls.prototype.prototype.constructor;
@@ -3365,8 +3368,9 @@ StructClass = class StructClass {
       try {
         obj2[k] = obj[k];
       } catch (error) {
-        if (warninglvl > 0)
+        if (warninglvl > 0) {
           console.warn("  failed to set property", k);
+        }
       }
       //let k=keys[i];
       //if (k=="__proto__")
@@ -3742,7 +3746,10 @@ StructClass = class StructClass {
       }
 
       if (bad) {
-        console.warn("Generating " + keywords.script + " script for derived class " + unmangle(cls.name));
+        if (warninglvl > 0) {
+          console.warn("Generating " + keywords.script + " script for derived class " + unmangle(cls.name));
+        }
+
         if (!structName) {
           structName = unmangle(cls.name);
         }
@@ -3777,7 +3784,9 @@ StructClass = class StructClass {
     }
 
     if (cls[keywords.name] in this.structs) {
-      console.warn("Struct " + unmangle(cls[keywords.name]) + " is already registered", cls);
+      if (warninglvl > 0) {
+        console.warn("Struct " + unmangle(cls[keywords.name]) + " is already registered", cls);
+      }
 
       if (!this.allowOverriding) {
         throw new Error("Struct " + unmangle(cls[keywords.name]) + " is already registered");
@@ -4099,8 +4108,10 @@ StructClass = class StructClass {
 
       return obj;
     } else if (cls[keywords.from] !== undefined) {
-      if (warninglvl > 1)
+      if (warninglvl > 1) {
         console.warn("Warning: class " + unmangle(cls.name) + " is using deprecated fromSTRUCT interface; use newSTRUCT/loadSTRUCT instead");
+      }
+
       return cls[keywords.from](load);
     } else { //default case, make new instance and then call load() on it
       let obj = objInstance;
@@ -4336,8 +4347,9 @@ StructClass = class StructClass {
       obj[keywords.load](load);
       return obj;
     } else if (cls[keywords.from] !== undefined) {
-      if (warninglvl > 1)
+      if (warninglvl > 1) {
         console.warn("Warning: class " + unmangle(cls.name) + " is using deprecated fromSTRUCT interface; use newSTRUCT/loadSTRUCT instead");
+      }
       return cls[keywords.from](load);
     } else { //default case, make new instance and then call load() on it
       let obj = objInstance;
