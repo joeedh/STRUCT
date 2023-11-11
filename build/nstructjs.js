@@ -4379,7 +4379,9 @@ class STRUCT {
           }
 
           if (val === undefined) {
-            console.warn("nstructjs.readJSON: Missing field " + f.name + " in struct " + stt.name);
+            if (warninglvl > 1) {
+              console.warn("nstructjs.readJSON: Missing field " + f.name + " in struct " + stt.name);
+            }
             continue;
           }
 
