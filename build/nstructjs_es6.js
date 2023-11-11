@@ -3736,7 +3736,7 @@ class STRUCT {
       }
       p = p.__proto__;
     }
-    
+
     cls.STRUCT = structScript;
     this.register(cls);
     return structScript;
@@ -4924,8 +4924,8 @@ function isRegistered(cls) {
  *  `);
  * }
  **/
-function inlineRegister(cls, structNameOverride) {
-  return manager.inlineRegister(cls, structNameOverride);
+function inlineRegister(cls, structScript) {
+  return manager.inlineRegister(cls, structScript);
 }
 
 /** Register a class with nstructjs **/
