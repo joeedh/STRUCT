@@ -588,6 +588,44 @@ export class STRUCT {
     recStruct(st, cls);
   }
 
+  mergeScripts(child, parent) {
+    let stc = struct_parse.parse(child.trim())
+    let stp = struct_parse.parse(parent.trim())
+
+    let fieldset = new Set();
+
+    for (let f of stc.fields) {
+      fieldset.add(f.name);
+    }
+
+    let fields = [];
+    for (let f of stp.fields) {
+      if (!fieldset.has(f.name)) {
+        fields.push(f);
+      }
+    }
+
+    stc.fields = fields.concat(stc.fields);
+    return STRUCT.fmt_struct(stc, false, false);
+  }
+
+  inlineRegister(cls, structScript) {
+    const keywords = this.constructor.keywords;
+
+    let p = cls.__proto__;
+    while (p && p !== Object) {
+      if (p.hasOwnProperty(keywords.script)) {
+        structScript = this.mergeScripts(structScript, p[keywords.script]);
+        break
+      }
+      p = p.__proto__;
+    }
+    
+    cls[keywords.script] = structScript;
+    this.register(cls);
+    return structScript;
+  }
+
   register(cls, structName) {
     return this.add_class(cls, structName);
   }

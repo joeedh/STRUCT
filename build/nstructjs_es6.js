@@ -3704,6 +3704,44 @@ class STRUCT {
     recStruct(st, cls);
   }
 
+  mergeScripts(child, parent) {
+    let stc = struct_parse.parse(child.trim());
+    let stp = struct_parse.parse(parent.trim());
+
+    let fieldset = new Set();
+
+    for (let f of stc.fields) {
+      fieldset.add(f.name);
+    }
+
+    let fields = [];
+    for (let f of stp.fields) {
+      if (!fieldset.has(f.name)) {
+        fields.push(f);
+      }
+    }
+
+    stc.fields = fields.concat(stc.fields);
+    return STRUCT.fmt_struct(stc, false, false);
+  }
+
+  inlineRegister(cls, structScript) {
+    const keywords = this.constructor.keywords;
+
+    let p = cls.__proto__;
+    while (p && p !== Object) {
+      if (p.hasOwnProperty(keywords.script)) {
+        structScript = this.mergeScripts(structScript, p.STRUCT);
+        break
+      }
+      p = p.__proto__;
+    }
+    
+    cls.STRUCT = structScript;
+    this.register(cls);
+    return structScript;
+  }
+
   register(cls, structName) {
     return this.add_class(cls, structName);
   }
@@ -4868,6 +4906,28 @@ function isRegistered(cls) {
   return manager.isRegistered(cls);
 }
 
+/** Register a class inline.
+ *
+ * Note: No need to use nstructjs.inherit,
+ * inheritance is handled for you.  Unlike
+ * nstructjs.inherit fields can be properly
+ * overridden in the child class without
+ * being written twice.
+ *
+ * class Test {
+ *  test = 0;
+ *
+ *  static STRUCT = nstructjs.inlineRegister(this, `
+ *  namespace.Test {
+ *    test : int;
+ *  }
+ *  `);
+ * }
+ **/
+function inlineRegister(cls, structNameOverride) {
+  return manager.inlineRegister(cls, structNameOverride);
+}
+
 /** Register a class with nstructjs **/
 function register(cls, structName) {
   return manager.register(cls, structName);
@@ -4908,4 +4968,4 @@ function readJSON(json, class_or_struct_id) {
   return manager.readJSON(json, class_or_struct_id);
 }
 
-export { JSONError, STRUCT, _truncateDollarSign, struct_binpack as binpack, consoleLogger, deriveStructManager, struct_filehelper as filehelper, formatJSON$1 as formatJSON, getEndian, inherit, isRegistered, manager, struct_parser as parser, struct_parseutil as parseutil, readJSON, readObject, register, setAllowOverriding, setDebugMode, setEndian, setTruncateDollarSign, setWarningMode, truncateDollarSign$1 as truncateDollarSign, struct_typesystem as typesystem, unpack_context, unregister, validateJSON$1 as validateJSON, validateStructs, writeJSON, writeObject, write_scripts };
+export { JSONError, STRUCT, _truncateDollarSign, struct_binpack as binpack, consoleLogger, deriveStructManager, struct_filehelper as filehelper, formatJSON$1 as formatJSON, getEndian, inherit, inlineRegister, isRegistered, manager, struct_parser as parser, struct_parseutil as parseutil, readJSON, readObject, register, setAllowOverriding, setDebugMode, setEndian, setTruncateDollarSign, setWarningMode, truncateDollarSign$1 as truncateDollarSign, struct_typesystem as typesystem, unpack_context, unregister, validateJSON$1 as validateJSON, validateStructs, writeJSON, writeObject, write_scripts };

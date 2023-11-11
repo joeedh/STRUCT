@@ -3727,6 +3727,44 @@ class STRUCT {
     recStruct(st, cls);
   }
 
+  mergeScripts(child, parent) {
+    let stc = struct_parse.parse(child.trim());
+    let stp = struct_parse.parse(parent.trim());
+
+    let fieldset = new Set();
+
+    for (let f of stc.fields) {
+      fieldset.add(f.name);
+    }
+
+    let fields = [];
+    for (let f of stp.fields) {
+      if (!fieldset.has(f.name)) {
+        fields.push(f);
+      }
+    }
+
+    stc.fields = fields.concat(stc.fields);
+    return STRUCT.fmt_struct(stc, false, false);
+  }
+
+  inlineRegister(cls, structScript) {
+    const keywords = this.constructor.keywords;
+
+    let p = cls.__proto__;
+    while (p && p !== Object) {
+      if (p.hasOwnProperty(keywords.script)) {
+        structScript = this.mergeScripts(structScript, p[keywords.script]);
+        break
+      }
+      p = p.__proto__;
+    }
+    
+    cls[keywords.script] = structScript;
+    this.register(cls);
+    return structScript;
+  }
+
   register(cls, structName) {
     return this.add_class(cls, structName);
   }
@@ -4891,6 +4929,28 @@ function isRegistered(cls) {
   return exports.manager.isRegistered(cls);
 }
 
+/** Register a class inline.
+ *
+ * Note: No need to use nstructjs.inherit,
+ * inheritance is handled for you.  Unlike
+ * nstructjs.inherit fields can be properly
+ * overridden in the child class without
+ * being written twice.
+ *
+ * class Test {
+ *  test = 0;
+ *
+ *  static STRUCT = nstructjs.inlineRegister(this, `
+ *  namespace.Test {
+ *    test : int;
+ *  }
+ *  `);
+ * }
+ **/
+function inlineRegister(cls, structNameOverride) {
+  return exports.manager.inlineRegister(cls, structNameOverride);
+}
+
 /** Register a class with nstructjs **/
 function register(cls, structName) {
   return exports.manager.register(cls, structName);
@@ -4955,6 +5015,7 @@ exports.filehelper = struct_filehelper;
 exports.formatJSON = formatJSON$1;
 exports.getEndian = getEndian;
 exports.inherit = inherit;
+exports.inlineRegister = inlineRegister;
 exports.isRegistered = isRegistered;
 exports.parser = struct_parser;
 exports.parseutil = struct_parseutil;

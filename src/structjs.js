@@ -63,6 +63,28 @@ export function isRegistered(cls) {
   return manager.isRegistered(cls);
 }
 
+/** Register a class inline.
+ *
+ * Note: No need to use nstructjs.inherit,
+ * inheritance is handled for you.  Unlike
+ * nstructjs.inherit fields can be properly
+ * overridden in the child class without
+ * being written twice.
+ *
+ * class Test {
+ *  test = 0;
+ *
+ *  static STRUCT = nstructjs.inlineRegister(this, `
+ *  namespace.Test {
+ *    test : int;
+ *  }
+ *  `);
+ * }
+ **/
+export function inlineRegister(cls, structNameOverride) {
+  return manager.inlineRegister(cls, structNameOverride);
+}
+
 /** Register a class with nstructjs **/
 export function register(cls, structName) {
   return manager.register(cls, structName);

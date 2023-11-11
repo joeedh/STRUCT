@@ -143,9 +143,8 @@ class Polygon {
       usid    : this.usid
     }
   }
-}
 
-Polygon.STRUCT = `
+  static STRUCT = structjs.inlineRegister(this, `
 node.Polygon {
   id        : int;
   uid       : uint;
@@ -159,9 +158,10 @@ node.Polygon {
   points    : array(e, int) | e.id;
   active    : int | this.points.active !== undefined ? this.points.active : -1;
   strtest   : string | JSON.stringify({a:2});
-}`;
+}`);
+}
+
 //points3   : static_array[short, 32] | [1,2,3];
-structjs.register(Polygon, "node.Polygon");
 
 class PolygonList extends Array {
   constructor() {
