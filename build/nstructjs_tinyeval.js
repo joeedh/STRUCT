@@ -810,7 +810,7 @@ for (let k in StructTypes) {
   StructTypeMap[StructTypes[k]] = k;
 }
 
-function gen_tabstr(t) {
+function gen_tabstr$2(t) {
   let s = "";
   for (let i = 0; i < t; i++) {
     s += "  ";
@@ -1549,17 +1549,17 @@ var struct_binpack = /*#__PURE__*/Object.freeze({
   unpack_static_string: unpack_static_string
 });
 
-let warninglvl = 2;
+let warninglvl$1 = 2;
 let debug = 0;
 
-let _static_envcode_null = "";
-let packer_debug, packer_debug_start, packer_debug_end;
+let _static_envcode_null$1 = "";
+let packer_debug$1, packer_debug_start$1, packer_debug_end$1;
 let packdebug_tablevel = 0;
 
 function _get_pack_debug() {
   return {
-    packer_debug, packer_debug_start, packer_debug_end,
-    debug, warninglvl
+    packer_debug: packer_debug$1, packer_debug_start: packer_debug_start$1, packer_debug_end: packer_debug_end$1,
+    debug, warninglvl: warninglvl$1
   }
 }
 
@@ -1602,14 +1602,14 @@ function setWarningMode2(t) {
     throw new Error("Expected a single number (>= 0) argument to setWarningMode");
   }
 
-  warninglvl = t;
+  warninglvl$1 = t;
 }
 
 function setDebugMode2(t) {
   debug = t;
 
   if (debug) {
-    packer_debug = function () {
+    packer_debug$1 = function () {
       let tab = gen_tabstr$1(packdebug_tablevel);
 
       if (arguments.length > 0) {
@@ -1618,24 +1618,24 @@ function setDebugMode2(t) {
         console.warn("Warning: undefined msg");
       }
     };
-    packer_debug_start = function (funcname) {
-      packer_debug("Start " + funcname);
+    packer_debug_start$1 = function (funcname) {
+      packer_debug$1("Start " + funcname);
       packdebug_tablevel++;
     };
 
-    packer_debug_end = function (funcname) {
+    packer_debug_end$1 = function (funcname) {
       packdebug_tablevel--;
 
       if (funcname) {
-        packer_debug("Leave " + funcname);
+        packer_debug$1("Leave " + funcname);
       }
     };
   } else {
-    packer_debug = function () {
+    packer_debug$1 = function () {
     };
-    packer_debug_start = function () {
+    packer_debug_start$1 = function () {
     };
-    packer_debug_end = function () {
+    packer_debug_end$1 = function () {
     };
   }
 }
@@ -1657,11 +1657,11 @@ function fromJSON(manager, val, obj, field, type, instance) {
   return StructFieldTypeMap[type.type].fromJSON(manager, val, obj, field, type, instance);
 }
 
-function formatJSON(manager, val, obj, field, type, instance, tlvl = 0) {
+function formatJSON$1(manager, val, obj, field, type, instance, tlvl = 0) {
   return StructFieldTypeMap[type.type].formatJSON(manager, val, obj, field, type, instance, tlvl);
 }
 
-function validateJSON(manager, val, obj, field, type, instance, _abstractKey) {
+function validateJSON$1(manager, val, obj, field, type, instance, _abstractKey) {
   return StructFieldTypeMap[type.type].validateJSON(manager, val, obj, field, type, instance, _abstractKey);
 }
 
@@ -1671,13 +1671,13 @@ function unpack_field(manager, data, type, uctx) {
 
   if (debug) {
     name = StructFieldTypeMap[type.type].define().name;
-    packer_debug_start("R " + name);
+    packer_debug_start$1("R " + name);
   }
 
   let ret = StructFieldTypeMap[type.type].unpack(manager, data, type, uctx);
 
   if (debug) {
-    packer_debug_end();
+    packer_debug_end$1();
   }
 
   return ret;
@@ -1696,7 +1696,7 @@ function do_pack(manager, data, val, obj, field, type) {
 
   if (debug) {
     name = StructFieldTypeMap[type.type].define().name;
-    packer_debug_start("W " + name);
+    packer_debug_start$1("W " + name);
   }
 
   let typeid = type;
@@ -1707,13 +1707,13 @@ function do_pack(manager, data, val, obj, field, type) {
   let ret = StructFieldTypeMap[typeid].pack(manager, data, val, obj, field, type);
 
   if (debug) {
-    packer_debug_end();
+    packer_debug_end$1();
   }
 
   return ret;
 }
 
-let _ws_env = [[undefined, undefined]];
+let _ws_env$1 = [[undefined, undefined]];
 
 class StructFieldType {
   static pack(manager, data, val, obj, field, type) {
@@ -1957,7 +1957,7 @@ class StructStructField extends StructFieldType {
   static pack(manager, data, val, obj, field, type) {
     let stt = manager.get_struct(type.data);
 
-    packer_debug("struct", stt.name);
+    packer_debug$1("struct", stt.name);
 
     manager.write_struct(data, val, stt);
   }
@@ -1996,14 +1996,14 @@ class StructStructField extends StructFieldType {
   static unpackInto(manager, data, type, uctx, dest) {
     let cls2 = manager.get_struct_cls(type.data);
 
-    packer_debug("struct", cls2 ? cls2.name : "(error)");
+    packer_debug$1("struct", cls2 ? cls2.name : "(error)");
     return manager.read_object(data, cls2, uctx, dest);
   }
 
   static packNull(manager, data, field, type) {
     let stt = manager.get_struct(type.data);
 
-    packer_debug("struct", type);
+    packer_debug$1("struct", type);
 
     for (let field2 of stt.fields) {
       let type2 = field2.type;
@@ -2014,7 +2014,7 @@ class StructStructField extends StructFieldType {
 
   static unpack(manager, data, type, uctx) {
     let cls2 = manager.get_struct_cls(type.data);
-    packer_debug("struct", cls2 ? cls2.name : "(error)");
+    packer_debug$1("struct", cls2 ? cls2.name : "(error)");
 
     return manager.read_object(data, cls2, uctx);
   }
@@ -2049,7 +2049,7 @@ class StructTStructField extends StructFieldType {
       throw new Error("Bad struct " + val.constructor[keywords.name] + " passed to write_struct");
     }
 
-    packer_debug("int " + stt.id);
+    packer_debug$1("int " + stt.id);
 
     pack_int(data, stt.id);
     manager.write_struct(data, val, stt);
@@ -2126,9 +2126,9 @@ class StructTStructField extends StructFieldType {
   static unpackInto(manager, data, type, uctx, dest) {
     let id = unpack_int(data, uctx);
 
-    packer_debug("-int " + id);
+    packer_debug$1("-int " + id);
     if (!(id in manager.struct_ids)) {
-      packer_debug("tstruct id: " + id);
+      packer_debug$1("tstruct id: " + id);
       console.trace();
       console.log(id);
       console.log(manager.struct_ids);
@@ -2137,7 +2137,7 @@ class StructTStructField extends StructFieldType {
 
     let cls2 = manager.get_struct_id(id);
 
-    packer_debug("struct name: " + cls2.name);
+    packer_debug$1("struct name: " + cls2.name);
 
     cls2 = manager.struct_cls[cls2.name];
 
@@ -2148,9 +2148,9 @@ class StructTStructField extends StructFieldType {
   static unpack(manager, data, type, uctx) {
     let id = unpack_int(data, uctx);
 
-    packer_debug("-int " + id);
+    packer_debug$1("-int " + id);
     if (!(id in manager.struct_ids)) {
-      packer_debug("tstruct id: " + id);
+      packer_debug$1("tstruct id: " + id);
       console.trace();
       console.log(id);
       console.log(manager.struct_ids);
@@ -2159,7 +2159,7 @@ class StructTStructField extends StructFieldType {
 
     let cls2 = manager.get_struct_id(id);
 
-    packer_debug("struct name: " + cls2.name);
+    packer_debug$1("struct name: " + cls2.name);
     cls2 = manager.struct_cls[cls2.name];
 
     return manager.read_object(data, cls2, uctx);
@@ -2198,7 +2198,7 @@ function formatArrayJson(manager, val, obj, field, type, type2, instance, tlvl, 
   for (let i = 0; i < array.length; i++) {
     let item = array[i];
 
-    s += tab(tlvl + 1) + formatJSON(manager, item, val, field, type2, instance, tlvl + 1) + ",\n";
+    s += tab(tlvl + 1) + formatJSON$1(manager, item, val, field, type2, instance, tlvl + 1) + ",\n";
   }
 
   s += tab(tlvl) + "]";
@@ -2214,12 +2214,12 @@ class StructArrayField extends StructFieldType {
       console.log("Field: ", field);
       console.log("Type: ", type);
       console.log("");
-      packer_debug("int 0");
+      packer_debug$1("int 0");
       pack_int(data, 0);
       return;
     }
 
-    packer_debug("int " + val.length);
+    packer_debug$1("int " + val.length);
     pack_int(data, val.length);
 
     let d = type.data;
@@ -2227,7 +2227,7 @@ class StructArrayField extends StructFieldType {
     let itername = d.iname;
     let type2 = d.type;
 
-    let env = _ws_env;
+    let env = _ws_env$1;
     for (let i = 0; i < val.length; i++) {
       let val2 = val[i];
       if (itername !== "" && itername !== undefined && field.get) {
@@ -2265,7 +2265,7 @@ class StructArrayField extends StructFieldType {
     }
 
     for (let i = 0; i < val.length; i++) {
-      let ret = validateJSON(manager, val[i], val, field, type.data.type, undefined, _abstractKey);
+      let ret = validateJSON$1(manager, val[i], val, field, type.data.type, undefined, _abstractKey);
 
       if (typeof ret === "string" || !ret) {
         return ret;
@@ -2309,7 +2309,7 @@ class StructArrayField extends StructFieldType {
 
     for (let i = 0; i < val.length; i++) {
       let val2 = val[i];
-      let env = _ws_env;
+      let env = _ws_env$1;
 
       if (itername !== "" && itername !== undefined && field.get) {
         env[0][0] = itername;
@@ -2336,7 +2336,7 @@ class StructArrayField extends StructFieldType {
 
   static unpack(manager, data, type, uctx) {
     let len = unpack_int(data, uctx);
-    packer_debug("-int " + len);
+    packer_debug$1("-int " + len);
 
     let arr = new Array(len);
     for (let i = 0; i < len; i++) {
@@ -2382,7 +2382,7 @@ class StructIterField extends StructFieldType {
     data.length += 4;
 
     let d = type.data, itername = d.iname, type2 = d.type;
-    let env = _ws_env;
+    let env = _ws_env$1;
 
     let i = 0;
     forEach(function (val2) {
@@ -2428,7 +2428,7 @@ class StructIterField extends StructFieldType {
     let itername = type.data.iname;
 
     for (let val2 of val) {
-      let env = _ws_env;
+      let env = _ws_env$1;
 
       if (itername !== "" && itername !== undefined && field.get) {
         env[0][0] = itername;
@@ -2462,7 +2462,7 @@ class StructIterField extends StructFieldType {
 
   static unpackInto(manager, data, type, uctx, arr) {
     let len = unpack_int(data, uctx);
-    packer_debug("-int " + len);
+    packer_debug$1("-int " + len);
 
     arr.length = 0;
 
@@ -2475,7 +2475,7 @@ class StructIterField extends StructFieldType {
 
   static unpack(manager, data, type, uctx) {
     let len = unpack_int(data, uctx);
-    packer_debug("-int " + len);
+    packer_debug$1("-int " + len);
 
     let arr = new Array(len);
     for (let i = 0; i < len; i++) {
@@ -2609,16 +2609,16 @@ class StructIterKeysField extends StructFieldType {
       len++;
     }
 
-    packer_debug("int " + len);
+    packer_debug$1("int " + len);
     pack_int(data, len);
 
     let d = type.data, itername = d.iname, type2 = d.type;
-    let env = _ws_env;
+    let env = _ws_env$1;
 
     let i = 0;
     for (let val2 in val) {
       if (i >= len) {
-        if (warninglvl > 0) {
+        if (warninglvl$1 > 0) {
           console.warn("Warning: object keys magically changed during iteration", val, i);
         }
         return;
@@ -2659,7 +2659,7 @@ class StructIterKeysField extends StructFieldType {
 
     for (let k in val) {
       let val2 = val[k];
-      let env = _ws_env;
+      let env = _ws_env$1;
 
       if (itername !== "" && itername !== undefined && field.get) {
         env[0][0] = itername;
@@ -2693,7 +2693,7 @@ class StructIterKeysField extends StructFieldType {
 
   static unpackInto(manager, data, type, uctx, arr) {
     let len = unpack_int(data, uctx);
-    packer_debug("-int " + len);
+    packer_debug$1("-int " + len);
 
     arr.length = 0;
 
@@ -2706,7 +2706,7 @@ class StructIterKeysField extends StructFieldType {
 
   static unpack(manager, data, type, uctx) {
     let len = unpack_int(data, uctx);
-    packer_debug("-int " + len);
+    packer_debug$1("-int " + len);
 
     let arr = new Array(len);
     for (let i = 0; i < len; i++) {
@@ -2803,7 +2803,7 @@ class StructStaticArrayField extends StructFieldType {
 
       //*
       if (itername !== "" && itername !== undefined && field.get) {
-        let env = _ws_env;
+        let env = _ws_env$1;
         env[0][0] = itername;
         env[0][1] = val2;
         val2 = manager._env_call(field.get, obj, env);
@@ -2854,7 +2854,7 @@ class StructStaticArrayField extends StructFieldType {
   }
 
   static unpackInto(manager, data, type, uctx, ret) {
-    packer_debug("-size: " + type.data.size);
+    packer_debug$1("-size: " + type.data.size);
 
     ret.length = 0;
 
@@ -2866,7 +2866,7 @@ class StructStaticArrayField extends StructFieldType {
   }
 
   static unpack(manager, data, type, uctx) {
-    packer_debug("-size: " + type.data.size);
+    packer_debug$1("-size: " + type.data.size);
 
     let ret = [];
 
@@ -2897,8 +2897,8 @@ var _sintern2 = /*#__PURE__*/Object.freeze({
   packNull: packNull,
   toJSON: toJSON,
   fromJSON: fromJSON,
-  formatJSON: formatJSON,
-  validateJSON: validateJSON,
+  formatJSON: formatJSON$1,
+  validateJSON: validateJSON$1,
   do_pack: do_pack,
   StructFieldType: StructFieldType,
   formatArrayJson: formatArrayJson
@@ -3183,9 +3183,10 @@ function updateDEBUG() {
 var sintern2 = _sintern2;
 var struct_eval = _struct_eval;
 
-let warninglvl$1 = 2;
+let warninglvl = 2;
 
-var truncateDollarSign = true;
+var truncateDollarSign$1 = true;
+exports.manager = void 0;
 
 class JSONError extends Error {};
 
@@ -3218,7 +3219,7 @@ function printEvalError(code) {
 }
 
 function setTruncateDollarSign(v) {
-  truncateDollarSign = !!v;
+  truncateDollarSign$1 = !!v;
 }
 
 function _truncateDollarSign(s) {
@@ -3232,18 +3233,18 @@ function _truncateDollarSign(s) {
 }
 
 function unmangle(name) {
-  if (truncateDollarSign) {
+  if (truncateDollarSign$1) {
     return _truncateDollarSign(name);
   } else {
     return name;
   }
 }
 
-let _static_envcode_null$1 = "";
+let _static_envcode_null = "";
 
 //truncate webpack-mangled names
 
-function gen_tabstr$2(tot) {
+function gen_tabstr(tot) {
   let ret = "";
 
   for (let i = 0; i < tot; i++) {
@@ -3253,15 +3254,15 @@ function gen_tabstr$2(tot) {
   return ret;
 }
 
-let packer_debug$1, packer_debug_start$1, packer_debug_end$1;
+let packer_debug, packer_debug_start, packer_debug_end;
 
 function update_debug_data() {
   let ret = _get_pack_debug();
 
-  packer_debug$1 = ret.packer_debug;
-  packer_debug_start$1 = ret.packer_debug_start;
-  packer_debug_end$1 = ret.packer_debug_end;
-  warninglvl$1 = ret.warninglvl;
+  packer_debug = ret.packer_debug;
+  packer_debug_start = ret.packer_debug_start;
+  packer_debug_end = ret.packer_debug_end;
+  warninglvl = ret.warninglvl;
 }
 
 update_debug_data();
@@ -3273,7 +3274,7 @@ function setWarningMode(t) {
     throw new Error("Expected a single number (>= 0) argument to setWarningMode");
   }
 
-  warninglvl$1 = t;
+  warninglvl = t;
 }
 
 function setDebugMode(t) {
@@ -3281,7 +3282,7 @@ function setDebugMode(t) {
   update_debug_data();
 }
 
-let _ws_env$1 = [[undefined, undefined]];
+let _ws_env = [[undefined, undefined]];
 
 function define_empty_class(scls, name) {
   let cls = function () {
@@ -3345,7 +3346,7 @@ class STRUCT {
   /** invoke loadSTRUCT methods on parent objects.  note that
    reader() is only called once.  it is called however.*/
   static Super(obj, reader) {
-    if (warninglvl$1 > 0) {
+    if (warninglvl > 0) {
       console.warn("deprecated");
     }
 
@@ -3371,7 +3372,7 @@ class STRUCT {
 
   /** deprecated.  used with old fromSTRUCT interface. */
   static chain_fromSTRUCT(cls, reader) {
-    if (warninglvl$1 > 0) {
+    if (warninglvl > 0) {
       console.warn("Using deprecated (and evil) chain_fromSTRUCT method, eek!");
     }
 
@@ -3390,7 +3391,7 @@ class STRUCT {
       try {
         obj2[k] = obj[k];
       } catch (error) {
-        if (warninglvl$1 > 0) {
+        if (warninglvl > 0) {
           console.warn("  failed to set property", k);
         }
       }
@@ -3625,7 +3626,7 @@ class STRUCT {
         let stt = struct_parse.parse(cls[keywords.script].trim());
         cls[keywords.name] = stt.name;
       } else if (!cls[keywords.name] && cls.name !== "Object") {
-        if (warninglvl$1 > 0)
+        if (warninglvl > 0)
           console.log("Warning, bad class in registered class list", unmangle(cls.name), cls);
         continue;
       }
@@ -3640,7 +3641,7 @@ class STRUCT {
 
       if (!(stt.name in clsmap)) {
         if (!(stt.name in this.null_natives))
-          if (warninglvl$1 > 0)
+          if (warninglvl > 0)
             console.log("WARNING: struct " + stt.name + " is missing from class list.");
 
         let dummy = define_empty_class(this.constructor, stt.name);
@@ -3806,7 +3807,7 @@ class STRUCT {
       }
 
       if (bad) {
-        if (warninglvl$1 > 0) {
+        if (warninglvl > 0) {
           console.warn("Generating " + keywords.script + " script for derived class " + unmangle(cls.name));
         }
 
@@ -3844,7 +3845,7 @@ class STRUCT {
     }
 
     if (cls[keywords.name] in this.structs) {
-      if (warninglvl$1 > 0) {
+      if (warninglvl > 0) {
         console.warn("Struct " + unmangle(cls[keywords.name]) + " is already registered", cls);
       }
 
@@ -3894,7 +3895,7 @@ class STRUCT {
   }
 
   _env_call(code, obj, env) {
-    let envcode = _static_envcode_null$1;
+    let envcode = _static_envcode_null;
     if (env !== undefined) {
       envcode = "";
       for (let i = 0; i < env.length; i++) {
@@ -3902,7 +3903,7 @@ class STRUCT {
       }
     }
     let fullcode = "";
-    if (envcode !== _static_envcode_null$1)
+    if (envcode !== _static_envcode_null)
       fullcode = envcode + code;
     else
       fullcode = code;
@@ -4108,7 +4109,7 @@ class STRUCT {
     if (uctx === undefined) {
       uctx = new unpack_context();
 
-      packer_debug$1("\n\n=Begin reading " + cls[keywords.name] + "=");
+      packer_debug("\n\n=Begin reading " + cls[keywords.name] + "=");
     }
     let thestruct = this;
 
@@ -4168,7 +4169,7 @@ class STRUCT {
 
       return obj;
     } else if (cls[keywords.from] !== undefined) {
-      if (warninglvl$1 > 1) {
+      if (warninglvl > 1) {
         console.warn("Warning: class " + unmangle(cls.name) + " is using deprecated fromSTRUCT interface; use newSTRUCT/loadSTRUCT instead");
       }
 
@@ -4349,7 +4350,7 @@ class STRUCT {
 
     stt = this.structs[cls[keywords.name]];
 
-    packer_debug$1("\n\n=Begin reading " + cls[keywords.name] + "=");
+    packer_debug("\n\n=Begin reading " + cls[keywords.name] + "=");
     let thestruct = this;
     let this2 = this;
     let was_run = false;
@@ -4407,7 +4408,7 @@ class STRUCT {
       obj[keywords.load](load);
       return obj;
     } else if (cls[keywords.from] !== undefined) {
-      if (warninglvl$1 > 1) {
+      if (warninglvl > 1) {
         console.warn("Warning: class " + unmangle(cls.name) + " is using deprecated fromSTRUCT interface; use newSTRUCT/loadSTRUCT instead");
       }
       return cls[keywords.from](load);
@@ -5469,7 +5470,7 @@ var pp = Parser.prototype;
 
 // ## Parser utilities
 
-var literal = /^(?:'((?:\\.|[^'])*?)'|"((?:\\.|[^"])*?)")/;
+var literal = /^(?:'((?:\\.|[^'\\])*?)'|"((?:\\.|[^"\\])*?)")/;
 pp.strictDirective = function(start) {
   for (;;) {
     // Try to find string literal.
@@ -6214,7 +6215,7 @@ pp$1.parseClass = function(node, isStatement) {
 };
 
 pp$1.parseClassElement = function(constructorAllowsSuper) {
-  var this$1 = this;
+  var this$1$1 = this;
 
   if (this.eat(types.semi)) { return null }
 
@@ -6222,14 +6223,14 @@ pp$1.parseClassElement = function(constructorAllowsSuper) {
   var tryContextual = function (k, noLineBreak) {
     if ( noLineBreak === void 0 ) noLineBreak = false;
 
-    var start = this$1.start, startLoc = this$1.startLoc;
-    if (!this$1.eatContextual(k)) { return false }
-    if (this$1.type !== types.parenL && (!noLineBreak || !this$1.canInsertSemicolon())) { return true }
-    if (method.key) { this$1.unexpected(); }
+    var start = this$1$1.start, startLoc = this$1$1.startLoc;
+    if (!this$1$1.eatContextual(k)) { return false }
+    if (this$1$1.type !== types.parenL && (!noLineBreak || !this$1$1.canInsertSemicolon())) { return true }
+    if (method.key) { this$1$1.unexpected(); }
     method.computed = false;
-    method.key = this$1.startNodeAt(start, startLoc);
+    method.key = this$1$1.startNodeAt(start, startLoc);
     method.key.name = k;
-    this$1.finishNode(method.key, "Identifier");
+    this$1$1.finishNode(method.key, "Identifier");
     return false
   };
 
@@ -9240,11 +9241,11 @@ pp$9.getToken = function() {
 // If we're in an ES6 environment, make parsers iterable
 if (typeof Symbol !== "undefined")
   { pp$9[Symbol.iterator] = function() {
-    var this$1 = this;
+    var this$1$1 = this;
 
     return {
       next: function () {
-        var token = this$1.getToken();
+        var token = this$1$1.getToken();
         return {
           done: token.type === types.eof,
           value: token
@@ -9983,7 +9984,7 @@ pp$9.readWord = function() {
 
 // Acorn is a tiny, fast JavaScript parser written in JavaScript.
 
-var version = "7.4.0";
+var version = "7.4.1";
 
 Parser.acorn = {
   Parser: Parser,
@@ -11001,7 +11002,7 @@ function test() {
 
 /** truncate webpack mangled names. defaults to true
  *  so Mesh$1 turns into Mesh */
-function truncateDollarSign$1(value = true) {
+function truncateDollarSign(value = true) {
   setTruncateDollarSign(value);
 }
 
@@ -11033,7 +11034,7 @@ function consoleLogger() {
  * @param logger
  * @returns {*}
  */
-function validateJSON$1(json, cls, useInternalParser, printColors = true, logger = consoleLogger) {
+function validateJSON(json, cls, useInternalParser, printColors = true, logger = consoleLogger) {
   return exports.manager.validateJSON(json, cls, useInternalParser, printColors, logger);
 }
 
@@ -11103,7 +11104,7 @@ function writeJSON(obj) {
   return exports.manager.writeJSON(obj);
 }
 
-function formatJSON$1(json, cls, addComments = true, validate = true) {
+function formatJSON(json, cls, addComments = true, validate = true) {
   return exports.manager.formatJSON(json, cls, addComments, validate);
 }
 
@@ -11126,7 +11127,7 @@ exports.binpack = struct_binpack;
 exports.consoleLogger = consoleLogger;
 exports.deriveStructManager = deriveStructManager;
 exports.filehelper = struct_filehelper;
-exports.formatJSON = formatJSON$1;
+exports.formatJSON = formatJSON;
 exports.getEndian = getEndian;
 exports.inherit = inherit;
 exports.inlineRegister = inlineRegister;
@@ -11142,12 +11143,12 @@ exports.setEndian = setEndian;
 exports.setTruncateDollarSign = setTruncateDollarSign;
 exports.setWarningMode = setWarningMode;
 exports.tinyeval = tinyeval;
-exports.truncateDollarSign = truncateDollarSign$1;
+exports.truncateDollarSign = truncateDollarSign;
 exports.typesystem = struct_typesystem;
 exports.unpack_context = unpack_context;
 exports.unregister = unregister;
 exports.useTinyEval = useTinyEval;
-exports.validateJSON = validateJSON$1;
+exports.validateJSON = validateJSON;
 exports.validateStructs = validateStructs;
 exports.writeJSON = writeJSON;
 exports.writeObject = writeObject;
