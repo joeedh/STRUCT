@@ -81,8 +81,8 @@ export function isRegistered(cls) {
  *  `);
  * }
  **/
-export function inlineRegister(cls, structNameOverride) {
-  return manager.inlineRegister(cls, structNameOverride);
+export function inlineRegister(cls, structScript) {
+  return manager.inlineRegister(cls, structScript);
 }
 
 /** Register a class with nstructjs **/

@@ -620,7 +620,7 @@ export class STRUCT {
       }
       p = p.__proto__;
     }
-    
+
     cls[keywords.script] = structScript;
     this.register(cls);
     return structScript;
