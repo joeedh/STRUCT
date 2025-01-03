@@ -2959,7 +2959,7 @@ class StructOptionalField extends StructFieldType {
   }
 
   static format(type) {
-    return "optional(" + type.data + ")";
+    return "optional(" + fmt_type(type.data) + ")";
   }
 
   static unpackInto(manager, data, type, uctx, dest) {

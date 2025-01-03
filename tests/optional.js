@@ -52,6 +52,7 @@ function test_main() {
     result = result && json3 === json1
     result = result && test2c.b === undefined
 
+    console.log(nstructjs.write_scripts())
     console.log(result ? 'PASSED' : 'FAILED')
     return result ? 0 : -1
 }
