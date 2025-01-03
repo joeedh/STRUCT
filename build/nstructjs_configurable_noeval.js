@@ -739,7 +739,8 @@ const StructEnum = {
   UINT         : 17,
   USHORT       : 18,
   STATIC_ARRAY : 19,
-  SIGNED_BYTE  : 20
+  SIGNED_BYTE  : 20,
+  OPTIONAL     : 21,
 };
 
 const ArrayTypes = new Set([
@@ -758,7 +759,6 @@ const ValueTypes = new Set([
   StructEnum.UINT,
   StructEnum.USHORT,
   StructEnum.SIGNED_BYTE
-
 ]);
 
 let StructTypes = {
@@ -777,7 +777,8 @@ let StructTypes = {
   "byte"         : StructEnum.BYTE,
   "bool"         : StructEnum.BOOL,
   "iterkeys"     : StructEnum.ITERKEYS,
-  "sbyte"        : StructEnum.SIGNED_BYTE
+  "sbyte"        : StructEnum.SIGNED_BYTE,
+  "optional"     : StructEnum.OPTIONAL,
 };
 
 let StructTypeMap = {};
@@ -857,7 +858,7 @@ function StructParser() {
   let reserved_tokens = new Set([
     "int", "float", "double", "string", "static_string", "array",
     "iter", "abstract", "short", "byte", "sbyte", "bool", "iterkeys", "uint", "ushort",
-    "static_array"
+    "static_array", "optional"
   ]);
 
   function tk(name, re, func) {
@@ -884,6 +885,7 @@ function StructParser() {
       return t;
     }),
     tk("COLON", /:/),
+    tk("OPT_COLON", /\?:/),
     tk("SOPEN", /\[/),
     tk("SCLOSE", /\]/),
     tk("JSCRIPT", /\|/, function (t) {
@@ -1053,6 +1055,18 @@ function StructParser() {
     }
   }
 
+  function p_Optional(p) {
+    p.expect("OPTIONAL");
+    p.expect("LPARAM");
+    const type = p_Type(p);
+    p.expect("RPARAM");
+
+    return {
+      type: StructEnum.OPTIONAL,
+      data: type
+    }
+  }
+
   function p_Type(p) {
     let tok = p.peeknext();
 
@@ -1076,6 +1090,8 @@ function StructParser() {
       return p_Abstract(p);
     } else if (tok.type === "DATAREF") {
       return p_DataRef(p);
+    } else if (tok.type === "OPTIONAL") {
+      return p_Optional(p);
     } else {
       p.error(tok, "invalid type " + tok.type);
     }
@@ -1096,9 +1112,22 @@ function StructParser() {
     let field = {};
 
     field.name = p_ID_or_num(p);
-    p.expect("COLON");
+    let is_opt = false;
+
+    if (p.peeknext().type === "OPT_COLON") {
+      p.expect("OPT_COLON");
+      is_opt = true;
+    } else {
+      p.expect("COLON");
+    }
 
     field.type = p_Type(p);
+    if (is_opt) {
+      field.type = {
+        type:  StructEnum.OPTIONAL,
+        data: field.type
+      };
+    }
     field.set = undefined;
     field.get = undefined;
 
@@ -2862,6 +2891,85 @@ class StructStaticArrayField extends StructFieldType {
 }
 
 StructFieldType.register(StructStaticArrayField);
+
+class StructOptionalField extends StructFieldType {
+  static pack(manager, data, val, obj, field, type) {
+    pack_int(data, val !== undefined && val !== null ? 1 : 0);
+    if (val !== undefined && val !== null) {
+      const fakeField = {...field};
+      fakeField.type = type.data;
+      do_pack(manager, data, val, obj, fakeField, type.data);
+    }
+  }
+
+  static fakeField(field, type) {
+    return {...field, type: type.data}
+  }
+
+  static validateJSON(manager, val, obj, field, type, instance, _abstractKey) {
+    const fakeField = this.fakeField(field, type); 
+    return val !== undefined && val !== null ? validateJSON$1(manager, val, obj, fakeField, type.data, undefined, _abstractKey) : true;
+  }
+
+
+  static fromJSON(manager, val, obj, field, type, instance) {
+    const fakeField = this.fakeField(field, type); 
+    return val !== undefined && val !== null ? fromJSON(manager, val, obj, fakeField, type.data, undefined) : undefined;
+  }
+
+  static formatJSON(manager, val, obj, field, type, instance, tlvl) {
+    if (val !== undefined && val !== null) {
+      const fakeField = this.fakeField(field, type);   
+      return formatJSON$1(manager, item, val, fakeField, type.data, instance, tlvl + 1) 
+    }
+    return 'null';
+  }
+
+  static toJSON(manager, val, obj, field, type) {
+    const fakeField = this.fakeField(field, type);
+    return val !== undefined && val !== null ? toJSON(manager, val, obj, fakeField, type.data) : null
+  }
+
+  static packNull(manager, data, field, type) {
+    pack_int(data, 0);
+  }
+
+  static format(type) {
+    return "optional(" + type.data + ")";
+  }
+
+  static unpackInto(manager, data, type, uctx, dest) {
+    let exists = unpack_int(data, uctx);
+
+    packer_debug$1("-int " + id);
+    packer_debug$1("optional exists: " + exists);
+
+    if (!exists) {
+      return
+    }
+
+    unpack_field(manager, data, type.data, uctx);
+  }
+
+  static unpack(manager, data, type, uctx) {
+    let exists = unpack_int(data, uctx);
+  
+    if (!exists) {
+      return undefined
+    }
+
+    return unpack_field(manager, data, type.data, uctx);
+  }
+
+  static define() {
+    return {
+      type: StructEnum.OPTIONAL,
+      name: "optional"
+    }
+  }
+}
+
+StructFieldType.register(StructOptionalField);
 
 var _sintern2 = /*#__PURE__*/Object.freeze({
   __proto__: null,
