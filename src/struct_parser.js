@@ -30,7 +30,8 @@ export const StructEnum = {
   UINT         : 17,
   USHORT       : 18,
   STATIC_ARRAY : 19,
-  SIGNED_BYTE  : 20
+  SIGNED_BYTE  : 20,
+  OPTIONAL     : 21,
 };
 
 export const ArrayTypes = new Set([
@@ -49,7 +50,6 @@ export const ValueTypes = new Set([
   StructEnum.UINT,
   StructEnum.USHORT,
   StructEnum.SIGNED_BYTE
-
 ])
 
 export let StructTypes = {
@@ -68,7 +68,8 @@ export let StructTypes = {
   "byte"         : StructEnum.BYTE,
   "bool"         : StructEnum.BOOL,
   "iterkeys"     : StructEnum.ITERKEYS,
-  "sbyte"        : StructEnum.SIGNED_BYTE
+  "sbyte"        : StructEnum.SIGNED_BYTE,
+  "optional"     : StructEnum.OPTIONAL,
 };
 
 export let StructTypeMap = {};
@@ -148,7 +149,7 @@ function StructParser() {
   let reserved_tokens = new Set([
     "int", "float", "double", "string", "static_string", "array",
     "iter", "abstract", "short", "byte", "sbyte", "bool", "iterkeys", "uint", "ushort",
-    "static_array"
+    "static_array", "optional"
   ]);
 
   function tk(name, re, func) {
@@ -175,6 +176,7 @@ function StructParser() {
       return t;
     }),
     tk("COLON", /:/),
+    tk("OPT_COLON", /\?:/),
     tk("SOPEN", /\[/),
     tk("SCLOSE", /\]/),
     tk("JSCRIPT", /\|/, function (t) {
@@ -344,6 +346,18 @@ function StructParser() {
     }
   }
 
+  function p_Optional(p) {
+    p.expect("OPTIONAL");
+    p.expect("LPARAM");
+    const type = p_Type(p)
+    p.expect("RPARAM");
+
+    return {
+      type: StructEnum.OPTIONAL,
+      data: type
+    }
+  }
+
   function p_Type(p) {
     let tok = p.peeknext();
 
@@ -367,6 +381,8 @@ function StructParser() {
       return p_Abstract(p);
     } else if (tok.type === "DATAREF") {
       return p_DataRef(p);
+    } else if (tok.type === "OPTIONAL") {
+      return p_Optional(p);
     } else {
       p.error(tok, "invalid type " + tok.type);
     }
@@ -387,9 +403,22 @@ function StructParser() {
     let field = {}
 
     field.name = p_ID_or_num(p);
-    p.expect("COLON");
+    let is_opt = false;
+
+    if (p.peeknext().type === "OPT_COLON") {
+      p.expect("OPT_COLON");
+      is_opt = true;
+    } else {
+      p.expect("COLON");
+    }
 
     field.type = p_Type(p);
+    if (is_opt) {
+      field.type = {
+        type:  StructEnum.OPTIONAL,
+        data: field.type
+      }
+    }
     field.set = undefined;
     field.get = undefined;
 

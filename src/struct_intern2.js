@@ -1349,3 +1349,81 @@ class StructStaticArrayField extends StructFieldType {
 
 StructFieldType.register(StructStaticArrayField);
 
+class StructOptionalField extends StructFieldType {
+  static pack(manager, data, val, obj, field, type) {
+    pack_int(data, val !== undefined && val !== null ? 1 : 0)
+    if (val !== undefined && val !== null) {
+      const fakeField = {...field}
+      fakeField.type = type.data
+      do_pack(manager, data, val, obj, fakeField, type.data);
+    }
+  }
+
+  static fakeField(field, type) {
+    return {...field, type: type.data}
+  }
+
+  static validateJSON(manager, val, obj, field, type, instance, _abstractKey) {
+    const fakeField = this.fakeField(field, type) 
+    return val !== undefined && val !== null ? validateJSON(manager, val, obj, fakeField, type.data, undefined, _abstractKey) : true;
+  }
+
+
+  static fromJSON(manager, val, obj, field, type, instance) {
+    const fakeField = this.fakeField(field, type) 
+    return val !== undefined && val !== null ? fromJSON(manager, val, obj, fakeField, type.data, undefined) : undefined;
+  }
+
+  static formatJSON(manager, val, obj, field, type, instance, tlvl) {
+    if (val !== undefined && val !== null) {
+      const fakeField = this.fakeField(field, type)   
+      return formatJSON(manager, item, val, fakeField, type.data, instance, tlvl + 1) 
+    }
+    return 'null';
+  }
+
+  static toJSON(manager, val, obj, field, type) {
+    const fakeField = this.fakeField(field, type)
+    return val !== undefined && val !== null ? toJSON(manager, val, obj, fakeField, type.data) : null
+  }
+
+  static packNull(manager, data, field, type) {
+    pack_int(data, 0);
+  }
+
+  static format(type) {
+    return "optional(" + type.data + ")";
+  }
+
+  static unpackInto(manager, data, type, uctx, dest) {
+    let exists = struct_binpack.unpack_int(data, uctx);
+
+    packer_debug("-int " + id);
+    packer_debug("optional exists: " + exists);
+
+    if (!exists) {
+      return
+    }
+
+    unpack_field(manager, data, type.data, uctx)
+  }
+
+  static unpack(manager, data, type, uctx) {
+    let exists = struct_binpack.unpack_int(data, uctx);
+  
+    if (!exists) {
+      return undefined
+    }
+
+    return unpack_field(manager, data, type.data, uctx);
+  }
+
+  static define() {
+    return {
+      type: StructEnum.OPTIONAL,
+      name: "optional"
+    }
+  }
+}
+
+StructFieldType.register(StructOptionalField);
