@@ -2,18 +2,20 @@
 
 import * as struct_binpack from './struct_binpack.js';
 import * as struct_intern from './struct_intern.js';
+import type { Version } from './types.js';
 
-let nbtoa, natob;
+let nbtoa: (str: string) => string;
+let natob: (str: string) => string;
 
 if (typeof btoa === "undefined") {
-  nbtoa = function btoa(str) {
-    let buffer = new Buffer("" + str, 'binary');
+  nbtoa = function (str: string): string {
+    const buffer = Buffer.from("" + str, 'binary');
     return buffer.toString('base64');
-  }
+  };
 
-  natob = function atob(str) {
-    return new Buffer(str, 'base64').toString('binary');
-  }
+  natob = function (str: string): string {
+    return Buffer.from(str, 'base64').toString('binary');
+  };
 } else {
   natob = atob;
   nbtoa = btoa;
@@ -27,24 +29,24 @@ file format:
   file version micro           : 1 bytes
   length of struct scripts     : 4 bytes
   struct scripts for this file : ...
-  
+
   block:
     magic signature for block              : 4 bytes
     length of data  (not including header) : 4 bytes
     id of struct type                      : 4 bytes
-    
+
     data                                   : ...
 */
 
-export function versionToInt(v) {
-  v = versionCoerce(v);
-  let mul = 64;
-  return ~~(v.major*mul*mul*mul + v.minor*mul*mul + v.micro*mul);
+export function versionToInt(v: string | number[] | Version): number {
+  const ver = versionCoerce(v);
+  const mul = 64;
+  return ~~(ver.major * mul * mul * mul + ver.minor * mul * mul + ver.micro * mul);
 }
 
-let ver_pat = /[0-9]+\.[0-9]+\.[0-9]+$/;
+const ver_pat = /[0-9]+\.[0-9]+\.[0-9]+$/;
 
-export function versionCoerce(v) {
+export function versionCoerce(v: string | number[] | Version): Version {
   if (!v) {
     throw new Error("empty version: " + v);
   }
@@ -54,20 +56,20 @@ export function versionCoerce(v) {
       throw new Error("invalid version string " + v);
     }
 
-    let ver = v.split(".");
+    const ver = v.split(".");
     return {
-      major : parseInt(ver[0]),
-      minor : parseInt(ver[1]),
-      micro : parseInt(ver[2])
-    }
+      major: parseInt(ver[0]),
+      minor: parseInt(ver[1]),
+      micro: parseInt(ver[2])
+    };
   } else if (Array.isArray(v)) {
     return {
-      major : v[0],
-      minor : v[1],
-      micro : v[2]
-    }
+      major: v[0],
+      minor: v[1],
+      micro: v[2]
+    };
   } else if (typeof v === "object") {
-    let test = (k) => k in v && typeof v[k] === "number";
+    const test = (k: keyof Version): boolean => k in v && typeof v[k] === "number";
 
     if (!test("major") || !test("minor") || !test("micro")) {
       throw new Error("invalid version object: " + v);
@@ -79,11 +81,16 @@ export function versionCoerce(v) {
   }
 }
 
-export function versionLessThan(a, b) {
+export function versionLessThan(a: string | number[] | Version, b: string | number[] | Version): boolean {
   return versionToInt(a) < versionToInt(b);
 }
 
 export class FileParams {
+  magic: string;
+  ext: string;
+  blocktypes: string[];
+  version: Version;
+
   constructor() {
     this.magic = "STRT";
     this.ext = ".bin";
@@ -99,78 +106,86 @@ export class FileParams {
 
 //used to define blocks
 export class Block {
-  constructor(type_magic, data) {
-    this.type = type_magic;
+  type: string;
+  data: unknown;
+
+  constructor(type?: string, data?: unknown) {
+    this.type = type || "";
     this.data = data;
   }
 }
 
-export class FileeError extends Error {
+export class FileError extends Error {
 }
 
 export class FileHelper {
+  version: Version;
+  blocktypes: string[];
+  magic: string;
+  ext: string;
+  struct: struct_intern.STRUCT | undefined;
+  unpack_ctx: struct_binpack.unpack_context | undefined;
+  blocks: Block[] | undefined;
+
   //params can be FileParams instance, or object literal
   //(it will convert to FileParams)
-  constructor(params) {
-    if (params === undefined) {
-      params = new FileParams();
-    } else {
-      let fp = new FileParams();
+  constructor(params?: Partial<FileParams>) {
+    const fp = new FileParams();
 
-      for (let k in params) {
-        fp[k] = params[k];
+    if (params !== undefined) {
+      for (const k in params) {
+        (fp as unknown as Record<string, unknown>)[k] = (params as unknown as Record<string, unknown>)[k];
       }
-      params = fp;
     }
 
-    this.version = params.version;
-    this.blocktypes = params.blocktypes;
-    this.magic = params.magic;
-    this.ext = params.ext;
+    this.version = fp.version;
+    this.blocktypes = fp.blocktypes;
+    this.magic = fp.magic;
+    this.ext = fp.ext;
     this.struct = undefined;
     this.unpack_ctx = undefined;
   }
 
-  read(dataview) {
+  read(dataview: DataView): Block[] {
     this.unpack_ctx = new struct_binpack.unpack_context();
 
-    let magic = struct_binpack.unpack_static_string(dataview, this.unpack_ctx, 4);
+    const magic = struct_binpack.unpack_static_string(dataview, this.unpack_ctx, 4);
 
     if (magic !== this.magic) {
       throw new FileError("corrupted file");
     }
 
-    this.version = {};
+    this.version = {
+      major: 0,
+      minor: 0,
+      micro: 0
+    };
     this.version.major = struct_binpack.unpack_short(dataview, this.unpack_ctx);
     this.version.minor = struct_binpack.unpack_byte(dataview, this.unpack_ctx);
     this.version.micro = struct_binpack.unpack_byte(dataview, this.unpack_ctx);
 
-    let struct = this.struct = new struct_intern.STRUCT();
+    const struct = this.struct = new struct_intern.STRUCT();
 
-    let scripts = struct_binpack.unpack_string(dataview, this.unpack_ctx);
+    const scripts = struct_binpack.unpack_string(dataview, this.unpack_ctx);
     this.struct.parse_structs(scripts, struct_intern.manager);
 
-    let blocks = [];
-    let dviewlen = dataview.buffer.byteLength;
+    const blocks: Block[] = [];
+    const dviewlen = dataview.buffer.byteLength;
 
     while (this.unpack_ctx.i < dviewlen) {
-      //console.log("reading block. . .", this.unpack_ctx.i, dviewlen);
-
-      let type = struct_binpack.unpack_static_string(dataview, this.unpack_ctx, 4);
-      let datalen = struct_binpack.unpack_int(dataview, this.unpack_ctx);
-      let bstruct = struct_binpack.unpack_int(dataview, this.unpack_ctx);
-      let bdata;
-
-      //console.log(type, datalen, bstruct);
+      const type = struct_binpack.unpack_static_string(dataview, this.unpack_ctx, 4);
+      const datalen = struct_binpack.unpack_int(dataview, this.unpack_ctx);
+      const bstruct = struct_binpack.unpack_int(dataview, this.unpack_ctx);
+      let bdata: unknown;
 
       if (bstruct === -2) { //string data, e.g. JSON
         bdata = struct_binpack.unpack_static_string(dataview, this.unpack_ctx, datalen);
       } else {
-        bdata = struct_binpack.unpack_bytes(dataview, this.unpack_ctx, datalen);
-        bdata = struct.read_object(bdata, bstruct, new struct_binpack.unpack_context());
+        const rawData = struct_binpack.unpack_bytes(dataview, this.unpack_ctx, datalen);
+        bdata = struct.read_object(rawData, bstruct, new struct_binpack.unpack_context());
       }
 
-      let block = new Block();
+      const block = new Block();
       block.type = type;
       block.data = bdata;
 
@@ -181,31 +196,29 @@ export class FileHelper {
     return blocks;
   }
 
-  doVersions(old) {
-    let blocks = this.blocks;
-
+  doVersions(old: string | number[] | Version): void {
     if (versionLessThan(old, "0.0.1")) {
       //do something
     }
   }
 
-  write(blocks) {
+  write(blocks: Block[]): DataView {
     this.struct = struct_intern.manager;
     this.blocks = blocks;
 
-    let data = [];
+    const data: number[] = [];
 
     struct_binpack.pack_static_string(data, this.magic, 4);
     struct_binpack.pack_short(data, this.version.major);
     struct_binpack.pack_byte(data, this.version.minor & 255);
     struct_binpack.pack_byte(data, this.version.micro & 255);
 
-    let scripts = struct_intern.write_scripts();
+    const scripts = struct_intern.write_scripts();
     struct_binpack.pack_string(data, scripts);
 
-    let struct = this.struct;
+    const struct = this.struct;
 
-    for (let block of blocks) {
+    for (const block of blocks) {
       if (typeof block.data === "string") { //string data, e.g. JSON
         struct_binpack.pack_static_string(data, block.type, 4);
         struct_binpack.pack_int(data, block.data.length);
@@ -214,13 +227,14 @@ export class FileHelper {
         continue;
       }
 
-      let structName = block.data.constructor.structName;
-      if (structName === undefined || !(structName in struct.structs)) {
+      const blockData = block.data as Record<string, unknown>;
+      const structNameVal = (blockData.constructor as unknown as Record<string, unknown>).structName as string | undefined;
+      if (structNameVal === undefined || !(structNameVal in struct.structs)) {
         throw new Error("Non-STRUCTable object " + block.data);
       }
 
-      let data2 = [];
-      let stt = struct.structs[structName];
+      const data2: number[] = [];
+      const stt = struct.structs[structNameVal];
 
       struct.write_object(data2, block.data);
 
@@ -234,11 +248,11 @@ export class FileHelper {
     return new DataView(new Uint8Array(data).buffer);
   }
 
-  writeBase64(blocks) {
-    let dataview = this.write(blocks);
+  writeBase64(blocks: Block[]): string {
+    const dataview = this.write(blocks);
 
     let str = "";
-    let bytes = new Uint8Array(dataview.buffer);
+    const bytes = new Uint8Array(dataview.buffer);
 
     for (let i = 0; i < bytes.length; i++) {
       str += String.fromCharCode(bytes[i]);
@@ -247,13 +261,13 @@ export class FileHelper {
     return nbtoa(str);
   }
 
-  makeBlock(type, data) {
+  makeBlock(type: string, data: unknown): Block {
     return new Block(type, data);
   }
 
-  readBase64(base64) {
-    let data = natob(base64);
-    let data2 = new Uint8Array(data.length);
+  readBase64(base64: string): Block[] {
+    const data = natob(base64);
+    const data2 = new Uint8Array(data.length);
 
     for (let i = 0; i < data.length; i++) {
       data2[i] = data.charCodeAt(i);
