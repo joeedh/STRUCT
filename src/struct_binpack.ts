@@ -179,7 +179,7 @@ const _static_sbuf_ss: number[] = new Array(2048);
 
 export function pack_static_string(data: number[], str: string, length: number): void {
   if (length === undefined)
-    throw new Error("'length' paremter is not optional for pack_static_string()");
+    throw new Error("'length' parameter is not optional for pack_static_string()");
 
   const arr: number[] = length < 2048 ? _static_sbuf_ss : new Array();
   arr.length = 0;

@@ -24,6 +24,9 @@ importers:
       '@babel/traverse':
         specifier: ^7.23.3
         version: 7.29.0
+      '@pathtx/prettier':
+        specifier: 3.3.0-dev
+        version: 3.3.0-dev
       '@rollup/plugin-commonjs':
         specifier: ^15.1.0
         version: 15.1.0(rollup@2.80.0)
@@ -133,6 +136,11 @@ packages:
 
   '@oxc-project/types@0.122.0':
     resolution: {integrity: sha512-oLAl5kBpV4w69UtFZ9xqcmTi+GENWOcPF7FCrczTiBbmC0ibXxCwyvZGbO39rCVEuLGAZM84DH0pUIyyv/YJzA==}
+
+  '@pathtx/prettier@3.3.0-dev':
+    resolution: {integrity: sha512-snpubo5nOKDvCJiMjSObgUDsAluXeIlQrmydavW6t6PKPDJftJRwRGeIzD5XthgS5Nf5TlaIlMjhz5P1o9ZGfg==}
+    engines: {node: '>=14'}
+    hasBin: true
 
   '@rolldown/binding-android-arm64@1.0.0-rc.12':
     resolution: {integrity: sha512-pv1y2Fv0JybcykuiiD3qBOBdz6RteYojRFY1d+b95WVuzx211CRh+ytI/+9iVyWQ6koTh5dawe4S/yRfOFjgaA==}
@@ -1507,6 +1515,8 @@ snapshots:
     optional: true
 
   '@oxc-project/types@0.122.0': {}
+
+  '@pathtx/prettier@3.3.0-dev': {}
 
   '@rolldown/binding-android-arm64@1.0.0-rc.12':
     optional: true

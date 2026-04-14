@@ -1,26 +1,35 @@
 "use strict";
 
-import * as struct_binpack from './struct_binpack.js';
-import * as struct_parser from './struct_parser.js';
-import * as _sintern2 from './struct_intern2.js';
-import * as _struct_eval from './struct_eval.js';
-import jsonParser, {printContext, TokSymbol} from './struct_json.js';
-import * as util from './struct_util.js';
+import * as struct_binpack from "./struct_binpack.js";
+import * as struct_parser from "./struct_parser.js";
+import * as _sintern2 from "./struct_intern2.js";
+import * as _struct_eval from "./struct_eval.js";
+import jsonParser, { printContext, TokSymbol } from "./struct_json.js";
+import * as util from "./struct_util.js";
 
 import {
-  TypeDescriptor, StructField, StructKeywords, StructableClass,
-  StructableInstance, StructManager, NStructInterface, UnpackContext,
-  FormatCtx, StructFieldTypeClass, StructEnumValue, Version,
+  TypeDescriptor,
+  StructField,
+  StructKeywords,
+  StructableClass,
+  StructableInstance,
+  StructManager,
+  NStructInterface,
+  UnpackContext,
+  FormatCtx,
+  StructFieldTypeClass,
+  StructEnumValue,
+  Version,
   StructEnum,
-} from './types.js';
+} from "./types.js";
 
 // needed to avoid a rollup bug in configurable mode
 const sintern2 = _sintern2;
 const struct_eval = _struct_eval;
 
-import {DEBUG} from './struct_global.js';
+import { DEBUG } from "./struct_global.js";
 
-import {_get_pack_debug, StructFieldTypeMap} from './struct_intern2.js';
+import { _get_pack_debug, StructFieldTypeMap } from "./struct_intern2.js";
 
 let warninglvl = 2;
 
@@ -31,7 +40,7 @@ export class JSONError extends Error {}
 
 function printCodeLines(code: string): string {
   const lines = code.split(String.fromCharCode(10));
-  let buf = '';
+  let buf = "";
 
   for (let i = 0; i < lines.length; i++) {
     let line = "" + (i + 1) + ":";
@@ -80,9 +89,14 @@ function unmangle(name: string): string {
 }
 
 import {
-  StructTypes, StructTypeMap, StructEnum as StructEnumParser, NStruct,
-  struct_parse, ValueTypes, ArrayTypes
-} from './struct_parser.js';
+  StructTypes,
+  StructTypeMap,
+  StructEnum as StructEnumParser,
+  NStruct,
+  struct_parse,
+  ValueTypes,
+  ArrayTypes,
+} from "./struct_parser.js";
 
 let _static_envcode_null = "";
 
@@ -129,8 +143,7 @@ export function setDebugMode(t: unknown): void {
 let _ws_env: [unknown, unknown][] = [[undefined, undefined]];
 
 function define_empty_class(scls: { keywords: StructKeywords }, name: string): StructableClass {
-  const cls = function (this: StructableInstance) {
-  } as unknown as StructableClass;
+  const cls = function (this: StructableInstance) {} as unknown as StructableClass;
 
   cls.prototype = Object.create(Object.prototype);
   (cls as Record<string, unknown>).constructor = cls.prototype.constructor = cls;
@@ -182,7 +195,7 @@ export class STRUCT {
     this.define_null_native("Object", Object as unknown as StructableClass);
 
     this.jsonUseColors = true;
-    this.jsonBuf = '';
+    this.jsonBuf = "";
     this.formatCtx = {};
   }
 
@@ -208,8 +221,7 @@ export class STRUCT {
 
     reader(obj);
 
-    function reader2(_obj: StructableInstance): void {
-    }
+    function reader2(_obj: StructableInstance): void {}
 
     const cls = obj.constructor;
     const keywords = this.keywords;
@@ -223,8 +235,14 @@ export class STRUCT {
     const parent = parentProto.constructor as StructableClass;
     bad = bad || parent === undefined;
 
-    if (!bad && parent.prototype[keywords.load] && parent.prototype[keywords.load] !== (obj as Record<string, unknown>)[keywords.load]) {
-      (parent.prototype[keywords.load] as (this: StructableInstance, reader: (obj: StructableInstance) => void) => void).call(obj, reader2);
+    if (
+      !bad &&
+      parent.prototype[keywords.load] &&
+      parent.prototype[keywords.load] !== (obj as Record<string, unknown>)[keywords.load]
+    ) {
+      (
+        parent.prototype[keywords.load] as (this: StructableInstance, reader: (obj: StructableInstance) => void) => void
+      ).call(obj, reader2);
     }
   }
 
@@ -239,17 +257,23 @@ export class STRUCT {
     const proto = cls.prototype;
     const parent = (proto as Record<string, unknown>).prototype as { constructor: StructableClass };
 
-    const obj = (parent.constructor as Record<string, unknown>)[keywords.from] as (reader: (obj: StructableInstance) => void) => StructableInstance;
+    const obj = (parent.constructor as Record<string, unknown>)[keywords.from] as (
+      reader: (obj: StructableInstance) => void
+    ) => StructableInstance;
     const result = obj(reader);
     const obj2 = new cls() as StructableInstance;
 
-    const keys: (string | symbol)[] = (Object.keys(result) as (string | symbol)[]).concat(Object.getOwnPropertySymbols(result));
+    const keys: (string | symbol)[] = (Object.keys(result) as (string | symbol)[]).concat(
+      Object.getOwnPropertySymbols(result)
+    );
 
     for (let i = 0; i < keys.length; i++) {
       const k = keys[i];
 
       try {
-        (obj2 as unknown as Record<string | symbol, unknown>)[k] = (result as unknown as Record<string | symbol, unknown>)[k];
+        (obj2 as unknown as Record<string | symbol, unknown>)[k] = (
+          result as unknown as Record<string | symbol, unknown>
+        )[k];
       } catch (error) {
         if (warninglvl > 0) {
           console.warn("  failed to set property", k);
@@ -267,17 +291,19 @@ export class STRUCT {
     return this.fmt_struct(stt, internal_only, no_helper_js);
   }
 
-  static fmt_struct(stt: NStructInterface, internal_only?: boolean, no_helper_js?: boolean, addComments?: boolean): string {
-    if (internal_only === undefined)
-      internal_only = false;
-    if (no_helper_js === undefined)
-      no_helper_js = false;
+  static fmt_struct(
+    stt: NStructInterface,
+    internal_only?: boolean,
+    no_helper_js?: boolean,
+    addComments?: boolean
+  ): string {
+    if (internal_only === undefined) internal_only = false;
+    if (no_helper_js === undefined) no_helper_js = false;
 
     let s = "";
     if (!internal_only) {
       s += stt.name;
-      if (stt.id !== -1)
-        s += " id=" + stt.id;
+      if (stt.id !== -1) s += " id=" + stt.id;
       s += " {\n";
     }
     const tab = "  ";
@@ -304,8 +330,7 @@ export class STRUCT {
 
       s += "\n";
     }
-    if (!internal_only)
-      s += "}";
+    if (!internal_only) s += "}";
     return s;
   }
 
@@ -320,7 +345,7 @@ export class STRUCT {
       load  : "load" + keyword,
       new   : "new" + keyword,
       after : "after" + keyword,
-      from  : "from" + keyword
+      from  : "from" + keyword,
     };
   }
 
@@ -422,10 +447,8 @@ export class STRUCT {
     for (const k in this.structs) {
       const stt = this.structs[k];
 
-      if (thisvar !== undefined)
-        func.call(thisvar, stt);
-      else
-        func(stt);
+      if (thisvar !== undefined) func.call(thisvar, stt);
+      else func(stt);
     }
   }
 
@@ -467,8 +490,7 @@ export class STRUCT {
         const stt = struct_parse.parse(((cls as Record<string, unknown>)[keywords.script] as string).trim()) as NStruct;
         (cls as Record<string, unknown>)[keywords.name] = stt.name;
       } else if (!(cls as Record<string, unknown>)[keywords.name] && cls.name !== "Object") {
-        if (warninglvl > 0)
-          console.log("Warning, bad class in registered class list", unmangle(cls.name), cls);
+        if (warninglvl > 0) console.log("Warning, bad class in registered class list", unmangle(cls.name), cls);
         continue;
       }
 
@@ -482,8 +504,7 @@ export class STRUCT {
 
       if (!(stt.name in clsmap)) {
         if (!(stt.name in this.null_natives))
-          if (warninglvl > 0)
-            console.log("WARNING: struct " + stt.name + " is missing from class list.");
+          if (warninglvl > 0) console.log("WARNING: struct " + stt.name + " is missing from class list.");
 
         const dummy = define_empty_class(this.constructor as typeof STRUCT, stt.name);
 
@@ -495,14 +516,12 @@ export class STRUCT {
         this.struct_cls[(dummy as Record<string, unknown>)[keywords.name] as string] = dummy;
         this.structs[(dummy as Record<string, unknown>)[keywords.name] as string] = stt;
 
-        if (stt.id !== -1)
-          this.struct_ids[stt.id] = stt;
+        if (stt.id !== -1) this.struct_ids[stt.id] = stt;
       } else {
         this.struct_cls[stt.name] = clsmap[stt.name];
         this.structs[stt.name] = stt;
 
-        if (stt.id !== -1)
-          this.struct_ids[stt.id] = stt;
+        if (stt.id !== -1) this.struct_ids[stt.id] = stt;
       }
 
       let tok = struct_parse.peek();
@@ -546,7 +565,7 @@ export class STRUCT {
     };
 
     recStruct = (st: NStructInterface, cls: StructableClass): void => {
-      if (!((cls as Record<string, unknown>)[keywords.name] as string in this.structs)) {
+      if (!(((cls as Record<string, unknown>)[keywords.name] as string) in this.structs)) {
         this.add_class(cls, (cls as Record<string, unknown>)[keywords.name] as string);
       }
 
@@ -617,7 +636,11 @@ export class STRUCT {
   unregister(cls: StructableClass): void {
     const keywords = (this.constructor as typeof STRUCT).keywords;
 
-    if (!cls || !(cls as Record<string, unknown>)[keywords.name] || !((cls as Record<string, unknown>)[keywords.name] as string in this.struct_cls)) {
+    if (
+      !cls ||
+      !(cls as Record<string, unknown>)[keywords.name] ||
+      !(((cls as Record<string, unknown>)[keywords.name] as string) in this.struct_cls)
+    ) {
       console.warn("Class not registered with nstructjs", cls);
       return;
     }
@@ -631,7 +654,7 @@ export class STRUCT {
 
   add_class(cls: StructableClass, structName?: string): void {
     // do not register Object
-    if (cls === Object as unknown) {
+    if (cls === (Object as unknown)) {
       return;
     }
 
@@ -643,7 +666,11 @@ export class STRUCT {
       while (p) {
         p = Object.getPrototypeOf(p as object);
 
-        if (p && (p as Record<string, unknown>)[keywords.script] && (p as Record<string, unknown>)[keywords.script] === (cls as Record<string, unknown>)[keywords.script]) {
+        if (
+          p &&
+          (p as Record<string, unknown>)[keywords.script] &&
+          (p as Record<string, unknown>)[keywords.script] === (cls as Record<string, unknown>)[keywords.script]
+        ) {
           bad = true;
           break;
         }
@@ -688,20 +715,24 @@ export class STRUCT {
       stt.name = (cls as Record<string, unknown>)[keywords.name] as string;
     }
 
-    if ((cls as Record<string, unknown>)[keywords.name] as string in this.structs) {
+    if (((cls as Record<string, unknown>)[keywords.name] as string) in this.structs) {
       if (warninglvl > 0) {
-        console.warn("Struct " + unmangle((cls as Record<string, unknown>)[keywords.name] as string) + " is already registered", cls);
+        console.warn(
+          "Struct " + unmangle((cls as Record<string, unknown>)[keywords.name] as string) + " is already registered",
+          cls
+        );
       }
 
       if (!this.allowOverriding) {
-        throw new Error("Struct " + unmangle((cls as Record<string, unknown>)[keywords.name] as string) + " is already registered");
+        throw new Error(
+          "Struct " + unmangle((cls as Record<string, unknown>)[keywords.name] as string) + " is already registered"
+        );
       }
 
       return;
     }
 
-    if (stt.id === -1)
-      stt.id = this.idgen++;
+    if (stt.id === -1) stt.id = this.idgen++;
 
     this.structs[(cls as Record<string, unknown>)[keywords.name] as string] = stt;
     this.struct_cls[(cls as Record<string, unknown>)[keywords.name] as string] = cls;
@@ -747,10 +778,8 @@ export class STRUCT {
       }
     }
     let fullcode = "";
-    if (envcode !== _static_envcode_null)
-      fullcode = envcode + code;
-    else
-      fullcode = code;
+    if (envcode !== _static_envcode_null) fullcode = envcode + code;
+    else fullcode = code;
     let func: (this: unknown, obj: unknown, env: unknown) => unknown;
 
     if (!(fullcode in this.compiled_code)) {
@@ -841,7 +870,11 @@ export class STRUCT {
    @param uctx : internal parameter
    @return Instance of cls_or_struct_id
    */
-  readObject(data: DataView | Uint8Array | Uint8ClampedArray | number[], cls_or_struct_id: StructableClass | number, uctx?: UnpackContext): unknown {
+  readObject(
+    data: DataView | Uint8Array | Uint8ClampedArray | number[],
+    cls_or_struct_id: StructableClass | number,
+    uctx?: UnpackContext
+  ): unknown {
     if (data instanceof Uint8Array || data instanceof Uint8ClampedArray) {
       data = new DataView(data.buffer);
     } else if (data instanceof Array) {
@@ -901,9 +934,10 @@ export class STRUCT {
         json2 = toJSON(this, val, obj, f, t1);
       }
 
-      if (f.name !== 'this') {
+      if (f.name !== "this") {
         json[f.name] = json2;
-      } else { // f.name was 'this'?
+      } else {
+        // f.name was 'this'?
         const isArrayCheck = Array.isArray(json2);
         let isArray = isArrayCheck || f.type.type === StructTypes.ARRAY;
         isArray = isArray || f.type.type === StructTypes.STATIC_ARRAY;
@@ -929,7 +963,12 @@ export class STRUCT {
    @param cls_or_struct_id : Structable class
    @param uctx : internal parameter
    */
-  read_object(data: DataView, cls_or_struct_id: StructableClass | number, uctx?: UnpackContext, objInstance?: unknown): unknown {
+  read_object(
+    data: DataView,
+    cls_or_struct_id: StructableClass | number,
+    uctx?: UnpackContext,
+    objInstance?: unknown
+  ): unknown {
     const keywords = (this.constructor as typeof STRUCT).keywords;
     let cls: StructableClass;
     let stt: NStructInterface;
@@ -964,7 +1003,13 @@ export class STRUCT {
     }
 
     function unpack_into(type: TypeDescriptor, dest: unknown): unknown {
-      return (StructFieldTypeMap as Record<number, StructFieldTypeClass>)[type.type].unpackInto!(this2, data, type, uctx!, dest);
+      return (StructFieldTypeMap as Record<number, StructFieldTypeClass>)[type.type].unpackInto!(
+        this2,
+        data,
+        type,
+        uctx!,
+        dest
+      );
     }
 
     let was_run = false;
@@ -983,7 +1028,7 @@ export class STRUCT {
         for (let i = 0; i < flen; i++) {
           const f = fields[i];
 
-          if (f.name === 'this') {
+          if (f.name === "this") {
             // load data into obj directly
             unpack_into(f.type, obj);
           } else {
@@ -999,7 +1044,11 @@ export class STRUCT {
       let obj = objInstance as StructableInstance | undefined;
 
       if (!obj && (cls as Record<string, unknown>)[keywords.new] !== undefined) {
-        obj = ((cls as Record<string, unknown>)[keywords.new] as (load: (obj: StructableInstance) => void) => StructableInstance).call(cls, load);
+        obj = (
+          (cls as Record<string, unknown>)[keywords.new] as (
+            load: (obj: StructableInstance) => void
+          ) => StructableInstance
+        ).call(cls, load);
       } else if (!obj) {
         obj = new cls() as StructableInstance;
       }
@@ -1007,22 +1056,37 @@ export class STRUCT {
       (obj![keywords.load] as (load: (obj: StructableInstance) => void) => void)(load);
 
       if (!was_run) {
-        console.warn("" + (cls as Record<string, unknown>)[keywords.name] + ".prototype[keywords.load]() did not execute its loader callback!");
+        console.warn(
+          "" +
+            (cls as Record<string, unknown>)[keywords.name] +
+            ".prototype[keywords.load]() did not execute its loader callback!"
+        );
         load(obj!);
       }
 
       return obj;
     } else if ((cls as Record<string, unknown>)[keywords.from] !== undefined) {
       if (warninglvl > 1) {
-        console.warn("Warning: class " + unmangle(cls.name) + " is using deprecated fromSTRUCT interface; use newSTRUCT/loadSTRUCT instead");
+        console.warn(
+          "Warning: class " +
+            unmangle(cls.name) +
+            " is using deprecated fromSTRUCT interface; use newSTRUCT/loadSTRUCT instead"
+        );
       }
 
-      return ((cls as Record<string, unknown>)[keywords.from] as (load: (obj: StructableInstance) => void) => unknown)(load);
-    } else { // default case, make new instance and then call load() on it
+      return ((cls as Record<string, unknown>)[keywords.from] as (load: (obj: StructableInstance) => void) => unknown)(
+        load
+      );
+    } else {
+      // default case, make new instance and then call load() on it
       let obj = objInstance as StructableInstance | undefined;
 
       if (!obj && (cls as Record<string, unknown>)[keywords.new] !== undefined) {
-        obj = ((cls as Record<string, unknown>)[keywords.new] as (load: (obj: StructableInstance) => void) => StructableInstance).call(cls, load);
+        obj = (
+          (cls as Record<string, unknown>)[keywords.new] as (
+            load: (obj: StructableInstance) => void
+          ) => StructableInstance
+        ).call(cls, load);
       } else if (!obj) {
         obj = new cls() as StructableInstance;
       }
@@ -1065,7 +1129,6 @@ export class STRUCT {
       }
 
       this.validateJSONIntern(parsed as Record<string, unknown>, cls_or_struct_id, _abstractKey);
-
     } catch (error) {
       if (!(error instanceof JSONError)) {
         console.error((error as Error).stack);
@@ -1078,7 +1141,11 @@ export class STRUCT {
     return true;
   }
 
-  validateJSONIntern(json: Record<string, unknown>, cls_or_struct_id: StructableClass | NStructInterface | number, _abstractKey: string = "_structName"): boolean {
+  validateJSONIntern(
+    json: Record<string, unknown>,
+    cls_or_struct_id: StructableClass | NStructInterface | number,
+    _abstractKey: string = "_structName"
+  ): boolean {
     const keywords = (this.constructor as typeof STRUCT).keywords;
 
     let cls: StructableClass;
@@ -1117,10 +1184,10 @@ export class STRUCT {
 
       let tokinfo: unknown;
 
-      if (f.name === 'this') {
+      if (f.name === "this") {
         val = json;
         keyTestJson = {
-          "this": json
+          "this": json,
         };
 
         keys.add("this");
@@ -1129,11 +1196,15 @@ export class STRUCT {
         val = json[f.name];
         keys.add(f.name);
 
-        const jsonTokInfo = (json as Record<string | symbol, unknown>)[TokSymbol as unknown as string] as Record<string, unknown> | undefined;
+        const jsonTokInfo = (json as Record<string | symbol, unknown>)[TokSymbol as unknown as string] as
+          | Record<string, unknown>
+          | undefined;
         tokinfo = jsonTokInfo ? (jsonTokInfo.fields as Record<string, unknown>)[f.name] : undefined;
         if (!tokinfo) {
           const f2 = fields[Math.max(i - 1, 0)];
-          const tokSymTokInfo = (TokSymbol as unknown as Record<string | symbol, unknown>)[TokSymbol as unknown as string] as Record<string, unknown> | undefined;
+          const tokSymTokInfo = (TokSymbol as unknown as Record<string | symbol, unknown>)[
+            TokSymbol as unknown as string
+          ] as Record<string, unknown> | undefined;
           tokinfo = tokSymTokInfo ? (tokSymTokInfo.fields as Record<string, unknown>)[f2.name] : undefined;
         }
 
@@ -1147,7 +1218,7 @@ export class STRUCT {
         // continue;
       }
 
-      const instance = f.name === 'this' ? val : json;
+      const instance = f.name === "this" ? val : json;
 
       const ret = sintern2.validateJSON(this, val, json, f, f.type, instance, _abstractKey);
 
@@ -1155,7 +1226,9 @@ export class STRUCT {
         const msg = typeof ret === "string" ? ": " + ret : "";
 
         if (tokinfo) {
-          this.jsonLogger(printContext(this.jsonBuf, tokinfo as import('./struct_json.js').TokInfo | undefined, this.jsonUseColors));
+          this.jsonLogger(
+            printContext(this.jsonBuf, tokinfo as import("./struct_json.js").TokInfo | undefined, this.jsonUseColors)
+          );
         }
 
         if (val === undefined) {
@@ -1184,7 +1257,11 @@ export class STRUCT {
     return true;
   }
 
-  readJSON(json: unknown, cls_or_struct_id: StructableClass | NStructInterface | number, objInstance?: unknown): unknown {
+  readJSON(
+    json: unknown,
+    cls_or_struct_id: StructableClass | NStructInterface | number,
+    objInstance?: unknown
+  ): unknown {
     const keywords = (this.constructor as typeof STRUCT).keywords;
 
     let cls: StructableClass;
@@ -1226,7 +1303,7 @@ export class STRUCT {
 
           let val: unknown;
 
-          if (f.name === 'this') {
+          if (f.name === "this") {
             val = json;
           } else {
             val = (json as Record<string, unknown>)[f.name];
@@ -1239,11 +1316,11 @@ export class STRUCT {
             continue;
           }
 
-          const instance = f.name === 'this' ? obj : objInstance;
+          const instance = f.name === "this" ? obj : objInstance;
 
           const ret = fromJSON(this2, val, obj, f, f.type, instance);
 
-          if (f.name !== 'this') {
+          if (f.name !== "this") {
             (obj as Record<string, unknown>)[f.name] = ret;
           }
         }
@@ -1256,7 +1333,11 @@ export class STRUCT {
       let obj = objInstance as StructableInstance | undefined;
 
       if (!obj && (cls as Record<string, unknown>)[keywords.new] !== undefined) {
-        obj = ((cls as Record<string, unknown>)[keywords.new] as (load: (obj: StructableInstance) => void) => StructableInstance).call(cls, load);
+        obj = (
+          (cls as Record<string, unknown>)[keywords.new] as (
+            load: (obj: StructableInstance) => void
+          ) => StructableInstance
+        ).call(cls, load);
       } else if (!obj) {
         obj = new cls() as StructableInstance;
       }
@@ -1265,14 +1346,25 @@ export class STRUCT {
       return obj;
     } else if ((cls as Record<string, unknown>)[keywords.from] !== undefined) {
       if (warninglvl > 1) {
-        console.warn("Warning: class " + unmangle(cls.name) + " is using deprecated fromSTRUCT interface; use newSTRUCT/loadSTRUCT instead");
+        console.warn(
+          "Warning: class " +
+            unmangle(cls.name) +
+            " is using deprecated fromSTRUCT interface; use newSTRUCT/loadSTRUCT instead"
+        );
       }
-      return ((cls as Record<string, unknown>)[keywords.from] as (load: (obj: StructableInstance) => void) => unknown)(load);
-    } else { // default case, make new instance and then call load() on it
+      return ((cls as Record<string, unknown>)[keywords.from] as (load: (obj: StructableInstance) => void) => unknown)(
+        load
+      );
+    } else {
+      // default case, make new instance and then call load() on it
       let obj = objInstance as StructableInstance | undefined;
 
       if (!obj && (cls as Record<string, unknown>)[keywords.new] !== undefined) {
-        obj = ((cls as Record<string, unknown>)[keywords.new] as (load: (obj: StructableInstance) => void) => StructableInstance).call(cls, load);
+        obj = (
+          (cls as Record<string, unknown>)[keywords.new] as (
+            load: (obj: StructableInstance) => void
+          ) => StructableInstance
+        ).call(cls, load);
       } else if (!obj) {
         obj = new cls() as StructableInstance;
       }
@@ -1283,11 +1375,16 @@ export class STRUCT {
     }
   }
 
-  formatJSON_intern(json: Record<string, unknown>, stt: NStructInterface, field?: StructField, tlvl: number = 0): string {
+  formatJSON_intern(
+    json: Record<string, unknown>,
+    stt: NStructInterface,
+    field?: StructField,
+    tlvl: number = 0
+  ): string {
     const keywords = (this.constructor as typeof STRUCT).keywords;
     const addComments = this.formatCtx.addComments;
 
-    let s = '{';
+    let s = "{";
 
     if (addComments && field && field.comment.trim()) {
       s += " " + field.comment.trim();
@@ -1326,7 +1423,7 @@ export class STRUCT {
   formatJSON(json: unknown, cls: StructableClass, addComments: boolean = true, validate: boolean = true): string {
     const keywords = (this.constructor as typeof STRUCT).keywords;
 
-    let s = '';
+    let s = "";
 
     if (validate) {
       this.validateJSON(json, cls);
@@ -1336,7 +1433,7 @@ export class STRUCT {
 
     this.formatCtx = {
       addComments,
-      validate
+      validate,
     };
 
     return this.formatJSON_intern(json as Record<string, unknown>, stt);
@@ -1346,20 +1443,21 @@ export class STRUCT {
 
 STRUCT.setClassKeyword("STRUCT");
 
-export function deriveStructManager(keywords: {
-  script: string;
-  name?: string;
-  load?: string;
-  new?: string;
-  from?: string;
-} = {
-  script: "STRUCT",
-  name  : undefined,
-  load  : undefined,
-  new   : undefined,
-  from  : undefined,
-}): typeof STRUCT {
-
+export function deriveStructManager(
+  keywords: {
+    script: string;
+    name?: string;
+    load?: string;
+    new?: string;
+    from?: string;
+  } = {
+    script: "STRUCT",
+    name  : undefined,
+    load  : undefined,
+    new   : undefined,
+    from  : undefined,
+  }
+): typeof STRUCT {
   if (!keywords.name) {
     keywords.name = keywords.script.toLowerCase() + "Name";
   }
@@ -1376,9 +1474,7 @@ export function deriveStructManager(keywords: {
     keywords.from = "from" + keywords.script;
   }
 
-  class NewSTRUCT extends STRUCT {
-
-  }
+  class NewSTRUCT extends STRUCT {}
 
   (NewSTRUCT as unknown as { keywords: StructKeywords }).keywords = keywords as StructKeywords;
   return NewSTRUCT;
@@ -1415,8 +1511,7 @@ export function write_scripts(nManager: STRUCT = manager, include_code: boolean 
       while (i < buf2.length && (buf2[i] === " " || buf2[i] === tab || buf2[i] === nl)) {
         i++;
       }
-      if (i !== i2)
-        i--;
+      if (i !== i2) i--;
     } else {
       buf += c;
     }

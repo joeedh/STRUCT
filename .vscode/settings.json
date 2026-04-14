@@ -1,0 +1,32 @@
+{
+  "prettier.configPath": ".prettierrc",
+  "prettier.prettierPath": "./node_modules/@pathtx/prettier/index.cjs",
+  "cSpell.words": [
+    "arraytype",
+    "colstr",
+    "envcode",
+    "fullcode",
+    "iend",
+    "istart",
+    "ITERKEYS",
+    "itername",
+    "JSCRIPT",
+    "lexdata",
+    "lexpos",
+    "maxlength",
+    "parseutil",
+    "RPARAM",
+    "sbuf",
+    "SCLOSE",
+    "sintern",
+    "SOPEN",
+    "strlit",
+    "strs",
+    "tinyeval",
+    "tokdef",
+    "tokinfo",
+    "TSTRUCT",
+    "uctx",
+    "warninglvl"
+  ]
+}
