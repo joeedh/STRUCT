@@ -1,4 +1,4 @@
-import * as nstructjs from '../src/structjs.js';
+import * as nstructjs from "../src/structjs.js";
 
 class AbstractClass {
   constructor() {
@@ -15,20 +15,17 @@ AbstractClass {
 `;
 nstructjs.register(AbstractClass);
 
-class A extends AbstractClass {
-}
+class A extends AbstractClass {}
 
 A.STRUCT = nstructjs.inherit(A, AbstractClass) + "}";
 nstructjs.register(A);
 
-class B extends AbstractClass {
-}
+class B extends AbstractClass {}
 
 B.STRUCT = nstructjs.inherit(B, AbstractClass) + "}";
 nstructjs.register(B);
 
-class C extends AbstractClass {
-}
+class C extends AbstractClass {}
 
 C.STRUCT = nstructjs.inherit(C, AbstractClass) + "}";
 nstructjs.register(C);
@@ -36,11 +33,7 @@ nstructjs.register(C);
 class Test {
   constructor() {
     this.test = new C();
-    this.tarray = [
-      new C(),
-      new C(),
-      new C()
-    ];
+    this.tarray = [new C(), new C(), new C()];
   }
 }
 
@@ -58,18 +51,17 @@ let json = nstructjs.writeJSON(new Test());
 
 console.log("TEST:", nstructjs.formatJSON(json, Test, true));
 
-let s = '';
+let s = "";
 
 function logger() {
   for (let arg of arguments) {
     s += arg + " ";
   }
 
-  s += "\n"
+  s += "\n";
 }
 
 nstructjs.validateJSON(json, Test, true, true, logger);
 
-console.log(s)
+console.log(s);
 console.log(JSON.stringify(json, undefined, 2));
-

@@ -1,9 +1,9 @@
 global.DEBUG = {
-  tinyeval : false
+  tinyeval: false,
 };
 
 //import * as structjs from '../build/nstructjs_es6.js';
-import * as structjs from '../src/structjs.js';
+import * as structjs from "../src/structjs.js";
 
 /*
 try {
@@ -25,7 +25,7 @@ try {
 structjs.setAllowOverriding(false);
 
 let filehelper = structjs.filehelper;
-import fs from 'fs';
+import fs from "fs";
 
 structjs.useTinyEval();
 //structjs.setDebugMode(3);
@@ -38,9 +38,9 @@ class Point {
     this.id = -1;
     this.sid = 23;
     this.fid = 3.5;
-    this.did = 1.5
+    this.did = 1.5;
     this.bid = 255;
-    this.sid = ~~((Math.random()*255) - 127);
+    this.sid = ~~(Math.random() * 255 - 127);
     this.strtest = {};
   }
 
@@ -73,35 +73,35 @@ class Polygon {
     this.flag = 0;
     this.id = -1;
 
-    this.strtest = {a : 2};
+    this.strtest = { a: 2 };
 
     this.pointmap = {
-      a : 1,
-      b : 2,
-      c : 5
+      a: 1,
+      b: 2,
+      c: 5,
     };
     this.pointmap2 = {
-      a : 1,
-      b : 2,
-      c : 5
+      a: 1,
+      b: 2,
+      c: 5,
     };
-    
-    this.uid = Math.pow(2, 32)-1;
-    this.usid = (1<<16)-1;
-    
+
+    this.uid = Math.pow(2, 32) - 1;
+    this.usid = (1 << 16) - 1;
+
     if (points !== undefined) {
       for (let p of points) {
         p.id = this.idgen++;
         this.points.push(p);
       }
     }
-    
+
     this.points3 = this.points.concat([]);
     while (this.points3.length < 32) {
-      this.points3.push(this.points3[this.points3.length-1]);
+      this.points3.push(this.points3[this.points3.length - 1]);
     }
   }
-  
+
   loadSTRUCT(reader) {
     reader(this);
 
@@ -111,40 +111,42 @@ class Polygon {
     //console.log(this.pointmap);
     //console.log(this.pointmap2);
   }
-  
+
   afterSTRUCT() {
     let idmap = {};
     for (let p of this.points) {
       console.log(this.points);
       idmap[p.id] = p;
     }
-    
+
     //console.log(this.points3);
     //process.exit();
 
-    for (let i=0; i<this.points3.length; i++) {
+    for (let i = 0; i < this.points3.length; i++) {
       this.points3[i] = idmap[this.points3[i]];
     }
   }
-  
+
   toJSON() {
     let points = [];
-    
+
     for (let p of this.points) {
       points.push(p.id);
     }
-    
+
     return {
-      points  : points,
-      points2 : this.points, 
-      points3 : this.points3,
-      id      : this.id,
-      uid     : this.uid,
-      usid    : this.usid
-    }
+      points : points,
+      points2: this.points,
+      points3: this.points3,
+      id     : this.id,
+      uid    : this.uid,
+      usid   : this.usid,
+    };
   }
 
-  static STRUCT = structjs.inlineRegister(this, `
+  static STRUCT = structjs.inlineRegister(
+    this,
+    `
 node.Polygon {
   id        : int;
   uid       : uint;
@@ -158,7 +160,8 @@ node.Polygon {
   points    : array(e, int) | e.id;
   active    : int | this.points.active !== undefined ? this.points.active : -1;
   strtest   : string | JSON.stringify({a:2});
-}`);
+}`
+  );
 }
 
 //points3   : static_array[short, 32] | [1,2,3];
@@ -182,7 +185,7 @@ class Canvas {
     this.points = [];
     this.polygons = new PolygonList();
   }
-  
+
   makePoint(x, y) {
     let p = new Point(x, y);
 
@@ -190,10 +193,10 @@ class Canvas {
 
     this.idmap[p.id] = p;
     this.points.push(p);
-    
+
     return p;
   }
-  
+
   makePolygon(points) {
     let p = new Polygon(points);
 
@@ -201,29 +204,29 @@ class Canvas {
 
     this.idmap[p.id] = p;
     this.polygons.push(p);
-    
+
     return p;
   }
-  
+
   loadSTRUCT(reader) {
     this.points.length = 0;
     this.polygons.length = 0;
 
     reader(this);
 
-    let idmap = this.idmap = {};
+    let idmap = (this.idmap = {});
 
     for (let p of this.points) {
       console.log("P.ID", p.id, p);
       idmap[p.id] = p;
     }
-    
+
     for (let p of this.polygons) {
       idmap[p.id] = p;
 
       console.log("POLYGON_POINTS", p.points);
 
-      for (let i=0; i<p.points.length; i++) {
+      for (let i = 0; i < p.points.length; i++) {
         p.points[i] = idmap[p.points[i]];
       }
     }
@@ -247,28 +250,22 @@ function test_main() {
   structjs.validateStructs();
 
   let canvas = new Canvas();
-  
-  let ps = [
-    canvas.makePoint(-1, -1),
-    canvas.makePoint(1, -1),
-    canvas.makePoint(1, 1),
-    canvas.makePoint(-1, 1)
-  ];
-  
+
+  let ps = [canvas.makePoint(-1, -1), canvas.makePoint(1, -1), canvas.makePoint(1, 1), canvas.makePoint(-1, 1)];
+
   canvas.makePolygon([ps[0], ps[1], ps[2]]);
 
   let params = {
-    magic      : "NSTK",
-    ext        : ".bin",
-    blocktypes : ["DATA"],
-    
-    version    : {
-      major : 0,
-      minor : 1,
-      micro : 2
-    }
-  };
+    magic     : "NSTK",
+    ext       : ".bin",
+    blocktypes: ["DATA"],
 
+    version: {
+      major: 0,
+      minor: 1,
+      micro: 2,
+    },
+  };
 
   let njson1 = structjs.writeJSON(canvas);
 
@@ -284,26 +281,26 @@ function test_main() {
   }
 
   let writer = new filehelper.FileHelper(params);
-  
+
   let data = writer.write([writer.makeBlock("DATA", canvas)]);
   let data8 = new Uint8Array(data.buffer);
-  
+
   fs.writeFileSync("node_test.bin", data8);
 
   console.log(structjs.write_scripts(writer.struct, true));
   //return;
-  
+
   //read back data
   let reader = new filehelper.FileHelper(params);
   let blocks = reader.read(data);
-  
+
   let canvas2 = blocks[0].data;
   let json1 = JSON.stringify(canvas, undefined, 2);
   let json2 = JSON.stringify(canvas2, undefined, 2);
-  
+
   let passed = json1.length === json2.length;
   passed = passed && JSON.stringify(writer.version) === JSON.stringify(reader.version);
-  
+
   //console.log(json2.points3);
   if (!passed) {
     console.log(json1, "\n\n\n\n\n\n\n\n\n", json2, json1.length, json2.length);
@@ -330,13 +327,13 @@ function test_main() {
   //json2 = JSON.stringify(canvas2.polygons, undefined, 2);
   console.log(json2);
 
-  console.log(passed ? "PASSED" : "FAILED")
+  console.log(passed ? "PASSED" : "FAILED");
   if (!passed) {
     process.exit(-1);
   }
 
   let json = structjs.writeJSON(canvas);
-//  json.polygons[0].points[0] = "sdsdfds";
+  //  json.polygons[0].points[0] = "sdsdfds";
 
   console.log(structjs.validateJSON(json, Canvas));
 }

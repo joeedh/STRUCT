@@ -3,9 +3,10 @@ import resolve from '@rollup/plugin-node-resolve';
 import cjs from "rollup-plugin-cjs-es";
 import replace from '@rollup/plugin-replace';
 import {terser} from "rollup-plugin-terser";
+import typescript from "@rollup/plugin-typescript";
 
 export default {
-  input    : 'src/structjs.js',
+  input    : 'src/structjs.ts',
   treeshake: false,
   output   : {
     file  : 'build/nstructjs_es6.js',
@@ -25,6 +26,7 @@ export default {
       delimiters               : ['', '']
     }),
     resolve(),
+    typescript(),
 //    terser()
   ]
 };
