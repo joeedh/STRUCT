@@ -31,10 +31,8 @@ if (Array.prototype.remove === undefined) {
     const i = this.indexOf(item);
 
     if (i < 0) {
-      if (suppress_error)
-        console.trace("Warning: item not in array", item);
-      else
-        throw new Error("Error: item not in array " + item);
+      if (suppress_error) console.trace("Warning: item not in array", item);
+      else throw new Error("Error: item not in array " + item);
 
       return;
     }

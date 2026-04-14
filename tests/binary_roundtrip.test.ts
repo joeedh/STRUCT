@@ -1,9 +1,9 @@
-import { describe, it, expect, beforeAll } from 'vitest';
+import { describe, it, expect, beforeAll } from "vitest";
 
 // Set up global DEBUG before importing nstructjs
 (globalThis as Record<string, unknown>).DEBUG = { tinyeval: false };
 
-import * as nstructjs from '../src/structjs.js';
+import * as nstructjs from "../src/structjs.js";
 
 // ============ Test Classes ============
 
@@ -21,7 +21,7 @@ class SimplePoint {
   }
 
   static STRUCT = nstructjs.inlineRegister(
-    SimplePoint as unknown as import('../src/types.js').StructableClass,
+    SimplePoint as unknown as import("../src/types.js").StructableClass,
     `
     test.SimplePoint {
       x : float;
@@ -61,7 +61,7 @@ class AllPrimitives {
   }
 
   static STRUCT = nstructjs.inlineRegister(
-    AllPrimitives as unknown as import('../src/types.js').StructableClass,
+    AllPrimitives as unknown as import("../src/types.js").StructableClass,
     `
     test.AllPrimitives {
       intVal    : int;
@@ -93,7 +93,7 @@ class WithArrays {
   }
 
   static STRUCT = nstructjs.inlineRegister(
-    WithArrays as unknown as import('../src/types.js').StructableClass,
+    WithArrays as unknown as import("../src/types.js").StructableClass,
     `
     test.WithArrays {
       ints   : array(int);
@@ -115,7 +115,7 @@ class StaticStringTest {
   }
 
   static STRUCT = nstructjs.inlineRegister(
-    StaticStringTest as unknown as import('../src/types.js').StructableClass,
+    StaticStringTest as unknown as import("../src/types.js").StructableClass,
     `
     test.StaticStringTest {
       name : static_string[32];
@@ -136,7 +136,7 @@ class StaticArrayTest {
   }
 
   static STRUCT = nstructjs.inlineRegister(
-    StaticArrayTest as unknown as import('../src/types.js').StructableClass,
+    StaticArrayTest as unknown as import("../src/types.js").StructableClass,
     `
     test.StaticArrayTest {
       values : static_array[int, 4];
@@ -163,7 +163,7 @@ test.BaseClass {
   baseField : int;
 }
 `;
-nstructjs.register(BaseClass as unknown as import('../src/types.js').StructableClass, "test.BaseClass");
+nstructjs.register(BaseClass as unknown as import("../src/types.js").StructableClass, "test.BaseClass");
 
 class DerivedClass extends BaseClass {
   derivedField: number;
@@ -178,7 +178,7 @@ class DerivedClass extends BaseClass {
   }
 
   static STRUCT = nstructjs.inlineRegister(
-    DerivedClass as unknown as import('../src/types.js').StructableClass,
+    DerivedClass as unknown as import("../src/types.js").StructableClass,
     `
     test.DerivedClass {
       derivedField : int;
@@ -199,7 +199,7 @@ class WithAbstract {
   }
 
   static STRUCT = nstructjs.inlineRegister(
-    WithAbstract as unknown as import('../src/types.js').StructableClass,
+    WithAbstract as unknown as import("../src/types.js").StructableClass,
     `
     test.WithAbstract {
       item : abstract(test.BaseClass);
@@ -222,7 +222,7 @@ class OptionalTest {
   }
 
   static STRUCT = nstructjs.inlineRegister(
-    OptionalTest as unknown as import('../src/types.js').StructableClass,
+    OptionalTest as unknown as import("../src/types.js").StructableClass,
     `
     test.OptionalTest {
       value  ?: double;
@@ -238,7 +238,7 @@ function binaryRoundTrip<T>(obj: T, cls: unknown): T {
   const data: number[] = [];
   nstructjs.writeObject(data, obj);
   const view = new DataView(new Uint8Array(data).buffer);
-  return nstructjs.readObject(view, cls as import('../src/types.js').StructableClass | number) as T;
+  return nstructjs.readObject(view, cls as import("../src/types.js").StructableClass | number) as T;
 }
 
 // ============ Tests ============
@@ -248,8 +248,8 @@ beforeAll(() => {
   nstructjs.setAllowOverriding(true);
 });
 
-describe('Binary Serialization - Primitive Types', () => {
-  it('should round-trip all primitive types', () => {
+describe("Binary Serialization - Primitive Types", () => {
+  it("should round-trip all primitive types", () => {
     const original = new AllPrimitives();
     const restored = binaryRoundTrip(original, AllPrimitives);
 
@@ -266,7 +266,7 @@ describe('Binary Serialization - Primitive Types', () => {
     expect(restored.stringVal).toBe(original.stringVal);
   });
 
-  it('should handle zero values', () => {
+  it("should handle zero values", () => {
     const original = new AllPrimitives();
     original.intVal = 0;
     original.uintVal = 0;
@@ -293,7 +293,7 @@ describe('Binary Serialization - Primitive Types', () => {
     expect(restored.stringVal).toBe("");
   });
 
-  it('should handle negative integers', () => {
+  it("should handle negative integers", () => {
     const original = new AllPrimitives();
     original.intVal = -2147483648; // min int32
     original.shortVal = -32768; // min int16
@@ -305,8 +305,8 @@ describe('Binary Serialization - Primitive Types', () => {
   });
 });
 
-describe('Binary Serialization - Simple Point', () => {
-  it('should round-trip a simple struct', () => {
+describe("Binary Serialization - Simple Point", () => {
+  it("should round-trip a simple struct", () => {
     const original = new SimplePoint(10.5, 20.25);
     const restored = binaryRoundTrip(original, SimplePoint);
 
@@ -315,15 +315,15 @@ describe('Binary Serialization - Simple Point', () => {
   });
 });
 
-describe('Binary Serialization - Arrays', () => {
-  it('should round-trip arrays of primitives', () => {
+describe("Binary Serialization - Arrays", () => {
+  it("should round-trip arrays of primitives", () => {
     const original = new WithArrays();
     const restored = binaryRoundTrip(original, WithArrays);
 
     expect(restored.ints).toEqual(original.ints);
   });
 
-  it('should round-trip arrays of structs', () => {
+  it("should round-trip arrays of structs", () => {
     const original = new WithArrays();
     const restored = binaryRoundTrip(original, WithArrays);
 
@@ -334,7 +334,7 @@ describe('Binary Serialization - Arrays', () => {
     }
   });
 
-  it('should handle empty arrays', () => {
+  it("should handle empty arrays", () => {
     const original = new WithArrays();
     original.ints = [];
     original.points = [];
@@ -345,8 +345,8 @@ describe('Binary Serialization - Arrays', () => {
   });
 });
 
-describe('Binary Serialization - Static String', () => {
-  it('should round-trip static strings', () => {
+describe("Binary Serialization - Static String", () => {
+  it("should round-trip static strings", () => {
     const original = new StaticStringTest();
     original.name = "hello";
     const restored = binaryRoundTrip(original, StaticStringTest);
@@ -355,8 +355,8 @@ describe('Binary Serialization - Static String', () => {
   });
 });
 
-describe('Binary Serialization - Static Array', () => {
-  it('should round-trip static arrays', () => {
+describe("Binary Serialization - Static Array", () => {
+  it("should round-trip static arrays", () => {
     const original = new StaticArrayTest();
     const restored = binaryRoundTrip(original, StaticArrayTest);
 
@@ -364,8 +364,8 @@ describe('Binary Serialization - Static Array', () => {
   });
 });
 
-describe('Binary Serialization - Abstract/Polymorphic Types', () => {
-  it('should round-trip abstract types', () => {
+describe("Binary Serialization - Abstract/Polymorphic Types", () => {
+  it("should round-trip abstract types", () => {
     const original = new WithAbstract();
     (original.item as DerivedClass).derivedField = 999;
     const restored = binaryRoundTrip(original, WithAbstract);
@@ -376,8 +376,8 @@ describe('Binary Serialization - Abstract/Polymorphic Types', () => {
   });
 });
 
-describe('Binary Serialization - Optional Fields', () => {
-  it('should round-trip optional fields with undefined', () => {
+describe("Binary Serialization - Optional Fields", () => {
+  it("should round-trip optional fields with undefined", () => {
     const original = new OptionalTest();
     original.value = undefined;
     original.present = 42.5;
@@ -388,7 +388,7 @@ describe('Binary Serialization - Optional Fields', () => {
     expect(restored.present).toBe(42.5);
   });
 
-  it('should round-trip optional fields when all present', () => {
+  it("should round-trip optional fields when all present", () => {
     const original = new OptionalTest();
     original.value = 3.14;
     original.present = 2.718;
@@ -399,7 +399,7 @@ describe('Binary Serialization - Optional Fields', () => {
     expect(restored.present).toBe(2.718);
   });
 
-  it('should round-trip optional fields when all undefined', () => {
+  it("should round-trip optional fields when all undefined", () => {
     const original = new OptionalTest();
     original.value = undefined;
     original.present = undefined;
@@ -411,8 +411,8 @@ describe('Binary Serialization - Optional Fields', () => {
   });
 });
 
-describe('Binary Serialization - Unicode Strings', () => {
-  it('should handle unicode strings', () => {
+describe("Binary Serialization - Unicode Strings", () => {
+  it("should handle unicode strings", () => {
     const original = new AllPrimitives();
     original.stringVal = "Hello \u2260 World \u00E9";
     const restored = binaryRoundTrip(original, AllPrimitives);
@@ -421,15 +421,15 @@ describe('Binary Serialization - Unicode Strings', () => {
   });
 });
 
-describe('Binary Serialization - FileHelper', () => {
-  it('should write and read blocks via FileHelper', () => {
+describe("Binary Serialization - FileHelper", () => {
+  it("should write and read blocks via FileHelper", () => {
     const filehelper = nstructjs.filehelper;
 
     const params = {
-      magic: "TEST",
-      ext: ".bin",
+      magic     : "TEST",
+      ext       : ".bin",
       blocktypes: ["DATA"],
-      version: { major: 0, minor: 1, micro: 0 }
+      version   : { major: 0, minor: 1, micro: 0 },
     };
 
     const point = new SimplePoint(42.5, 99.25);

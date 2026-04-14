@@ -1,8 +1,8 @@
 "use strict";
 
-import {tokdef, parser, lexer, token} from './struct_parseutil.js';
-import {termColor} from './struct_util.js';
-import {PUTIL_ParseError} from './struct_parseutil.js';
+import { tokdef, parser, lexer, token } from "./struct_parseutil.js";
+import { termColor } from "./struct_util.js";
+import { PUTIL_ParseError } from "./struct_parseutil.js";
 
 export const TokSymbol: unique symbol = Symbol("token-info");
 
@@ -98,9 +98,18 @@ export function buildJSONParser(): parser {
     tk("NULL", /null/),
     tk("COMMA", /,/),
     tk("COLON", /:/),
-    tk("NUM", numre, (t: token) => { t.value = "" + parseFloat(t.value); return t; }),
-    tk("NUM", nfloat3, (t: token) => { t.value = "" + parseFloat(t.value); return t; }),
-    tk("NUM", nfloatexp as RegExp, (t: token) => { t.value = "" + parseFloat(t.value); return t; }),
+    tk("NUM", numre, (t: token) => {
+      t.value = "" + parseFloat(t.value);
+      return t;
+    }),
+    tk("NUM", nfloat3, (t: token) => {
+      t.value = "" + parseFloat(t.value);
+      return t;
+    }),
+    tk("NUM", nfloatexp as RegExp, (t: token) => {
+      t.value = "" + parseFloat(t.value);
+      return t;
+    }),
   ];
 
   function tokinfo(t: token | undefined): TokInfo {
@@ -211,7 +220,7 @@ export function printContext(buf: string, tokinfo: TokInfo | undefined, printCol
   const lines = buf.split("\n");
 
   if (!tokinfo) {
-    return '';
+    return "";
   }
 
   const lineno = tokinfo.lineno;
@@ -220,7 +229,7 @@ export function printContext(buf: string, tokinfo: TokInfo | undefined, printCol
   const istart = Math.max(lineno - 50, 0);
   const iend = Math.min(lineno + 2, lines.length - 1);
 
-  let s = '';
+  let s = "";
 
   if (printColors) {
     s += termColor("  /* pretty-printed json */\n", "blue");
@@ -243,7 +252,7 @@ export function printContext(buf: string, tokinfo: TokInfo | undefined, printCol
     }
 
     if (i === lineno) {
-      let l2 = '';
+      let l2 = "";
       for (let j = 0; j < col + 5; j++) {
         l2 += " ";
       }

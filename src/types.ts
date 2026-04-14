@@ -1,25 +1,25 @@
 export const StructEnum = {
-  INT: 0,
-  FLOAT: 1,
-  DOUBLE: 2,
-  STRING: 7,
+  INT          : 0,
+  FLOAT        : 1,
+  DOUBLE       : 2,
+  STRING       : 7,
   STATIC_STRING: 8,
-  STRUCT: 9,
-  TSTRUCT: 10,
-  ARRAY: 11,
-  ITER: 12,
-  SHORT: 13,
-  BYTE: 14,
-  BOOL: 15,
-  ITERKEYS: 16,
-  UINT: 17,
-  USHORT: 18,
-  STATIC_ARRAY: 19,
-  SIGNED_BYTE: 20,
-  OPTIONAL: 21,
+  STRUCT       : 9,
+  TSTRUCT      : 10,
+  ARRAY        : 11,
+  ITER         : 12,
+  SHORT        : 13,
+  BYTE         : 14,
+  BOOL         : 15,
+  ITERKEYS     : 16,
+  UINT         : 17,
+  USHORT       : 18,
+  STATIC_ARRAY : 19,
+  SIGNED_BYTE  : 20,
+  OPTIONAL     : 21,
 } as const;
 
-export type StructEnumValue = typeof StructEnum[keyof typeof StructEnum];
+export type StructEnumValue = (typeof StructEnum)[keyof typeof StructEnum];
 
 export interface ArrayTypeData {
   type: TypeDescriptor;
@@ -80,7 +80,7 @@ export interface FieldTypeDefinition {
 
 /** Interface for user-registered classes. Uses unknown index signature instead of any. */
 export interface StructableClass {
-  new(...args: unknown[]): StructableInstance;
+  new (...args: unknown[]): StructableInstance;
   prototype: StructableInstance;
   name: string;
   [key: string]: unknown;
@@ -94,17 +94,53 @@ export interface StructableInstance {
 export type LoaderCallback = (obj: StructableInstance) => void;
 
 export interface StructFieldTypeClass {
-  pack(manager: StructManager, data: number[], val: unknown, obj: unknown, field: StructField, type: TypeDescriptor): void;
+  pack(
+    manager: StructManager,
+    data: number[],
+    val: unknown,
+    obj: unknown,
+    field: StructField,
+    type: TypeDescriptor
+  ): void;
   unpack(manager: StructManager, data: DataView, type: TypeDescriptor, uctx: UnpackContext): unknown;
   packNull(manager: StructManager, data: number[], field: StructField, type: TypeDescriptor): void;
   format(type: TypeDescriptor): string;
   toJSON(manager: StructManager, val: unknown, obj: unknown, field: StructField, type: TypeDescriptor): unknown;
-  fromJSON(manager: StructManager, val: unknown, obj: unknown, field: StructField, type: TypeDescriptor, instance: unknown): unknown;
-  formatJSON(manager: StructManager, val: unknown, obj: unknown, field: StructField, type: TypeDescriptor, instance: unknown, tlvl?: number): string;
-  validateJSON(manager: StructManager, val: unknown, obj: unknown, field: StructField, type: TypeDescriptor, instance: unknown, _abstractKey?: string): true | string;
+  fromJSON(
+    manager: StructManager,
+    val: unknown,
+    obj: unknown,
+    field: StructField,
+    type: TypeDescriptor,
+    instance: unknown
+  ): unknown;
+  formatJSON(
+    manager: StructManager,
+    val: unknown,
+    obj: unknown,
+    field: StructField,
+    type: TypeDescriptor,
+    instance: unknown,
+    tlvl?: number
+  ): string;
+  validateJSON(
+    manager: StructManager,
+    val: unknown,
+    obj: unknown,
+    field: StructField,
+    type: TypeDescriptor,
+    instance: unknown,
+    _abstractKey?: string
+  ): true | string;
   useHelperJS(field: StructField): boolean;
   define(): FieldTypeDefinition;
-  unpackInto?(manager: StructManager, data: DataView, type: TypeDescriptor, uctx: UnpackContext, dest: unknown): unknown;
+  unpackInto?(
+    manager: StructManager,
+    data: DataView,
+    type: TypeDescriptor,
+    uctx: UnpackContext,
+    dest: unknown
+  ): unknown;
   register(cls: StructFieldTypeClass): void;
 }
 
@@ -142,12 +178,36 @@ export interface StructManager {
   get_struct_id(id: number): NStructInterface;
   write_struct(data: number[], obj: unknown, stt: NStructInterface): void;
   write_object(data: number[], obj: unknown): number[];
-  read_object(data: DataView, cls_or_struct_id: StructableClass | number, uctx?: UnpackContext, objInstance?: unknown): unknown;
-  readObject(data: DataView | Uint8Array | number[], cls_or_struct_id: StructableClass | number, uctx?: UnpackContext): unknown;
+  read_object(
+    data: DataView,
+    cls_or_struct_id: StructableClass | number,
+    uctx?: UnpackContext,
+    objInstance?: unknown
+  ): unknown;
+  readObject(
+    data: DataView | Uint8Array | number[],
+    cls_or_struct_id: StructableClass | number,
+    uctx?: UnpackContext
+  ): unknown;
   writeJSON(obj: unknown, stt?: NStructInterface): Record<string, unknown>;
-  readJSON(json: unknown, cls_or_struct_id: StructableClass | NStructInterface | number, objInstance?: unknown): unknown;
-  validateJSON(json: unknown, cls_or_struct_id: StructableClass | NStructInterface | number, useInternalParser?: boolean, useColors?: boolean, consoleLogger?: (...args: unknown[]) => void, _abstractKey?: string): boolean;
-  validateJSONIntern(json: Record<string, unknown>, cls_or_struct_id: StructableClass | NStructInterface | number, _abstractKey?: string): boolean;
+  readJSON(
+    json: unknown,
+    cls_or_struct_id: StructableClass | NStructInterface | number,
+    objInstance?: unknown
+  ): unknown;
+  validateJSON(
+    json: unknown,
+    cls_or_struct_id: StructableClass | NStructInterface | number,
+    useInternalParser?: boolean,
+    useColors?: boolean,
+    consoleLogger?: (...args: unknown[]) => void,
+    _abstractKey?: string
+  ): boolean;
+  validateJSONIntern(
+    json: Record<string, unknown>,
+    cls_or_struct_id: StructableClass | NStructInterface | number,
+    _abstractKey?: string
+  ): boolean;
   formatJSON(json: unknown, cls: StructableClass, addComments?: boolean, validate?: boolean): string;
   formatJSON_intern(json: Record<string, unknown>, stt: NStructInterface, field?: StructField, tlvl?: number): string;
   _env_call(code: string, obj: unknown, env?: [string, unknown][] | [string | undefined, unknown][]): unknown;
@@ -155,7 +215,7 @@ export interface StructManager {
 
 export interface StructManagerStatic {
   keywords: StructKeywords;
-  new(): StructManager;
+  new (): StructManager;
   inherit(child: StructableClass, parent: StructableClass, structName?: string): string;
   fmt_struct(stt: NStructInterface, internal_only?: boolean, no_helper_js?: boolean, addComments?: boolean): string;
   formatStruct(stt: NStructInterface, internal_only?: boolean, no_helper_js?: boolean): string;

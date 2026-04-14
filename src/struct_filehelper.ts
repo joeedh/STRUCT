@@ -1,20 +1,20 @@
 "use strict";
 
-import * as struct_binpack from './struct_binpack.js';
-import * as struct_intern from './struct_intern.js';
-import type { Version } from './types.js';
+import * as struct_binpack from "./struct_binpack.js";
+import * as struct_intern from "./struct_intern.js";
+import type { Version } from "./types.js";
 
 let nbtoa: (str: string) => string;
 let natob: (str: string) => string;
 
 if (typeof btoa === "undefined") {
   nbtoa = function (str: string): string {
-    const buffer = Buffer.from("" + str, 'binary');
-    return buffer.toString('base64');
+    const buffer = Buffer.from("" + str, "binary");
+    return buffer.toString("base64");
   };
 
   natob = function (str: string): string {
-    return Buffer.from(str, 'base64').toString('binary');
+    return Buffer.from(str, "base64").toString("binary");
   };
 } else {
   natob = atob;
@@ -60,13 +60,13 @@ export function versionCoerce(v: string | number[] | Version): Version {
     return {
       major: parseInt(ver[0]),
       minor: parseInt(ver[1]),
-      micro: parseInt(ver[2])
+      micro: parseInt(ver[2]),
     };
   } else if (Array.isArray(v)) {
     return {
       major: v[0],
       minor: v[1],
-      micro: v[2]
+      micro: v[2],
     };
   } else if (typeof v === "object") {
     const test = (k: keyof Version): boolean => k in v && typeof v[k] === "number";
@@ -99,7 +99,7 @@ export class FileParams {
     this.version = {
       major: 0,
       minor: 0,
-      micro: 1
+      micro: 1,
     };
   }
 }
@@ -115,8 +115,7 @@ export class Block {
   }
 }
 
-export class FileError extends Error {
-}
+export class FileError extends Error {}
 
 export class FileHelper {
   version: Version;
@@ -158,13 +157,13 @@ export class FileHelper {
     this.version = {
       major: 0,
       minor: 0,
-      micro: 0
+      micro: 0,
     };
     this.version.major = struct_binpack.unpack_short(dataview, this.unpack_ctx);
     this.version.minor = struct_binpack.unpack_byte(dataview, this.unpack_ctx);
     this.version.micro = struct_binpack.unpack_byte(dataview, this.unpack_ctx);
 
-    const struct = this.struct = new struct_intern.STRUCT();
+    const struct = (this.struct = new struct_intern.STRUCT());
 
     const scripts = struct_binpack.unpack_string(dataview, this.unpack_ctx);
     this.struct.parse_structs(scripts, struct_intern.manager);
@@ -178,7 +177,8 @@ export class FileHelper {
       const bstruct = struct_binpack.unpack_int(dataview, this.unpack_ctx);
       let bdata: unknown;
 
-      if (bstruct === -2) { //string data, e.g. JSON
+      if (bstruct === -2) {
+        //string data, e.g. JSON
         bdata = struct_binpack.unpack_static_string(dataview, this.unpack_ctx, datalen);
       } else {
         const rawData = struct_binpack.unpack_bytes(dataview, this.unpack_ctx, datalen);
@@ -219,7 +219,8 @@ export class FileHelper {
     const struct = this.struct;
 
     for (const block of blocks) {
-      if (typeof block.data === "string") { //string data, e.g. JSON
+      if (typeof block.data === "string") {
+        //string data, e.g. JSON
         struct_binpack.pack_static_string(data, block.type, 4);
         struct_binpack.pack_int(data, block.data.length);
         struct_binpack.pack_int(data, -2); //flag as string data
@@ -228,7 +229,9 @@ export class FileHelper {
       }
 
       const blockData = block.data as Record<string, unknown>;
-      const structNameVal = (blockData.constructor as unknown as Record<string, unknown>).structName as string | undefined;
+      const structNameVal = (blockData.constructor as unknown as Record<string, unknown>).structName as
+        | string
+        | undefined;
       if (structNameVal === undefined || !(structNameVal in struct.structs)) {
         throw new Error("Non-STRUCTable object " + block.data);
       }

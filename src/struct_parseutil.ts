@@ -5,10 +5,10 @@ The lexical scanner in this module was inspired by PyPLY
 http://www.dabeaz.com/ply/ply.html
 */
 
-import {termColor} from './struct_util.js';
+import { termColor } from "./struct_util.js";
 
 function print_lines(ld: string, lineno: number, col: number, printColors: boolean, tokenObj?: token): string {
-  let buf = '';
+  let buf = "";
   const lines = ld.split("\n");
   const istart = Math.max(lineno - 5, 0);
   const iend = Math.min(lineno + 3, lines.length);
@@ -28,9 +28,9 @@ function print_lines(ld: string, lineno: number, col: number, printColors: boole
     }
     buf += l;
     if (i === lineno) {
-      let colstr = '     ';
+      let colstr = "     ";
       for (let j = 0; j < col; j++) {
-        colstr += ' ';
+        colstr += " ";
       }
       colstr += color("^", "red");
 
@@ -51,7 +51,15 @@ export class token {
   lexer: lexer;
   parser: parser | undefined;
 
-  constructor(type: string, val: string, lexpos: number, lineno: number, lex: lexer, p: parser | undefined, col: number) {
+  constructor(
+    type: string,
+    val: string,
+    lexpos: number,
+    lineno: number,
+    lex: lexer,
+    p: parser | undefined,
+    col: number
+  ) {
     this.type = type;
     this.value = val;
     this.lexpos = lexpos;
@@ -62,10 +70,8 @@ export class token {
   }
 
   toString(): string {
-    if (this.value !== undefined)
-      return "token(type=" + this.type + ", value='" + this.value + "')";
-    else
-      return "token(type=" + this.type + ")";
+    if (this.value !== undefined) return "token(type=" + this.type + ", value='" + this.value + "')";
+    else return "token(type=" + this.type + ")";
   }
 }
 
@@ -141,7 +147,7 @@ export class lexer {
       this.tokints[tokdefArr[i].name] = i;
     }
     this.statestack = [["__main__", 0]];
-    this.states = {"__main__": [tokdefArr, errfunc]};
+    this.states = { "__main__": [tokdefArr, errfunc] };
     this.statedata = 0;
     this.peeked_tokens = [];
 
@@ -159,8 +165,7 @@ export class lexer {
     this.states[name] = [tokdefArr, errfunc];
   }
 
-  tok_int(_name: string): void {
-  }
+  tok_int(_name: string): void {}
 
   push_state(state: string, statedata: number): void {
     this.statestack.push([state, statedata]);
@@ -179,10 +184,10 @@ export class lexer {
   }
 
   input(str: string): void {
-    const linemap = this.linemap = new Array(str.length);
+    const linemap = (this.linemap = new Array(str.length));
     let lineno = 0;
     let col = 0;
-    const colmap = this.colmap = new Array(str.length);
+    const colmap = (this.colmap = new Array(str.length));
 
     for (let i = 0; i < str.length; i++, col++) {
       const c = str[i];
@@ -207,8 +212,7 @@ export class lexer {
   }
 
   error(): void {
-    if (this.errfunc !== undefined && !this.errfunc(this))
-      return;
+    if (this.errfunc !== undefined && !this.errfunc(this)) return;
 
     const safepos = Math.min(this.lexpos, this.lexdata.length - 1);
     const line = this.linemap![safepos];
@@ -224,8 +228,7 @@ export class lexer {
 
   peek(): token | undefined {
     const tok = this.next(true);
-    if (tok === undefined)
-      return undefined;
+    if (tok === undefined) return undefined;
     this.peeked_tokens.push(tok);
     return tok;
   }
@@ -255,8 +258,7 @@ export class lexer {
       return tok;
     }
 
-    if (this.lexpos >= this.lexdata.length)
-      return undefined;
+    if (this.lexpos >= this.lexdata.length) return undefined;
 
     const ts = this.tokdef;
     const tlen = ts.length;
@@ -265,8 +267,7 @@ export class lexer {
 
     for (let i = 0; i < tlen; i++) {
       const t = ts[i];
-      if (t.re === undefined)
-        continue;
+      if (t.re === undefined) continue;
       const res = t.re.exec(lexdata);
       if (res !== null && res !== undefined && res.index === 0) {
         results.push([t, res]);
@@ -329,11 +330,9 @@ export class parser {
   }
 
   parse(data?: string, err_on_unconsumed?: boolean): unknown {
-    if (err_on_unconsumed === undefined)
-      err_on_unconsumed = true;
+    if (err_on_unconsumed === undefined) err_on_unconsumed = true;
 
-    if (data !== undefined)
-      this.lexer.input(data);
+    if (data !== undefined) this.lexer.input(data);
 
     const ret = this.start!(this);
 
@@ -350,18 +349,15 @@ export class parser {
   error(tokenObj: token | undefined, msg?: string): never {
     let estr: string;
 
-    if (msg === undefined)
-      msg = "";
-    if (tokenObj === undefined)
-      estr = "Parse error at end of input: " + msg;
-    else
-      estr = `Parse error at line ${tokenObj.lineno + 1}:${tokenObj.col + 1}: ${msg}`;
+    if (msg === undefined) msg = "";
+    if (tokenObj === undefined) estr = "Parse error at end of input: " + msg;
+    else estr = `Parse error at line ${tokenObj.lineno + 1}:${tokenObj.col + 1}: ${msg}`;
 
     let ld = this.lexer.lexdata;
     const lineno = tokenObj ? tokenObj.lineno : this.lexer.linemap![this.lexer.linemap!.length - 1];
     const col = tokenObj ? tokenObj.col : 0;
 
-    ld = ld.replace(/\r/g, '');
+    ld = ld.replace(/\r/g, "");
 
     this.logger(print_lines(ld, lineno, col, true, tokenObj));
     this.logger(estr);
@@ -374,30 +370,26 @@ export class parser {
 
   peek(): token | undefined {
     const tok = this.lexer.peek();
-    if (tok !== undefined)
-      tok.parser = this;
+    if (tok !== undefined) tok.parser = this;
     return tok;
   }
 
   peeknext(): token | undefined {
     const tok = this.lexer.peeknext();
-    if (tok !== undefined)
-      tok.parser = this;
+    if (tok !== undefined) tok.parser = this;
     return tok;
   }
 
   next(): token | undefined {
     const tok = this.lexer.next();
 
-    if (tok !== undefined)
-      tok.parser = this;
+    if (tok !== undefined) tok.parser = this;
     return tok;
   }
 
   optional(type: string): boolean {
     const tok = this.peeknext();
-    if (tok === undefined)
-      return false;
+    if (tok === undefined) return false;
     if (tok.type === type) {
       this.next();
       return true;

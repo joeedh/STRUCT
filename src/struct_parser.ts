@@ -1,10 +1,10 @@
 "use strict";
 
-import * as struct_parseutil from './struct_parseutil.js';
-import type { StructField, TypeDescriptor, StructEnumValue, NStructInterface } from './types.js';
-import { StructEnum } from './types.js';
+import * as struct_parseutil from "./struct_parseutil.js";
+import type { StructField, TypeDescriptor, StructEnumValue, NStructInterface } from "./types.js";
+import { StructEnum } from "./types.js";
 
-export { StructEnum } from './types.js';
+export { StructEnum } from "./types.js";
 
 export class NStruct implements NStructInterface {
   fields: StructField[];
@@ -19,7 +19,10 @@ export class NStruct implements NStructInterface {
 }
 
 export const ArrayTypes = new Set<StructEnumValue>([
-  StructEnum.STATIC_ARRAY, StructEnum.ARRAY, StructEnum.ITERKEYS, StructEnum.ITER
+  StructEnum.STATIC_ARRAY,
+  StructEnum.ARRAY,
+  StructEnum.ITERKEYS,
+  StructEnum.ITER,
 ]);
 
 export const ValueTypes = new Set<StructEnumValue>([
@@ -33,7 +36,7 @@ export const ValueTypes = new Set<StructEnumValue>([
   StructEnum.BOOL,
   StructEnum.UINT,
   StructEnum.USHORT,
-  StructEnum.SIGNED_BYTE
+  StructEnum.SIGNED_BYTE,
 ]);
 
 export const StructTypes: Record<string, StructEnumValue> = {
@@ -71,9 +74,11 @@ function gen_tabstr(t: number): string {
 }
 
 export function stripComments(buf: string): string {
-  let s = '';
+  let s = "";
 
-  const MAIN = 0, COMMENT = 1, STR = 2;
+  const MAIN = 0,
+    COMMENT = 1,
+    STR = 2;
 
   let n: string | undefined;
   let strs = new Set(["'", '"', "`"]);
@@ -125,36 +130,57 @@ export function stripComments(buf: string): string {
 }
 
 function StructParser(): struct_parseutil.parser {
-  const basic_types = new Set([
-    "int", "float", "double", "string", "short", "byte", "sbyte", "bool", "uint", "ushort"
-  ]);
+  const basic_types = new Set(["int", "float", "double", "string", "short", "byte", "sbyte", "bool", "uint", "ushort"]);
 
   const reserved_tokens = new Set([
-    "int", "float", "double", "string", "static_string", "array",
-    "iter", "abstract", "short", "byte", "sbyte", "bool", "iterkeys", "uint", "ushort",
-    "static_array", "optional"
+    "int",
+    "float",
+    "double",
+    "string",
+    "static_string",
+    "array",
+    "iter",
+    "abstract",
+    "short",
+    "byte",
+    "sbyte",
+    "bool",
+    "iterkeys",
+    "uint",
+    "ushort",
+    "static_array",
+    "optional",
   ]);
 
-  function tk(name: string, re?: RegExp, func?: (t: struct_parseutil.token) => struct_parseutil.token | undefined, example?: string): struct_parseutil.tokdef {
+  function tk(
+    name: string,
+    re?: RegExp,
+    func?: (t: struct_parseutil.token) => struct_parseutil.token | undefined,
+    example?: string
+  ): struct_parseutil.tokdef {
     return new struct_parseutil.tokdef(name, re, func, example);
   }
 
   const tokens = [
-    tk("ID", /[a-zA-Z_$]+[a-zA-Z0-9_\.$]*/, function (t) {
-
-      if (reserved_tokens.has(t.value)) {
-        t.type = t.value.toUpperCase();
-      }
-      return t;
-    }, "identifier"),
+    tk(
+      "ID",
+      /[a-zA-Z_$]+[a-zA-Z0-9_\.$]*/,
+      function (t) {
+        if (reserved_tokens.has(t.value)) {
+          t.type = t.value.toUpperCase();
+        }
+        return t;
+      },
+      "identifier"
+    ),
     tk("OPEN", /\{/),
     tk("EQUALS", /=/),
     tk("CLOSE", /}/),
-    tk("STRLIT", /\"[^"]*\"/, t => {
+    tk("STRLIT", /\"[^"]*\"/, (t) => {
       t.value = t.value.slice(1, t.value.length - 1);
       return t;
     }),
-    tk("STRLIT", /\'[^']*\'/, t => {
+    tk("STRLIT", /\'[^']*\'/, (t) => {
       t.value = t.value.slice(1, t.value.length - 1);
       return t;
     }),
@@ -169,8 +195,7 @@ function StructParser(): struct_parseutil.parser {
 
       while (lex.lexpos < lex.lexdata.length) {
         const c = lex.lexdata[lex.lexpos];
-        if (c === "\n")
-          break;
+        if (c === "\n") break;
 
         if (c === "/" && p === "/") {
           js = js.slice(0, js.length - 1);
@@ -197,13 +222,23 @@ function StructParser(): struct_parseutil.parser {
     tk("COMMA", /,/),
     tk("NUM", /[0-9]+/, undefined, "number"),
     tk("SEMI", /;/),
-    tk("NEWLINE", /\n/, function (t) {
-      t.lexer.lineno += 1;
-      return undefined;
-    }, "newline"),
-    tk("SPACE", / |\t/, function (_t) {
-      return undefined;
-    }, "whitespace")
+    tk(
+      "NEWLINE",
+      /\n/,
+      function (t) {
+        t.lexer.lineno += 1;
+        return undefined;
+      },
+      "newline"
+    ),
+    tk(
+      "SPACE",
+      / |\t/,
+      function (_t) {
+        return undefined;
+      },
+      "whitespace"
+    ),
   ];
 
   reserved_tokens.forEach(function (rt) {
@@ -228,7 +263,7 @@ function StructParser(): struct_parseutil.parser {
     p.expect("SOPEN");
     const num = parseInt(p.expect("NUM"), 10);
     p.expect("SCLOSE");
-    return {type: StructEnum.STATIC_STRING, data: {maxlength: num}};
+    return { type: StructEnum.STATIC_STRING, data: { maxlength: num } };
   }
 
   function p_Array(p: struct_parseutil.parser): TypeDescriptor {
@@ -238,12 +273,12 @@ function StructParser(): struct_parseutil.parser {
 
     let itername = "";
     if (p.optional("COMMA")) {
-      itername = ((arraytype as {data?: string}).data || "").replace(/"/g, "");
+      itername = ((arraytype as { data?: string }).data || "").replace(/"/g, "");
       arraytype = p_Type(p);
     }
 
     p.expect("RPARAM");
-    return {type: StructEnum.ARRAY, data: {type: arraytype, iname: itername}};
+    return { type: StructEnum.ARRAY, data: { type: arraytype, iname: itername } };
   }
 
   function p_Iter(p: struct_parseutil.parser): TypeDescriptor {
@@ -254,12 +289,12 @@ function StructParser(): struct_parseutil.parser {
     let itername = "";
 
     if (p.optional("COMMA")) {
-      itername = ((arraytype as {data?: string}).data || "").replace(/"/g, "");
+      itername = ((arraytype as { data?: string }).data || "").replace(/"/g, "");
       arraytype = p_Type(p);
     }
 
     p.expect("RPARAM");
-    return {type: StructEnum.ITER, data: {type: arraytype, iname: itername}};
+    return { type: StructEnum.ITER, data: { type: arraytype, iname: itername } };
   }
 
   function p_StaticArray(p: struct_parseutil.parser): TypeDescriptor {
@@ -279,11 +314,11 @@ function StructParser(): struct_parseutil.parser {
 
     if (p.optional("COMMA")) {
       const td = p_Type(p);
-      itername = (td as {data?: string}).data || "";
+      itername = (td as { data?: string }).data || "";
     }
 
     p.expect("SCLOSE");
-    return {type: StructEnum.STATIC_ARRAY, data: {type: arraytype, size: size, iname: itername}};
+    return { type: StructEnum.STATIC_ARRAY, data: { type: arraytype, size: size, iname: itername } };
   }
 
   function p_IterKeys(p: struct_parseutil.parser): TypeDescriptor {
@@ -294,12 +329,12 @@ function StructParser(): struct_parseutil.parser {
     let itername = "";
 
     if (p.optional("COMMA")) {
-      itername = ((arraytype as {data?: string}).data || "").replace(/"/g, "");
+      itername = ((arraytype as { data?: string }).data || "").replace(/"/g, "");
       arraytype = p_Type(p);
     }
 
     p.expect("RPARAM");
-    return {type: StructEnum.ITERKEYS, data: {type: arraytype, iname: itername}};
+    return { type: StructEnum.ITERKEYS, data: { type: arraytype, iname: itername } };
   }
 
   function p_Abstract(p: struct_parseutil.parser): TypeDescriptor {
@@ -318,7 +353,7 @@ function StructParser(): struct_parseutil.parser {
     return {
       type: StructEnum.TSTRUCT,
       data: type,
-      jsonKeyword
+      jsonKeyword,
     };
   }
 
@@ -330,7 +365,7 @@ function StructParser(): struct_parseutil.parser {
 
     return {
       type: StructEnum.OPTIONAL,
-      data: type
+      data: type,
     };
   }
 
@@ -343,10 +378,10 @@ function StructParser(): struct_parseutil.parser {
 
     if (tok.type === "ID") {
       p.next();
-      return {type: StructEnum.STRUCT, data: tok.value};
+      return { type: StructEnum.STRUCT, data: tok.value };
     } else if (basic_types.has(tok.type.toLowerCase())) {
       p.next();
-      return {type: StructTypes[tok.type.toLowerCase()]} as TypeDescriptor;
+      return { type: StructTypes[tok.type.toLowerCase()] } as TypeDescriptor;
     } else if (tok.type === "ARRAY") {
       return p_Array(p);
     } else if (tok.type === "ITER") {
@@ -396,7 +431,7 @@ function StructParser(): struct_parseutil.parser {
     if (is_opt) {
       type = {
         type: StructEnum.OPTIONAL,
-        data: type
+        data: type,
       };
     }
 

@@ -1,20 +1,48 @@
-import * as struct_binpack from './struct_binpack.js';
-import {StructEnum, ValueTypes} from './struct_parser.js';
-import * as util from './struct_util.js';
+import * as struct_binpack from "./struct_binpack.js";
+import { StructEnum, ValueTypes } from "./struct_parser.js";
+import * as util from "./struct_util.js";
 
 import {
-  TypeDescriptor, StructField, StructEnumValue, StructFieldTypeClass,
-  StructManager, UnpackContext, FieldTypeDefinition,
-} from './types.js';
+  TypeDescriptor,
+  StructField,
+  StructEnumValue,
+  StructFieldTypeClass,
+  StructManager,
+  UnpackContext,
+  FieldTypeDefinition,
+} from "./types.js";
 
 import {
-  pack_int, pack_byte, pack_float, pack_sbyte, pack_short,
-  pack_string, pack_uint, pack_static_string, pack_ushort, pack_double,
-  pack_bytes, unpack_byte, STRUCT_ENDIAN, unpack_int, decode_utf8,
-  unpack_double, encode_utf8, test_utf8, unpack_bytes, unpack_float, unpack_sbyte,
-  unpack_string, unpack_short, unpack_static_string, unpack_uint, unpack_ushort,
-  unpack_context, temp_dataview, uint8_view
-} from './struct_binpack.js';
+  pack_int,
+  pack_byte,
+  pack_float,
+  pack_sbyte,
+  pack_short,
+  pack_string,
+  pack_uint,
+  pack_static_string,
+  pack_ushort,
+  pack_double,
+  pack_bytes,
+  unpack_byte,
+  STRUCT_ENDIAN,
+  unpack_int,
+  decode_utf8,
+  unpack_double,
+  encode_utf8,
+  test_utf8,
+  unpack_bytes,
+  unpack_float,
+  unpack_sbyte,
+  unpack_string,
+  unpack_short,
+  unpack_static_string,
+  unpack_uint,
+  unpack_ushort,
+  unpack_context,
+  temp_dataview,
+  uint8_view,
+} from "./struct_binpack.js";
 
 let warninglvl = 2;
 let debug = 0;
@@ -33,8 +61,11 @@ export function _get_pack_debug(): {
   warninglvl: number;
 } {
   return {
-    packer_debug, packer_debug_start, packer_debug_end,
-    debug, warninglvl
+    packer_debug,
+    packer_debug_start,
+    packer_debug_end,
+    debug,
+    warninglvl,
   };
 }
 
@@ -114,12 +145,9 @@ export function setDebugMode2(t: number): void {
       }
     };
   } else {
-    packer_debug = function (..._args: unknown[]): void {
-    };
-    packer_debug_start = function (..._args: unknown[]): void {
-    };
-    packer_debug_end = function (..._args: unknown[]): void {
-    };
+    packer_debug = function (..._args: unknown[]): void {};
+    packer_debug_start = function (..._args: unknown[]): void {};
+    packer_debug_end = function (..._args: unknown[]): void {};
   }
 }
 
@@ -132,22 +160,50 @@ export function packNull(manager: StructManager, data: number[], field: StructFi
   StructFieldTypeMap[type.type].packNull(manager, data, field, type);
 }
 
-export function toJSON(manager: StructManager, val: unknown, obj: unknown, field: StructField, type: TypeDescriptor): unknown {
+export function toJSON(
+  manager: StructManager,
+  val: unknown,
+  obj: unknown,
+  field: StructField,
+  type: TypeDescriptor
+): unknown {
   return StructFieldTypeMap[type.type].toJSON(manager, val, obj, field, type);
 }
 
-export function fromJSON(manager: StructManager, val: unknown, obj: unknown, field: StructField, type: TypeDescriptor, instance: unknown): unknown {
+export function fromJSON(
+  manager: StructManager,
+  val: unknown,
+  obj: unknown,
+  field: StructField,
+  type: TypeDescriptor,
+  instance: unknown
+): unknown {
   return StructFieldTypeMap[type.type].fromJSON(manager, val, obj, field, type, instance);
 }
 
-export function formatJSON(manager: StructManager, val: unknown, obj: unknown, field: StructField, type: TypeDescriptor, instance: unknown, tlvl: number = 0): string {
+export function formatJSON(
+  manager: StructManager,
+  val: unknown,
+  obj: unknown,
+  field: StructField,
+  type: TypeDescriptor,
+  instance: unknown,
+  tlvl: number = 0
+): string {
   return StructFieldTypeMap[type.type].formatJSON(manager, val, obj, field, type, instance, tlvl);
 }
 
-export function validateJSON(manager: StructManager, val: unknown, obj: unknown, field: StructField, type: TypeDescriptor, instance: unknown, _abstractKey?: string): true | string {
+export function validateJSON(
+  manager: StructManager,
+  val: unknown,
+  obj: unknown,
+  field: StructField,
+  type: TypeDescriptor,
+  instance: unknown,
+  _abstractKey?: string
+): true | string {
   return StructFieldTypeMap[type.type].validateJSON(manager, val, obj, field, type, instance, _abstractKey);
 }
-
 
 function unpack_field(manager: StructManager, data: DataView, type: TypeDescriptor, uctx: UnpackContext): unknown {
   let name: string | undefined;
@@ -167,18 +223,28 @@ function unpack_field(manager: StructManager, data: DataView, type: TypeDescript
 }
 
 let fakeFields = new cachering<FakeFieldEntry>(() => {
-  return {type: undefined, get: undefined, set: undefined};
+  return { type: undefined, get: undefined, set: undefined };
 }, 256);
 
 function fmt_type(type: TypeDescriptor): string {
   return StructFieldTypeMap[type.type].format(type);
 }
 
-export function do_pack(manager: StructManager, data: number[], val: unknown, obj: unknown, field: StructField, type: TypeDescriptor | number): void {
+export function do_pack(
+  manager: StructManager,
+  data: number[],
+  val: unknown,
+  obj: unknown,
+  field: StructField,
+  type: TypeDescriptor | number
+): void {
   let name: string | undefined;
 
   if (debug) {
-    name = StructFieldTypeMap[(type as TypeDescriptor).type !== undefined ? (type as TypeDescriptor).type : type as number].define().name;
+    name =
+      StructFieldTypeMap[
+        (type as TypeDescriptor).type !== undefined ? (type as TypeDescriptor).type : (type as number)
+      ].define().name;
     packer_debug_start("W " + name);
   }
 
@@ -201,8 +267,14 @@ export function do_pack(manager: StructManager, data: number[], val: unknown, ob
 let _ws_env: [string | undefined, unknown][] = [[undefined, undefined]];
 
 export class StructFieldType {
-  static pack(manager: StructManager, data: number[], val: unknown, obj: unknown, field: StructField, type: TypeDescriptor): void {
-  }
+  static pack(
+    manager: StructManager,
+    data: number[],
+    val: unknown,
+    obj: unknown,
+    field: StructField,
+    type: TypeDescriptor
+  ): void {}
 
   static unpack(_manager: StructManager, _data: DataView, _type: TypeDescriptor, _uctx: UnpackContext): unknown {
     return undefined;
@@ -220,15 +292,38 @@ export class StructFieldType {
     return val;
   }
 
-  static fromJSON(manager: StructManager, val: unknown, obj: unknown, field: StructField, type: TypeDescriptor, instance: unknown): unknown {
+  static fromJSON(
+    manager: StructManager,
+    val: unknown,
+    obj: unknown,
+    field: StructField,
+    type: TypeDescriptor,
+    instance: unknown
+  ): unknown {
     return val;
   }
 
-  static formatJSON(manager: StructManager, val: unknown, obj: unknown, field: StructField, type: TypeDescriptor, instance: unknown, tlvl?: number): string {
+  static formatJSON(
+    manager: StructManager,
+    val: unknown,
+    obj: unknown,
+    field: StructField,
+    type: TypeDescriptor,
+    instance: unknown,
+    tlvl?: number
+  ): string {
     return JSON.stringify(val);
   }
 
-  static validateJSON(manager: StructManager, val: unknown, obj: unknown, field: StructField, type: TypeDescriptor, instance: unknown, _abstractKey?: string): true | string {
+  static validateJSON(
+    manager: StructManager,
+    val: unknown,
+    obj: unknown,
+    field: StructField,
+    type: TypeDescriptor,
+    instance: unknown,
+    _abstractKey?: string
+  ): true | string {
     return true;
   }
 
@@ -254,7 +349,7 @@ export class StructFieldType {
   static define(): FieldTypeDefinition {
     return {
       type: -1 as StructEnumValue,
-      name: "(error)"
+      name: "(error)",
     };
   }
 
@@ -284,7 +379,14 @@ export class StructFieldType {
 }
 
 class StructIntField extends StructFieldType {
-  static pack(manager: StructManager, data: number[], val: unknown, obj: unknown, field: StructField, type: TypeDescriptor): void {
+  static pack(
+    manager: StructManager,
+    data: number[],
+    val: unknown,
+    obj: unknown,
+    field: StructField,
+    type: TypeDescriptor
+  ): void {
     pack_int(data, val as number);
   }
 
@@ -292,7 +394,15 @@ class StructIntField extends StructFieldType {
     return unpack_int(data, uctx);
   }
 
-  static validateJSON(manager: StructManager, val: unknown, obj: unknown, field: StructField, type: TypeDescriptor, instance: unknown, _abstractKey?: string): true | string {
+  static validateJSON(
+    manager: StructManager,
+    val: unknown,
+    obj: unknown,
+    field: StructField,
+    type: TypeDescriptor,
+    instance: unknown,
+    _abstractKey?: string
+  ): true | string {
     if (typeof val !== "number" || val !== Math.floor(val)) {
       return "" + val + " is not an integer";
     }
@@ -303,7 +413,7 @@ class StructIntField extends StructFieldType {
   static define(): FieldTypeDefinition {
     return {
       type: StructEnum.INT,
-      name: "int"
+      name: "int",
     };
   }
 }
@@ -311,7 +421,14 @@ class StructIntField extends StructFieldType {
 StructFieldType.register(StructIntField as unknown as StructFieldTypeClass);
 
 class StructFloatField extends StructFieldType {
-  static pack(manager: StructManager, data: number[], val: unknown, obj: unknown, field: StructField, type: TypeDescriptor): void {
+  static pack(
+    manager: StructManager,
+    data: number[],
+    val: unknown,
+    obj: unknown,
+    field: StructField,
+    type: TypeDescriptor
+  ): void {
     pack_float(data, val as number);
   }
 
@@ -319,7 +436,15 @@ class StructFloatField extends StructFieldType {
     return unpack_float(data, uctx);
   }
 
-  static validateJSON(manager: StructManager, val: unknown, obj: unknown, field: StructField, type: TypeDescriptor, instance: unknown, _abstractKey?: string): true | string {
+  static validateJSON(
+    manager: StructManager,
+    val: unknown,
+    obj: unknown,
+    field: StructField,
+    type: TypeDescriptor,
+    instance: unknown,
+    _abstractKey?: string
+  ): true | string {
     if (typeof val !== "number") {
       return "Not a float: " + val;
     }
@@ -330,7 +455,7 @@ class StructFloatField extends StructFieldType {
   static define(): FieldTypeDefinition {
     return {
       type: StructEnum.FLOAT,
-      name: "float"
+      name: "float",
     };
   }
 }
@@ -338,7 +463,14 @@ class StructFloatField extends StructFieldType {
 StructFieldType.register(StructFloatField as unknown as StructFieldTypeClass);
 
 class StructDoubleField extends StructFieldType {
-  static pack(manager: StructManager, data: number[], val: unknown, obj: unknown, field: StructField, type: TypeDescriptor): void {
+  static pack(
+    manager: StructManager,
+    data: number[],
+    val: unknown,
+    obj: unknown,
+    field: StructField,
+    type: TypeDescriptor
+  ): void {
     pack_double(data, val as number);
   }
 
@@ -346,7 +478,15 @@ class StructDoubleField extends StructFieldType {
     return unpack_double(data, uctx);
   }
 
-  static validateJSON(manager: StructManager, val: unknown, obj: unknown, field: StructField, type: TypeDescriptor, instance: unknown, _abstractKey?: string): true | string {
+  static validateJSON(
+    manager: StructManager,
+    val: unknown,
+    obj: unknown,
+    field: StructField,
+    type: TypeDescriptor,
+    instance: unknown,
+    _abstractKey?: string
+  ): true | string {
     if (typeof val !== "number") {
       return "Not a double: " + val;
     }
@@ -357,7 +497,7 @@ class StructDoubleField extends StructFieldType {
   static define(): FieldTypeDefinition {
     return {
       type: StructEnum.DOUBLE,
-      name: "double"
+      name: "double",
     };
   }
 }
@@ -365,13 +505,28 @@ class StructDoubleField extends StructFieldType {
 StructFieldType.register(StructDoubleField as unknown as StructFieldTypeClass);
 
 class StructStringField extends StructFieldType {
-  static pack(manager: StructManager, data: number[], val: unknown, obj: unknown, field: StructField, type: TypeDescriptor): void {
-    const s = !val ? "" : val as string;
+  static pack(
+    manager: StructManager,
+    data: number[],
+    val: unknown,
+    obj: unknown,
+    field: StructField,
+    type: TypeDescriptor
+  ): void {
+    const s = !val ? "" : (val as string);
 
     pack_string(data, s);
   }
 
-  static validateJSON(manager: StructManager, val: unknown, obj: unknown, field: StructField, type: TypeDescriptor, instance: unknown, _abstractKey?: string): true | string {
+  static validateJSON(
+    manager: StructManager,
+    val: unknown,
+    obj: unknown,
+    field: StructField,
+    type: TypeDescriptor,
+    instance: unknown,
+    _abstractKey?: string
+  ): true | string {
     if (typeof val !== "string") {
       return "Not a string: " + val;
     }
@@ -390,7 +545,7 @@ class StructStringField extends StructFieldType {
   static define(): FieldTypeDefinition {
     return {
       type: StructEnum.STRING,
-      name: "string"
+      name: "string",
     };
   }
 }
@@ -398,13 +553,28 @@ class StructStringField extends StructFieldType {
 StructFieldType.register(StructStringField as unknown as StructFieldTypeClass);
 
 class StructStaticStringField extends StructFieldType {
-  static pack(manager: StructManager, data: number[], val: unknown, obj: unknown, field: StructField, type: TypeDescriptor): void {
-    const s = !val ? "" : val as string;
+  static pack(
+    manager: StructManager,
+    data: number[],
+    val: unknown,
+    obj: unknown,
+    field: StructField,
+    type: TypeDescriptor
+  ): void {
+    const s = !val ? "" : (val as string);
 
     pack_static_string(data, s, (type.data as { maxlength: number }).maxlength);
   }
 
-  static validateJSON(manager: StructManager, val: unknown, obj: unknown, field: StructField, type: TypeDescriptor, instance: unknown, _abstractKey?: string): true | string {
+  static validateJSON(
+    manager: StructManager,
+    val: unknown,
+    obj: unknown,
+    field: StructField,
+    type: TypeDescriptor,
+    instance: unknown,
+    _abstractKey?: string
+  ): true | string {
     if (typeof val !== "string") {
       return "Not a string: " + val;
     }
@@ -431,7 +601,7 @@ class StructStaticStringField extends StructFieldType {
   static define(): FieldTypeDefinition {
     return {
       type: StructEnum.STATIC_STRING,
-      name: "static_string"
+      name: "static_string",
     };
   }
 }
@@ -439,7 +609,14 @@ class StructStaticStringField extends StructFieldType {
 StructFieldType.register(StructStaticStringField as unknown as StructFieldTypeClass);
 
 class StructStructField extends StructFieldType {
-  static pack(manager: StructManager, data: number[], val: unknown, obj: unknown, field: StructField, type: TypeDescriptor): void {
+  static pack(
+    manager: StructManager,
+    data: number[],
+    val: unknown,
+    obj: unknown,
+    field: StructField,
+    type: TypeDescriptor
+  ): void {
     let stt = manager.get_struct(type.data as string);
 
     packer_debug("struct", stt.name);
@@ -447,7 +624,15 @@ class StructStructField extends StructFieldType {
     manager.write_struct(data, val, stt);
   }
 
-  static validateJSON(manager: StructManager, val: unknown, obj: unknown, field: StructField, type: TypeDescriptor, instance: unknown, _abstractKey?: string): true | string {
+  static validateJSON(
+    manager: StructManager,
+    val: unknown,
+    obj: unknown,
+    field: StructField,
+    type: TypeDescriptor,
+    instance: unknown,
+    _abstractKey?: string
+  ): true | string {
     let stt = manager.get_struct(type.data as string);
 
     if (!val) {
@@ -461,13 +646,28 @@ class StructStructField extends StructFieldType {
     return type.data as string;
   }
 
-  static fromJSON(manager: StructManager, val: unknown, obj: unknown, field: StructField, type: TypeDescriptor, instance: unknown): unknown {
+  static fromJSON(
+    manager: StructManager,
+    val: unknown,
+    obj: unknown,
+    field: StructField,
+    type: TypeDescriptor,
+    instance: unknown
+  ): unknown {
     let stt = manager.get_struct(type.data as string);
 
     return manager.readJSON(val, stt, instance);
   }
 
-  static formatJSON(manager: StructManager, val: unknown, obj: unknown, field: StructField, type: TypeDescriptor, instance: unknown, tlvl?: number): string {
+  static formatJSON(
+    manager: StructManager,
+    val: unknown,
+    obj: unknown,
+    field: StructField,
+    type: TypeDescriptor,
+    instance: unknown,
+    tlvl?: number
+  ): string {
     let stt = manager.get_struct(type.data as string);
 
     return manager.formatJSON_intern(val as Record<string, unknown>, stt, field, tlvl);
@@ -478,7 +678,13 @@ class StructStructField extends StructFieldType {
     return manager.writeJSON(val, stt);
   }
 
-  static unpackInto(manager: StructManager, data: DataView, type: TypeDescriptor, uctx: UnpackContext, dest: unknown): unknown {
+  static unpackInto(
+    manager: StructManager,
+    data: DataView,
+    type: TypeDescriptor,
+    uctx: UnpackContext,
+    dest: unknown
+  ): unknown {
     let cls2 = manager.get_struct_cls(type.data as string);
 
     packer_debug("struct", cls2 ? cls2.name : "(error)");
@@ -507,7 +713,7 @@ class StructStructField extends StructFieldType {
   static define(): FieldTypeDefinition {
     return {
       type: StructEnum.STRUCT,
-      name: "struct"
+      name: "struct",
     };
   }
 }
@@ -515,17 +721,24 @@ class StructStructField extends StructFieldType {
 StructFieldType.register(StructStructField as unknown as StructFieldTypeClass);
 
 class StructTStructField extends StructFieldType {
-  static pack(manager: StructManager, data: number[], val: unknown, obj: unknown, field: StructField, type: TypeDescriptor): void {
+  static pack(
+    manager: StructManager,
+    data: number[],
+    val: unknown,
+    obj: unknown,
+    field: StructField,
+    type: TypeDescriptor
+  ): void {
     let cls = manager.get_struct_cls(type.data as string);
     let stt = manager.get_struct(type.data as string);
 
-    const keywords = (manager.constructor as unknown as { keywords: import('./types.js').StructKeywords }).keywords;
+    const keywords = (manager.constructor as unknown as { keywords: import("./types.js").StructKeywords }).keywords;
 
     const valObj = val as Record<string, unknown>;
     const valCtor = valObj.constructor as unknown as Record<string, unknown>;
 
     //make sure inheritance is correct
-    if (valCtor[keywords.name] !== type.data && (val instanceof (cls as unknown as Function))) {
+    if (valCtor[keywords.name] !== type.data && val instanceof (cls as unknown as Function)) {
       stt = manager.get_struct(valCtor[keywords.name] as string);
     } else if (valCtor[keywords.name] === type.data) {
       stt = manager.get_struct(type.data as string);
@@ -540,7 +753,15 @@ class StructTStructField extends StructFieldType {
     manager.write_struct(data, val, stt);
   }
 
-  static validateJSON(manager: StructManager, val: unknown, obj: unknown, field: StructField, type: TypeDescriptor, instance: unknown, _abstractKey?: string): true | string {
+  static validateJSON(
+    manager: StructManager,
+    val: unknown,
+    obj: unknown,
+    field: StructField,
+    type: TypeDescriptor,
+    instance: unknown,
+    _abstractKey?: string
+  ): true | string {
     let key = (type as { jsonKeyword: string }).jsonKeyword;
 
     if (typeof val !== "object") {
@@ -570,8 +791,14 @@ class StructTStructField extends StructFieldType {
     return manager.validateJSONIntern(valObj, stt, (type as { jsonKeyword: string }).jsonKeyword) as true | string;
   }
 
-
-  static fromJSON(manager: StructManager, val: unknown, obj: unknown, field: StructField, type: TypeDescriptor, instance: unknown): unknown {
+  static fromJSON(
+    manager: StructManager,
+    val: unknown,
+    obj: unknown,
+    field: StructField,
+    type: TypeDescriptor,
+    instance: unknown
+  ): unknown {
     let key = (type as { jsonKeyword: string }).jsonKeyword;
 
     const valObj = val as Record<string, unknown>;
@@ -580,7 +807,15 @@ class StructTStructField extends StructFieldType {
     return manager.readJSON(val, stt, instance);
   }
 
-  static formatJSON(manager: StructManager, val: unknown, obj: unknown, field: StructField, type: TypeDescriptor, instance: unknown, tlvl?: number): string {
+  static formatJSON(
+    manager: StructManager,
+    val: unknown,
+    obj: unknown,
+    field: StructField,
+    type: TypeDescriptor,
+    instance: unknown,
+    tlvl?: number
+  ): string {
     let key = (type as { jsonKeyword: string }).jsonKeyword;
 
     const valObj = val as Record<string, unknown>;
@@ -590,7 +825,7 @@ class StructTStructField extends StructFieldType {
   }
 
   static toJSON(manager: StructManager, val: unknown, obj: unknown, field: StructField, type: TypeDescriptor): unknown {
-    const keywords = (manager.constructor as unknown as { keywords: import('./types.js').StructKeywords }).keywords;
+    const keywords = (manager.constructor as unknown as { keywords: import("./types.js").StructKeywords }).keywords;
 
     const valObj = val as Record<string, unknown>;
     const valCtor = valObj.constructor as unknown as Record<string, unknown>;
@@ -607,14 +842,20 @@ class StructTStructField extends StructFieldType {
     let stt = manager.get_struct(type.data as string);
 
     pack_int(data, stt.id);
-    packNull(manager, data, field, {type: StructEnum.STRUCT, data: type.data as string});
+    packNull(manager, data, field, { type: StructEnum.STRUCT, data: type.data as string });
   }
 
   static format(type: TypeDescriptor): string {
     return "abstract(" + type.data + ")";
   }
 
-  static unpackInto(manager: StructManager, data: DataView, type: TypeDescriptor, uctx: UnpackContext, dest: unknown): unknown {
+  static unpackInto(
+    manager: StructManager,
+    data: DataView,
+    type: TypeDescriptor,
+    uctx: UnpackContext,
+    dest: unknown
+  ): unknown {
     let id = struct_binpack.unpack_int(data, uctx);
 
     packer_debug("-int " + id);
@@ -658,7 +899,7 @@ class StructTStructField extends StructFieldType {
   static define(): FieldTypeDefinition {
     return {
       type: StructEnum.TSTRUCT,
-      name: "tstruct"
+      name: "tstruct",
     };
   }
 }
@@ -667,8 +908,14 @@ StructFieldType.register(StructTStructField as unknown as StructFieldTypeClass);
 
 /** out is just a [string], an array of dimen 1 whose sole entry is the output string. */
 export function formatArrayJson(
-  manager: StructManager, val: unknown, obj: unknown, field: StructField,
-  type: TypeDescriptor, type2: TypeDescriptor, instance: unknown, tlvl: number,
+  manager: StructManager,
+  val: unknown,
+  obj: unknown,
+  field: StructField,
+  type: TypeDescriptor,
+  type2: TypeDescriptor,
+  instance: unknown,
+  tlvl: number,
   array: unknown[] = val as unknown[]
 ): string {
   if (array === undefined || array === null || typeof array !== "object" || !(Symbol.iterator in array)) {
@@ -681,7 +928,7 @@ export function formatArrayJson(
     return JSON.stringify(array);
   }
 
-  let s = '[';
+  let s = "[";
   if (manager.formatCtx.addComments && field.comment.trim()) {
     s += " " + field.comment.trim();
   }
@@ -700,7 +947,14 @@ export function formatArrayJson(
 }
 
 class StructArrayField extends StructFieldType {
-  static pack(manager: StructManager, data: number[], val: unknown, obj: unknown, field: StructField, type: TypeDescriptor): void {
+  static pack(
+    manager: StructManager,
+    data: number[],
+    val: unknown,
+    obj: unknown,
+    field: StructField,
+    type: TypeDescriptor
+  ): void {
     if (val === undefined) {
       console.trace();
       console.log("Undefined array fed to struct struct packer!");
@@ -717,7 +971,7 @@ class StructArrayField extends StructFieldType {
     packer_debug("int " + arr.length);
     struct_binpack.pack_int(data, arr.length);
 
-    let d = (type.data as { type: TypeDescriptor; iname: string });
+    let d = type.data as { type: TypeDescriptor; iname: string };
 
     let itername = d.iname;
     let type2 = d.type;
@@ -755,14 +1009,30 @@ class StructArrayField extends StructFieldType {
     return !(field.type.data as { iname: string }).iname;
   }
 
-  static validateJSON(manager: StructManager, val: unknown, obj: unknown, field: StructField, type: TypeDescriptor, instance: unknown, _abstractKey?: string): true | string {
+  static validateJSON(
+    manager: StructManager,
+    val: unknown,
+    obj: unknown,
+    field: StructField,
+    type: TypeDescriptor,
+    instance: unknown,
+    _abstractKey?: string
+  ): true | string {
     if (!val) {
       return "not an array: " + val;
     }
 
     const arr = val as unknown[];
     for (let i = 0; i < arr.length; i++) {
-      let ret = validateJSON(manager, arr[i], val, field, (type.data as { type: TypeDescriptor }).type, undefined, _abstractKey);
+      let ret = validateJSON(
+        manager,
+        arr[i],
+        val,
+        field,
+        (type.data as { type: TypeDescriptor }).type,
+        undefined,
+        _abstractKey
+      );
 
       if (typeof ret === "string" || !ret) {
         return ret;
@@ -772,7 +1042,14 @@ class StructArrayField extends StructFieldType {
     return true;
   }
 
-  static fromJSON(manager: StructManager, val: unknown, obj: unknown, field: StructField, type: TypeDescriptor, instance: unknown): unknown {
+  static fromJSON(
+    manager: StructManager,
+    val: unknown,
+    obj: unknown,
+    field: StructField,
+    type: TypeDescriptor,
+    instance: unknown
+  ): unknown {
     const arr = val as unknown[];
     let ret = (instance || []) as unknown[];
 
@@ -793,8 +1070,25 @@ class StructArrayField extends StructFieldType {
     return ret;
   }
 
-  static formatJSON(manager: StructManager, val: unknown, obj: unknown, field: StructField, type: TypeDescriptor, instance: unknown, tlvl?: number): string {
-    return formatArrayJson(manager, val, obj, field, type, (type.data as { type: TypeDescriptor }).type, instance, tlvl ?? 0);
+  static formatJSON(
+    manager: StructManager,
+    val: unknown,
+    obj: unknown,
+    field: StructField,
+    type: TypeDescriptor,
+    instance: unknown,
+    tlvl?: number
+  ): string {
+    return formatArrayJson(
+      manager,
+      val,
+      obj,
+      field,
+      type,
+      (type.data as { type: TypeDescriptor }).type,
+      instance,
+      tlvl ?? 0
+    );
   }
 
   static toJSON(manager: StructManager, val: unknown, obj: unknown, field: StructField, type: TypeDescriptor): unknown {
@@ -819,7 +1113,13 @@ class StructArrayField extends StructFieldType {
     return json;
   }
 
-  static unpackInto(manager: StructManager, data: DataView, type: TypeDescriptor, uctx: UnpackContext, dest: unknown): unknown {
+  static unpackInto(
+    manager: StructManager,
+    data: DataView,
+    type: TypeDescriptor,
+    uctx: UnpackContext,
+    dest: unknown
+  ): unknown {
     let len = struct_binpack.unpack_int(data, uctx);
     const arr = dest as unknown[];
     arr.length = 0;
@@ -846,7 +1146,7 @@ class StructArrayField extends StructFieldType {
   static define(): FieldTypeDefinition {
     return {
       type: StructEnum.ARRAY,
-      name: "array"
+      name: "array",
     };
   }
 }
@@ -854,7 +1154,14 @@ class StructArrayField extends StructFieldType {
 StructFieldType.register(StructArrayField as unknown as StructFieldTypeClass);
 
 class StructIterField extends StructFieldType {
-  static pack(manager: StructManager, data: number[], val: unknown, obj: unknown, field: StructField, type: TypeDescriptor): void {
+  static pack(
+    manager: StructManager,
+    data: number[],
+    val: unknown,
+    obj: unknown,
+    field: StructField,
+    type: TypeDescriptor
+  ): void {
     //this was originally implemented to use ES6 iterators.
     function forEach(cb: (item: unknown) => void, thisvar: unknown): void {
       const v = val as Record<string, unknown> | null;
@@ -910,15 +1217,48 @@ class StructIterField extends StructFieldType {
     data[starti++] = uint8_view[3];
   }
 
-  static formatJSON(manager: StructManager, val: unknown, obj: unknown, field: StructField, type: TypeDescriptor, instance: unknown, tlvl?: number): string {
-    return formatArrayJson(manager, val, obj, field, type, (type.data as { type: TypeDescriptor }).type, instance, tlvl ?? 0, util.list(val as Iterable<unknown>));
+  static formatJSON(
+    manager: StructManager,
+    val: unknown,
+    obj: unknown,
+    field: StructField,
+    type: TypeDescriptor,
+    instance: unknown,
+    tlvl?: number
+  ): string {
+    return formatArrayJson(
+      manager,
+      val,
+      obj,
+      field,
+      type,
+      (type.data as { type: TypeDescriptor }).type,
+      instance,
+      tlvl ?? 0,
+      util.list(val as Iterable<unknown>)
+    );
   }
 
-  static validateJSON(manager: StructManager, val: unknown, obj: unknown, field: StructField, type: TypeDescriptor, instance: unknown, _abstractKey?: string): true | string {
+  static validateJSON(
+    manager: StructManager,
+    val: unknown,
+    obj: unknown,
+    field: StructField,
+    type: TypeDescriptor,
+    instance: unknown,
+    _abstractKey?: string
+  ): true | string {
     return StructArrayField.validateJSON(manager, val, obj, field, type, instance, _abstractKey);
   }
 
-  static fromJSON(manager: StructManager, val: unknown, obj: unknown, field: StructField, type: TypeDescriptor, instance: unknown): unknown {
+  static fromJSON(
+    manager: StructManager,
+    val: unknown,
+    obj: unknown,
+    field: StructField,
+    type: TypeDescriptor,
+    instance: unknown
+  ): unknown {
     return StructArrayField.fromJSON(manager, val, obj, field, type, instance);
   }
 
@@ -961,7 +1301,13 @@ class StructIterField extends StructFieldType {
     }
   }
 
-  static unpackInto(manager: StructManager, data: DataView, type: TypeDescriptor, uctx: UnpackContext, dest: unknown): unknown {
+  static unpackInto(
+    manager: StructManager,
+    data: DataView,
+    type: TypeDescriptor,
+    uctx: UnpackContext,
+    dest: unknown
+  ): unknown {
     let len = struct_binpack.unpack_int(data, uctx);
     packer_debug("-int " + len);
 
@@ -990,7 +1336,7 @@ class StructIterField extends StructFieldType {
   static define(): FieldTypeDefinition {
     return {
       type: StructEnum.ITER,
-      name: "iter"
+      name: "iter",
     };
   }
 }
@@ -998,7 +1344,14 @@ class StructIterField extends StructFieldType {
 StructFieldType.register(StructIterField as unknown as StructFieldTypeClass);
 
 class StructShortField extends StructFieldType {
-  static pack(manager: StructManager, data: number[], val: unknown, obj: unknown, field: StructField, type: TypeDescriptor): void {
+  static pack(
+    manager: StructManager,
+    data: number[],
+    val: unknown,
+    obj: unknown,
+    field: StructField,
+    type: TypeDescriptor
+  ): void {
     pack_short(data, val as number);
   }
 
@@ -1009,7 +1362,7 @@ class StructShortField extends StructFieldType {
   static define(): FieldTypeDefinition {
     return {
       type: StructEnum.SHORT,
-      name: "short"
+      name: "short",
     };
   }
 }
@@ -1017,7 +1370,14 @@ class StructShortField extends StructFieldType {
 StructFieldType.register(StructShortField as unknown as StructFieldTypeClass);
 
 class StructByteField extends StructFieldType {
-  static pack(manager: StructManager, data: number[], val: unknown, obj: unknown, field: StructField, type: TypeDescriptor): void {
+  static pack(
+    manager: StructManager,
+    data: number[],
+    val: unknown,
+    obj: unknown,
+    field: StructField,
+    type: TypeDescriptor
+  ): void {
     pack_byte(data, val as number);
   }
 
@@ -1028,7 +1388,7 @@ class StructByteField extends StructFieldType {
   static define(): FieldTypeDefinition {
     return {
       type: StructEnum.BYTE,
-      name: "byte"
+      name: "byte",
     };
   }
 }
@@ -1036,7 +1396,14 @@ class StructByteField extends StructFieldType {
 StructFieldType.register(StructByteField as unknown as StructFieldTypeClass);
 
 class StructSignedByteField extends StructFieldType {
-  static pack(manager: StructManager, data: number[], val: unknown, obj: unknown, field: StructField, type: TypeDescriptor): void {
+  static pack(
+    manager: StructManager,
+    data: number[],
+    val: unknown,
+    obj: unknown,
+    field: StructField,
+    type: TypeDescriptor
+  ): void {
     pack_sbyte(data, val as number);
   }
 
@@ -1047,7 +1414,7 @@ class StructSignedByteField extends StructFieldType {
   static define(): FieldTypeDefinition {
     return {
       type: StructEnum.SIGNED_BYTE,
-      name: "sbyte"
+      name: "sbyte",
     };
   }
 }
@@ -1055,15 +1422,30 @@ class StructSignedByteField extends StructFieldType {
 StructFieldType.register(StructSignedByteField as unknown as StructFieldTypeClass);
 
 class StructBoolField extends StructFieldType {
-  static pack(manager: StructManager, data: number[], val: unknown, obj: unknown, field: StructField, type: TypeDescriptor): void {
-    pack_byte(data, (val ? 1 : 0));
+  static pack(
+    manager: StructManager,
+    data: number[],
+    val: unknown,
+    obj: unknown,
+    field: StructField,
+    type: TypeDescriptor
+  ): void {
+    pack_byte(data, val ? 1 : 0);
   }
 
   static unpack(manager: StructManager, data: DataView, type: TypeDescriptor, uctx: UnpackContext): unknown {
     return !!unpack_byte(data, uctx);
   }
 
-  static validateJSON(manager: StructManager, val: unknown, obj: unknown, field: StructField, type: TypeDescriptor, instance: unknown, _abstractKey?: string): true | string {
+  static validateJSON(
+    manager: StructManager,
+    val: unknown,
+    obj: unknown,
+    field: StructField,
+    type: TypeDescriptor,
+    instance: unknown,
+    _abstractKey?: string
+  ): true | string {
     if (val === 0 || val === 1 || val === true || val === false || val === "true" || val === "false") {
       return true;
     }
@@ -1071,7 +1453,14 @@ class StructBoolField extends StructFieldType {
     return "" + val + " is not a bool";
   }
 
-  static fromJSON(manager: StructManager, val: unknown, obj: unknown, field: StructField, type: TypeDescriptor, instance: unknown): unknown {
+  static fromJSON(
+    manager: StructManager,
+    val: unknown,
+    obj: unknown,
+    field: StructField,
+    type: TypeDescriptor,
+    instance: unknown
+  ): unknown {
     if (val === "false") {
       return false;
     }
@@ -1086,7 +1475,7 @@ class StructBoolField extends StructFieldType {
   static define(): FieldTypeDefinition {
     return {
       type: StructEnum.BOOL,
-      name: "bool"
+      name: "bool",
     };
   }
 }
@@ -1094,7 +1483,14 @@ class StructBoolField extends StructFieldType {
 StructFieldType.register(StructBoolField as unknown as StructFieldTypeClass);
 
 class StructIterKeysField extends StructFieldType {
-  static pack(manager: StructManager, data: number[], val: unknown, obj: unknown, field: StructField, type: TypeDescriptor): void {
+  static pack(
+    manager: StructManager,
+    data: number[],
+    val: unknown,
+    obj: unknown,
+    field: StructField,
+    type: TypeDescriptor
+  ): void {
     //this was originally implemented to use ES6 iterators.
     if ((typeof val !== "object" && typeof val !== "function") || val === null) {
       console.warn("Bad object fed to iterkeys in struct packer!", val);
@@ -1139,23 +1535,56 @@ class StructIterKeysField extends StructFieldType {
         val2 = valObj[key]; //fetch value
       }
 
-      let f2: StructField = {type: type2, get: undefined, set: undefined, name: "", comment: ""};
+      let f2: StructField = { type: type2, get: undefined, set: undefined, name: "", comment: "" };
       do_pack(manager, data, val2, obj, f2, type2);
 
       i++;
     }
   }
 
-  static validateJSON(manager: StructManager, val: unknown, obj: unknown, field: StructField, type: TypeDescriptor, instance: unknown, _abstractKey?: string): true | string {
+  static validateJSON(
+    manager: StructManager,
+    val: unknown,
+    obj: unknown,
+    field: StructField,
+    type: TypeDescriptor,
+    instance: unknown,
+    _abstractKey?: string
+  ): true | string {
     return StructArrayField.validateJSON(manager, val, obj, field, type, instance, _abstractKey);
   }
 
-  static fromJSON(manager: StructManager, val: unknown, obj: unknown, field: StructField, type: TypeDescriptor, instance: unknown): unknown {
+  static fromJSON(
+    manager: StructManager,
+    val: unknown,
+    obj: unknown,
+    field: StructField,
+    type: TypeDescriptor,
+    instance: unknown
+  ): unknown {
     return StructArrayField.fromJSON(manager, val, obj, field, type, instance);
   }
 
-  static formatJSON(manager: StructManager, val: unknown, obj: unknown, field: StructField, type: TypeDescriptor, instance: unknown, tlvl?: number): string {
-    return formatArrayJson(manager, val, obj, field, type, (type.data as { type: TypeDescriptor }).type, instance, tlvl ?? 0, util.list(val as Iterable<unknown>));
+  static formatJSON(
+    manager: StructManager,
+    val: unknown,
+    obj: unknown,
+    field: StructField,
+    type: TypeDescriptor,
+    instance: unknown,
+    tlvl?: number
+  ): string {
+    return formatArrayJson(
+      manager,
+      val,
+      obj,
+      field,
+      type,
+      (type.data as { type: TypeDescriptor }).type,
+      instance,
+      tlvl ?? 0,
+      util.list(val as Iterable<unknown>)
+    );
   }
 
   static toJSON(manager: StructManager, val: unknown, obj: unknown, field: StructField, type: TypeDescriptor): unknown {
@@ -1197,7 +1626,13 @@ class StructIterKeysField extends StructFieldType {
     }
   }
 
-  static unpackInto(manager: StructManager, data: DataView, type: TypeDescriptor, uctx: UnpackContext, dest: unknown): unknown {
+  static unpackInto(
+    manager: StructManager,
+    data: DataView,
+    type: TypeDescriptor,
+    uctx: UnpackContext,
+    dest: unknown
+  ): unknown {
     let len = unpack_int(data, uctx);
     packer_debug("-int " + len);
 
@@ -1226,7 +1661,7 @@ class StructIterKeysField extends StructFieldType {
   static define(): FieldTypeDefinition {
     return {
       type: StructEnum.ITERKEYS,
-      name: "iterkeys"
+      name: "iterkeys",
     };
   }
 }
@@ -1234,7 +1669,14 @@ class StructIterKeysField extends StructFieldType {
 StructFieldType.register(StructIterKeysField as unknown as StructFieldTypeClass);
 
 class StructUintField extends StructFieldType {
-  static pack(manager: StructManager, data: number[], val: unknown, obj: unknown, field: StructField, type: TypeDescriptor): void {
+  static pack(
+    manager: StructManager,
+    data: number[],
+    val: unknown,
+    obj: unknown,
+    field: StructField,
+    type: TypeDescriptor
+  ): void {
     pack_uint(data, val as number);
   }
 
@@ -1242,7 +1684,15 @@ class StructUintField extends StructFieldType {
     return unpack_uint(data, uctx);
   }
 
-  static validateJSON(manager: StructManager, val: unknown, obj: unknown, field: StructField, type: TypeDescriptor, instance: unknown, _abstractKey?: string): true | string {
+  static validateJSON(
+    manager: StructManager,
+    val: unknown,
+    obj: unknown,
+    field: StructField,
+    type: TypeDescriptor,
+    instance: unknown,
+    _abstractKey?: string
+  ): true | string {
     if (typeof val !== "number" || val !== Math.floor(val)) {
       return "" + val + " is not an integer";
     }
@@ -1253,16 +1703,22 @@ class StructUintField extends StructFieldType {
   static define(): FieldTypeDefinition {
     return {
       type: StructEnum.UINT,
-      name: "uint"
+      name: "uint",
     };
   }
 }
 
 StructFieldType.register(StructUintField as unknown as StructFieldTypeClass);
 
-
 class StructUshortField extends StructFieldType {
-  static pack(manager: StructManager, data: number[], val: unknown, obj: unknown, field: StructField, type: TypeDescriptor): void {
+  static pack(
+    manager: StructManager,
+    data: number[],
+    val: unknown,
+    obj: unknown,
+    field: StructField,
+    type: TypeDescriptor
+  ): void {
     pack_ushort(data, val as number);
   }
 
@@ -1270,7 +1726,15 @@ class StructUshortField extends StructFieldType {
     return unpack_ushort(data, uctx);
   }
 
-  static validateJSON(manager: StructManager, val: unknown, obj: unknown, field: StructField, type: TypeDescriptor, instance: unknown, _abstractKey?: string): true | string {
+  static validateJSON(
+    manager: StructManager,
+    val: unknown,
+    obj: unknown,
+    field: StructField,
+    type: TypeDescriptor,
+    instance: unknown,
+    _abstractKey?: string
+  ): true | string {
     if (typeof val !== "number" || val !== Math.floor(val)) {
       return "" + val + " is not an integer";
     }
@@ -1281,7 +1745,7 @@ class StructUshortField extends StructFieldType {
   static define(): FieldTypeDefinition {
     return {
       type: StructEnum.USHORT,
-      name: "ushort"
+      name: "ushort",
     };
   }
 }
@@ -1289,7 +1753,14 @@ class StructUshortField extends StructFieldType {
 StructFieldType.register(StructUshortField as unknown as StructFieldTypeClass);
 
 class StructStaticArrayField extends StructFieldType {
-  static pack(manager: StructManager, data: number[], val: unknown, obj: unknown, field: StructField, type: TypeDescriptor): void {
+  static pack(
+    manager: StructManager,
+    data: number[],
+    val: unknown,
+    obj: unknown,
+    field: StructField,
+    type: TypeDescriptor
+  ): void {
     const d = type.data as { type: TypeDescriptor; size: number; iname: string };
 
     if (d.size === undefined) {
@@ -1323,16 +1794,49 @@ class StructStaticArrayField extends StructFieldType {
     return !(field.type.data as { iname: string }).iname;
   }
 
-  static validateJSON(manager: StructManager, val: unknown, obj: unknown, field: StructField, type: TypeDescriptor, instance: unknown, _abstractKey?: string): true | string {
+  static validateJSON(
+    manager: StructManager,
+    val: unknown,
+    obj: unknown,
+    field: StructField,
+    type: TypeDescriptor,
+    instance: unknown,
+    _abstractKey?: string
+  ): true | string {
     return StructArrayField.validateJSON(manager, val, obj, field, type, instance, _abstractKey);
   }
 
-  static fromJSON(manager: StructManager, val: unknown, obj: unknown, field: StructField, type: TypeDescriptor, instance: unknown): unknown {
+  static fromJSON(
+    manager: StructManager,
+    val: unknown,
+    obj: unknown,
+    field: StructField,
+    type: TypeDescriptor,
+    instance: unknown
+  ): unknown {
     return StructArrayField.fromJSON(manager, val, obj, field, type, instance);
   }
 
-  static formatJSON(manager: StructManager, val: unknown, obj: unknown, field: StructField, type: TypeDescriptor, instance: unknown, tlvl?: number): string {
-    return formatArrayJson(manager, val, obj, field, type, (type.data as { type: TypeDescriptor }).type, instance, tlvl ?? 0, util.list(val as Iterable<unknown>));
+  static formatJSON(
+    manager: StructManager,
+    val: unknown,
+    obj: unknown,
+    field: StructField,
+    type: TypeDescriptor,
+    instance: unknown,
+    tlvl?: number
+  ): string {
+    return formatArrayJson(
+      manager,
+      val,
+      obj,
+      field,
+      type,
+      (type.data as { type: TypeDescriptor }).type,
+      instance,
+      tlvl ?? 0,
+      util.list(val as Iterable<unknown>)
+    );
   }
 
   static packNull(manager: StructManager, data: number[], field: StructField, type: TypeDescriptor): void {
@@ -1361,7 +1865,13 @@ class StructStaticArrayField extends StructFieldType {
     return ret;
   }
 
-  static unpackInto(manager: StructManager, data: DataView, type: TypeDescriptor, uctx: UnpackContext, dest: unknown): unknown {
+  static unpackInto(
+    manager: StructManager,
+    data: DataView,
+    type: TypeDescriptor,
+    uctx: UnpackContext,
+    dest: unknown
+  ): unknown {
     const d = type.data as { type: TypeDescriptor; size: number };
     packer_debug("-size: " + d.size);
 
@@ -1391,7 +1901,7 @@ class StructStaticArrayField extends StructFieldType {
   static define(): FieldTypeDefinition {
     return {
       type: StructEnum.STATIC_ARRAY,
-      name: "static_array"
+      name: "static_array",
     };
   }
 }
@@ -1399,34 +1909,68 @@ class StructStaticArrayField extends StructFieldType {
 StructFieldType.register(StructStaticArrayField as unknown as StructFieldTypeClass);
 
 class StructOptionalField extends StructFieldType {
-  static pack(manager: StructManager, data: number[], val: unknown, obj: unknown, field: StructField, type: TypeDescriptor): void {
+  static pack(
+    manager: StructManager,
+    data: number[],
+    val: unknown,
+    obj: unknown,
+    field: StructField,
+    type: TypeDescriptor
+  ): void {
     pack_int(data, val !== undefined && val !== null ? 1 : 0);
     if (val !== undefined && val !== null) {
-      const fakeField: StructField = {...field, type: type.data as TypeDescriptor};
+      const fakeField: StructField = { ...field, type: type.data as TypeDescriptor };
       do_pack(manager, data, val, obj, fakeField, type.data as TypeDescriptor);
     }
   }
 
   static fakeField(field: StructField, type: TypeDescriptor): StructField {
-    return {...field, type: type.data as TypeDescriptor};
+    return { ...field, type: type.data as TypeDescriptor };
   }
 
-  static validateJSON(manager: StructManager, val: unknown, obj: unknown, field: StructField, type: TypeDescriptor, instance: unknown, _abstractKey?: string): true | string {
+  static validateJSON(
+    manager: StructManager,
+    val: unknown,
+    obj: unknown,
+    field: StructField,
+    type: TypeDescriptor,
+    instance: unknown,
+    _abstractKey?: string
+  ): true | string {
     const fakeField = this.fakeField(field, type);
-    return val !== undefined && val !== null ? validateJSON(manager, val, obj, fakeField, type.data as TypeDescriptor, undefined, _abstractKey) : true;
+    return val !== undefined && val !== null
+      ? validateJSON(manager, val, obj, fakeField, type.data as TypeDescriptor, undefined, _abstractKey)
+      : true;
   }
 
-  static fromJSON(manager: StructManager, val: unknown, obj: unknown, field: StructField, type: TypeDescriptor, instance: unknown): unknown {
+  static fromJSON(
+    manager: StructManager,
+    val: unknown,
+    obj: unknown,
+    field: StructField,
+    type: TypeDescriptor,
+    instance: unknown
+  ): unknown {
     const fakeField = this.fakeField(field, type);
-    return val !== undefined && val !== null ? fromJSON(manager, val, obj, fakeField, type.data as TypeDescriptor, undefined) : undefined;
+    return val !== undefined && val !== null
+      ? fromJSON(manager, val, obj, fakeField, type.data as TypeDescriptor, undefined)
+      : undefined;
   }
 
-  static formatJSON(manager: StructManager, val: unknown, obj: unknown, field: StructField, type: TypeDescriptor, instance: unknown, tlvl?: number): string {
+  static formatJSON(
+    manager: StructManager,
+    val: unknown,
+    obj: unknown,
+    field: StructField,
+    type: TypeDescriptor,
+    instance: unknown,
+    tlvl?: number
+  ): string {
     if (val !== undefined && val !== null) {
       const fakeField = this.fakeField(field, type);
       return formatJSON(manager, val, val, fakeField, type.data as TypeDescriptor, instance, (tlvl ?? 0) + 1);
     }
-    return 'null';
+    return "null";
   }
 
   static toJSON(manager: StructManager, val: unknown, obj: unknown, field: StructField, type: TypeDescriptor): unknown {
@@ -1442,7 +1986,13 @@ class StructOptionalField extends StructFieldType {
     return "optional(" + fmt_type(type.data as TypeDescriptor) + ")";
   }
 
-  static unpackInto(manager: StructManager, data: DataView, type: TypeDescriptor, uctx: UnpackContext, dest: unknown): unknown {
+  static unpackInto(
+    manager: StructManager,
+    data: DataView,
+    type: TypeDescriptor,
+    uctx: UnpackContext,
+    dest: unknown
+  ): unknown {
     let exists = struct_binpack.unpack_int(data, uctx);
 
     packer_debug("optional exists: " + exists);
@@ -1467,7 +2017,7 @@ class StructOptionalField extends StructFieldType {
   static define(): FieldTypeDefinition {
     return {
       type: StructEnum.OPTIONAL,
-      name: "optional"
+      name: "optional",
     };
   }
 }

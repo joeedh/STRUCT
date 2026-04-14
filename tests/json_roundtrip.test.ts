@@ -1,9 +1,9 @@
-import { describe, it, expect, beforeAll } from 'vitest';
+import { describe, it, expect, beforeAll } from "vitest";
 
 // Set up global DEBUG before importing nstructjs
 (globalThis as Record<string, unknown>).DEBUG = { tinyeval: false };
 
-import * as nstructjs from '../src/structjs.js';
+import * as nstructjs from "../src/structjs.js";
 
 // ============ Test Classes ============
 
@@ -21,7 +21,7 @@ class JPoint {
   }
 
   static STRUCT = nstructjs.inlineRegister(
-    JPoint as unknown as import('../src/types.js').StructableClass,
+    JPoint as unknown as import("../src/types.js").StructableClass,
     `
     json.JPoint {
       x : double;
@@ -51,7 +51,7 @@ class JAllTypes {
   }
 
   static STRUCT = nstructjs.inlineRegister(
-    JAllTypes as unknown as import('../src/types.js').StructableClass,
+    JAllTypes as unknown as import("../src/types.js").StructableClass,
     `
     json.JAllTypes {
       intVal    : int;
@@ -78,7 +78,7 @@ class JWithArray {
   }
 
   static STRUCT = nstructjs.inlineRegister(
-    JWithArray as unknown as import('../src/types.js').StructableClass,
+    JWithArray as unknown as import("../src/types.js").StructableClass,
     `
     json.JWithArray {
       numbers : array(int);
@@ -105,7 +105,7 @@ json.JBase {
   baseVal : int;
 }
 `;
-nstructjs.register(JBase as unknown as import('../src/types.js').StructableClass, "json.JBase");
+nstructjs.register(JBase as unknown as import("../src/types.js").StructableClass, "json.JBase");
 
 class JDerived extends JBase {
   derivedVal: number;
@@ -120,7 +120,7 @@ class JDerived extends JBase {
   }
 
   static STRUCT = nstructjs.inlineRegister(
-    JDerived as unknown as import('../src/types.js').StructableClass,
+    JDerived as unknown as import("../src/types.js").StructableClass,
     `
     json.JDerived {
       derivedVal : int;
@@ -141,7 +141,7 @@ class JAbstractHolder {
   }
 
   static STRUCT = nstructjs.inlineRegister(
-    JAbstractHolder as unknown as import('../src/types.js').StructableClass,
+    JAbstractHolder as unknown as import("../src/types.js").StructableClass,
     `
     json.JAbstractHolder {
       item : abstract(json.JBase);
@@ -164,7 +164,7 @@ class JOptional {
   }
 
   static STRUCT = nstructjs.inlineRegister(
-    JOptional as unknown as import('../src/types.js').StructableClass,
+    JOptional as unknown as import("../src/types.js").StructableClass,
     `
     json.JOptional {
       present ?: double;
@@ -178,7 +178,7 @@ class JOptional {
 
 function jsonRoundTrip<T>(obj: T, cls: unknown): T {
   const json = nstructjs.writeJSON(obj);
-  return nstructjs.readJSON(json, cls as import('../src/types.js').StructableClass) as T;
+  return nstructjs.readJSON(json, cls as import("../src/types.js").StructableClass) as T;
 }
 
 // ============ Tests ============
@@ -188,8 +188,8 @@ beforeAll(() => {
   nstructjs.setAllowOverriding(true);
 });
 
-describe('JSON Serialization - Basic Types', () => {
-  it('should round-trip all basic types', () => {
+describe("JSON Serialization - Basic Types", () => {
+  it("should round-trip all basic types", () => {
     const original = new JAllTypes();
     const restored = jsonRoundTrip(original, JAllTypes);
 
@@ -200,23 +200,23 @@ describe('JSON Serialization - Basic Types', () => {
     expect(restored.boolVal).toBe(original.boolVal);
   });
 
-  it('should produce valid JSON structure', () => {
+  it("should produce valid JSON structure", () => {
     const original = new JAllTypes();
     const json = nstructjs.writeJSON(original);
 
-    expect(json).toHaveProperty('intVal');
-    expect(json).toHaveProperty('floatVal');
-    expect(json).toHaveProperty('doubleVal');
-    expect(json).toHaveProperty('stringVal');
-    expect(json).toHaveProperty('boolVal');
-    expect(typeof json.intVal).toBe('number');
-    expect(typeof json.stringVal).toBe('string');
-    expect(typeof json.boolVal).toBe('boolean');
+    expect(json).toHaveProperty("intVal");
+    expect(json).toHaveProperty("floatVal");
+    expect(json).toHaveProperty("doubleVal");
+    expect(json).toHaveProperty("stringVal");
+    expect(json).toHaveProperty("boolVal");
+    expect(typeof json.intVal).toBe("number");
+    expect(typeof json.stringVal).toBe("string");
+    expect(typeof json.boolVal).toBe("boolean");
   });
 });
 
-describe('JSON Serialization - Nested Structs', () => {
-  it('should round-trip nested structs', () => {
+describe("JSON Serialization - Nested Structs", () => {
+  it("should round-trip nested structs", () => {
     const original = new JPoint(42.5, 99.75);
     const restored = jsonRoundTrip(original, JPoint);
 
@@ -225,8 +225,8 @@ describe('JSON Serialization - Nested Structs', () => {
   });
 });
 
-describe('JSON Serialization - Arrays', () => {
-  it('should round-trip arrays of primitives and structs', () => {
+describe("JSON Serialization - Arrays", () => {
+  it("should round-trip arrays of primitives and structs", () => {
     const original = new JWithArray();
     const restored = jsonRoundTrip(original, JWithArray);
 
@@ -237,8 +237,8 @@ describe('JSON Serialization - Arrays', () => {
   });
 });
 
-describe('JSON Serialization - Abstract/Polymorphic Types', () => {
-  it('should round-trip abstract types with type discriminator', () => {
+describe("JSON Serialization - Abstract/Polymorphic Types", () => {
+  it("should round-trip abstract types with type discriminator", () => {
     const original = new JAbstractHolder();
     (original.item as JDerived).derivedVal = 777;
 
@@ -254,8 +254,8 @@ describe('JSON Serialization - Abstract/Polymorphic Types', () => {
   });
 });
 
-describe('JSON Serialization - Optional Fields', () => {
-  it('should serialize undefined optional as null in JSON', () => {
+describe("JSON Serialization - Optional Fields", () => {
+  it("should serialize undefined optional as null in JSON", () => {
     const original = new JOptional();
     const json = nstructjs.writeJSON(original);
 
@@ -263,7 +263,7 @@ describe('JSON Serialization - Optional Fields', () => {
     expect(json.missing).toBeNull();
   });
 
-  it('should deserialize null optional back to undefined', () => {
+  it("should deserialize null optional back to undefined", () => {
     const original = new JOptional();
     const restored = jsonRoundTrip(original, JOptional);
 
@@ -271,7 +271,7 @@ describe('JSON Serialization - Optional Fields', () => {
     expect(restored.missing).toBeUndefined();
   });
 
-  it('should round-trip when all optionals are present', () => {
+  it("should round-trip when all optionals are present", () => {
     const original = new JOptional();
     original.missing = 50.5;
     const restored = jsonRoundTrip(original, JOptional);
@@ -281,21 +281,24 @@ describe('JSON Serialization - Optional Fields', () => {
   });
 });
 
-describe('JSON Serialization - Validation', () => {
-  it('should validate correct JSON', () => {
+describe("JSON Serialization - Validation", () => {
+  it("should validate correct JSON", () => {
     const original = new JAllTypes();
     const json = nstructjs.writeJSON(original);
 
-    const result = nstructjs.validateJSON(json, JAllTypes as unknown as import('../src/types.js').StructableClass);
+    const result = nstructjs.validateJSON(json, JAllTypes as unknown as import("../src/types.js").StructableClass);
     expect(result).toBe(true);
   });
 });
 
-describe('JSON Serialization - writeJSON then stringify stability', () => {
-  it('should produce identical results on re-serialization', () => {
+describe("JSON Serialization - writeJSON then stringify stability", () => {
+  it("should produce identical results on re-serialization", () => {
     const original = new JPoint(1.5, 2.5);
     const json1 = nstructjs.writeJSON(original);
-    const restored = nstructjs.readJSON(json1, JPoint as unknown as import('../src/types.js').StructableClass) as JPoint;
+    const restored = nstructjs.readJSON(
+      json1,
+      JPoint as unknown as import("../src/types.js").StructableClass
+    ) as JPoint;
     const json2 = nstructjs.writeJSON(restored);
 
     expect(JSON.stringify(json1)).toBe(JSON.stringify(json2));

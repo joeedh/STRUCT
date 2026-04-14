@@ -15,11 +15,11 @@ const colormap: Record<string, number> = {
   "pink"    : 198,
   "brown"   : 314,
   "lightred": 91,
-  "peach"   : 210
+  "peach"   : 210,
 };
 
-export function tab(n: number, chr: string = ' '): string {
-  let t = '';
+export function tab(n: number, chr: string = " "): string {
+  let t = "";
 
   for (let i = 0; i < n; i++) {
     t += chr;
@@ -50,11 +50,11 @@ export function termColor(s: string | symbol, c: string | number): string {
   }
 
   if (code > 107) {
-    const s2 = '\u001b[38;5;' + code + "m";
-    return s2 + str + '\u001b[0m';
+    const s2 = "\u001b[38;5;" + code + "m";
+    return s2 + str + "\u001b[0m";
   }
 
-  return '\u001b[' + code + 'm' + str + '\u001b[0m';
+  return "\u001b[" + code + "m" + str + "\u001b[0m";
 }
 
 interface TermToken {
@@ -63,10 +63,10 @@ interface TermToken {
 }
 
 export function termPrint(...args: unknown[]): string {
-  let s = '';
+  let s = "";
   for (let i = 0; i < args.length; i++) {
     if (i > 0) {
-      s += ' ';
+      s += " ";
     }
     s += args[i];
   }
@@ -75,19 +75,19 @@ export function termPrint(...args: unknown[]): string {
   const re1b = /\u001b\[[1-9][0-9];[0-9][0-9]?;[0-9]+m/;
   const re2 = /\u001b\[0m/;
 
-  const endtag = '\u001b[0m';
+  const endtag = "\u001b[0m";
 
   function tok(s: string, type: string): TermToken {
     return {
       type : type,
-      value: s
+      value: s,
     };
   }
 
   const tokdefs: [RegExp, string][] = [
     [re1a, "start"],
     [re1b, "start"],
-    [re2, "end"]
+    [re2, "end"],
   ];
 
   let s2 = s;
@@ -136,7 +136,7 @@ export function termPrint(...args: unknown[]): string {
   const stack: (string | undefined)[] = [];
   let cur: string | undefined;
 
-  let out = '';
+  let out = "";
 
   for (const t of tokens) {
     if (t.type === "chunk") {

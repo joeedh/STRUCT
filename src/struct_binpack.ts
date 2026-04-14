@@ -1,6 +1,6 @@
 "use strict";
 
-import type { UnpackContext as UnpackContextType } from './types.js';
+import type { UnpackContext as UnpackContextType } from "./types.js";
 
 export let STRUCT_ENDIAN: boolean = true; //little endian
 
@@ -99,8 +99,7 @@ export function encode_utf8(arr: number[], str: string): void {
       let uc = c & 127;
       c = c >> 7;
 
-      if (c !== 0)
-        uc |= 128;
+      if (c !== 0) uc |= 128;
 
       arr.push(uc);
     }
@@ -116,7 +115,7 @@ export function decode_utf8(arr: number[]): string {
     let sum = c & 127;
     let j = 0;
 
-    while (i < arr.length && (c & 128)) {
+    while (i < arr.length && c & 128) {
       j += 7;
       i++;
       c = arr[i];
@@ -167,10 +166,8 @@ function truncate_utf8(arr: number[], maxlen: number): number[] {
     i++;
   }
 
-  if (last_codepoint < maxlen)
-    arr.length = last_codepoint;
-  else
-    arr.length = last2;
+  if (last_codepoint < maxlen) arr.length = last_codepoint;
+  else arr.length = last2;
 
   return arr;
 }
@@ -178,8 +175,7 @@ function truncate_utf8(arr: number[], maxlen: number): number[] {
 const _static_sbuf_ss: number[] = new Array(2048);
 
 export function pack_static_string(data: number[], str: string, length: number): void {
-  if (length === undefined)
-    throw new Error("'length' parameter is not optional for pack_static_string()");
+  if (length === undefined) throw new Error("'length' parameter is not optional for pack_static_string()");
 
   const arr: number[] = length < 2048 ? _static_sbuf_ss : new Array();
   arr.length = 0;
@@ -277,8 +273,7 @@ export function unpack_string(data: DataView, uctx: UnpackContextType): string {
 const _static_arr_uss: number[] = new Array(2048);
 
 export function unpack_static_string(data: DataView, uctx: UnpackContextType, length: number): string {
-  if (length === undefined)
-    throw new Error("'length' cannot be undefined in unpack_static_string()");
+  if (length === undefined) throw new Error("'length' cannot be undefined in unpack_static_string()");
 
   const arr = length < 2048 ? _static_arr_uss : new Array(length);
   arr.length = 0;

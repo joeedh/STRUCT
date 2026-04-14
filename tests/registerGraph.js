@@ -1,13 +1,13 @@
-import * as nstructjs from '../src/structjs.js';
+import * as nstructjs from "../src/structjs.js";
 
 function makeDummyClass(key) {
   let ret = class {
-    constructor() {
+    constructor() {}
+  };
 
-    }
-  }
-
-  ret.STRUCT = key + ` {
+  ret.STRUCT =
+    key +
+    ` {
 }`;
   nstructjs.register(ret, key);
 
@@ -27,12 +27,12 @@ class A {
     this.b = 2;
     this.c = [
       [0, 0, 0],
-      [1, 1, 1]
+      [1, 1, 1],
     ];
     this.d = [
       [new B(), new B(), new B()],
-      [new B(), new B(), new B()]
-    ]
+      [new B(), new B(), new B()],
+    ];
   }
 }
 A.STRUCT = `
