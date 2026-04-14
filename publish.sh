@@ -34,3 +34,5 @@ echo $?
 cd ..
 git tag -a $VERSION -m "Release $VERSION"
 git push --tags
+
+rm -rf package
