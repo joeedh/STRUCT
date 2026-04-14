@@ -52,6 +52,7 @@ export declare function inlineRegister(cls: StructableClass, structScript: strin
 /** Register a class with nstructjs **/
 export declare function register(cls: StructableClass, structName?: string): void;
 export declare function unregister(cls: StructableClass): void;
+/** @deprecated */
 export declare function inherit(child: StructableClass, parent: StructableClass, structName?: string): string;
 /**
  @param data : DataView

@@ -2706,9 +2706,7 @@ class STRUCT {
         const parentProto = Object.getPrototypeOf(cls.prototype);
         const parent = parentProto.constructor;
         bad = bad || parent === undefined;
-        if (!bad &&
-            parent.prototype[keywords.load] &&
-            parent.prototype[keywords.load] !== obj[keywords.load]) {
+        if (!bad && parent.prototype[keywords.load] && parent.prototype[keywords.load] !== obj[keywords.load]) {
             parent.prototype[keywords.load].call(obj, reader2);
         }
     }
@@ -3029,9 +3027,7 @@ class STRUCT {
     }
     unregister(cls) {
         const keywords = this.constructor.keywords;
-        if (!cls ||
-            !cls[keywords.name] ||
-            !(cls[keywords.name] in this.struct_cls)) {
+        if (!cls || !cls[keywords.name] || !(cls[keywords.name] in this.struct_cls)) {
             console.warn("Class not registered with nstructjs", cls);
             return;
         }
@@ -3051,9 +3047,7 @@ class STRUCT {
             let p = cls;
             while (p) {
                 p = Object.getPrototypeOf(p);
-                if (p &&
-                    p[keywords.script] &&
-                    p[keywords.script] === cls[keywords.script]) {
+                if (p && p[keywords.script] && p[keywords.script] === cls[keywords.script]) {
                     bad = true;
                     break;
                 }
@@ -3351,21 +3345,20 @@ class STRUCT {
                 }
             };
         }
-        const load = makeLoader(stt);
+        const loader = makeLoader(stt);
         if (cls.prototype[keywords.load] !== undefined) {
             let obj = objInstance;
             if (!obj && cls[keywords.new] !== undefined) {
-                obj = cls[keywords.new].call(cls, load);
+                obj = cls[keywords.new].call(cls, loader);
             }
             else if (!obj) {
                 obj = new cls();
             }
-            obj[keywords.load](load);
+            const objAny = obj;
+            objAny[keywords.load](loader);
             if (!was_run) {
-                console.warn("" +
-                    cls[keywords.name] +
-                    ".prototype[keywords.load]() did not execute its loader callback!");
-                load(obj);
+                console.warn("" + cls[keywords.name] + ".prototype[keywords.load]() did not execute its loader callback!");
+                loader(obj);
             }
             return obj;
         }
@@ -3376,18 +3369,18 @@ class STRUCT {
                     " is using deprecated fromSTRUCT interface; use newSTRUCT/loadSTRUCT instead");
             }
             const anyCls = cls;
-            return anyCls[keywords.from](load);
+            return anyCls[keywords.from](loader);
         }
         else {
             // default case, make new instance and then call load() on it
             let obj = objInstance;
             if (!obj && cls[keywords.new] !== undefined) {
-                obj = cls[keywords.new].call(cls, load);
+                obj = cls[keywords.new].call(cls, loader);
             }
             else if (!obj) {
                 obj = new cls();
             }
-            load(obj);
+            loader(obj);
             return obj;
         }
     }
@@ -10110,6 +10103,7 @@ function register(cls, structName) {
 function unregister(cls) {
     exports.manager.unregister(cls);
 }
+/** @deprecated */
 function inherit(child, parent, structName = child.name) {
     return STRUCT.inherit(child, parent, structName);
 }

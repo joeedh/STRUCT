@@ -146,18 +146,18 @@ function define_empty_class(scls: { keywords: StructKeywords }, name: string): S
   const cls = function (this: StructableInstance) {} as unknown as StructableClass;
 
   cls.prototype = Object.create(Object.prototype);
-  (cls as Record<string, unknown>).constructor = cls.prototype.constructor = cls;
+  (cls as any).constructor = cls.prototype.constructor = cls;
 
   const keywords = scls.keywords;
 
-  (cls as Record<string, unknown>)[keywords.script] = name + " {\n  }\n";
-  (cls as Record<string, unknown>)[keywords.name] = name;
+  (cls as any)[keywords.script] = name + " {\n  }\n";
+  (cls as any)[keywords.name] = name;
 
   cls.prototype[keywords.load] = function (this: StructableInstance, reader: (obj: StructableInstance) => void) {
     reader(this);
   };
 
-  (cls as Record<string, unknown>)[keywords.new] = function (this: StructableClass) {
+  (cls as any)[keywords.new] = function (this: StructableClass) {
     return new this();
   };
 
@@ -199,14 +199,14 @@ export class STRUCT {
     this.formatCtx = {};
   }
 
-  static inherit(child: StructableClass, parent: StructableClass, structName: string = child.name): string {
+  static inherit(child: StructableClass, parent: StructableClass, structName: string = child.name!): string {
     const keywords = this.keywords;
 
-    if (!(parent as Record<string, unknown>)[keywords.script]) {
+    if (!(parent as any)[keywords.script]) {
       return structName + "{\n";
     }
 
-    const stt = struct_parse.parse((parent as Record<string, unknown>)[keywords.script] as string) as NStruct;
+    const stt = struct_parse.parse((parent as any)[keywords.script] as string) as NStruct;
     let code = structName + "{\n";
     code += STRUCT.fmt_struct(stt, true, false, true);
     return code;
@@ -235,11 +235,7 @@ export class STRUCT {
     const parent = parentProto.constructor as StructableClass;
     bad = bad || parent === undefined;
 
-    if (
-      !bad &&
-      parent.prototype[keywords.load] &&
-      parent.prototype[keywords.load] !== (obj as Record<string, unknown>)[keywords.load]
-    ) {
+    if (!bad && parent.prototype[keywords.load] && parent.prototype[keywords.load] !== (obj as any)[keywords.load]) {
       (
         parent.prototype[keywords.load] as (this: StructableInstance, reader: (obj: StructableInstance) => void) => void
       ).call(obj, reader2);
@@ -255,9 +251,9 @@ export class STRUCT {
     }
 
     const proto = cls.prototype;
-    const parent = (proto as Record<string, unknown>).prototype as { constructor: StructableClass };
+    const parent = (proto as any).prototype as { constructor: StructableClass };
 
-    const obj = (parent.constructor as Record<string, unknown>)[keywords.from] as (
+    const obj = (parent.constructor as any)[keywords.from] as (
       reader: (obj: StructableInstance) => void
     ) => StructableInstance;
     const result = obj(reader);
@@ -354,7 +350,7 @@ export class STRUCT {
     const keywords = (this.constructor as typeof STRUCT).keywords;
     const obj = define_empty_class(this.constructor as typeof STRUCT, name);
 
-    const stt = struct_parse.parse((obj as Record<string, unknown>)[keywords.script] as string) as NStruct;
+    const stt = struct_parse.parse((obj as any)[keywords.script] as string) as NStruct;
 
     stt.id = this.idgen++;
 
@@ -388,7 +384,7 @@ export class STRUCT {
 
       if (typeof ret.type === "number") {
         for (const k in StructEnum) {
-          if ((StructEnum as Record<string, unknown>)[k] === ret.type) {
+          if ((StructEnum as any)[k] === ret.type) {
             ret.type = k;
             break;
           }
@@ -487,15 +483,15 @@ export class STRUCT {
     for (let i = 0; i < defined_classes.length; i++) {
       const cls = defined_classes[i];
 
-      if (!(cls as Record<string, unknown>)[keywords.name] && (cls as Record<string, unknown>)[keywords.script]) {
-        const stt = struct_parse.parse(((cls as Record<string, unknown>)[keywords.script] as string).trim()) as NStruct;
-        (cls as Record<string, unknown>)[keywords.name] = stt.name;
-      } else if (!(cls as Record<string, unknown>)[keywords.name] && cls.name !== "Object") {
-        if (warninglvl > 0) console.log("Warning, bad class in registered class list", unmangle(cls.name), cls);
+      if (!(cls as any)[keywords.name] && (cls as any)[keywords.script]) {
+        const stt = struct_parse.parse(((cls as any)[keywords.script] as string).trim()) as NStruct;
+        (cls as any)[keywords.name] = stt.name;
+      } else if (!(cls as any)[keywords.name] && cls.name !== "Object") {
+        if (warninglvl > 0) console.log("Warning, bad class in registered class list", unmangle(cls.name!), cls);
         continue;
       }
 
-      clsmap[(cls as Record<string, unknown>)[keywords.name] as string] = defined_classes[i];
+      clsmap[(cls as any)[keywords.name] as string] = defined_classes[i];
     }
 
     struct_parse.input(buf);
@@ -509,19 +505,13 @@ export class STRUCT {
 
         const dummy = define_empty_class(this.constructor as typeof STRUCT, stt.name);
 
-        (dummy as Record<string, unknown>)[keywords.script] = STRUCT.fmt_struct(
-          stt,
-          undefined,
-          undefined,
-          undefined,
-          true
-        );
-        (dummy as Record<string, unknown>)[keywords.name] = stt.name;
+        (dummy as any)[keywords.script] = STRUCT.fmt_struct(stt, undefined, undefined, undefined, true);
+        (dummy as any)[keywords.name] = stt.name;
 
         dummy.prototype[keywords.name] = dummy.name;
 
-        this.struct_cls[(dummy as Record<string, unknown>)[keywords.name] as string] = dummy;
-        this.structs[(dummy as Record<string, unknown>)[keywords.name] as string] = stt;
+        this.struct_cls[(dummy as any)[keywords.name] as string] = dummy;
+        this.structs[(dummy as any)[keywords.name] as string] = stt;
 
         if (stt.id !== -1) this.struct_ids[stt.id] = stt;
       } else {
@@ -543,7 +533,7 @@ export class STRUCT {
   registerGraph(srcSTRUCT: STRUCT, cls: StructableClass): void {
     const keywords = (this.constructor as typeof STRUCT).keywords;
 
-    if (!(cls as Record<string, unknown>)[keywords.name]) {
+    if (!(cls as any)[keywords.name]) {
       console.warn("class was not in srcSTRUCT");
       this.register(cls);
       return;
@@ -572,8 +562,8 @@ export class STRUCT {
     };
 
     recStruct = (st: NStructInterface, cls: StructableClass): void => {
-      if (!(((cls as Record<string, unknown>)[keywords.name] as string) in this.structs)) {
-        this.add_class(cls, (cls as Record<string, unknown>)[keywords.name] as string);
+      if (!(((cls as any)[keywords.name] as string) in this.structs)) {
+        this.add_class(cls, (cls as any)[keywords.name] as string);
       }
 
       for (const f of st.fields) {
@@ -594,7 +584,7 @@ export class STRUCT {
       }
     };
 
-    const st = srcSTRUCT.structs[(cls as Record<string, unknown>)[keywords.name] as string];
+    const st = srcSTRUCT.structs[(cls as any)[keywords.name] as string];
     recStruct(st, cls);
   }
 
@@ -624,14 +614,14 @@ export class STRUCT {
 
     let p: unknown = Object.getPrototypeOf(cls);
     while (p && p !== Object) {
-      if ((p as Record<string, unknown>).hasOwnProperty(keywords.script)) {
-        structScript = this.mergeScripts(structScript, (p as Record<string, unknown>)[keywords.script] as string);
+      if ((p as any).hasOwnProperty(keywords.script)) {
+        structScript = this.mergeScripts(structScript, (p as any)[keywords.script] as string);
         break;
       }
       p = Object.getPrototypeOf(p as object);
     }
 
-    (cls as Record<string, unknown>)[keywords.script] = structScript;
+    (cls as any)[keywords.script] = structScript;
     this.register(cls);
     return structScript;
   }
@@ -643,19 +633,15 @@ export class STRUCT {
   unregister(cls: StructableClass): void {
     const keywords = (this.constructor as typeof STRUCT).keywords;
 
-    if (
-      !cls ||
-      !(cls as Record<string, unknown>)[keywords.name] ||
-      !(((cls as Record<string, unknown>)[keywords.name] as string) in this.struct_cls)
-    ) {
+    if (!cls || !(cls as any)[keywords.name] || !(((cls as any)[keywords.name] as string) in this.struct_cls)) {
       console.warn("Class not registered with nstructjs", cls);
       return;
     }
 
-    const st = this.structs[(cls as Record<string, unknown>)[keywords.name] as string];
+    const st = this.structs[(cls as any)[keywords.name] as string];
 
-    delete this.structs[(cls as Record<string, unknown>)[keywords.name] as string];
-    delete this.struct_cls[(cls as Record<string, unknown>)[keywords.name] as string];
+    delete this.structs[(cls as any)[keywords.name] as string];
+    delete this.struct_cls[(cls as any)[keywords.name] as string];
     delete this.struct_ids[st.id];
   }
 
@@ -666,18 +652,14 @@ export class STRUCT {
     }
 
     const keywords = (this.constructor as typeof STRUCT).keywords;
-    if ((cls as Record<string, unknown>)[keywords.script]) {
+    if ((cls as any)[keywords.script]) {
       let bad = false;
 
       let p: unknown = cls;
       while (p) {
         p = Object.getPrototypeOf(p as object);
 
-        if (
-          p &&
-          (p as Record<string, unknown>)[keywords.script] &&
-          (p as Record<string, unknown>)[keywords.script] === (cls as Record<string, unknown>)[keywords.script]
-        ) {
+        if (p && (p as any)[keywords.script] && (p as any)[keywords.script] === (cls as any)[keywords.script]) {
           bad = true;
           break;
         }
@@ -685,55 +667,50 @@ export class STRUCT {
 
       if (bad) {
         if (warninglvl > 0) {
-          console.warn("Generating " + keywords.script + " script for derived class " + unmangle(cls.name));
+          console.warn("Generating " + keywords.script + " script for derived class " + unmangle(cls.name!));
         }
 
         if (!structName) {
-          structName = unmangle(cls.name);
+          structName = unmangle(cls.name!);
         }
 
-        (cls as Record<string, unknown>)[keywords.script] = STRUCT.inherit(cls, p as StructableClass) + "\n}";
+        (cls as any)[keywords.script] = STRUCT.inherit(cls, p as StructableClass) + "\n}";
       }
     }
 
-    if (!(cls as Record<string, unknown>)[keywords.script]) {
-      throw new Error("class " + unmangle(cls.name) + " has no " + keywords.script + " script");
+    if (!(cls as any)[keywords.script]) {
+      throw new Error("class " + unmangle(cls.name!) + " has no " + keywords.script + " script");
     }
 
-    const stt = struct_parse.parse((cls as Record<string, unknown>)[keywords.script] as string) as NStruct;
+    const stt = struct_parse.parse((cls as any)[keywords.script] as string) as NStruct;
 
     stt.name = unmangle(stt.name);
 
-    (cls as Record<string, unknown>)[keywords.name] = stt.name;
+    (cls as any)[keywords.name] = stt.name;
 
     // create default newSTRUCT
-    if ((cls as Record<string, unknown>)[keywords.new] === undefined) {
-      (cls as Record<string, unknown>)[keywords.new] = function (this: StructableClass) {
+    if ((cls as any)[keywords.new] === undefined) {
+      (cls as any)[keywords.new] = function (this: StructableClass) {
         return new this();
       };
     }
 
     if (structName !== undefined) {
       stt.name = structName;
-      (cls as Record<string, unknown>)[keywords.name] = structName;
-    } else if ((cls as Record<string, unknown>)[keywords.name] === undefined) {
-      (cls as Record<string, unknown>)[keywords.name] = stt.name;
+      (cls as any)[keywords.name] = structName;
+    } else if ((cls as any)[keywords.name] === undefined) {
+      (cls as any)[keywords.name] = stt.name;
     } else {
-      stt.name = (cls as Record<string, unknown>)[keywords.name] as string;
+      stt.name = (cls as any)[keywords.name] as string;
     }
 
-    if (((cls as Record<string, unknown>)[keywords.name] as string) in this.structs) {
+    if (((cls as any)[keywords.name] as string) in this.structs) {
       if (warninglvl > 0) {
-        console.warn(
-          "Struct " + unmangle((cls as Record<string, unknown>)[keywords.name] as string) + " is already registered",
-          cls
-        );
+        console.warn("Struct " + unmangle((cls as any)[keywords.name] as string) + " is already registered", cls);
       }
 
       if (!this.allowOverriding) {
-        throw new Error(
-          "Struct " + unmangle((cls as Record<string, unknown>)[keywords.name] as string) + " is already registered"
-        );
+        throw new Error("Struct " + unmangle((cls as any)[keywords.name] as string) + " is already registered");
       }
 
       return;
@@ -741,8 +718,8 @@ export class STRUCT {
 
     if (stt.id === -1) stt.id = this.idgen++;
 
-    this.structs[(cls as Record<string, unknown>)[keywords.name] as string] = stt;
-    this.struct_cls[(cls as Record<string, unknown>)[keywords.name] as string] = cls;
+    this.structs[(cls as any)[keywords.name] as string] = stt;
+    this.struct_cls[(cls as any)[keywords.name] as string] = cls;
     this.struct_ids[stt.id] = stt;
   }
 
@@ -753,7 +730,7 @@ export class STRUCT {
       return false;
     }
 
-    return cls === this.struct_cls[(cls as Record<string, unknown>)[keywords.name] as string];
+    return cls === this.struct_cls[(cls as any)[keywords.name] as string];
   }
 
   get_struct_id(id: number): NStructInterface {
@@ -836,7 +813,7 @@ export class STRUCT {
         if (f.get !== undefined) {
           val = thestruct._env_call(f.get, obj);
         } else {
-          val = f.name === "this" ? obj : (obj as Record<string, unknown>)[f.name];
+          val = f.name === "this" ? obj : (obj as any)[f.name];
         }
 
         if (DEBUG.tinyeval) {
@@ -845,7 +822,7 @@ export class STRUCT {
 
         sintern2.do_pack(this, data, val, obj, f, t1);
       } else {
-        const val = f.name === "this" ? obj : (obj as Record<string, unknown>)[f.name];
+        const val = f.name === "this" ? obj : (obj as any)[f.name];
         sintern2.do_pack(this, data, val, obj, f, t1);
       }
     }
@@ -858,7 +835,7 @@ export class STRUCT {
   write_object(data: number[] | undefined, obj: unknown): number[] {
     const keywords = (this.constructor as typeof STRUCT).keywords;
 
-    const cls = (obj as StructableInstance).constructor[keywords.name] as string;
+    const cls = (obj as any).constructor[keywords.name] as string;
     const stt = this.get_struct(cls);
 
     if (data === undefined) {
@@ -903,7 +880,7 @@ export class STRUCT {
     const keywords = (this.constructor as typeof STRUCT).keywords;
 
     const cls = (obj as StructableInstance).constructor;
-    stt = stt || this.get_struct((cls as Record<string, unknown>)[keywords.name] as string);
+    stt = stt || this.get_struct((cls as any)[keywords.name] as string);
 
     function use_helper_js(field: StructField): boolean {
       const type = field.type.type;
@@ -928,7 +905,7 @@ export class STRUCT {
         if (f.get !== undefined) {
           val = thestruct._env_call(f.get, obj);
         } else {
-          val = f.name === "this" ? obj : (obj as Record<string, unknown>)[f.name];
+          val = f.name === "this" ? obj : (obj as any)[f.name];
         }
 
         if (DEBUG.tinyeval) {
@@ -937,7 +914,7 @@ export class STRUCT {
 
         json2 = toJSON(this, val, obj, f, t1);
       } else {
-        val = f.name === "this" ? obj : (obj as Record<string, unknown>)[f.name];
+        val = f.name === "this" ? obj : (obj as any)[f.name];
         json2 = toJSON(this, val, obj, f, t1);
       }
 
@@ -957,12 +934,12 @@ export class STRUCT {
             json[j] = arr[j];
           }
         } else {
-          Object.assign(json, json2 as Record<string, unknown>);
+          Object.assign(json, json2 as any);
         }
       }
     }
 
-    return json as Record<string, unknown>;
+    return json as any;
   }
 
   /**
@@ -994,12 +971,12 @@ export class STRUCT {
       throw new Error("bad cls_or_struct_id " + cls_or_struct_id);
     }
 
-    stt = this.structs[(cls as Record<string, unknown>)[keywords.name] as string];
+    stt = this.structs[(cls as any)[keywords.name] as string];
 
     if (uctx === undefined) {
       uctx = new struct_binpack.unpack_context();
 
-      packer_debug("\n\n=Begin reading " + (cls as Record<string, unknown>)[keywords.name] + "=");
+      packer_debug("\n\n=Begin reading " + (cls as any)[keywords.name] + "=");
     }
     const thestruct = this;
 
@@ -1039,65 +1016,62 @@ export class STRUCT {
             // load data into obj directly
             unpack_into(f.type, obj);
           } else {
-            (obj as Record<string, unknown>)[f.name] = unpack_field(f.type);
+            (obj as any)[f.name] = unpack_field(f.type);
           }
         }
       };
     }
 
-    const load = makeLoader(stt);
+    const loader = makeLoader(stt);
 
     if (cls.prototype[keywords.load] !== undefined) {
       let obj = objInstance as StructableInstance | undefined;
 
-      if (!obj && (cls as Record<string, unknown>)[keywords.new] !== undefined) {
-        obj = (
-          (cls as Record<string, unknown>)[keywords.new] as (
-            load: (obj: StructableInstance) => void
-          ) => StructableInstance
-        ).call(cls, load);
+      if (!obj && (cls as any)[keywords.new] !== undefined) {
+        obj = ((cls as any)[keywords.new] as (load: (obj: StructableInstance) => void) => StructableInstance).call(
+          cls,
+          loader
+        );
       } else if (!obj) {
         obj = new cls() as StructableInstance;
       }
 
-      (obj![keywords.load] as (load: (obj: StructableInstance) => void) => void)(load);
+      const objAny = obj as any;
+      objAny[keywords.load](loader);
 
       if (!was_run) {
         console.warn(
-          "" +
-            (cls as Record<string, unknown>)[keywords.name] +
-            ".prototype[keywords.load]() did not execute its loader callback!"
+          "" + (cls as any)[keywords.name] + ".prototype[keywords.load]() did not execute its loader callback!"
         );
-        load(obj!);
+        loader(obj!);
       }
 
       return obj as T;
-    } else if ((cls as Record<string, unknown>)[keywords.from] !== undefined) {
+    } else if ((cls as any)[keywords.from] !== undefined) {
       if (warninglvl > 1) {
         console.warn(
           "Warning: class " +
-            unmangle(cls.name) +
+            unmangle(cls.name!) +
             " is using deprecated fromSTRUCT interface; use newSTRUCT/loadSTRUCT instead"
         );
       }
 
       const anyCls = cls as any;
-      return anyCls[keywords.from](load) as T;
+      return anyCls[keywords.from](loader) as T;
     } else {
       // default case, make new instance and then call load() on it
       let obj = objInstance as StructableInstance | undefined;
 
-      if (!obj && (cls as Record<string, unknown>)[keywords.new] !== undefined) {
-        obj = (
-          (cls as Record<string, unknown>)[keywords.new] as (
-            load: (obj: StructableInstance) => void
-          ) => StructableInstance
-        ).call(cls, load);
+      if (!obj && (cls as any)[keywords.new] !== undefined) {
+        obj = ((cls as any)[keywords.new] as (load: (obj: StructableInstance) => void) => StructableInstance).call(
+          cls,
+          loader
+        );
       } else if (!obj) {
         obj = new cls() as StructableInstance;
       }
 
-      load(obj!);
+      loader(obj!);
 
       return obj as T;
     }
@@ -1125,7 +1099,7 @@ export class STRUCT {
       this.jsonLogger = consoleLogger;
 
       // add token annotations
-      (jsonParser as unknown as Record<string, unknown>).logger = this.jsonLogger;
+      (jsonParser as unknown as any).logger = this.jsonLogger;
 
       let parsed: unknown;
       if (useInternalParser) {
@@ -1134,7 +1108,7 @@ export class STRUCT {
         parsed = JSON.parse(jsonStr);
       }
 
-      this.validateJSONIntern(parsed as Record<string, unknown>, cls_or_struct_id, _abstractKey);
+      this.validateJSONIntern(parsed as any, cls_or_struct_id, _abstractKey);
     } catch (error) {
       if (!(error instanceof JSONError)) {
         console.error((error as Error).stack);
@@ -1169,7 +1143,7 @@ export class STRUCT {
       throw new Error("bad cls_or_struct_id " + cls_or_struct_id);
     }
 
-    stt = this.structs[(cls as Record<string, unknown>)[keywords.name] as string];
+    stt = this.structs[(cls as any)[keywords.name] as string];
 
     if (stt === undefined) {
       throw new Error("unknown class " + cls);
@@ -1205,13 +1179,13 @@ export class STRUCT {
         const jsonTokInfo = (json as Record<string | symbol, unknown>)[TokSymbol as unknown as string] as
           | Record<string, unknown>
           | undefined;
-        tokinfo = jsonTokInfo ? (jsonTokInfo.fields as Record<string, unknown>)[f.name] : undefined;
+        tokinfo = jsonTokInfo ? (jsonTokInfo.fields as any)[f.name] : undefined;
         if (!tokinfo) {
           const f2 = fields[Math.max(i - 1, 0)];
           const tokSymTokInfo = (TokSymbol as unknown as Record<string | symbol, unknown>)[
             TokSymbol as unknown as string
-          ] as Record<string, unknown> | undefined;
-          tokinfo = tokSymTokInfo ? (tokSymTokInfo.fields as Record<string, unknown>)[f2.name] : undefined;
+          ] as any | undefined;
+          tokinfo = tokSymTokInfo ? (tokSymTokInfo.fields as any)[f2.name] : undefined;
         }
 
         if (!tokinfo) {
@@ -1248,13 +1222,13 @@ export class STRUCT {
     }
 
     for (const k in keyTestJson) {
-      if (typeof (json as Record<string, unknown>)[k] === "symbol") {
+      if (typeof (json as any)[k] === "symbol") {
         // ignore symbols
         continue;
       }
 
       if (!keys.has(k)) {
-        this.jsonLogger((cls as Record<string, unknown>)[keywords.script] as string);
+        this.jsonLogger((cls as any)[keywords.script] as string);
         throw new JSONError(stt.name + ": Unknown json field " + k);
         return false;
       }
@@ -1285,9 +1259,9 @@ export class STRUCT {
       throw new Error("bad cls_or_struct_id " + cls_or_struct_id);
     }
 
-    stt = this.structs[(cls as Record<string, unknown>)[keywords.name] as string];
+    stt = this.structs[(cls as any)[keywords.name] as string];
 
-    packer_debug("\n\n=Begin reading " + (cls as Record<string, unknown>)[keywords.name] + "=");
+    packer_debug("\n\n=Begin reading " + (cls as any)[keywords.name] + "=");
     const thestruct = this;
     const this2 = this;
     let was_run = false;
@@ -1312,7 +1286,7 @@ export class STRUCT {
           if (f.name === "this") {
             val = json;
           } else {
-            val = (json as Record<string, unknown>)[f.name];
+            val = (json as any)[f.name];
           }
 
           if (val === undefined) {
@@ -1327,7 +1301,7 @@ export class STRUCT {
           const ret = fromJSON(this2, val, obj, f, f.type, instance);
 
           if (f.name !== "this") {
-            (obj as Record<string, unknown>)[f.name] = ret;
+            (obj as any)[f.name] = ret;
           }
         }
       };
@@ -1338,12 +1312,11 @@ export class STRUCT {
     if (cls.prototype[keywords.load] !== undefined) {
       let obj = objInstance as StructableInstance | undefined;
 
-      if (!obj && (cls as Record<string, unknown>)[keywords.new] !== undefined) {
-        obj = (
-          (cls as Record<string, unknown>)[keywords.new] as (
-            load: (obj: StructableInstance) => void
-          ) => StructableInstance
-        ).call(cls, loader);
+      if (!obj && (cls as any)[keywords.new] !== undefined) {
+        obj = ((cls as any)[keywords.new] as (load: (obj: StructableInstance) => void) => StructableInstance).call(
+          cls,
+          loader
+        );
       } else if (!obj) {
         obj = new cls() as StructableInstance;
       }
@@ -1351,11 +1324,11 @@ export class STRUCT {
       const anyObj = obj as any;
       anyObj[keywords.load](loader);
       return obj as T;
-    } else if ((cls as Record<string, unknown>)[keywords.from] !== undefined) {
+    } else if ((cls as any)[keywords.from] !== undefined) {
       if (warninglvl > 1) {
         console.warn(
           "Warning: class " +
-            unmangle(cls.name) +
+            unmangle(cls.name!) +
             " is using deprecated fromSTRUCT interface; use newSTRUCT/loadSTRUCT instead"
         );
       }
@@ -1365,12 +1338,11 @@ export class STRUCT {
       // default case, make new instance and then call load() on it
       let obj = objInstance as StructableInstance | undefined;
 
-      if (!obj && (cls as Record<string, unknown>)[keywords.new] !== undefined) {
-        obj = (
-          (cls as Record<string, unknown>)[keywords.new] as (
-            load: (obj: StructableInstance) => void
-          ) => StructableInstance
-        ).call(cls, loader);
+      if (!obj && (cls as any)[keywords.new] !== undefined) {
+        obj = ((cls as any)[keywords.new] as (load: (obj: StructableInstance) => void) => StructableInstance).call(
+          cls,
+          loader
+        );
       } else if (!obj) {
         obj = new cls() as StructableInstance;
       }
@@ -1434,14 +1406,14 @@ export class STRUCT {
       this.validateJSON(json, cls);
     }
 
-    const stt = this.structs[(cls as Record<string, unknown>)[keywords.name] as string];
+    const stt = this.structs[(cls as any)[keywords.name] as string];
 
     this.formatCtx = {
       addComments,
       validate,
     };
 
-    return this.formatJSON_intern(json as Record<string, unknown>, stt);
+    return this.formatJSON_intern(json as any, stt);
   }
 }
 //$KEYWORD_CONFIG_END

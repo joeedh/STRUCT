@@ -82,18 +82,16 @@ export type StructReader<T = any> = (obj: T) => void;
 
 /** Interface for user-registered classes. Uses unknown index signature instead of any. */
 export interface StructableClass<T extends StructableInstance | unknown = StructableInstance> {
-  new (...args: unknown[]): T extends unknown ? StructableInstance : T;
-  prototype: StructableInstance;
-  name: string;
-  structName: string;
+  new (): T;
+  // note: TS makes constructor names (which do always exist)
+  // extremely difficult to deal with, so we just make
+  // it optional.  it's relatively rare for the API to actually read this anyway.
+  name?: string;
+  structName?: string;
   fromSTRUCT?: (reader: StructReader<this>) => unknown;
-  [key: string]: unknown;
 }
-
 export interface StructableInstance {
-  constructor: StructableClass<this>;
-  [key: string]: unknown;
-  loadSTRUCT?: (reader: StructReader<this>) => unknown;
+  loadSTRUCT: (reader: StructReader<this>) => unknown;
 }
 
 export type LoaderCallback = (obj: StructableInstance) => void;

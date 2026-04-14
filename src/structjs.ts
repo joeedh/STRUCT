@@ -102,7 +102,8 @@ export function unregister(cls: StructableClass): void {
   manager.unregister(cls);
 }
 
-export function inherit(child: StructableClass, parent: StructableClass, structName: string = child.name): string {
+/** @deprecated */
+export function inherit(child: StructableClass, parent: StructableClass, structName: string = child.name!): string {
   return STRUCT.inherit(child, parent, structName);
 }
 
