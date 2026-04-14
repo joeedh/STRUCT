@@ -67,7 +67,7 @@ export function setAllowOverriding(t: unknown): boolean {
   return (manager.allowOverriding = !!t);
 }
 
-export function isRegistered(cls: StructableClass): boolean {
+export function isRegistered(cls: any): boolean {
   return manager.isRegistered(cls);
 }
 
@@ -89,21 +89,21 @@ export function isRegistered(cls: StructableClass): boolean {
  *  `);
  * }
  **/
-export function inlineRegister(cls: StructableClass, structScript: string): string {
+export function inlineRegister(cls: any, structScript: string): string {
   return manager.inlineRegister(cls, structScript);
 }
 
 /** Register a class with nstructjs **/
-export function register(cls: StructableClass, structName?: string): void {
+export function register(cls: any, structName?: string): void {
   return manager.register(cls, structName);
 }
 
-export function unregister(cls: StructableClass): void {
+export function unregister(cls: any): void {
   manager.unregister(cls);
 }
 
 /** @deprecated */
-export function inherit(child: StructableClass, parent: StructableClass, structName: string = child.name!): string {
+export function inherit(child: any, parent: any, structName: string = child.name!): string {
   return STRUCT.inherit(child, parent, structName);
 }
 
