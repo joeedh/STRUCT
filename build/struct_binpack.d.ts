@@ -1,0 +1,34 @@
+import type { UnpackContext as UnpackContextType } from "./types.js";
+export declare let STRUCT_ENDIAN: boolean;
+export declare function setBinaryEndian(mode: boolean): void;
+export declare const temp_dataview: DataView;
+export declare const uint8_view: Uint8Array;
+export declare class unpack_context implements UnpackContextType {
+    i: number;
+    constructor();
+}
+export declare function pack_byte(array: number[], val: number): void;
+export declare function pack_sbyte(array: number[], val: number): void;
+export declare function pack_bytes(array: number[], bytes: ArrayLike<number>): void;
+export declare function pack_int(array: number[], val: number): void;
+export declare function pack_uint(array: number[], val: number): void;
+export declare function pack_ushort(array: number[], val: number): void;
+export declare function pack_float(array: number[], val: number): void;
+export declare function pack_double(array: number[], val: number): void;
+export declare function pack_short(array: number[], val: number): void;
+export declare function encode_utf8(arr: number[], str: string): void;
+export declare function decode_utf8(arr: number[]): string;
+export declare function test_utf8(): boolean;
+export declare function pack_static_string(data: number[], str: string, length: number): void;
+export declare function pack_string(data: number[], str: string): void;
+export declare function unpack_bytes(dview: DataView, uctx: UnpackContextType, len: number): DataView;
+export declare function unpack_byte(dview: DataView, uctx: UnpackContextType): number;
+export declare function unpack_sbyte(dview: DataView, uctx: UnpackContextType): number;
+export declare function unpack_int(dview: DataView, uctx: UnpackContextType): number;
+export declare function unpack_uint(dview: DataView, uctx: UnpackContextType): number;
+export declare function unpack_ushort(dview: DataView, uctx: UnpackContextType): number;
+export declare function unpack_float(dview: DataView, uctx: UnpackContextType): number;
+export declare function unpack_double(dview: DataView, uctx: UnpackContextType): number;
+export declare function unpack_short(dview: DataView, uctx: UnpackContextType): number;
+export declare function unpack_string(data: DataView, uctx: UnpackContextType): string;
+export declare function unpack_static_string(data: DataView, uctx: UnpackContextType, length: number): string;
