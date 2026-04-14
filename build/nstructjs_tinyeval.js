@@ -3375,7 +3375,8 @@ class STRUCT {
                     unmangle(cls.name) +
                     " is using deprecated fromSTRUCT interface; use newSTRUCT/loadSTRUCT instead");
             }
-            return cls[keywords.from](load);
+            const anyCls = cls;
+            return anyCls[keywords.from](load);
         }
         else {
             // default case, make new instance and then call load() on it
@@ -3558,16 +3559,17 @@ class STRUCT {
                 }
             };
         }
-        const load = makeLoader(stt);
+        const loader = makeLoader(stt);
         if (cls.prototype[keywords.load] !== undefined) {
             let obj = objInstance;
             if (!obj && cls[keywords.new] !== undefined) {
-                obj = cls[keywords.new].call(cls, load);
+                obj = cls[keywords.new].call(cls, loader);
             }
             else if (!obj) {
                 obj = new cls();
             }
-            obj[keywords.load](load);
+            const anyObj = obj;
+            anyObj[keywords.load](loader);
             return obj;
         }
         else if (cls[keywords.from] !== undefined) {
@@ -3576,18 +3578,19 @@ class STRUCT {
                     unmangle(cls.name) +
                     " is using deprecated fromSTRUCT interface; use newSTRUCT/loadSTRUCT instead");
             }
-            return cls[keywords.from](load);
+            const anyCls = cls;
+            return anyCls[keywords.from](loader);
         }
         else {
             // default case, make new instance and then call load() on it
             let obj = objInstance;
             if (!obj && cls[keywords.new] !== undefined) {
-                obj = cls[keywords.new].call(cls, load);
+                obj = cls[keywords.new].call(cls, loader);
             }
             else if (!obj) {
                 obj = new cls();
             }
-            load(obj);
+            loader(obj);
             return obj;
         }
     }

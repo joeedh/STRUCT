@@ -55,14 +55,14 @@ export declare function inherit(child: StructableClass, parent: StructableClass,
 /**
  @param data : DataView
  */
-export declare function readObject(data: DataView | Uint8Array | number[], cls: StructableClass | number, __uctx?: import("./types.js").UnpackContext): unknown;
+export declare function readObject<T = unknown>(data: DataView | Uint8Array | number[], cls: StructableClass<T> | number, __uctx?: import("./types.js").UnpackContext): T;
 /**
  @param data : Array instance to write bytes to
  */
-export declare function writeObject(data: number[], obj: unknown): number[];
-export declare function writeJSON(obj: unknown): Record<string, unknown>;
+export declare function writeObject<T = unknown>(data: number[], obj: T): number[];
+export declare function writeJSON<T = unknown>(obj: T): Record<string, unknown>;
 export declare function formatJSON(json: unknown, cls: StructableClass, addComments?: boolean, validate?: boolean): string;
-export declare function readJSON(json: unknown, class_or_struct_id: StructableClass | NStructInterface | number): unknown;
+export declare function readJSON<T = unknown>(json: unknown, class_or_struct_id: StructableClass<T> | NStructInterface | number): T;
 export { setDebugMode } from "./struct_intern.js";
 export { setWarningMode } from "./struct_intern.js";
 export declare const tinyeval: any;

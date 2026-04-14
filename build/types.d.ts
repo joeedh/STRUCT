@@ -107,8 +107,8 @@ export interface FieldTypeDefinition {
     name: string;
 }
 /** Interface for user-registered classes. Uses unknown index signature instead of any. */
-export interface StructableClass {
-    new (...args: unknown[]): StructableInstance;
+export interface StructableClass<T extends StructableInstance | unknown = StructableInstance> {
+    new (...args: unknown[]): T extends unknown ? StructableInstance : T;
     prototype: StructableInstance;
     name: string;
     [key: string]: unknown;

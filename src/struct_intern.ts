@@ -877,11 +877,11 @@ export class STRUCT {
    @param uctx : internal parameter
    @return Instance of cls_or_struct_id
    */
-  readObject(
+  readObject<T = unknown>(
     data: DataView | Uint8Array | Uint8ClampedArray | number[],
-    cls_or_struct_id: StructableClass | number,
+    cls_or_struct_id: StructableClass<T> | number,
     uctx?: UnpackContext
-  ): unknown {
+  ): T {
     if (data instanceof Uint8Array || data instanceof Uint8ClampedArray) {
       data = new DataView(data.buffer);
     } else if (data instanceof Array) {
@@ -970,14 +970,14 @@ export class STRUCT {
    @param cls_or_struct_id : Structable class
    @param uctx : internal parameter
    */
-  read_object(
+  read_object<T = unknown>(
     data: DataView,
-    cls_or_struct_id: StructableClass | number,
+    cls_or_struct_id: StructableClass<T> | number,
     uctx?: UnpackContext,
     objInstance?: unknown
-  ): unknown {
+  ): T {
     const keywords = (this.constructor as typeof STRUCT).keywords;
-    let cls: StructableClass;
+    let cls: StructableClass<T>;
     let stt: NStructInterface;
 
     if (data instanceof Array) {
@@ -985,7 +985,7 @@ export class STRUCT {
     }
 
     if (typeof cls_or_struct_id === "number") {
-      cls = this.struct_cls[this.struct_ids[cls_or_struct_id].name];
+      cls = this.struct_cls[this.struct_ids[cls_or_struct_id].name] as StructableClass<T>;
     } else {
       cls = cls_or_struct_id;
     }
@@ -1071,7 +1071,7 @@ export class STRUCT {
         load(obj!);
       }
 
-      return obj;
+      return obj as T;
     } else if ((cls as Record<string, unknown>)[keywords.from] !== undefined) {
       if (warninglvl > 1) {
         console.warn(
@@ -1081,9 +1081,8 @@ export class STRUCT {
         );
       }
 
-      return ((cls as Record<string, unknown>)[keywords.from] as (load: (obj: StructableInstance) => void) => unknown)(
-        load
-      );
+      const anyCls = cls as any;
+      return anyCls[keywords.from](load) as T;
     } else {
       // default case, make new instance and then call load() on it
       let obj = objInstance as StructableInstance | undefined;
@@ -1100,7 +1099,7 @@ export class STRUCT {
 
       load(obj!);
 
-      return obj;
+      return obj as T;
     }
   }
 
@@ -1264,11 +1263,11 @@ export class STRUCT {
     return true;
   }
 
-  readJSON(
+  readJSON<T = unknown>(
     json: unknown,
-    cls_or_struct_id: StructableClass | NStructInterface | number,
+    cls_or_struct_id: StructableClass<T> | NStructInterface | number,
     objInstance?: unknown
-  ): unknown {
+  ): T {
     const keywords = (this.constructor as typeof STRUCT).keywords;
 
     let cls: StructableClass;
@@ -1334,7 +1333,7 @@ export class STRUCT {
       };
     }
 
-    const load = makeLoader(stt);
+    const loader = makeLoader(stt);
 
     if (cls.prototype[keywords.load] !== undefined) {
       let obj = objInstance as StructableInstance | undefined;
@@ -1344,13 +1343,14 @@ export class STRUCT {
           (cls as Record<string, unknown>)[keywords.new] as (
             load: (obj: StructableInstance) => void
           ) => StructableInstance
-        ).call(cls, load);
+        ).call(cls, loader);
       } else if (!obj) {
         obj = new cls() as StructableInstance;
       }
 
-      (obj![keywords.load] as (load: (obj: StructableInstance) => void) => void)(load);
-      return obj;
+      const anyObj = obj as any;
+      anyObj[keywords.load](loader);
+      return obj as T;
     } else if ((cls as Record<string, unknown>)[keywords.from] !== undefined) {
       if (warninglvl > 1) {
         console.warn(
@@ -1359,9 +1359,8 @@ export class STRUCT {
             " is using deprecated fromSTRUCT interface; use newSTRUCT/loadSTRUCT instead"
         );
       }
-      return ((cls as Record<string, unknown>)[keywords.from] as (load: (obj: StructableInstance) => void) => unknown)(
-        load
-      );
+      const anyCls = cls as any;
+      return anyCls[keywords.from](loader);
     } else {
       // default case, make new instance and then call load() on it
       let obj = objInstance as StructableInstance | undefined;
@@ -1371,14 +1370,13 @@ export class STRUCT {
           (cls as Record<string, unknown>)[keywords.new] as (
             load: (obj: StructableInstance) => void
           ) => StructableInstance
-        ).call(cls, load);
+        ).call(cls, loader);
       } else if (!obj) {
         obj = new cls() as StructableInstance;
       }
 
-      load(obj!);
-
-      return obj;
+      loader(obj!);
+      return obj as T;
     }
   }
 

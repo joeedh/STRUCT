@@ -108,22 +108,22 @@ export function inherit(child: StructableClass, parent: StructableClass, structN
 /**
  @param data : DataView
  */
-export function readObject(
+export function readObject<T = unknown>(
   data: DataView | Uint8Array | number[],
-  cls: StructableClass | number,
+  cls: StructableClass<T> | number,
   __uctx?: import("./types.js").UnpackContext
-): unknown {
+): T {
   return manager.readObject(data, cls, __uctx);
 }
 
 /**
  @param data : Array instance to write bytes to
  */
-export function writeObject(data: number[], obj: unknown): number[] {
+export function writeObject<T = unknown>(data: number[], obj: T): number[] {
   return manager.writeObject(data, obj);
 }
 
-export function writeJSON(obj: unknown): Record<string, unknown> {
+export function writeJSON<T = unknown>(obj: T): Record<string, unknown> {
   return manager.writeJSON(obj);
 }
 
@@ -136,7 +136,7 @@ export function formatJSON(
   return manager.formatJSON(json, cls, addComments, validate);
 }
 
-export function readJSON(json: unknown, class_or_struct_id: StructableClass | NStructInterface | number): unknown {
+export function readJSON<T = unknown>(json: unknown, class_or_struct_id: StructableClass<T> | NStructInterface | number): T {
   return manager.readJSON(json, class_or_struct_id);
 }
 

@@ -61,7 +61,7 @@ export declare class STRUCT {
      @param uctx : internal parameter
      @return Instance of cls_or_struct_id
      */
-    readObject(data: DataView | Uint8Array | Uint8ClampedArray | number[], cls_or_struct_id: StructableClass | number, uctx?: UnpackContext): unknown;
+    readObject<T = unknown>(data: DataView | Uint8Array | Uint8ClampedArray | number[], cls_or_struct_id: StructableClass<T> | number, uctx?: UnpackContext): T;
     /**
      @param data array to write data into,
      @param obj structable object
@@ -73,10 +73,10 @@ export declare class STRUCT {
      @param cls_or_struct_id : Structable class
      @param uctx : internal parameter
      */
-    read_object(data: DataView, cls_or_struct_id: StructableClass | number, uctx?: UnpackContext, objInstance?: unknown): unknown;
+    read_object<T = unknown>(data: DataView, cls_or_struct_id: StructableClass<T> | number, uctx?: UnpackContext, objInstance?: unknown): T;
     validateJSON(json: unknown, cls_or_struct_id: StructableClass | NStructInterface | number, useInternalParser?: boolean, useColors?: boolean, consoleLogger?: (...args: unknown[]) => void, _abstractKey?: string): boolean;
     validateJSONIntern(json: Record<string, unknown>, cls_or_struct_id: StructableClass | NStructInterface | number, _abstractKey?: string): boolean;
-    readJSON(json: unknown, cls_or_struct_id: StructableClass | NStructInterface | number, objInstance?: unknown): unknown;
+    readJSON<T = unknown>(json: unknown, cls_or_struct_id: StructableClass<T> | NStructInterface | number, objInstance?: unknown): T;
     formatJSON_intern(json: Record<string, unknown>, stt: NStructInterface, field?: StructField, tlvl?: number): string;
     formatJSON(json: unknown, cls: StructableClass, addComments?: boolean, validate?: boolean): string;
 }

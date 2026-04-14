@@ -2,6 +2,7 @@
   "name": "nstructjs",
   "author": "Joseph Eagar",
   "version": "0.7.9",
+  "main": "build/nstructjs_es6.js",
   "index": "build/nstructjs_es6.js",
   "types": "build/structjs.d.ts",
   "description": "ProtoBuf-like serialization system optimized for JS",

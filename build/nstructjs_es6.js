@@ -3351,7 +3351,8 @@ class STRUCT {
                     unmangle(cls.name) +
                     " is using deprecated fromSTRUCT interface; use newSTRUCT/loadSTRUCT instead");
             }
-            return cls.fromSTRUCT(load);
+            const anyCls = cls;
+            return anyCls.fromSTRUCT(load);
         }
         else {
             // default case, make new instance and then call load() on it
@@ -3534,16 +3535,17 @@ class STRUCT {
                 }
             };
         }
-        const load = makeLoader(stt);
+        const loader = makeLoader(stt);
         if (cls.prototype.loadSTRUCT !== undefined) {
             let obj = objInstance;
             if (!obj && cls.newSTRUCT !== undefined) {
-                obj = cls.newSTRUCT.call(cls, load);
+                obj = cls.newSTRUCT.call(cls, loader);
             }
             else if (!obj) {
                 obj = new cls();
             }
-            obj.loadSTRUCT(load);
+            const anyObj = obj;
+            anyObj.loadSTRUCT(loader);
             return obj;
         }
         else if (cls.fromSTRUCT !== undefined) {
@@ -3552,18 +3554,19 @@ class STRUCT {
                     unmangle(cls.name) +
                     " is using deprecated fromSTRUCT interface; use newSTRUCT/loadSTRUCT instead");
             }
-            return cls.fromSTRUCT(load);
+            const anyCls = cls;
+            return anyCls.fromSTRUCT(loader);
         }
         else {
             // default case, make new instance and then call load() on it
             let obj = objInstance;
             if (!obj && cls.newSTRUCT !== undefined) {
-                obj = cls.newSTRUCT.call(cls, load);
+                obj = cls.newSTRUCT.call(cls, loader);
             }
             else if (!obj) {
                 obj = new cls();
             }
-            load(obj);
+            loader(obj);
             return obj;
         }
     }
