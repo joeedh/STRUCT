@@ -9,6 +9,7 @@ import * as struct_eval from "./struct_eval.js";
 export { unpack_context } from "./struct_binpack.js";
 import { STRUCT, manager, setTruncateDollarSign } from "./struct_intern.js";
 import type { StructableClass, NStructInterface } from "./types.js";
+export type { StructableClass, NStructInterface, StructableInstance, StructReader } from "./types.js";
 
 export * from "./struct_intern.js";
 

@@ -5,6 +5,7 @@ import * as struct_binpack from "./struct_binpack.js";
 import * as struct_filehelper from "./struct_filehelper.js";
 export { unpack_context } from "./struct_binpack.js";
 import type { StructableClass, NStructInterface } from "./types.js";
+export type { StructableClass, NStructInterface, StructableInstance, StructReader } from "./types.js";
 export * from "./struct_intern.js";
 /** truncate webpack mangled names. defaults to true
  *  so Mesh$1 turns into Mesh */

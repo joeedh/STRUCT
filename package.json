@@ -1,7 +1,7 @@
 {
   "name": "nstructjs",
   "author": "Joseph Eagar",
-  "version": "0.8.1",
+  "version": "0.8.2",
   "main": "build/nstructjs_es6.js",
   "index": "build/nstructjs_es6.js",
   "types": "build/structjs.d.ts",
