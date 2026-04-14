@@ -106,16 +106,20 @@ export interface FieldTypeDefinition {
     type: StructEnumValue;
     name: string;
 }
+export type StructReader<T = any> = (obj: T) => void;
 /** Interface for user-registered classes. Uses unknown index signature instead of any. */
 export interface StructableClass<T extends StructableInstance | unknown = StructableInstance> {
     new (...args: unknown[]): T extends unknown ? StructableInstance : T;
     prototype: StructableInstance;
     name: string;
+    structName: string;
+    fromSTRUCT?: (reader: StructReader<this>) => unknown;
     [key: string]: unknown;
 }
 export interface StructableInstance {
-    constructor: StructableClass;
+    constructor: StructableClass<this>;
     [key: string]: unknown;
+    loadSTRUCT?: (reader: StructReader<this>) => unknown;
 }
 export type LoaderCallback = (obj: StructableInstance) => void;
 export interface StructFieldTypeClass {

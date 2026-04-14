@@ -22,6 +22,7 @@
     "SOPEN",
     "strlit",
     "strs",
+    "Structable",
     "tinyeval",
     "tokdef",
     "tokinfo",

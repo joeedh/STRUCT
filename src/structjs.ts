@@ -136,7 +136,10 @@ export function formatJSON(
   return manager.formatJSON(json, cls, addComments, validate);
 }
 
-export function readJSON<T = unknown>(json: unknown, class_or_struct_id: StructableClass<T> | NStructInterface | number): T {
+export function readJSON<T = unknown>(
+  json: unknown,
+  class_or_struct_id: StructableClass<T> | NStructInterface | number
+): T {
   return manager.readJSON(json, class_or_struct_id);
 }
 

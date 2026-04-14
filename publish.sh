@@ -26,9 +26,11 @@ echo $?
 git push
 echo $?
 
-echo "npm publish"
+echo "npm publish --access public"
 echo $?
-npm publish
+npm publish --access public
 echo $?
 
-#git tag -a $VERSION -m "Release $VERSION"
+cd ..
+git tag -a $VERSION -m "Release $VERSION"
+git push --tags
