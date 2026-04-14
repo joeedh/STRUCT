@@ -1,7 +1,7 @@
 {
   "name": "nstructjs",
   "author": "Joseph Eagar",
-  "version": "0.7.9",
+  "version": "0.8.0",
   "main": "build/nstructjs_es6.js",
   "index": "build/nstructjs_es6.js",
   "types": "build/structjs.d.ts",
@@ -40,5 +40,8 @@
     "tslib": "^2.8.1",
     "typescript": "^6.0.2",
     "vitest": "^4.1.1"
+  },
+  "publishConfig": {
+    "access": "public"
   }
 }
