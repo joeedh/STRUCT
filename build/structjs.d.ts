@@ -29,7 +29,7 @@ export declare function consoleLogger(...args: unknown[]): void;
 export declare function validateJSON(json: unknown, cls: StructableClass | NStructInterface | number, useInternalParser?: boolean, printColors?: boolean, logger?: (...args: unknown[]) => void): boolean;
 export declare function getEndian(): boolean;
 export declare function setAllowOverriding(t: unknown): boolean;
-export declare function isRegistered(cls: StructableClass): boolean;
+export declare function isRegistered(cls: any): boolean;
 /** Register a class inline.
  *
  * Note: No need to use nstructjs.inherit,
@@ -48,12 +48,12 @@ export declare function isRegistered(cls: StructableClass): boolean;
  *  `);
  * }
  **/
-export declare function inlineRegister(cls: StructableClass, structScript: string): string;
+export declare function inlineRegister(cls: any, structScript: string): string;
 /** Register a class with nstructjs **/
-export declare function register(cls: StructableClass, structName?: string): void;
-export declare function unregister(cls: StructableClass): void;
+export declare function register(cls: any, structName?: string): void;
+export declare function unregister(cls: any): void;
 /** @deprecated */
-export declare function inherit(child: StructableClass, parent: StructableClass, structName?: string): string;
+export declare function inherit(child: any, parent: any, structName?: string): string;
 /**
  @param data : DataView
  */
