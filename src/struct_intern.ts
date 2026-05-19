@@ -179,6 +179,28 @@ export class STRUCT {
   jsonLogger!: (...args: unknown[]) => void;
   formatCtx: FormatCtx;
 
+  /**
+   * Host-supplied hook invoked when an `abstract(...)` field references a
+   * struct name that's in the schema dictionary but whose JS class isn't
+   * currently registered (e.g. the addon that owned it isn't loaded).
+   *
+   * Return a StructableClass to use *as the instance constructor* for that
+   * struct. The reader will still walk the original on-disk schema to fill
+   * the instance's fields by name, so the instance ends up with all of the
+   * original class's data attached as dynamic properties. Return undefined
+   * to fall through to the default error.
+   */
+  onUnknownClass?: (clsname: string, schema: NStructInterface) => StructableClass<unknown> | undefined;
+
+  /**
+   * Host-supplied hook invoked at write time, when serializing a value
+   * whose class isn't the one declared in the schema (e.g. a placeholder
+   * standing in for an unloaded addon's class). Return the original
+   * struct-name to use that struct's schema for both the struct id and the
+   * field layout. Return undefined to fall through to the default behavior.
+   */
+  onSerializeUnknown?: (obj: unknown) => string | undefined;
+
   static keywords: StructKeywords;
 
   constructor() {
@@ -961,8 +983,22 @@ export class STRUCT {
       data = new DataView(new Uint8Array(data).buffer);
     }
 
+    // When dispatched via abstract-type from a numeric struct id, capture the
+    // *file's* schema. If the JS class isn't registered (addon unloaded) and
+    // the host has installed an onUnknownClass hook, fall back to the host's
+    // placeholder class but keep walking the file's schema so the placeholder
+    // ends up with every original field as a dynamic property — see plan §4.
+    let unknownClassSchema: NStructInterface | undefined;
     if (typeof cls_or_struct_id === "number") {
-      cls = this.struct_cls[this.struct_ids[cls_or_struct_id].name] as StructableClass<T>;
+      const fileSchema = this.struct_ids[cls_or_struct_id];
+      cls = this.struct_cls[fileSchema.name] as StructableClass<T>;
+      if (cls === undefined && this.onUnknownClass) {
+        const hookResult = this.onUnknownClass(fileSchema.name, fileSchema);
+        if (hookResult !== undefined) {
+          cls = hookResult as StructableClass<T>;
+          unknownClassSchema = fileSchema;
+        }
+      }
     } else {
       cls = cls_or_struct_id;
     }
@@ -971,7 +1007,7 @@ export class STRUCT {
       throw new Error("bad cls_or_struct_id " + cls_or_struct_id);
     }
 
-    stt = this.structs[(cls as any)[keywords.name] as string];
+    stt = unknownClassSchema ?? this.structs[(cls as any)[keywords.name] as string];
 
     if (uctx === undefined) {
       uctx = new struct_binpack.unpack_context();

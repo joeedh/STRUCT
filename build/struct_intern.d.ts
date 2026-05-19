@@ -19,6 +19,26 @@ export declare class STRUCT {
     jsonBuf: string;
     jsonLogger: (...args: unknown[]) => void;
     formatCtx: FormatCtx;
+    /**
+     * Host-supplied hook invoked when an `abstract(...)` field references a
+     * struct name that's in the schema dictionary but whose JS class isn't
+     * currently registered (e.g. the addon that owned it isn't loaded).
+     *
+     * Return a StructableClass to use *as the instance constructor* for that
+     * struct. The reader will still walk the original on-disk schema to fill
+     * the instance's fields by name, so the instance ends up with all of the
+     * original class's data attached as dynamic properties. Return undefined
+     * to fall through to the default error.
+     */
+    onUnknownClass?: (clsname: string, schema: NStructInterface) => StructableClass<unknown> | undefined;
+    /**
+     * Host-supplied hook invoked at write time, when serializing a value
+     * whose class isn't the one declared in the schema (e.g. a placeholder
+     * standing in for an unloaded addon's class). Return the original
+     * struct-name to use that struct's schema for both the struct id and the
+     * field layout. Return undefined to fall through to the default behavior.
+     */
+    onSerializeUnknown?: (obj: unknown) => string | undefined;
     static keywords: StructKeywords;
     constructor();
     static inherit(child: StructableClass, parent: StructableClass, structName?: string): string;

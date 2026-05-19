@@ -1540,6 +1540,18 @@ class StructTStructField extends StructFieldType {
         let cls = manager.get_struct_cls(type.data);
         let stt = manager.get_struct(type.data);
         const keywords = manager.constructor.keywords;
+        // Host-supplied placeholder for an unloaded-addon class: write under the
+        // original struct's id + schema, not the placeholder's. See plan §4.
+        if (manager.onSerializeUnknown) {
+            const overrideName = manager.onSerializeUnknown(val);
+            if (overrideName !== undefined) {
+                const ostt = manager.get_struct(overrideName);
+                packer_debug$1("int " + ostt.id);
+                pack_int(data, ostt.id);
+                manager.write_struct(data, val, ostt);
+                return;
+            }
+        }
         const valObj = val;
         const valCtor = valObj.constructor;
         //make sure inheritance is correct
@@ -1621,7 +1633,13 @@ class StructTStructField extends StructFieldType {
         let cls2 = manager.get_struct_id(id);
         packer_debug$1("struct name: " + cls2.name);
         let cls3 = manager.struct_cls[cls2.name];
-        return manager.read_object(data, cls3, uctx, dest);
+        // Pass the numeric id when class missing so read_object's onUnknownClass
+        // hook can fire and produce a placeholder instance. See plan §4.
+        const instance = manager.read_object(data, cls3 ?? id, uctx, dest);
+        if (cls3 === undefined && instance && typeof instance === "object") {
+            instance._origClsname = cls2.name;
+        }
+        return instance;
     }
     static unpack(manager, data, type, uctx) {
         let id = unpack_int(data, uctx);
@@ -1636,7 +1654,13 @@ class StructTStructField extends StructFieldType {
         let cls2 = manager.get_struct_id(id);
         packer_debug$1("struct name: " + cls2.name);
         let cls3 = manager.struct_cls[cls2.name];
-        return manager.read_object(data, cls3, uctx);
+        // Pass the numeric id when class missing so read_object's onUnknownClass
+        // hook can fire and produce a placeholder instance. See plan §4.
+        const instance = manager.read_object(data, cls3 ?? id, uctx);
+        if (cls3 === undefined && instance && typeof instance === "object") {
+            instance._origClsname = cls2.name;
+        }
+        return instance;
     }
     static define() {
         return {
@@ -3278,8 +3302,22 @@ class STRUCT {
         if (data instanceof Array) {
             data = new DataView(new Uint8Array(data).buffer);
         }
+        // When dispatched via abstract-type from a numeric struct id, capture the
+        // *file's* schema. If the JS class isn't registered (addon unloaded) and
+        // the host has installed an onUnknownClass hook, fall back to the host's
+        // placeholder class but keep walking the file's schema so the placeholder
+        // ends up with every original field as a dynamic property — see plan §4.
+        let unknownClassSchema;
         if (typeof cls_or_struct_id === "number") {
-            cls = this.struct_cls[this.struct_ids[cls_or_struct_id].name];
+            const fileSchema = this.struct_ids[cls_or_struct_id];
+            cls = this.struct_cls[fileSchema.name];
+            if (cls === undefined && this.onUnknownClass) {
+                const hookResult = this.onUnknownClass(fileSchema.name, fileSchema);
+                if (hookResult !== undefined) {
+                    cls = hookResult;
+                    unknownClassSchema = fileSchema;
+                }
+            }
         }
         else {
             cls = cls_or_struct_id;
@@ -3287,7 +3325,7 @@ class STRUCT {
         if (cls === undefined) {
             throw new Error("bad cls_or_struct_id " + cls_or_struct_id);
         }
-        stt = this.structs[cls[keywords.name]];
+        stt = unknownClassSchema ?? this.structs[cls[keywords.name]];
         if (uctx === undefined) {
             uctx = new unpack_context();
             packer_debug("\n\n=Begin reading " + cls[keywords.name] + "=");
