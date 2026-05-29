@@ -1,0 +1,109 @@
+<!DOCTYPE html><html class="default" lang="en" data-base="../"><head><meta charset="utf-8"/><meta http-equiv="x-ua-compatible" content="IE=edge"/><title>AUDIT | nstructjs - v0.8.4</title><meta name="description" content="Documentation for nstructjs"/><meta name="viewport" content="width=device-width, initial-scale=1"/><link rel="stylesheet" href="../assets/style.css"/><link rel="stylesheet" href="../assets/highlight.css"/><script defer src="../assets/main.js"></script><script async src="../assets/icons.js" id="tsd-icons-script"></script><script async src="../assets/search.js" id="tsd-search-script"></script><script async src="../assets/navigation.js" id="tsd-nav-script"></script><script async src="../assets/hierarchy.js" id="tsd-hierarchy-script"></script></head><body><script>document.documentElement.dataset.theme = localStorage.getItem("tsd-theme") || "os";document.body.style.display="none";setTimeout(() => window.app?app.showPage():document.body.style.removeProperty("display"),500)</script><header class="tsd-page-toolbar"><div class="tsd-toolbar-contents container"><a href="../index.html" class="title">nstructjs - v0.8.4</a><div id="tsd-toolbar-links"></div><button id="tsd-search-trigger" class="tsd-widget" aria-label="Search"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-search"></use></svg></button><dialog id="tsd-search" aria-label="Search"><input role="combobox" id="tsd-search-input" aria-controls="tsd-search-results" aria-autocomplete="list" aria-expanded="true" autocapitalize="off" autocomplete="off" placeholder="Search the docs" maxLength="100"/><ul role="listbox" id="tsd-search-results"></ul><div id="tsd-search-status" aria-live="polite" aria-atomic="true"><div>Preparing search index...</div></div></dialog><a href="#" class="tsd-widget menu" id="tsd-toolbar-menu-trigger" data-toggle="menu" aria-label="Menu"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-menu"></use></svg></a></div></header><div class="container container-main"><div class="col-content"><div class="tsd-page-title"><ul class="tsd-breadcrumb" aria-label="Breadcrumb"><li><a href="" aria-current="page">AUDIT</a></li></ul></div><div class="tsd-panel tsd-typography"><h1 id="documentation-audit" class="tsd-anchor-link">Documentation Audit<a href="#documentation-audit" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h1>
+<p>This file records the reconciliation of the prose documentation (migrated from the old GitHub wiki)
+against the current source in <code>src/</code>, performed during the docs migration. It is a snapshot, not a
+living document — re-audit when the public API changes.</p>
+<h2 id="method" class="tsd-anchor-link">Method<a href="#method" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h2>
+<p>The wiki pages were compared against the public API surface re-exported from <code>src/structjs.ts</code>
+(which re-exports everything from <code>src/struct_intern.ts</code>) and the binary primitives in
+<code>src/struct_binpack.ts</code>. Each identifier referenced in the docs was checked for existence and
+correct name/signature.</p>
+<h2 id="corrections-applied-to-the-migrated-docs" class="tsd-anchor-link">Corrections applied to the migrated docs<a href="#corrections-applied-to-the-migrated-docs" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h2>
+<table>
+<thead>
+<tr>
+<th>Old (wiki)</th>
+<th>Corrected</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>nstructjs.manager.add_class(SomeClass)</code></td>
+<td><code>nstructjs.register(SomeClass)</code></td>
+<td><code>add_class</code> still exists as a method on <code>STRUCT</code> (<code>struct_intern.ts:670</code>) but <code>register</code> is the public idiom.</td>
+</tr>
+<tr>
+<td><code>nstructjs.manager.write_object(data, obj)</code></td>
+<td><code>nstructjs.writeObject(data, obj)</code></td>
+<td>Snake_case method still exists (<code>struct_intern.ts:857</code>, backward-compatible); top-level camelCase is the documented API.</td>
+</tr>
+<tr>
+<td><code>nstructjs.manager.read_object(data, cls)</code></td>
+<td><code>nstructjs.readObject(view, cls)</code></td>
+<td>Same as above (<code>struct_intern.ts:972</code>).</td>
+</tr>
+<tr>
+<td><code>nstructjs.manager.write_object(anObject)</code> (missing <code>data</code> arg)</td>
+<td><code>nstructjs.writeObject(data, anObject)</code></td>
+<td>Plain bug in the wiki example — the first arg is the output array.</td>
+</tr>
+<tr>
+<td><code>nstructjs.binpack.write_string</code></td>
+<td><code>nstructjs.binpack.pack_string</code></td>
+<td>No <code>write_string</code> export; the function is <code>pack_string</code> (<code>struct_binpack.ts:198</code>).</td>
+</tr>
+<tr>
+<td><code>new nstructjs.binpack.unpack_ctx()</code></td>
+<td><code>new nstructjs.binpack.unpack_context()</code></td>
+<td>The exported class is <code>unpack_context</code> (<code>struct_binpack.ts:14</code>), also re-exported at top level.</td>
+</tr>
+<tr>
+<td><code>new nstructjs.STRUCT()</code></td>
+<td><code>nstructjs.deriveStructManager()</code> (with <code>new nstructjs.STRUCT()</code> noted as equivalent)</td>
+<td><code>STRUCT</code> is exported; <code>deriveStructManager</code> is the friendlier factory (<code>struct_intern.ts</code>).</td>
+</tr>
+<tr>
+<td><code>nstructjs.inherit(...)</code> in JSON example</td>
+<td><code>nstructjs.inlineRegister(...)</code></td>
+<td><code>inherit</code> is marked <code>@deprecated</code> in <code>structjs.ts:105</code>; <code>inlineRegister</code> handles inheritance automatically.</td>
+</tr>
+<tr>
+<td>Endianness: &quot;network (big) byte order&quot;</td>
+<td>&quot;configurable, default little-endian&quot;</td>
+<td><code>STRUCT_ENDIAN = true</code> (little-endian) by default in <code>struct_binpack.ts:5</code>; controlled by <code>setEndian</code>/<code>getEndian</code>.</td>
+</tr>
+<tr>
+<td><code>@STRUCT</code> esdoc manual link, wiki-style <code>[Page](Page)</code> links</td>
+<td>relative <code>Page.md</code> links</td>
+<td>esdoc-specific link syntax removed.</td>
+</tr>
+</tbody>
+</table>
+<h2 id="verified-still-correct-no-change-needed" class="tsd-anchor-link">Verified still-correct (no change needed)<a href="#verified-still-correct-no-change-needed" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h2>
+<ul>
+<li><code>nstructjs.write_scripts()</code> — exists (<code>struct_intern.ts:1505</code>), exported via <code>export *</code>.</li>
+<li><code>manager.parse_structs(scripts)</code> — exists (<code>struct_intern.ts:475</code>).</li>
+<li><code>nstructjs.binpack.pack_string</code> / <code>unpack_string</code> — exist (<code>struct_binpack.ts:198</code>/<code>256</code>).</li>
+<li>The STRUCT DSL grammar, type list, and binary string/array semantics in <code>Specification.md</code>.</li>
+</ul>
+<h2 id="gaps-filled" class="tsd-anchor-link">Gaps filled<a href="#gaps-filled" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h2>
+<ul>
+<li><strong>JSON API</strong> was undocumented in prose. Added coverage of <code>writeJSON</code>, <code>readJSON</code>, <code>formatJSON</code>,
+and <code>validateJSON</code> (all in <code>struct_intern.ts</code>, re-exported from <code>structjs.ts</code>).</li>
+<li><strong><code>inlineRegister</code></strong> is now the recommended registration path and is shown in the intro and JSON
+pages.</li>
+<li><strong><code>uint</code> / <code>ushort</code></strong> primitive types were missing from the grammar/type list in
+<code>Specification.md</code>; added.</li>
+</ul>
+<h2 id="known-incomplete-deferred-prose-does-not-yet-cover" class="tsd-anchor-link">Known-incomplete / deferred (prose does not yet cover)<a href="#known-incomplete-deferred-prose-does-not-yet-cover" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h2>
+<p>These are real public exports (<code>src/structjs.ts</code>) that the prose docs still treat lightly or not at
+all. They are covered by the generated TypeDoc API reference, but could use narrative docs later:</p>
+<ul>
+<li><code>deriveStructManager(keywords?)</code> — custom-keyword managers (only mentioned in passing).</li>
+<li><code>onUnknownClass</code> / <code>onSerializeUnknown</code> hooks (added in commits <code>c6b6753</code> / <code>bb6fadb</code>) — only
+listed in <code>index.md</code>, no worked example.</li>
+<li><code>truncateDollarSign</code>, <code>setAllowOverriding</code>, <code>isRegistered</code>, <code>validateStructs</code>, <code>setDebugMode</code>,
+<code>setWarningMode</code>, <code>useTinyEval</code> — listed in <code>index.md</code> but not given dedicated sections.</li>
+<li>The <code>array(item, Type) | helper</code> per-item map form and the <code>obj.field.uuid</code> helper-script
+mechanism could use a dedicated reference page (currently only shown by example in the intro).</li>
+<li><code>static_array[T, N]</code> and <code>optional(T)</code> types appear in <code>AGENTS.MD</code>'s type list and the source but
+are not in <code>Specification.md</code>'s grammar — verify against <code>struct_parser.ts</code> and add if supported.</li>
+</ul>
+<h2 id="removed-sources" class="tsd-anchor-link">Removed sources<a href="#removed-sources" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h2>
+<ul>
+<li><code>docs/</code> (generated esdoc HTML, 113 files) — replaced by TypeDoc output.</li>
+<li><code>docs_src/Refactor.md</code> — stale 2020 TODO; the <code>fromSTRUCT → loadSTRUCT/newSTRUCT</code> migration it
+proposed is long since complete (<code>loadSTRUCT</code>/<code>newSTRUCT</code> are the current instance hooks, see
+<code>types.ts</code> <code>StructableInstance</code>).</li>
+</ul>
+</div></div><div class="col-sidebar"><div class="page-menu"><div class="tsd-navigation settings"><details class="tsd-accordion"><summary class="tsd-accordion-summary"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-chevronDown"></use></svg><h3>Settings</h3></summary><div class="tsd-accordion-details"><div class="tsd-filter-visibility"><span class="settings-label">Member Visibility</span><ul id="tsd-filter-options"><li class="tsd-filter-item"><label class="tsd-filter-input"><input type="checkbox" id="tsd-filter-protected" name="protected"/><svg width="32" height="32" viewBox="0 0 32 32" aria-hidden="true"><rect class="tsd-checkbox-background" width="30" height="30" x="1" y="1" rx="6" fill="none"></rect><path class="tsd-checkbox-checkmark" d="M8.35422 16.8214L13.2143 21.75L24.6458 10.25" stroke="none" stroke-width="3.5" stroke-linejoin="round" fill="none"></path></svg><span>Protected</span></label></li><li class="tsd-filter-item"><label class="tsd-filter-input"><input type="checkbox" id="tsd-filter-inherited" name="inherited" checked/><svg width="32" height="32" viewBox="0 0 32 32" aria-hidden="true"><rect class="tsd-checkbox-background" width="30" height="30" x="1" y="1" rx="6" fill="none"></rect><path class="tsd-checkbox-checkmark" d="M8.35422 16.8214L13.2143 21.75L24.6458 10.25" stroke="none" stroke-width="3.5" stroke-linejoin="round" fill="none"></path></svg><span>Inherited</span></label></li><li class="tsd-filter-item"><label class="tsd-filter-input"><input type="checkbox" id="tsd-filter-external" name="external"/><svg width="32" height="32" viewBox="0 0 32 32" aria-hidden="true"><rect class="tsd-checkbox-background" width="30" height="30" x="1" y="1" rx="6" fill="none"></rect><path class="tsd-checkbox-checkmark" d="M8.35422 16.8214L13.2143 21.75L24.6458 10.25" stroke="none" stroke-width="3.5" stroke-linejoin="round" fill="none"></path></svg><span>External</span></label></li></ul></div><div class="tsd-theme-toggle"><label class="settings-label" for="tsd-theme">Theme</label><select id="tsd-theme"><option value="os">OS</option><option value="light">Light</option><option value="dark">Dark</option></select></div></div></details></div><details open class="tsd-accordion tsd-page-navigation"><summary class="tsd-accordion-summary"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-chevronDown"></use></svg><h3>On This Page</h3></summary><div class="tsd-accordion-details"><a href="#documentation-audit"><span>Documentation <wbr/>Audit</span></a><ul><li><a href="#method"><span>Method</span></a></li><li><a href="#corrections-applied-to-the-migrated-docs"><span>Corrections applied to the migrated docs</span></a></li><li><a href="#verified-still-correct-no-change-needed"><span>Verified still-<wbr/>correct (no change needed)</span></a></li><li><a href="#gaps-filled"><span>Gaps filled</span></a></li><li><a href="#known-incomplete-deferred-prose-does-not-yet-cover"><span>Known-<wbr/>incomplete / deferred (prose does not yet cover)</span></a></li><li><a href="#removed-sources"><span>Removed sources</span></a></li></ul></div></details></div><div class="site-menu"><nav class="tsd-navigation"><a href="../modules.html">nstructjs - v0.8.4</a><ul class="tsd-small-nested-navigation" id="tsd-nav-container"><li>Loading...</li></ul></nav></div></div></div><footer><p class="tsd-generator">Generated using <a href="https://typedoc.org/" target="_blank">TypeDoc</a></p></footer><div class="overlay"></div></body></html>

@@ -1,0 +1,94 @@
+<!DOCTYPE html><html class="default" lang="en" data-base="../"><head><meta charset="utf-8"/><meta http-equiv="x-ua-compatible" content="IE=edge"/><title>Specification | nstructjs - v0.8.4</title><meta name="description" content="Documentation for nstructjs"/><meta name="viewport" content="width=device-width, initial-scale=1"/><link rel="stylesheet" href="../assets/style.css"/><link rel="stylesheet" href="../assets/highlight.css"/><script defer src="../assets/main.js"></script><script async src="../assets/icons.js" id="tsd-icons-script"></script><script async src="../assets/search.js" id="tsd-search-script"></script><script async src="../assets/navigation.js" id="tsd-nav-script"></script><script async src="../assets/hierarchy.js" id="tsd-hierarchy-script"></script></head><body><script>document.documentElement.dataset.theme = localStorage.getItem("tsd-theme") || "os";document.body.style.display="none";setTimeout(() => window.app?app.showPage():document.body.style.removeProperty("display"),500)</script><header class="tsd-page-toolbar"><div class="tsd-toolbar-contents container"><a href="../index.html" class="title">nstructjs - v0.8.4</a><div id="tsd-toolbar-links"></div><button id="tsd-search-trigger" class="tsd-widget" aria-label="Search"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-search"></use></svg></button><dialog id="tsd-search" aria-label="Search"><input role="combobox" id="tsd-search-input" aria-controls="tsd-search-results" aria-autocomplete="list" aria-expanded="true" autocapitalize="off" autocomplete="off" placeholder="Search the docs" maxLength="100"/><ul role="listbox" id="tsd-search-results"></ul><div id="tsd-search-status" aria-live="polite" aria-atomic="true"><div>Preparing search index...</div></div></dialog><a href="#" class="tsd-widget menu" id="tsd-toolbar-menu-trigger" data-toggle="menu" aria-label="Menu"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-menu"></use></svg></a></div></header><div class="container container-main"><div class="col-content"><div class="tsd-page-title"><ul class="tsd-breadcrumb" aria-label="Breadcrumb"><li><a href="" aria-current="page">Specification</a></li></ul></div><div class="tsd-panel tsd-typography"><h1 id="specification" class="tsd-anchor-link">Specification<a href="#specification" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h1>
+<h1 id="grammar" class="tsd-anchor-link">Grammar<a href="#grammar" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h1>
+<pre><code>ID =&gt; [a-zA-Z_+][a-zA-Z0-9]*
+      ID . ID
+
+header =&gt; ID {
+          ID 'id' = NUMBER {
+
+type =&gt; int
+        uint
+        float
+        bool
+        byte
+        double
+        short
+        ushort
+        string
+        static_string [ NUMBER ]
+        ID
+        abstract(TYPE)
+        abstract(TYPE, STRING)
+        array(TYPE)
+        array(ITERNAME, TYPE)
+        iter(TYPE)
+        iter(ITERNAME, TYPE)
+        iterkeys(ITERNAME, TYPE)
+
+field =&gt; ID : TYPE
+         ID : TYPE | JSCODE
+
+fieldlist =&gt; field ;
+             fieldlist field ;
+
+STRUCT =&gt; header fieldlist }
+</code></pre>
+<h1 id="semantics" class="tsd-anchor-link">Semantics<a href="#semantics" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h1>
+<h2 id="endianness" class="tsd-anchor-link">Endianness<a href="#endianness" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h2>
+<p>The byte order is configurable via <code>nstructjs.setEndian(littleEndian)</code> / <code>nstructjs.getEndian()</code>.
+<strong>The default is little-endian.</strong> Set it once, consistently, for both writing and reading a given
+file. (Historically the format was specified as network/big-endian; the current default is
+little-endian, so do not assume big-endian when reading older specs.)</p>
+<h2 id="type-definitions" class="tsd-anchor-link">Type definitions<a href="#type-definitions" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h2>
+<h3 id="int" class="tsd-anchor-link">int<a href="#int" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<p>The <code>int</code> type is a signed 32-bit integer.</p>
+<h3 id="uint" class="tsd-anchor-link">uint<a href="#uint" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<p>The <code>uint</code> type is an unsigned 32-bit integer.</p>
+<h3 id="byte" class="tsd-anchor-link">byte<a href="#byte" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<p>The <code>byte</code> type is an unsigned 8-bit integer.</p>
+<h3 id="bool" class="tsd-anchor-link">bool<a href="#bool" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<p>The <code>bool</code> type is an unsigned 8-bit integer. It is cast to a boolean when read from file.</p>
+<h3 id="float" class="tsd-anchor-link">float<a href="#float" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<p>The <code>float</code> type is a 32-bit IEEE float.</p>
+<h3 id="double" class="tsd-anchor-link">double<a href="#double" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<p>The <code>double</code> type is a 64-bit IEEE float.</p>
+<h3 id="short" class="tsd-anchor-link">short<a href="#short" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<p>The <code>short</code> type is a signed 16-bit integer.</p>
+<h3 id="ushort" class="tsd-anchor-link">ushort<a href="#ushort" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<p>The <code>ushort</code> type is an unsigned 16-bit integer.</p>
+<h3 id="string" class="tsd-anchor-link">string<a href="#string" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<p>The <code>string</code> type is an array of unsigned 8-bit integers, encoded as UTF-8.</p>
+<h4 id="semantics-1" class="tsd-anchor-link">Semantics<a href="#semantics-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h4>
+<p>Strings are written in these steps:</p>
+<ol>
+<li>Write the size of the final encoded byte array as a signed 32-bit integer.</li>
+<li>Write the encoded byte array.</li>
+</ol>
+<h2 id="static_string" class="tsd-anchor-link">static_string<a href="#static_string" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h2>
+<p>The <code>static_string</code> type is a fixed-size array of unsigned 8-bit integers. String data that is too
+long is truncated to fit within the array; data that is too short is padded with zeros.</p>
+<h2 id="object-type" class="tsd-anchor-link">Object type<a href="#object-type" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h2>
+<p>Object types declared without <code>abstract()</code> are written via their STRUCT definitions.</p>
+<h2 id="abstract-object-type" class="tsd-anchor-link">Abstract object type<a href="#abstract-object-type" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h2>
+<p>Object types saved with <code>abstract()</code> must save a signed integer ID referencing their struct
+definition within the manager that created them, then write the object as above.</p>
+<p>If the client passes an additional string, it is used in JSON mode as the property key under which
+the struct name is stored; otherwise <code>_structName</code> is used.</p>
+<h2 id="array" class="tsd-anchor-link">Array<a href="#array" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h2>
+<p>Arrays may be variable length, of any valid STRUCT type, including abstract types.</p>
+<h3 id="semantics-2" class="tsd-anchor-link">Semantics<a href="#semantics-2" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<p>To write an array:</p>
+<ol>
+<li>Write a 32-bit signed integer representing the array length.</li>
+<li>Write each array item according to the STRUCT type rules.</li>
+</ol>
+<h2 id="iter" class="tsd-anchor-link">Iter<a href="#iter" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h2>
+<p>The <code>iter</code> type is written identically to <code>array</code>, but relaxes the requirement for direct,
+contiguous arrays — it works with whatever iterator protocol is appropriate for the language.</p>
+<h2 id="iterkeys" class="tsd-anchor-link">IterKeys<a href="#iterkeys" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h2>
+<p><code>iterkeys</code> iterates over an object's own keys (using a <code>for-in</code> loop). Like <code>array</code> and <code>iter</code> it
+takes an optional iter-key argument.</p>
+<p>Example:</p>
+<pre><code>object : iterkeys(e, Something) | this.object[e].getSomething();
+</code></pre>
+</div></div><div class="col-sidebar"><div class="page-menu"><div class="tsd-navigation settings"><details class="tsd-accordion"><summary class="tsd-accordion-summary"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-chevronDown"></use></svg><h3>Settings</h3></summary><div class="tsd-accordion-details"><div class="tsd-filter-visibility"><span class="settings-label">Member Visibility</span><ul id="tsd-filter-options"><li class="tsd-filter-item"><label class="tsd-filter-input"><input type="checkbox" id="tsd-filter-protected" name="protected"/><svg width="32" height="32" viewBox="0 0 32 32" aria-hidden="true"><rect class="tsd-checkbox-background" width="30" height="30" x="1" y="1" rx="6" fill="none"></rect><path class="tsd-checkbox-checkmark" d="M8.35422 16.8214L13.2143 21.75L24.6458 10.25" stroke="none" stroke-width="3.5" stroke-linejoin="round" fill="none"></path></svg><span>Protected</span></label></li><li class="tsd-filter-item"><label class="tsd-filter-input"><input type="checkbox" id="tsd-filter-inherited" name="inherited" checked/><svg width="32" height="32" viewBox="0 0 32 32" aria-hidden="true"><rect class="tsd-checkbox-background" width="30" height="30" x="1" y="1" rx="6" fill="none"></rect><path class="tsd-checkbox-checkmark" d="M8.35422 16.8214L13.2143 21.75L24.6458 10.25" stroke="none" stroke-width="3.5" stroke-linejoin="round" fill="none"></path></svg><span>Inherited</span></label></li><li class="tsd-filter-item"><label class="tsd-filter-input"><input type="checkbox" id="tsd-filter-external" name="external"/><svg width="32" height="32" viewBox="0 0 32 32" aria-hidden="true"><rect class="tsd-checkbox-background" width="30" height="30" x="1" y="1" rx="6" fill="none"></rect><path class="tsd-checkbox-checkmark" d="M8.35422 16.8214L13.2143 21.75L24.6458 10.25" stroke="none" stroke-width="3.5" stroke-linejoin="round" fill="none"></path></svg><span>External</span></label></li></ul></div><div class="tsd-theme-toggle"><label class="settings-label" for="tsd-theme">Theme</label><select id="tsd-theme"><option value="os">OS</option><option value="light">Light</option><option value="dark">Dark</option></select></div></div></details></div><details open class="tsd-accordion tsd-page-navigation"><summary class="tsd-accordion-summary"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-chevronDown"></use></svg><h3>On This Page</h3></summary><div class="tsd-accordion-details"><a href="#specification"><span>Specification</span></a><a href="#grammar"><span>Grammar</span></a><a href="#semantics"><span>Semantics</span></a><ul><li><a href="#endianness"><span>Endianness</span></a></li><li><a href="#type-definitions"><span>Type definitions</span></a></li><li><ul><li><a href="#int"><span>int</span></a></li><li><a href="#uint"><span>uint</span></a></li><li><a href="#byte"><span>byte</span></a></li><li><a href="#bool"><span>bool</span></a></li><li><a href="#float"><span>float</span></a></li><li><a href="#double"><span>double</span></a></li><li><a href="#short"><span>short</span></a></li><li><a href="#ushort"><span>ushort</span></a></li><li><a href="#string"><span>string</span></a></li><li><ul><li><a href="#semantics-1"><span>Semantics</span></a></li></ul></li></ul></li><li><a href="#static_string"><span>static_<wbr/>string</span></a></li><li><a href="#object-type"><span>Object type</span></a></li><li><a href="#abstract-object-type"><span>Abstract object type</span></a></li><li><a href="#array"><span>Array</span></a></li><li><ul><li><a href="#semantics-2"><span>Semantics</span></a></li></ul></li><li><a href="#iter"><span>Iter</span></a></li><li><a href="#iterkeys"><span>Iter<wbr/>Keys</span></a></li></ul></div></details></div><div class="site-menu"><nav class="tsd-navigation"><a href="../modules.html">nstructjs - v0.8.4</a><ul class="tsd-small-nested-navigation" id="tsd-nav-container"><li>Loading...</li></ul></nav></div></div></div><footer><p class="tsd-generator">Generated using <a href="https://typedoc.org/" target="_blank">TypeDoc</a></p></footer><div class="overlay"></div></body></html>

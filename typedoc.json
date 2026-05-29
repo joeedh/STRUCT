@@ -1,0 +1,16 @@
+{
+  "$schema": "https://typedoc.org/schema.json",
+  "name": "nstructjs",
+  "entryPoints": ["src/structjs.ts"],
+  "out": "docs",
+  "readme": "documentation/index.md",
+  "projectDocuments": [
+    "documentation/Intro-and-Examples.md",
+    "documentation/Reading-And-Writing.md",
+    "documentation/JSON.md",
+    "documentation/Specification.md",
+    "documentation/AUDIT.md"
+  ],
+  "includeVersion": true,
+  "excludeInternal": true
+}
