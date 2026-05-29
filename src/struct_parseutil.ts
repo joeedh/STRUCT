@@ -1,4 +1,3 @@
-"use strict";
 /*
 The lexical scanner in this module was inspired by PyPLY
 

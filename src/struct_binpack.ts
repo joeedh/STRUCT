@@ -1,5 +1,3 @@
-"use strict";
-
 import type { UnpackContext as UnpackContextType } from "./types.js";
 
 export let STRUCT_ENDIAN: boolean = true; //little endian

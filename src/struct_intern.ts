@@ -1,5 +1,3 @@
-"use strict";
-
 import * as struct_binpack from "./struct_binpack.js";
 import * as struct_parser from "./struct_parser.js";
 import * as _sintern2 from "./struct_intern2.js";

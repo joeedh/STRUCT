@@ -12,6 +12,7 @@ export declare class token {
 export declare class tokdef {
     name: string;
     re: RegExp | undefined;
+    reSticky: RegExp | undefined;
     func: ((t: token) => token | undefined) | undefined;
     example: string | undefined;
     constructor(name: string, regexpr?: RegExp, func?: (t: token) => token | undefined, example?: string);

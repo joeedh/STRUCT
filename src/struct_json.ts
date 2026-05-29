@@ -1,5 +1,3 @@
-"use strict";
-
 import { tokdef, parser, lexer, token } from "./struct_parseutil.js";
 import { termColor } from "./struct_util.js";
 import { PUTIL_ParseError } from "./struct_parseutil.js";

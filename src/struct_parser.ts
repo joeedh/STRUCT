@@ -1,5 +1,3 @@
-"use strict";
-
 import * as struct_parseutil from "./struct_parseutil.js";
 import type { StructField, TypeDescriptor, StructEnumValue, NStructInterface } from "./types.js";
 import { StructEnum } from "./types.js";

@@ -1,5 +1,3 @@
-"use strict";
-
 declare global {
   interface Array<T> {
     pop_i(idx: number): void;

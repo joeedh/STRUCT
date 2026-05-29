@@ -1,5 +1,3 @@
-"use strict";
-
 declare const global: typeof globalThis | undefined;
 
 export let nGlobal: typeof globalThis = globalThis;

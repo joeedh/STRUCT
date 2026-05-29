@@ -1,5 +1,3 @@
-"use strict";
-
 const colormap: Record<string, number> = {
   "black"   : 30,
   "red"     : 31,

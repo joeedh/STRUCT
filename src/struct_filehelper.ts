@@ -1,5 +1,3 @@
-"use strict";
-
 import * as struct_binpack from "./struct_binpack.js";
 import * as struct_intern from "./struct_intern.js";
 import type { Version } from "./types.js";

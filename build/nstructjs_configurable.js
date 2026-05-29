@@ -1,4 +1,3 @@
-"use strict";
 const colormap = {
     "black": 30,
     "red": 31,
@@ -137,7 +136,11 @@ function list(iter) {
     return ret;
 }
 
-"use strict";
+/*
+The lexical scanner in this module was inspired by PyPLY
+
+http://www.dabeaz.com/ply/ply.html
+*/
 function print_lines(ld, lineno, col, printColors, tokenObj) {
     let buf = "";
     const lines = ld.split("\n");
@@ -187,6 +190,7 @@ class tokdef {
     constructor(name, regexpr, func, example) {
         this.name = name;
         this.re = regexpr;
+        this.reSticky = regexpr ? new RegExp(regexpr.source, regexpr.flags.replace(/[gy]/g, "") + "y") : undefined;
         this.func = func;
         this.example = example;
         if (example === undefined && regexpr) {
@@ -320,24 +324,25 @@ class lexer {
             return undefined;
         const ts = this.tokdef;
         const tlen = ts.length;
-        const lexdata = this.lexdata.slice(this.lexpos, this.lexdata.length);
-        const results = [];
-        for (let i = 0; i < tlen; i++) {
-            const t = ts[i];
-            if (t.re === undefined)
-                continue;
-            const res = t.re.exec(lexdata);
-            if (res !== null && res !== undefined && res.index === 0) {
-                results.push([t, res]);
-            }
-        }
+        const lexpos = this.lexpos;
+        const lexdata = this.lexdata;
+        // Match each token regexp directly at `lexpos` in the full input using a
+        // sticky (`y`) regexp, and keep the longest match. This avoids slicing the
+        // remaining input (O(n) per token) and the old unanchored exec that scanned
+        // forward looking for a match anywhere — both of which made lexing O(n^2),
+        // with the unanchored STRLIT pattern (`"[^"]*"`) the worst offender.
         let max_res = 0;
         let theres = undefined;
-        for (let i = 0; i < results.length; i++) {
-            const res = results[i];
-            if (res[1][0].length > max_res) {
-                theres = res;
-                max_res = res[1][0].length;
+        for (let i = 0; i < tlen; i++) {
+            const t = ts[i];
+            const re = t.reSticky;
+            if (re === undefined)
+                continue;
+            re.lastIndex = lexpos;
+            const res = re.exec(lexdata);
+            if (res !== null && res[0].length > max_res) {
+                theres = [t, res[0]];
+                max_res = res[0].length;
             }
         }
         if (theres === undefined) {
@@ -349,7 +354,7 @@ class lexer {
         if (this.lexpos < this.lexdata.length) {
             this.lineno = this.linemap[this.lexpos];
         }
-        let tok = new token(def.name, theres[1][0], this.lexpos, this.lineno, this, undefined, col);
+        let tok = new token(def.name, theres[1], this.lexpos, this.lineno, this, undefined, col);
         this.lexpos += tok.value.length;
         if (def.func) {
             tok = def.func(tok);
@@ -483,7 +488,6 @@ const StructEnum = {
     OPTIONAL: 21,
 };
 
-"use strict";
 class NStruct {
     constructor(name) {
         this.fields = [];
@@ -902,7 +906,6 @@ var struct_typesystem = /*#__PURE__*/Object.freeze({
     __proto__: null
 });
 
-"use strict";
 let STRUCT_ENDIAN = true; //little endian
 function setBinaryEndian(mode) {
     STRUCT_ENDIAN = !!mode;
@@ -2322,7 +2325,6 @@ var _sintern2 = /*#__PURE__*/Object.freeze({
     formatArrayJson: formatArrayJson
 });
 
-"use strict";
 let structEval = eval;
 function setStructEval(val) {
     structEval = val;
@@ -2334,7 +2336,6 @@ var _struct_eval = /*#__PURE__*/Object.freeze({
     setStructEval: setStructEval
 });
 
-"use strict";
 const TokSymbol = Symbol("token-info");
 // TokSymbol is attached to plain objects and arrays at runtime.
 // We use helper functions to access it safely.
@@ -2542,7 +2543,6 @@ function printContext(buf, tokinfo, printColors = true) {
     return s;
 }
 
-"use strict";
 let nGlobal = globalThis;
 if (typeof globalThis !== "undefined") {
     nGlobal = globalThis;
@@ -2570,7 +2570,6 @@ function updateDEBUG() {
     }
 }
 
-"use strict";
 // needed to avoid a rollup bug in configurable mode
 const sintern2 = _sintern2;
 const struct_eval = _struct_eval;
@@ -3707,7 +3706,6 @@ function write_scripts(nManager = manager, include_code = false) {
     return buf;
 }
 
-"use strict";
 let nbtoa;
 let natob;
 if (typeof btoa === "undefined") {
