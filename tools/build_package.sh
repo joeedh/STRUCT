@@ -1,8 +1,11 @@
 #!/bin/sh
 
+# Run from the repository root regardless of where this script is invoked.
+cd "$(dirname "$0")/.."
+
 git commit -a
 
-bash build.sh
+bash tools/build.sh
 
 mkdir -p package/build
 mkdir -p package/docs

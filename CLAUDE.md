@@ -15,7 +15,7 @@ dynamic code generation for performance — no intermediate representation, no g
 
 ## Commands
 
-- `pnpm build` — build all bundles into `build/` (runs `build.sh` → Rollup).
+- `pnpm build` — build all bundles into `build/` (runs `tools/build.sh` → Rollup).
 - `pnpm test` — run the Vitest suite (`tests/*.test.ts`).
 - `pnpm run typecheck` — `tsc --noEmit`.
 - `pnpm docs` — generate the API reference into `docs/` with TypeDoc (config in `typedoc.json`).
@@ -65,6 +65,14 @@ backward compatibility.
 - **esdoc has been removed** (no more `.esdoc.json` / `nstructjs_esdoc.cjs` / `build_docs.sh`).
 - `documentation/AUDIT.md` records how the docs were reconciled against the source and lists known
   gaps; update it when the public API changes.
+- **[`documentation/parsing.md`](documentation/parsing.md)** is an agent-oriented deep-dive on how
+  the STRUCT DSL is lexed and parsed (lexer → recursive-descent parser → `TypeDescriptor`s) — read
+  it before touching `struct_parser.ts` / `struct_parseutil.ts`.
+- **[`documentation/JSON.md`](documentation/JSON.md)** is the short JSON serialization API reference;
+  **[`documentation/jsonGuide.md`](documentation/jsonGuide.md)** is the companion deep-dive on the
+  JSON data model, type mappings, polymorphism, and validation — read it before touching the
+  `toJSON`/`fromJSON`/`validateJSON`/`formatJSON` handlers in `struct_intern2.ts` or
+  `struct_json.ts`.
 
 ## STRUCT DSL
 

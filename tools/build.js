@@ -4,8 +4,8 @@
     include: "structjs",
     out: "build/nstructjs.js",
     wrap: {
-      startFile: 'start.frag',
-      endFile:   'end.frag'
+      startFile: 'tools/start.frag',
+      endFile:   'tools/end.frag'
     },
     insertRequire: ["structjs"],
     optimize: "none"

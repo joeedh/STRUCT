@@ -5,6 +5,27 @@ serialization system for JavaScript.
 It's designed with JavaScript in mind, and supports direct serialization/deserialization
 of objects (unlike ProtoBuf or JSON, which build intermediary objects).
 
+## Example
+
+```js
+import * as nstructjs from "nstructjs";
+
+class Point {
+  constructor(x = 0, y = 0) { this.x = x; this.y = y; }
+  loadSTRUCT(reader) { reader(this); }
+
+  static STRUCT = nstructjs.inlineRegister(this, `
+    Point { x : float; y : float; }
+  `);
+}
+
+const data = [];                                  // write to a byte array
+nstructjs.writeObject(data, new Point(1, 2));
+
+const view = new DataView(new Uint8Array(data).buffer);
+const p = nstructjs.readObject(view, Point);      // -> Point { x: 1, y: 2 }
+```
+
 ## Documentation
 
 The maintained documentation lives in [`documentation/`](documentation/index.md):

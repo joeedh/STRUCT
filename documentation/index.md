@@ -15,6 +15,8 @@ deprecated and now just points here.)
 - [Reading and Writing](Reading-And-Writing.md) — the binary read/write API and how to embed
   STRUCT scripts in a file for forward/backward compatibility.
 - [JSON](JSON.md) — the JSON serialization API.
+- [JSON Guide](jsonGuide.md) — deep-dive on the JSON data model, type mappings, polymorphism, and
+  validation.
 - [Specification](Specification.md) — the STRUCT DSL grammar and the binary format spec.
 - [Documentation Audit](AUDIT.md) — record of how this documentation was reconciled against the
   source code.

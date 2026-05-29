@@ -1,5 +1,8 @@
 #!/bin/bash
 
+# Run from the repository root regardless of where this script is invoked.
+cd "$(dirname "$0")/.."
+
 VERSION=`cat package.json | grep version | sed 's/[" :,]//g' | sed 's/version//'`
 
 git commit -a
@@ -11,11 +14,11 @@ echo $?
 
 echo Publishing $VERSION
 echo $?
-bash build.sh
+bash tools/build.sh
 echo $?
 
 #bash build_docs.sh && \
-bash build_package.sh
+bash tools/build_package.sh
 echo $?
 
 cd package

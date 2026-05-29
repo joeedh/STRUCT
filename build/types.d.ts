@@ -146,6 +146,7 @@ export interface FormatCtx {
 }
 /** Forward reference to the STRUCT manager to avoid circular imports */
 export interface StructManager {
+    onSerializeUnknown?: (val: unknown) => string | undefined;
     idgen: number;
     allowOverriding: boolean;
     structs: Record<string, NStructInterface>;

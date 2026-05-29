@@ -73,7 +73,7 @@ Supported types: `int`, `uint`, `float`, `double`, `string`, `static_string[N]`,
 ## Build System
 
 - **Bundler:** Rollup with multiple config files for different output formats.
-- **Build script:** `build.sh` generates all variants into `build/`.
+- **Build script:** `tools/build.sh` generates all variants into `build/`.
 - **Output formats:**
   - `nstructjs.js` — standard bundle
   - `nstructjs_es6.js` — ES6 module
