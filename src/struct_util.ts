@@ -16,6 +16,22 @@ const colormap: Record<string, number> = {
   "peach"   : 210,
 };
 
+/**
+ * Marks a class auto-synthesized by `parse_structs` to stand in for a struct
+ * that was missing from the registered class list (i.e. its real JS class isn't
+ * loaded — typically an unloaded addon). When a host has installed an
+ * `onUnknownClass` hook, the read path treats such a dummy as "unknown" so the
+ * host's placeholder class is used and `_origClsname` is stamped, instead of
+ * silently reading into the throwaway dummy. `null_natives` (register_null)
+ * dummies are NOT flagged, so they keep their existing behavior.
+ */
+export const PARSE_STRUCTS_DUMMY = Symbol.for("nstructjs.parseStructsDummy");
+
+/** True if `cls` is a `parse_structs`-synthesized placeholder (see above). */
+export function isParseStructsDummy(cls: unknown): boolean {
+  return !!cls && !!(cls as Record<symbol, unknown>)[PARSE_STRUCTS_DUMMY];
+}
+
 export function tab(n: number, chr: string = " "): string {
   let t = "";
 

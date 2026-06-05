@@ -886,10 +886,13 @@ class StructTStructField extends StructFieldType {
 
     let cls3 = manager.struct_cls[cls2.name];
 
-    // Pass the numeric id when class missing so read_object's onUnknownClass
-    // hook can fire and produce a placeholder instance. See plan §4.
-    const instance = manager.read_object(data, cls3 ?? id, uctx, dest);
-    if (cls3 === undefined && instance && typeof instance === "object") {
+    // Treat a parse_structs dummy as missing when a hook is installed, so the
+    // hook fires for unloaded-addon classes. Pass the numeric id in that case so
+    // read_object's onUnknownClass hook can produce a placeholder. See plan §4.
+    const missing =
+      cls3 === undefined || (!!manager.onUnknownClass && util.isParseStructsDummy(cls3));
+    const instance = manager.read_object(data, missing ? id : cls3, uctx, dest);
+    if (missing && instance && typeof instance === "object") {
       (instance as Record<string, unknown>)._origClsname = cls2.name;
     }
     return instance;
@@ -912,10 +915,13 @@ class StructTStructField extends StructFieldType {
     packer_debug("struct name: " + cls2.name);
     let cls3 = manager.struct_cls[cls2.name];
 
-    // Pass the numeric id when class missing so read_object's onUnknownClass
-    // hook can fire and produce a placeholder instance. See plan §4.
-    const instance = manager.read_object(data, cls3 ?? id, uctx);
-    if (cls3 === undefined && instance && typeof instance === "object") {
+    // Treat a parse_structs dummy as missing when a hook is installed, so the
+    // hook fires for unloaded-addon classes. Pass the numeric id in that case so
+    // read_object's onUnknownClass hook can produce a placeholder. See plan §4.
+    const missing =
+      cls3 === undefined || (!!manager.onUnknownClass && util.isParseStructsDummy(cls3));
+    const instance = manager.read_object(data, missing ? id : cls3, uctx);
+    if (missing && instance && typeof instance === "object") {
       (instance as Record<string, unknown>)._origClsname = cls2.name;
     }
     return instance;

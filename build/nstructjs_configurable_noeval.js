@@ -15,6 +15,20 @@ const colormap = {
     "lightred": 91,
     "peach": 210,
 };
+/**
+ * Marks a class auto-synthesized by `parse_structs` to stand in for a struct
+ * that was missing from the registered class list (i.e. its real JS class isn't
+ * loaded — typically an unloaded addon). When a host has installed an
+ * `onUnknownClass` hook, the read path treats such a dummy as "unknown" so the
+ * host's placeholder class is used and `_origClsname` is stamped, instead of
+ * silently reading into the throwaway dummy. `null_natives` (register_null)
+ * dummies are NOT flagged, so they keep their existing behavior.
+ */
+const PARSE_STRUCTS_DUMMY = Symbol.for("nstructjs.parseStructsDummy");
+/** True if `cls` is a `parse_structs`-synthesized placeholder (see above). */
+function isParseStructsDummy(cls) {
+    return !!cls && !!cls[PARSE_STRUCTS_DUMMY];
+}
 function tab(n, chr = " ") {
     let t = "";
     for (let i = 0; i < n; i++) {
@@ -1636,10 +1650,12 @@ class StructTStructField extends StructFieldType {
         let cls2 = manager.get_struct_id(id);
         packer_debug$1("struct name: " + cls2.name);
         let cls3 = manager.struct_cls[cls2.name];
-        // Pass the numeric id when class missing so read_object's onUnknownClass
-        // hook can fire and produce a placeholder instance. See plan §4.
-        const instance = manager.read_object(data, cls3 ?? id, uctx, dest);
-        if (cls3 === undefined && instance && typeof instance === "object") {
+        // Treat a parse_structs dummy as missing when a hook is installed, so the
+        // hook fires for unloaded-addon classes. Pass the numeric id in that case so
+        // read_object's onUnknownClass hook can produce a placeholder. See plan §4.
+        const missing = cls3 === undefined || (!!manager.onUnknownClass && isParseStructsDummy(cls3));
+        const instance = manager.read_object(data, missing ? id : cls3, uctx, dest);
+        if (missing && instance && typeof instance === "object") {
             instance._origClsname = cls2.name;
         }
         return instance;
@@ -1657,10 +1673,12 @@ class StructTStructField extends StructFieldType {
         let cls2 = manager.get_struct_id(id);
         packer_debug$1("struct name: " + cls2.name);
         let cls3 = manager.struct_cls[cls2.name];
-        // Pass the numeric id when class missing so read_object's onUnknownClass
-        // hook can fire and produce a placeholder instance. See plan §4.
-        const instance = manager.read_object(data, cls3 ?? id, uctx);
-        if (cls3 === undefined && instance && typeof instance === "object") {
+        // Treat a parse_structs dummy as missing when a hook is installed, so the
+        // hook fires for unloaded-addon classes. Pass the numeric id in that case so
+        // read_object's onUnknownClass hook can produce a placeholder. See plan §4.
+        const missing = cls3 === undefined || (!!manager.onUnknownClass && isParseStructsDummy(cls3));
+        const instance = manager.read_object(data, missing ? id : cls3, uctx);
+        if (missing && instance && typeof instance === "object") {
             instance._origClsname = cls2.name;
         }
         return instance;
@@ -2919,6 +2937,9 @@ class STRUCT {
                 dummy[keywords.script] = STRUCT.fmt_struct(stt, undefined, undefined, undefined, true);
                 dummy[keywords.name] = stt.name;
                 dummy.prototype[keywords.name] = dummy.name;
+                // Flag so the read path can route this through onUnknownClass instead of
+                // silently reading into the throwaway dummy (see util.isParseStructsDummy).
+                dummy[PARSE_STRUCTS_DUMMY] = true;
                 this.struct_cls[dummy[keywords.name]] = dummy;
                 this.structs[dummy[keywords.name]] = stt;
                 if (stt.id !== -1)
@@ -3310,7 +3331,10 @@ class STRUCT {
         if (typeof cls_or_struct_id === "number") {
             const fileSchema = this.struct_ids[cls_or_struct_id];
             cls = this.struct_cls[fileSchema.name];
-            if (cls === undefined && this.onUnknownClass) {
+            // A parse_structs dummy stands in for an unloaded class — route it through
+            // the hook (when installed) just like a genuinely-absent class, so the
+            // host placeholder is used instead of the throwaway dummy.
+            if ((cls === undefined || isParseStructsDummy(cls)) && this.onUnknownClass) {
                 const hookResult = this.onUnknownClass(fileSchema.name, fileSchema);
                 if (hookResult !== undefined) {
                     cls = hookResult;

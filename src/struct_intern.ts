@@ -530,6 +530,10 @@ export class STRUCT {
 
         dummy.prototype[keywords.name] = dummy.name;
 
+        // Flag so the read path can route this through onUnknownClass instead of
+        // silently reading into the throwaway dummy (see util.isParseStructsDummy).
+        (dummy as any)[util.PARSE_STRUCTS_DUMMY] = true;
+
         this.struct_cls[(dummy as any)[keywords.name] as string] = dummy;
         this.structs[(dummy as any)[keywords.name] as string] = stt;
 
@@ -990,7 +994,10 @@ export class STRUCT {
     if (typeof cls_or_struct_id === "number") {
       const fileSchema = this.struct_ids[cls_or_struct_id];
       cls = this.struct_cls[fileSchema.name] as StructableClass<T>;
-      if (cls === undefined && this.onUnknownClass) {
+      // A parse_structs dummy stands in for an unloaded class — route it through
+      // the hook (when installed) just like a genuinely-absent class, so the
+      // host placeholder is used instead of the throwaway dummy.
+      if ((cls === undefined || util.isParseStructsDummy(cls)) && this.onUnknownClass) {
         const hookResult = this.onUnknownClass(fileSchema.name, fileSchema);
         if (hookResult !== undefined) {
           cls = hookResult as StructableClass<T>;
