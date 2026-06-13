@@ -3,7 +3,9 @@ import * as struct_typesystem from "./struct_typesystem.js";
 import * as struct_parseutil from "./struct_parseutil.js";
 import * as struct_binpack from "./struct_binpack.js";
 import * as struct_filehelper from "./struct_filehelper.js";
-export { unpack_context } from "./struct_binpack.js";
+export { unpack_context, BinWriter } from "./struct_binpack.js";
+export type { PackBuffer } from "./struct_binpack.js";
+import type { PackBuffer as PackBufferType } from "./struct_binpack.js";
 import type { StructableClass, NStructInterface } from "./types.js";
 export type { StructableClass, NStructInterface, StructableInstance, StructReader } from "./types.js";
 export * from "./struct_intern.js";
@@ -59,9 +61,10 @@ export declare function inherit(child: any, parent: any, structName?: string): s
  */
 export declare function readObject<T = unknown>(data: DataView | Uint8Array | number[], cls: StructableClass<T> | number, __uctx?: import("./types.js").UnpackContext): T;
 /**
- @param data : Array instance to write bytes to
+ @param data : Array or BinWriter instance to write bytes to
  */
 export declare function writeObject<T = unknown>(data: number[], obj: T): number[];
+export declare function writeObject<B extends PackBufferType, T = unknown>(data: B, obj: T): B;
 export declare function writeJSON<T = unknown>(obj: T): Record<string, unknown>;
 export declare function formatJSON(json: unknown, cls: StructableClass, addComments?: boolean, validate?: boolean): string;
 export declare function readJSON<T = unknown>(json: unknown, class_or_struct_id: StructableClass<T> | NStructInterface | number): T;

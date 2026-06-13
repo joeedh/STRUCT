@@ -17,11 +17,117 @@ export class unpack_context implements UnpackContextType {
   }
 }
 
-export function pack_byte(array: number[], val: number): void {
+/**
+ Growable byte buffer for the pack path; a drop-in alternative to the legacy
+ `number[]` sink that avoids per-byte push() and the final whole-buffer copy.
+ */
+export class BinWriter {
+  readonly _isBinWriter = true;
+
+  buf: Uint8Array;
+  view: DataView;
+  length: number = 0;
+
+  constructor(initialCapacity: number = 4096) {
+    this.buf = new Uint8Array(initialCapacity);
+    this.view = new DataView(this.buf.buffer);
+  }
+
+  ensure(n: number): void {
+    const need = this.length + n;
+    if (need > this.buf.length) {
+      let cap = this.buf.length * 2;
+      while (cap < need) {
+        cap *= 2;
+      }
+
+      const nb = new Uint8Array(cap);
+      nb.set(this.buf);
+      this.buf = nb;
+      this.view = new DataView(nb.buffer);
+    }
+  }
+
+  push(v: number): void {
+    this.ensure(1);
+    this.buf[this.length++] = v;
+  }
+
+  pushBytes(bytes: ArrayLike<number>): void {
+    const n = bytes.length;
+    this.ensure(n);
+    this.buf.set(bytes as Uint8Array | number[], this.length);
+    this.length += n;
+  }
+
+  i16(v: number): void {
+    this.ensure(2);
+    this.view.setInt16(this.length, v, STRUCT_ENDIAN);
+    this.length += 2;
+  }
+
+  u16(v: number): void {
+    this.ensure(2);
+    this.view.setUint16(this.length, v, STRUCT_ENDIAN);
+    this.length += 2;
+  }
+
+  i32(v: number): void {
+    this.ensure(4);
+    this.view.setInt32(this.length, v, STRUCT_ENDIAN);
+    this.length += 4;
+  }
+
+  u32(v: number): void {
+    this.ensure(4);
+    this.view.setUint32(this.length, v, STRUCT_ENDIAN);
+    this.length += 4;
+  }
+
+  f32(v: number): void {
+    this.ensure(4);
+    this.view.setFloat32(this.length, v, STRUCT_ENDIAN);
+    this.length += 4;
+  }
+
+  f64(v: number): void {
+    this.ensure(8);
+    this.view.setFloat64(this.length, v, STRUCT_ENDIAN);
+    this.length += 8;
+  }
+
+  /** Reserve n bytes (zero-filled) and return their offset, for back-patching. */
+  reserve(n: number): number {
+    this.ensure(n);
+    const off = this.length;
+    this.buf.fill(0, off, off + n);
+    this.length += n;
+    return off;
+  }
+
+  patchI32(offset: number, v: number): void {
+    this.view.setInt32(offset, v, STRUCT_ENDIAN);
+  }
+
+  /** Used bytes as a view over the internal buffer (no copy). */
+  finish(): Uint8Array {
+    return this.buf.subarray(0, this.length);
+  }
+
+  /** Used bytes as an exact-size copy (safe to grab .buffer of). */
+  toBytes(): Uint8Array {
+    return this.buf.slice(0, this.length);
+  }
+}
+
+/** Sink accepted by the pack_* functions: legacy number[] or a BinWriter. */
+export type PackBuffer = number[] | BinWriter;
+
+export function pack_byte(array: PackBuffer, val: number): void {
   array.push(val);
 }
 
-export function pack_sbyte(array: number[], val: number): void {
+export function pack_sbyte(array: PackBuffer, val: number): void {
   if (val < 0) {
     val = 256 + val;
   }
@@ -29,13 +135,23 @@ export function pack_sbyte(array: number[], val: number): void {
   array.push(val);
 }
 
-export function pack_bytes(array: number[], bytes: ArrayLike<number>): void {
+export function pack_bytes(array: PackBuffer, bytes: ArrayLike<number>): void {
+  if ((array as BinWriter)._isBinWriter) {
+    (array as BinWriter).pushBytes(bytes);
+    return;
+  }
+
   for (let i = 0; i < bytes.length; i++) {
-    array.push(bytes[i]);
+    (array as number[]).push(bytes[i]);
   }
 }
 
-export function pack_int(array: number[], val: number): void {
+export function pack_int(array: PackBuffer, val: number): void {
+  if ((array as BinWriter)._isBinWriter) {
+    (array as BinWriter).i32(val);
+    return;
+  }
+
   temp_dataview.setInt32(0, val, STRUCT_ENDIAN);
 
   array.push(uint8_view[0]);
@@ -44,7 +160,12 @@ export function pack_int(array: number[], val: number): void {
   array.push(uint8_view[3]);
 }
 
-export function pack_uint(array: number[], val: number): void {
+export function pack_uint(array: PackBuffer, val: number): void {
+  if ((array as BinWriter)._isBinWriter) {
+    (array as BinWriter).u32(val);
+    return;
+  }
+
   temp_dataview.setUint32(0, val, STRUCT_ENDIAN);
 
   array.push(uint8_view[0]);
@@ -53,14 +174,24 @@ export function pack_uint(array: number[], val: number): void {
   array.push(uint8_view[3]);
 }
 
-export function pack_ushort(array: number[], val: number): void {
+export function pack_ushort(array: PackBuffer, val: number): void {
+  if ((array as BinWriter)._isBinWriter) {
+    (array as BinWriter).u16(val);
+    return;
+  }
+
   temp_dataview.setUint16(0, val, STRUCT_ENDIAN);
 
   array.push(uint8_view[0]);
   array.push(uint8_view[1]);
 }
 
-export function pack_float(array: number[], val: number): void {
+export function pack_float(array: PackBuffer, val: number): void {
+  if ((array as BinWriter)._isBinWriter) {
+    (array as BinWriter).f32(val);
+    return;
+  }
+
   temp_dataview.setFloat32(0, val, STRUCT_ENDIAN);
 
   array.push(uint8_view[0]);
@@ -69,7 +200,12 @@ export function pack_float(array: number[], val: number): void {
   array.push(uint8_view[3]);
 }
 
-export function pack_double(array: number[], val: number): void {
+export function pack_double(array: PackBuffer, val: number): void {
+  if ((array as BinWriter)._isBinWriter) {
+    (array as BinWriter).f64(val);
+    return;
+  }
+
   temp_dataview.setFloat64(0, val, STRUCT_ENDIAN);
 
   array.push(uint8_view[0]);
@@ -82,7 +218,12 @@ export function pack_double(array: number[], val: number): void {
   array.push(uint8_view[7]);
 }
 
-export function pack_short(array: number[], val: number): void {
+export function pack_short(array: PackBuffer, val: number): void {
+  if ((array as BinWriter)._isBinWriter) {
+    (array as BinWriter).i16(val);
+    return;
+  }
+
   temp_dataview.setInt16(0, val, STRUCT_ENDIAN);
 
   array.push(uint8_view[0]);
@@ -172,7 +313,7 @@ function truncate_utf8(arr: number[], maxlen: number): number[] {
 
 const _static_sbuf_ss: number[] = new Array(2048);
 
-export function pack_static_string(data: number[], str: string, length: number): void {
+export function pack_static_string(data: PackBuffer, str: string, length: number): void {
   if (length === undefined) throw new Error("'length' parameter is not optional for pack_static_string()");
 
   const arr: number[] = length < 2048 ? _static_sbuf_ss : new Array();
@@ -181,27 +322,23 @@ export function pack_static_string(data: number[], str: string, length: number):
   encode_utf8(arr, str);
   truncate_utf8(arr, length);
 
-  for (let i = 0; i < length; i++) {
-    if (i >= arr.length) {
-      data.push(0);
-    } else {
-      data.push(arr[i]);
-    }
+  for (let i = arr.length; i < length; i++) {
+    arr.push(0);
   }
+  arr.length = length;
+
+  pack_bytes(data, arr);
 }
 
 const _static_sbuf: number[] = new Array(32);
 
 /*strings are packed as 32-bit unicode codepoints*/
-export function pack_string(data: number[], str: string): void {
+export function pack_string(data: PackBuffer, str: string): void {
   _static_sbuf.length = 0;
   encode_utf8(_static_sbuf, str);
 
   pack_int(data, _static_sbuf.length);
-
-  for (let i = 0; i < _static_sbuf.length; i++) {
-    data.push(_static_sbuf[i]);
-  }
+  pack_bytes(data, _static_sbuf);
 }
 
 export function unpack_bytes(dview: DataView, uctx: UnpackContextType, len: number): DataView {
@@ -261,9 +398,11 @@ export function unpack_string(data: DataView, uctx: UnpackContextType): string {
   const arr = slen < 2048 ? _static_arr_us : new Array(slen);
 
   arr.length = slen;
+  const p = uctx.i;
   for (let i = 0; i < slen; i++) {
-    arr[i] = unpack_byte(data, uctx);
+    arr[i] = data.getUint8(p + i);
   }
+  uctx.i += slen;
 
   return decode_utf8(arr);
 }
@@ -276,9 +415,10 @@ export function unpack_static_string(data: DataView, uctx: UnpackContextType, le
   const arr = length < 2048 ? _static_arr_uss : new Array(length);
   arr.length = 0;
 
+  const p = uctx.i;
   let done = false;
   for (let i = 0; i < length; i++) {
-    const c = unpack_byte(data, uctx);
+    const c = data.getUint8(p + i);
 
     if (c === 0) {
       done = true;
@@ -288,6 +428,7 @@ export function unpack_static_string(data: DataView, uctx: UnpackContextType, le
       arr.push(c);
     }
   }
+  uctx.i += length;
 
   truncate_utf8(arr, length);
   return decode_utf8(arr);

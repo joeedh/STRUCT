@@ -1,4 +1,5 @@
 import { StructField, StructKeywords, StructableClass, StructableInstance, NStructInterface, UnpackContext, FormatCtx } from "./types.js";
+import type { PackBuffer } from "./struct_binpack.js";
 export declare let truncateDollarSign: boolean;
 export declare let manager: STRUCT;
 export declare class JSONError extends Error {
@@ -67,12 +68,13 @@ export declare class STRUCT {
     get_struct(name: string): NStructInterface;
     get_struct_cls(name: string): StructableClass;
     _env_call(code: string, obj: unknown, env?: [string, unknown][]): unknown;
-    write_struct(data: number[], obj: unknown, stt: NStructInterface): void;
+    write_struct(data: PackBuffer, obj: unknown, stt: NStructInterface): void;
     /**
      @param data : array to write data into,
      @param obj  : structable object
      */
     write_object(data: number[] | undefined, obj: unknown): number[];
+    write_object<B extends PackBuffer>(data: B, obj: unknown): B;
     /**
      Read an object from binary data
   
@@ -87,6 +89,7 @@ export declare class STRUCT {
      @param obj structable object
      */
     writeObject(data: number[] | undefined, obj: unknown): number[];
+    writeObject<B extends PackBuffer>(data: B, obj: unknown): B;
     writeJSON(obj: unknown, stt?: NStructInterface): Record<string, unknown>;
     /**
      @param data : DataView or Uint8Array instance

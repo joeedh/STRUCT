@@ -204,7 +204,7 @@ export class FileHelper {
     this.struct = struct_intern.manager;
     this.blocks = blocks;
 
-    const data: number[] = [];
+    const data = new struct_binpack.BinWriter();
 
     struct_binpack.pack_static_string(data, this.magic, 4);
     struct_binpack.pack_short(data, this.version.major);
@@ -234,7 +234,7 @@ export class FileHelper {
         throw new Error("Non-STRUCTable object " + block.data);
       }
 
-      const data2: number[] = [];
+      const data2 = new struct_binpack.BinWriter();
       const stt = struct.structs[structNameVal];
 
       struct.write_object(data2, block.data);
@@ -243,10 +243,10 @@ export class FileHelper {
       struct_binpack.pack_int(data, data2.length);
       struct_binpack.pack_int(data, stt.id);
 
-      struct_binpack.pack_bytes(data, data2);
+      data.pushBytes(data2.finish());
     }
 
-    return new DataView(new Uint8Array(data).buffer);
+    return new DataView(data.toBytes().buffer);
   }
 
   writeBase64(blocks: Block[]): string {

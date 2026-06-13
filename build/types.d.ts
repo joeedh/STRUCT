@@ -1,3 +1,4 @@
+import type { PackBuffer } from "./struct_binpack.js";
 export declare const StructEnum: {
     readonly INT: 0;
     readonly FLOAT: 1;
@@ -119,9 +120,9 @@ export interface StructableInstance {
 }
 export type LoaderCallback = (obj: StructableInstance) => void;
 export interface StructFieldTypeClass {
-    pack(manager: StructManager, data: number[], val: unknown, obj: unknown, field: StructField, type: TypeDescriptor): void;
+    pack(manager: StructManager, data: PackBuffer, val: unknown, obj: unknown, field: StructField, type: TypeDescriptor): void;
     unpack(manager: StructManager, data: DataView, type: TypeDescriptor, uctx: UnpackContext): unknown;
-    packNull(manager: StructManager, data: number[], field: StructField, type: TypeDescriptor): void;
+    packNull(manager: StructManager, data: PackBuffer, field: StructField, type: TypeDescriptor): void;
     format(type: TypeDescriptor): string;
     toJSON(manager: StructManager, val: unknown, obj: unknown, field: StructField, type: TypeDescriptor): unknown;
     fromJSON(manager: StructManager, val: unknown, obj: unknown, field: StructField, type: TypeDescriptor, instance: unknown): unknown;
@@ -162,8 +163,8 @@ export interface StructManager {
     get_struct(name: string): NStructInterface;
     get_struct_cls(name: string): StructableClass;
     get_struct_id(id: number): NStructInterface;
-    write_struct(data: number[], obj: unknown, stt: NStructInterface): void;
-    write_object(data: number[], obj: unknown): number[];
+    write_struct(data: PackBuffer, obj: unknown, stt: NStructInterface): void;
+    write_object(data: PackBuffer | undefined, obj: unknown): PackBuffer;
     read_object(data: DataView, cls_or_struct_id: StructableClass | number, uctx?: UnpackContext, objInstance?: unknown): unknown;
     readObject(data: DataView | Uint8Array | number[], cls_or_struct_id: StructableClass | number, uctx?: UnpackContext): unknown;
     writeJSON(obj: unknown, stt?: NStructInterface): Record<string, unknown>;

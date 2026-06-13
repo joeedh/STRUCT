@@ -1,3 +1,5 @@
+import type { PackBuffer } from "./struct_binpack.js";
+
 export const StructEnum = {
   INT          : 0,
   FLOAT        : 1,
@@ -99,14 +101,14 @@ export type LoaderCallback = (obj: StructableInstance) => void;
 export interface StructFieldTypeClass {
   pack(
     manager: StructManager,
-    data: number[],
+    data: PackBuffer,
     val: unknown,
     obj: unknown,
     field: StructField,
     type: TypeDescriptor
   ): void;
   unpack(manager: StructManager, data: DataView, type: TypeDescriptor, uctx: UnpackContext): unknown;
-  packNull(manager: StructManager, data: number[], field: StructField, type: TypeDescriptor): void;
+  packNull(manager: StructManager, data: PackBuffer, field: StructField, type: TypeDescriptor): void;
   format(type: TypeDescriptor): string;
   toJSON(manager: StructManager, val: unknown, obj: unknown, field: StructField, type: TypeDescriptor): unknown;
   fromJSON(
@@ -181,8 +183,8 @@ export interface StructManager {
   get_struct(name: string): NStructInterface;
   get_struct_cls(name: string): StructableClass;
   get_struct_id(id: number): NStructInterface;
-  write_struct(data: number[], obj: unknown, stt: NStructInterface): void;
-  write_object(data: number[], obj: unknown): number[];
+  write_struct(data: PackBuffer, obj: unknown, stt: NStructInterface): void;
+  write_object(data: PackBuffer | undefined, obj: unknown): PackBuffer;
   read_object(
     data: DataView,
     cls_or_struct_id: StructableClass | number,

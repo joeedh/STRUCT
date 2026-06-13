@@ -42,7 +42,9 @@ import {
   unpack_context,
   temp_dataview,
   uint8_view,
+  BinWriter,
 } from "./struct_binpack.js";
+import type { PackBuffer } from "./struct_binpack.js";
 
 let warninglvl = 2;
 let debug = 0;
@@ -156,7 +158,7 @@ setDebugMode2(debug);
 export const StructFieldTypes: StructFieldTypeClass[] = [];
 export const StructFieldTypeMap: Record<number, StructFieldTypeClass> = {};
 
-export function packNull(manager: StructManager, data: number[], field: StructField, type: TypeDescriptor): void {
+export function packNull(manager: StructManager, data: PackBuffer, field: StructField, type: TypeDescriptor): void {
   StructFieldTypeMap[type.type].packNull(manager, data, field, type);
 }
 
@@ -226,13 +228,126 @@ let fakeFields = new cachering<FakeFieldEntry>(() => {
   return { type: undefined, get: undefined, set: undefined };
 }, 256);
 
+/*
+ Bulk fast paths for arrays/iters of fixed-width primitives: identical wire
+ bytes to the per-element path, minus the per-element dispatch. Both helpers
+ return false for non-primitive element types (caller falls back).
+*/
+function unpackPrimitiveBulk(
+  data: DataView,
+  etype: number,
+  len: number,
+  uctx: UnpackContext,
+  arr: unknown[]
+): boolean {
+  let p = uctx.i;
+
+  switch (etype) {
+    case StructEnum.BYTE:
+      for (let i = 0; i < len; i++) arr[i] = data.getUint8(p + i);
+      p += len;
+      break;
+    case StructEnum.SIGNED_BYTE:
+      for (let i = 0; i < len; i++) arr[i] = data.getInt8(p + i);
+      p += len;
+      break;
+    case StructEnum.BOOL:
+      for (let i = 0; i < len; i++) arr[i] = !!data.getUint8(p + i);
+      p += len;
+      break;
+    case StructEnum.SHORT:
+      for (let i = 0; i < len; i++, p += 2) arr[i] = data.getInt16(p, STRUCT_ENDIAN);
+      break;
+    case StructEnum.USHORT:
+      for (let i = 0; i < len; i++, p += 2) arr[i] = data.getUint16(p, STRUCT_ENDIAN);
+      break;
+    case StructEnum.INT:
+      for (let i = 0; i < len; i++, p += 4) arr[i] = data.getInt32(p, STRUCT_ENDIAN);
+      break;
+    case StructEnum.UINT:
+      for (let i = 0; i < len; i++, p += 4) arr[i] = data.getUint32(p, STRUCT_ENDIAN);
+      break;
+    case StructEnum.FLOAT:
+      for (let i = 0; i < len; i++, p += 4) arr[i] = data.getFloat32(p, STRUCT_ENDIAN);
+      break;
+    case StructEnum.DOUBLE:
+      for (let i = 0; i < len; i++, p += 8) arr[i] = data.getFloat64(p, STRUCT_ENDIAN);
+      break;
+    default:
+      return false;
+  }
+
+  uctx.i = p;
+  return true;
+}
+
+function packPrimitiveBulk(data: PackBuffer, etype: number, arr: ArrayLike<number>, n: number = arr.length): boolean {
+  switch (etype) {
+    case StructEnum.BYTE:
+      if ((data as BinWriter)._isBinWriter && n === arr.length) {
+        (data as BinWriter).pushBytes(arr);
+      } else {
+        for (let i = 0; i < n; i++) pack_byte(data, arr[i]);
+      }
+      break;
+    case StructEnum.SIGNED_BYTE:
+      for (let i = 0; i < n; i++) pack_sbyte(data, arr[i]);
+      break;
+    case StructEnum.BOOL:
+      for (let i = 0; i < n; i++) pack_byte(data, arr[i] ? 1 : 0);
+      break;
+    case StructEnum.SHORT:
+      for (let i = 0; i < n; i++) pack_short(data, arr[i]);
+      break;
+    case StructEnum.USHORT:
+      for (let i = 0; i < n; i++) pack_ushort(data, arr[i]);
+      break;
+    case StructEnum.INT:
+      for (let i = 0; i < n; i++) pack_int(data, arr[i]);
+      break;
+    case StructEnum.UINT:
+      for (let i = 0; i < n; i++) pack_uint(data, arr[i]);
+      break;
+    case StructEnum.FLOAT:
+      for (let i = 0; i < n; i++) pack_float(data, arr[i]);
+      break;
+    case StructEnum.DOUBLE:
+      for (let i = 0; i < n; i++) pack_double(data, arr[i]);
+      break;
+    default:
+      return false;
+  }
+
+  return true;
+}
+
+/** A bulk-packable value: a plain array or a (non-DataView) typed array. */
+function isBulkArray(val: unknown): boolean {
+  return Array.isArray(val) || (ArrayBuffer.isView(val) && !(val instanceof DataView));
+}
+
+/** Fresh-array unpack of a byte iter/array straight into an owned typed array
+ *  (one bulk copy, no per-element work). Wire bytes are unchanged; the field
+ *  value becomes Uint8Array/Int8Array instead of number[]. Returns null for
+ *  non-byte element types. The pack side accepts typed arrays (isBulkArray),
+ *  so this round-trips. */
+function unpackByteTyped(data: DataView, etype: number, len: number, uctx: UnpackContext): Uint8Array | Int8Array | null {
+  if (etype !== StructEnum.BYTE && etype !== StructEnum.SIGNED_BYTE) {
+    return null;
+  }
+  const abs = data.byteOffset + uctx.i;
+  const slice = data.buffer.slice(abs, abs + len);
+  uctx.i += len;
+  return etype === StructEnum.BYTE ? new Uint8Array(slice) : new Int8Array(slice);
+}
+
 function fmt_type(type: TypeDescriptor): string {
   return StructFieldTypeMap[type.type].format(type);
 }
 
 export function do_pack(
   manager: StructManager,
-  data: number[],
+  data: PackBuffer,
   val: unknown,
   obj: unknown,
   field: StructField,
@@ -269,7 +384,7 @@ let _ws_env: [string | undefined, unknown][] = [[undefined, undefined]];
 export class StructFieldType {
   static pack(
     manager: StructManager,
-    data: number[],
+    data: PackBuffer,
     val: unknown,
     obj: unknown,
     field: StructField,
@@ -280,7 +395,7 @@ export class StructFieldType {
     return undefined;
   }
 
-  static packNull(manager: StructManager, data: number[], field: StructField, type: TypeDescriptor): void {
+  static packNull(manager: StructManager, data: PackBuffer, field: StructField, type: TypeDescriptor): void {
     this.pack(manager, data, 0, 0, field, type);
   }
 
@@ -381,7 +496,7 @@ export class StructFieldType {
 class StructIntField extends StructFieldType {
   static pack(
     manager: StructManager,
-    data: number[],
+    data: PackBuffer,
     val: unknown,
     obj: unknown,
     field: StructField,
@@ -423,7 +538,7 @@ StructFieldType.register(StructIntField as unknown as StructFieldTypeClass);
 class StructFloatField extends StructFieldType {
   static pack(
     manager: StructManager,
-    data: number[],
+    data: PackBuffer,
     val: unknown,
     obj: unknown,
     field: StructField,
@@ -465,7 +580,7 @@ StructFieldType.register(StructFloatField as unknown as StructFieldTypeClass);
 class StructDoubleField extends StructFieldType {
   static pack(
     manager: StructManager,
-    data: number[],
+    data: PackBuffer,
     val: unknown,
     obj: unknown,
     field: StructField,
@@ -507,7 +622,7 @@ StructFieldType.register(StructDoubleField as unknown as StructFieldTypeClass);
 class StructStringField extends StructFieldType {
   static pack(
     manager: StructManager,
-    data: number[],
+    data: PackBuffer,
     val: unknown,
     obj: unknown,
     field: StructField,
@@ -534,7 +649,7 @@ class StructStringField extends StructFieldType {
     return true;
   }
 
-  static packNull(manager: StructManager, data: number[], field: StructField, type: TypeDescriptor): void {
+  static packNull(manager: StructManager, data: PackBuffer, field: StructField, type: TypeDescriptor): void {
     this.pack(manager, data, "", 0, field, type);
   }
 
@@ -555,7 +670,7 @@ StructFieldType.register(StructStringField as unknown as StructFieldTypeClass);
 class StructStaticStringField extends StructFieldType {
   static pack(
     manager: StructManager,
-    data: number[],
+    data: PackBuffer,
     val: unknown,
     obj: unknown,
     field: StructField,
@@ -590,7 +705,7 @@ class StructStaticStringField extends StructFieldType {
     return `static_string[${(type.data as { maxlength: number }).maxlength}]`;
   }
 
-  static packNull(manager: StructManager, data: number[], field: StructField, type: TypeDescriptor): void {
+  static packNull(manager: StructManager, data: PackBuffer, field: StructField, type: TypeDescriptor): void {
     this.pack(manager, data, "", 0, field, type);
   }
 
@@ -611,7 +726,7 @@ StructFieldType.register(StructStaticStringField as unknown as StructFieldTypeCl
 class StructStructField extends StructFieldType {
   static pack(
     manager: StructManager,
-    data: number[],
+    data: PackBuffer,
     val: unknown,
     obj: unknown,
     field: StructField,
@@ -691,7 +806,7 @@ class StructStructField extends StructFieldType {
     return manager.read_object(data, cls2, uctx, dest);
   }
 
-  static packNull(manager: StructManager, data: number[], field: StructField, type: TypeDescriptor): void {
+  static packNull(manager: StructManager, data: PackBuffer, field: StructField, type: TypeDescriptor): void {
     let stt = manager.get_struct(type.data as string);
 
     packer_debug("struct", type);
@@ -723,7 +838,7 @@ StructFieldType.register(StructStructField as unknown as StructFieldTypeClass);
 class StructTStructField extends StructFieldType {
   static pack(
     manager: StructManager,
-    data: number[],
+    data: PackBuffer,
     val: unknown,
     obj: unknown,
     field: StructField,
@@ -740,7 +855,7 @@ class StructTStructField extends StructFieldType {
       const overrideName = manager.onSerializeUnknown(val);
       if (overrideName !== undefined) {
         const ostt = manager.get_struct(overrideName);
-        packer_debug("int " + ostt.id);
+        if (debug) packer_debug("int " + ostt.id);
         pack_int(data, ostt.id);
         manager.write_struct(data, val, ostt);
         return;
@@ -760,7 +875,7 @@ class StructTStructField extends StructFieldType {
       throw new Error("Bad struct " + valCtor[keywords.name] + " passed to write_struct");
     }
 
-    packer_debug("int " + stt.id);
+    if (debug) packer_debug("int " + stt.id);
 
     pack_int(data, stt.id);
     manager.write_struct(data, val, stt);
@@ -851,7 +966,7 @@ class StructTStructField extends StructFieldType {
     return ret;
   }
 
-  static packNull(manager: StructManager, data: number[], field: StructField, type: TypeDescriptor): void {
+  static packNull(manager: StructManager, data: PackBuffer, field: StructField, type: TypeDescriptor): void {
     let stt = manager.get_struct(type.data as string);
 
     pack_int(data, stt.id);
@@ -871,7 +986,7 @@ class StructTStructField extends StructFieldType {
   ): unknown {
     let id = struct_binpack.unpack_int(data, uctx);
 
-    packer_debug("-int " + id);
+    if (debug) packer_debug("-int " + id);
     if (!(id in manager.struct_ids)) {
       packer_debug("tstruct id: " + id);
       console.trace();
@@ -882,7 +997,7 @@ class StructTStructField extends StructFieldType {
 
     let cls2 = manager.get_struct_id(id);
 
-    packer_debug("struct name: " + cls2.name);
+    if (debug) packer_debug("struct name: " + cls2.name);
 
     let cls3 = manager.struct_cls[cls2.name];
 
@@ -901,7 +1016,7 @@ class StructTStructField extends StructFieldType {
   static unpack(manager: StructManager, data: DataView, type: TypeDescriptor, uctx: UnpackContext): unknown {
     let id = struct_binpack.unpack_int(data, uctx);
 
-    packer_debug("-int " + id);
+    if (debug) packer_debug("-int " + id);
     if (!(id in manager.struct_ids)) {
       packer_debug("tstruct id: " + id);
       console.trace();
@@ -912,7 +1027,7 @@ class StructTStructField extends StructFieldType {
 
     let cls2 = manager.get_struct_id(id);
 
-    packer_debug("struct name: " + cls2.name);
+    if (debug) packer_debug("struct name: " + cls2.name);
     let cls3 = manager.struct_cls[cls2.name];
 
     // Treat a parse_structs dummy as missing when a hook is installed, so the
@@ -980,7 +1095,7 @@ export function formatArrayJson(
 class StructArrayField extends StructFieldType {
   static pack(
     manager: StructManager,
-    data: number[],
+    data: PackBuffer,
     val: unknown,
     obj: unknown,
     field: StructField,
@@ -1007,13 +1122,18 @@ class StructArrayField extends StructFieldType {
     let itername = d.iname;
     let type2 = d.type;
 
+    const useEnv = itername !== "" && itername !== undefined && field.get;
+    if (!debug && !useEnv && packPrimitiveBulk(data, type2.type, arr as unknown as ArrayLike<number>)) {
+      return;
+    }
+
     let env = _ws_env;
     for (let i = 0; i < arr.length; i++) {
       let val2: unknown = arr[i];
-      if (itername !== "" && itername !== undefined && field.get) {
+      if (useEnv) {
         env[0][0] = itername;
         env[0][1] = val2;
-        val2 = manager._env_call(field.get, obj, env);
+        val2 = manager._env_call(field.get!, obj, env);
       }
 
       //XXX not sure I really need this fakeField stub here. . .
@@ -1023,7 +1143,7 @@ class StructArrayField extends StructFieldType {
     }
   }
 
-  static packNull(manager: StructManager, data: number[], field: StructField, type: TypeDescriptor): void {
+  static packNull(manager: StructManager, data: PackBuffer, field: StructField, type: TypeDescriptor): void {
     pack_int(data, 0);
   }
 
@@ -1153,10 +1273,19 @@ class StructArrayField extends StructFieldType {
   ): unknown {
     let len = struct_binpack.unpack_int(data, uctx);
     const arr = dest as unknown[];
+    const t2 = (type.data as { type: TypeDescriptor }).type;
+
+    if (!debug) {
+      arr.length = len;
+      if (unpackPrimitiveBulk(data, t2.type, len, uctx, arr)) {
+        return arr;
+      }
+    }
+
     arr.length = 0;
 
     for (let i = 0; i < len; i++) {
-      arr.push(unpack_field(manager, data, (type.data as { type: TypeDescriptor }).type, uctx));
+      arr.push(unpack_field(manager, data, t2, uctx));
     }
 
     return arr;
@@ -1166,9 +1295,23 @@ class StructArrayField extends StructFieldType {
     let len = struct_binpack.unpack_int(data, uctx);
     packer_debug("-int " + len);
 
+    const t2 = (type.data as { type: TypeDescriptor }).type;
+
+    if (!debug) {
+      const typed = unpackByteTyped(data, t2.type, len, uctx);
+      if (typed) {
+        return typed;
+      }
+    }
+
     let arr = new Array(len);
+
+    if (!debug && unpackPrimitiveBulk(data, t2.type, len, uctx, arr)) {
+      return arr;
+    }
+
     for (let i = 0; i < len; i++) {
-      arr[i] = unpack_field(manager, data, (type.data as { type: TypeDescriptor }).type, uctx);
+      arr[i] = unpack_field(manager, data, t2, uctx);
     }
 
     return arr;
@@ -1187,7 +1330,7 @@ StructFieldType.register(StructArrayField as unknown as StructFieldTypeClass);
 class StructIterField extends StructFieldType {
   static pack(
     manager: StructManager,
-    data: number[],
+    data: PackBuffer,
     val: unknown,
     obj: unknown,
     field: StructField,
@@ -1213,22 +1356,40 @@ class StructIterField extends StructFieldType {
       }
     }
 
-    /* save space for length */
-    let starti = data.length;
-    data.length += 4;
-
     let d = type.data as { type: TypeDescriptor; iname: string };
     let itername = d.iname;
     let type2 = d.type;
     let env = _ws_env;
 
+    const useEnv = itername !== "" && itername !== undefined && field.get;
+    if (!debug && !useEnv && isBulkArray(val)) {
+      const arr = val as ArrayLike<number>;
+
+      pack_int(data, arr.length);
+      if (packPrimitiveBulk(data, type2.type, arr)) {
+        return;
+      }
+
+      /* non-primitive elements: undo the length we just wrote */
+      data.length -= 4;
+    }
+
+    /* save space for length */
+    let starti: number;
+    if ((data as BinWriter)._isBinWriter) {
+      starti = (data as BinWriter).reserve(4);
+    } else {
+      starti = data.length;
+      data.length += 4;
+    }
+
     let i = 0;
     forEach(function (val2: unknown) {
       let v2 = val2;
-      if (itername !== "" && itername !== undefined && field.get) {
+      if (useEnv) {
         env[0][0] = itername;
         env[0][1] = v2;
-        v2 = manager._env_call(field.get, obj, env);
+        v2 = manager._env_call(field.get!, obj, env);
       }
 
       //XXX not sure I really need this fakeField stub here. . .
@@ -1240,12 +1401,17 @@ class StructIterField extends StructFieldType {
     }, undefined);
 
     /* write length */
-    temp_dataview.setInt32(0, i, STRUCT_ENDIAN);
+    if ((data as BinWriter)._isBinWriter) {
+      (data as BinWriter).patchI32(starti, i);
+    } else {
+      temp_dataview.setInt32(0, i, STRUCT_ENDIAN);
 
-    data[starti++] = uint8_view[0];
-    data[starti++] = uint8_view[1];
-    data[starti++] = uint8_view[2];
-    data[starti++] = uint8_view[3];
+      const a = data as number[];
+      a[starti++] = uint8_view[0];
+      a[starti++] = uint8_view[1];
+      a[starti++] = uint8_view[2];
+      a[starti++] = uint8_view[3];
+    }
   }
 
   static formatJSON(
@@ -1315,7 +1481,7 @@ class StructIterField extends StructFieldType {
     return json;
   }
 
-  static packNull(manager: StructManager, data: number[], field: StructField, type: TypeDescriptor): void {
+  static packNull(manager: StructManager, data: PackBuffer, field: StructField, type: TypeDescriptor): void {
     pack_int(data, 0);
   }
 
@@ -1343,10 +1509,19 @@ class StructIterField extends StructFieldType {
     packer_debug("-int " + len);
 
     const arr = dest as unknown[];
+    const t2 = (type.data as { type: TypeDescriptor }).type;
+
+    if (!debug) {
+      arr.length = len;
+      if (unpackPrimitiveBulk(data, t2.type, len, uctx, arr)) {
+        return arr;
+      }
+    }
+
     arr.length = 0;
 
     for (let i = 0; i < len; i++) {
-      arr.push(unpack_field(manager, data, (type.data as { type: TypeDescriptor }).type, uctx));
+      arr.push(unpack_field(manager, data, t2, uctx));
     }
 
     return arr;
@@ -1356,9 +1531,23 @@ class StructIterField extends StructFieldType {
     let len = struct_binpack.unpack_int(data, uctx);
     packer_debug("-int " + len);
 
+    const t2 = (type.data as { type: TypeDescriptor }).type;
+
+    if (!debug) {
+      const typed = unpackByteTyped(data, t2.type, len, uctx);
+      if (typed) {
+        return typed;
+      }
+    }
+
     let arr = new Array(len);
+
+    if (!debug && unpackPrimitiveBulk(data, t2.type, len, uctx, arr)) {
+      return arr;
+    }
+
     for (let i = 0; i < len; i++) {
-      arr[i] = unpack_field(manager, data, (type.data as { type: TypeDescriptor }).type, uctx);
+      arr[i] = unpack_field(manager, data, t2, uctx);
     }
 
     return arr;
@@ -1377,7 +1566,7 @@ StructFieldType.register(StructIterField as unknown as StructFieldTypeClass);
 class StructShortField extends StructFieldType {
   static pack(
     manager: StructManager,
-    data: number[],
+    data: PackBuffer,
     val: unknown,
     obj: unknown,
     field: StructField,
@@ -1403,7 +1592,7 @@ StructFieldType.register(StructShortField as unknown as StructFieldTypeClass);
 class StructByteField extends StructFieldType {
   static pack(
     manager: StructManager,
-    data: number[],
+    data: PackBuffer,
     val: unknown,
     obj: unknown,
     field: StructField,
@@ -1429,7 +1618,7 @@ StructFieldType.register(StructByteField as unknown as StructFieldTypeClass);
 class StructSignedByteField extends StructFieldType {
   static pack(
     manager: StructManager,
-    data: number[],
+    data: PackBuffer,
     val: unknown,
     obj: unknown,
     field: StructField,
@@ -1455,7 +1644,7 @@ StructFieldType.register(StructSignedByteField as unknown as StructFieldTypeClas
 class StructBoolField extends StructFieldType {
   static pack(
     manager: StructManager,
-    data: number[],
+    data: PackBuffer,
     val: unknown,
     obj: unknown,
     field: StructField,
@@ -1516,7 +1705,7 @@ StructFieldType.register(StructBoolField as unknown as StructFieldTypeClass);
 class StructIterKeysField extends StructFieldType {
   static pack(
     manager: StructManager,
-    data: number[],
+    data: PackBuffer,
     val: unknown,
     obj: unknown,
     field: StructField,
@@ -1640,7 +1829,7 @@ class StructIterKeysField extends StructFieldType {
     return json;
   }
 
-  static packNull(manager: StructManager, data: number[], field: StructField, type: TypeDescriptor): void {
+  static packNull(manager: StructManager, data: PackBuffer, field: StructField, type: TypeDescriptor): void {
     pack_int(data, 0);
   }
 
@@ -1668,10 +1857,19 @@ class StructIterKeysField extends StructFieldType {
     packer_debug("-int " + len);
 
     const arr = dest as unknown[];
+    const t2 = (type.data as { type: TypeDescriptor }).type;
+
+    if (!debug) {
+      arr.length = len;
+      if (unpackPrimitiveBulk(data, t2.type, len, uctx, arr)) {
+        return arr;
+      }
+    }
+
     arr.length = 0;
 
     for (let i = 0; i < len; i++) {
-      arr.push(unpack_field(manager, data, (type.data as { type: TypeDescriptor }).type, uctx));
+      arr.push(unpack_field(manager, data, t2, uctx));
     }
 
     return arr;
@@ -1681,9 +1879,23 @@ class StructIterKeysField extends StructFieldType {
     let len = unpack_int(data, uctx);
     packer_debug("-int " + len);
 
+    const t2 = (type.data as { type: TypeDescriptor }).type;
+
+    if (!debug) {
+      const typed = unpackByteTyped(data, t2.type, len, uctx);
+      if (typed) {
+        return typed;
+      }
+    }
+
     let arr = new Array(len);
+
+    if (!debug && unpackPrimitiveBulk(data, t2.type, len, uctx, arr)) {
+      return arr;
+    }
+
     for (let i = 0; i < len; i++) {
-      arr[i] = unpack_field(manager, data, (type.data as { type: TypeDescriptor }).type, uctx);
+      arr[i] = unpack_field(manager, data, t2, uctx);
     }
 
     return arr;
@@ -1702,7 +1914,7 @@ StructFieldType.register(StructIterKeysField as unknown as StructFieldTypeClass)
 class StructUintField extends StructFieldType {
   static pack(
     manager: StructManager,
-    data: number[],
+    data: PackBuffer,
     val: unknown,
     obj: unknown,
     field: StructField,
@@ -1744,7 +1956,7 @@ StructFieldType.register(StructUintField as unknown as StructFieldTypeClass);
 class StructUshortField extends StructFieldType {
   static pack(
     manager: StructManager,
-    data: number[],
+    data: PackBuffer,
     val: unknown,
     obj: unknown,
     field: StructField,
@@ -1786,7 +1998,7 @@ StructFieldType.register(StructUshortField as unknown as StructFieldTypeClass);
 class StructStaticArrayField extends StructFieldType {
   static pack(
     manager: StructManager,
-    data: number[],
+    data: PackBuffer,
     val: unknown,
     obj: unknown,
     field: StructField,
@@ -1806,15 +2018,25 @@ class StructStaticArrayField extends StructFieldType {
       return;
     }
 
+    const useEnv = itername !== "" && itername !== undefined && field.get;
+    if (
+      !debug &&
+      !useEnv &&
+      arr.length >= d.size &&
+      packPrimitiveBulk(data, d.type.type, arr as unknown as ArrayLike<number>, d.size)
+    ) {
+      return;
+    }
+
     for (let i = 0; i < d.size; i++) {
       let i2 = Math.min(i, Math.min(arr.length - 1, d.size));
       let val2: unknown = arr[i2];
 
-      if (itername !== "" && itername !== undefined && field.get) {
+      if (useEnv) {
         let env = _ws_env;
         env[0][0] = itername;
         env[0][1] = val2;
-        val2 = manager._env_call(field.get, obj, env);
+        val2 = manager._env_call(field.get!, obj, env);
       }
 
       do_pack(manager, data, val2, val, field, d.type);
@@ -1870,7 +2092,7 @@ class StructStaticArrayField extends StructFieldType {
     );
   }
 
-  static packNull(manager: StructManager, data: number[], field: StructField, type: TypeDescriptor): void {
+  static packNull(manager: StructManager, data: PackBuffer, field: StructField, type: TypeDescriptor): void {
     const d = type.data as { type: TypeDescriptor; size: number };
     let size = d.size;
     for (let i = 0; i < size; i++) {
@@ -1907,6 +2129,14 @@ class StructStaticArrayField extends StructFieldType {
     packer_debug("-size: " + d.size);
 
     const ret = dest as unknown[];
+
+    if (!debug) {
+      ret.length = d.size;
+      if (unpackPrimitiveBulk(data, d.type.type, d.size, uctx, ret)) {
+        return ret;
+      }
+    }
+
     ret.length = 0;
 
     for (let i = 0; i < d.size; i++) {
@@ -1919,6 +2149,13 @@ class StructStaticArrayField extends StructFieldType {
   static unpack(manager: StructManager, data: DataView, type: TypeDescriptor, uctx: UnpackContext): unknown {
     const d = type.data as { type: TypeDescriptor; size: number };
     packer_debug("-size: " + d.size);
+
+    if (!debug) {
+      const ret = new Array(d.size);
+      if (unpackPrimitiveBulk(data, d.type.type, d.size, uctx, ret)) {
+        return ret;
+      }
+    }
 
     let ret: unknown[] = [];
 
@@ -1942,7 +2179,7 @@ StructFieldType.register(StructStaticArrayField as unknown as StructFieldTypeCla
 class StructOptionalField extends StructFieldType {
   static pack(
     manager: StructManager,
-    data: number[],
+    data: PackBuffer,
     val: unknown,
     obj: unknown,
     field: StructField,
@@ -2009,7 +2246,7 @@ class StructOptionalField extends StructFieldType {
     return val !== undefined && val !== null ? toJSON(manager, val, obj, fakeField, type.data as TypeDescriptor) : null;
   }
 
-  static packNull(manager: StructManager, data: number[], field: StructField, type: TypeDescriptor): void {
+  static packNull(manager: StructManager, data: PackBuffer, field: StructField, type: TypeDescriptor): void {
     pack_int(data, 0);
   }
 

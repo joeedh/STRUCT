@@ -28,6 +28,7 @@ const struct_eval = _struct_eval;
 import { DEBUG } from "./struct_global.js";
 
 import { _get_pack_debug, StructFieldTypeMap } from "./struct_intern2.js";
+import type { PackBuffer } from "./struct_binpack.js";
 
 let warninglvl = 2;
 
@@ -817,7 +818,7 @@ export class STRUCT {
     }
   }
 
-  write_struct(data: number[], obj: unknown, stt: NStructInterface): void {
+  write_struct(data: PackBuffer, obj: unknown, stt: NStructInterface): void {
     function use_helper_js(field: StructField): boolean {
       const type = field.type.type;
       const cls = (StructFieldTypeMap as Record<number, StructFieldTypeClass>)[type];
@@ -856,7 +857,9 @@ export class STRUCT {
    @param data : array to write data into,
    @param obj  : structable object
    */
-  write_object(data: number[] | undefined, obj: unknown): number[] {
+  write_object(data: number[] | undefined, obj: unknown): number[];
+  write_object<B extends PackBuffer>(data: B, obj: unknown): B;
+  write_object(data: PackBuffer | undefined, obj: unknown): PackBuffer {
     const keywords = (this.constructor as typeof STRUCT).keywords;
 
     const cls = (obj as any).constructor[keywords.name] as string;
@@ -896,8 +899,10 @@ export class STRUCT {
    @param data array to write data into,
    @param obj structable object
    */
-  writeObject(data: number[] | undefined, obj: unknown): number[] {
-    return this.write_object(data, obj);
+  writeObject(data: number[] | undefined, obj: unknown): number[];
+  writeObject<B extends PackBuffer>(data: B, obj: unknown): B;
+  writeObject(data: PackBuffer | undefined, obj: unknown): PackBuffer {
+    return this.write_object(data as number[] | undefined, obj);
   }
 
   writeJSON(obj: unknown, stt?: NStructInterface): Record<string, unknown> {
@@ -1019,51 +1024,32 @@ export class STRUCT {
 
       packer_debug("\n\n=Begin reading " + (cls as any)[keywords.name] + "=");
     }
-    const thestruct = this;
-
     const this2 = this;
-
-    function unpack_field(type: TypeDescriptor): unknown {
-      return (StructFieldTypeMap as Record<number, StructFieldTypeClass>)[type.type].unpack(this2, data, type, uctx!);
-    }
-
-    function unpack_into(type: TypeDescriptor, dest: unknown): unknown {
-      return (StructFieldTypeMap as Record<number, StructFieldTypeClass>)[type.type].unpackInto!(
-        this2,
-        data,
-        type,
-        uctx!,
-        dest
-      );
-    }
+    const typeMap = StructFieldTypeMap as Record<number, StructFieldTypeClass>;
 
     let was_run = false;
 
-    function makeLoader(stt: NStructInterface): (obj: StructableInstance) => void {
-      return function load(obj: StructableInstance): void {
-        if (was_run) {
-          return;
+    const loader = function load(obj: StructableInstance): void {
+      if (was_run) {
+        return;
+      }
+
+      was_run = true;
+
+      const fields = stt.fields;
+      const flen = fields.length;
+
+      for (let i = 0; i < flen; i++) {
+        const f = fields[i];
+
+        if (f.name === "this") {
+          // load data into obj directly
+          typeMap[f.type.type].unpackInto!(this2, data, f.type, uctx!, obj);
+        } else {
+          (obj as any)[f.name] = typeMap[f.type.type].unpack(this2, data, f.type, uctx!);
         }
-
-        was_run = true;
-
-        const fields = stt.fields;
-        const flen = fields.length;
-
-        for (let i = 0; i < flen; i++) {
-          const f = fields[i];
-
-          if (f.name === "this") {
-            // load data into obj directly
-            unpack_into(f.type, obj);
-          } else {
-            (obj as any)[f.name] = unpack_field(f.type);
-          }
-        }
-      };
-    }
-
-    const loader = makeLoader(stt);
+      }
+    };
 
     if (cls.prototype[keywords.load] !== undefined) {
       let obj = objInstance as StructableInstance | undefined;

@@ -955,6 +955,90 @@ class unpack_context {
         this.i = 0;
     }
 }
+/**
+ Growable byte buffer for the pack path; a drop-in alternative to the legacy
+ `number[]` sink that avoids per-byte push() and the final whole-buffer copy.
+ */
+class BinWriter {
+    constructor(initialCapacity = 4096) {
+        this._isBinWriter = true;
+        this.length = 0;
+        this.buf = new Uint8Array(initialCapacity);
+        this.view = new DataView(this.buf.buffer);
+    }
+    ensure(n) {
+        const need = this.length + n;
+        if (need > this.buf.length) {
+            let cap = this.buf.length * 2;
+            while (cap < need) {
+                cap *= 2;
+            }
+            const nb = new Uint8Array(cap);
+            nb.set(this.buf);
+            this.buf = nb;
+            this.view = new DataView(nb.buffer);
+        }
+    }
+    push(v) {
+        this.ensure(1);
+        this.buf[this.length++] = v;
+    }
+    pushBytes(bytes) {
+        const n = bytes.length;
+        this.ensure(n);
+        this.buf.set(bytes, this.length);
+        this.length += n;
+    }
+    i16(v) {
+        this.ensure(2);
+        this.view.setInt16(this.length, v, STRUCT_ENDIAN);
+        this.length += 2;
+    }
+    u16(v) {
+        this.ensure(2);
+        this.view.setUint16(this.length, v, STRUCT_ENDIAN);
+        this.length += 2;
+    }
+    i32(v) {
+        this.ensure(4);
+        this.view.setInt32(this.length, v, STRUCT_ENDIAN);
+        this.length += 4;
+    }
+    u32(v) {
+        this.ensure(4);
+        this.view.setUint32(this.length, v, STRUCT_ENDIAN);
+        this.length += 4;
+    }
+    f32(v) {
+        this.ensure(4);
+        this.view.setFloat32(this.length, v, STRUCT_ENDIAN);
+        this.length += 4;
+    }
+    f64(v) {
+        this.ensure(8);
+        this.view.setFloat64(this.length, v, STRUCT_ENDIAN);
+        this.length += 8;
+    }
+    /** Reserve n bytes (zero-filled) and return their offset, for back-patching. */
+    reserve(n) {
+        this.ensure(n);
+        const off = this.length;
+        this.buf.fill(0, off, off + n);
+        this.length += n;
+        return off;
+    }
+    patchI32(offset, v) {
+        this.view.setInt32(offset, v, STRUCT_ENDIAN);
+    }
+    /** Used bytes as a view over the internal buffer (no copy). */
+    finish() {
+        return this.buf.subarray(0, this.length);
+    }
+    /** Used bytes as an exact-size copy (safe to grab .buffer of). */
+    toBytes() {
+        return this.buf.slice(0, this.length);
+    }
+}
 function pack_byte(array, val) {
     array.push(val);
 }
@@ -965,11 +1049,19 @@ function pack_sbyte(array, val) {
     array.push(val);
 }
 function pack_bytes(array, bytes) {
+    if (array._isBinWriter) {
+        array.pushBytes(bytes);
+        return;
+    }
     for (let i = 0; i < bytes.length; i++) {
         array.push(bytes[i]);
     }
 }
 function pack_int(array, val) {
+    if (array._isBinWriter) {
+        array.i32(val);
+        return;
+    }
     temp_dataview.setInt32(0, val, STRUCT_ENDIAN);
     array.push(uint8_view[0]);
     array.push(uint8_view[1]);
@@ -977,6 +1069,10 @@ function pack_int(array, val) {
     array.push(uint8_view[3]);
 }
 function pack_uint(array, val) {
+    if (array._isBinWriter) {
+        array.u32(val);
+        return;
+    }
     temp_dataview.setUint32(0, val, STRUCT_ENDIAN);
     array.push(uint8_view[0]);
     array.push(uint8_view[1]);
@@ -984,11 +1080,19 @@ function pack_uint(array, val) {
     array.push(uint8_view[3]);
 }
 function pack_ushort(array, val) {
+    if (array._isBinWriter) {
+        array.u16(val);
+        return;
+    }
     temp_dataview.setUint16(0, val, STRUCT_ENDIAN);
     array.push(uint8_view[0]);
     array.push(uint8_view[1]);
 }
 function pack_float(array, val) {
+    if (array._isBinWriter) {
+        array.f32(val);
+        return;
+    }
     temp_dataview.setFloat32(0, val, STRUCT_ENDIAN);
     array.push(uint8_view[0]);
     array.push(uint8_view[1]);
@@ -996,6 +1100,10 @@ function pack_float(array, val) {
     array.push(uint8_view[3]);
 }
 function pack_double(array, val) {
+    if (array._isBinWriter) {
+        array.f64(val);
+        return;
+    }
     temp_dataview.setFloat64(0, val, STRUCT_ENDIAN);
     array.push(uint8_view[0]);
     array.push(uint8_view[1]);
@@ -1007,6 +1115,10 @@ function pack_double(array, val) {
     array.push(uint8_view[7]);
 }
 function pack_short(array, val) {
+    if (array._isBinWriter) {
+        array.i16(val);
+        return;
+    }
     temp_dataview.setInt16(0, val, STRUCT_ENDIAN);
     array.push(uint8_view[0]);
     array.push(uint8_view[1]);
@@ -1082,14 +1194,11 @@ function pack_static_string(data, str, length) {
     arr.length = 0;
     encode_utf8(arr, str);
     truncate_utf8(arr, length);
-    for (let i = 0; i < length; i++) {
-        if (i >= arr.length) {
-            data.push(0);
-        }
-        else {
-            data.push(arr[i]);
-        }
+    for (let i = arr.length; i < length; i++) {
+        arr.push(0);
     }
+    arr.length = length;
+    pack_bytes(data, arr);
 }
 const _static_sbuf = new Array(32);
 /*strings are packed as 32-bit unicode codepoints*/
@@ -1097,9 +1206,7 @@ function pack_string(data, str) {
     _static_sbuf.length = 0;
     encode_utf8(_static_sbuf, str);
     pack_int(data, _static_sbuf.length);
-    for (let i = 0; i < _static_sbuf.length; i++) {
-        data.push(_static_sbuf[i]);
-    }
+    pack_bytes(data, _static_sbuf);
 }
 function unpack_bytes(dview, uctx, len) {
     const ret = new DataView(dview.buffer.slice(uctx.i, uctx.i + len));
@@ -1144,9 +1251,11 @@ function unpack_string(data, uctx) {
     }
     const arr = slen < 2048 ? _static_arr_us : new Array(slen);
     arr.length = slen;
+    const p = uctx.i;
     for (let i = 0; i < slen; i++) {
-        arr[i] = unpack_byte(data, uctx);
+        arr[i] = data.getUint8(p + i);
     }
+    uctx.i += slen;
     return decode_utf8(arr);
 }
 const _static_arr_uss = new Array(2048);
@@ -1155,9 +1264,10 @@ function unpack_static_string(data, uctx, length) {
         throw new Error("'length' cannot be undefined in unpack_static_string()");
     const arr = length < 2048 ? _static_arr_uss : new Array(length);
     arr.length = 0;
+    const p = uctx.i;
     let done = false;
     for (let i = 0; i < length; i++) {
-        const c = unpack_byte(data, uctx);
+        const c = data.getUint8(p + i);
         if (c === 0) {
             done = true;
         }
@@ -1165,6 +1275,7 @@ function unpack_static_string(data, uctx, length) {
             arr.push(c);
         }
     }
+    uctx.i += length;
     truncate_utf8(arr, length);
     return decode_utf8(arr);
 }
@@ -1176,6 +1287,7 @@ var struct_binpack = /*#__PURE__*/Object.freeze({
     temp_dataview: temp_dataview,
     uint8_view: uint8_view,
     unpack_context: unpack_context,
+    BinWriter: BinWriter,
     pack_byte: pack_byte,
     pack_sbyte: pack_sbyte,
     pack_bytes: pack_bytes,
@@ -1312,6 +1424,125 @@ function unpack_field(manager, data, type, uctx) {
 let fakeFields = new cachering(() => {
     return { type: undefined, get: undefined, set: undefined };
 }, 256);
+/*
+ Bulk fast paths for arrays/iters of fixed-width primitives: identical wire
+ bytes to the per-element path, minus the per-element dispatch. Both helpers
+ return false for non-primitive element types (caller falls back).
+*/
+function unpackPrimitiveBulk(data, etype, len, uctx, arr) {
+    let p = uctx.i;
+    switch (etype) {
+        case StructEnum.BYTE:
+            for (let i = 0; i < len; i++)
+                arr[i] = data.getUint8(p + i);
+            p += len;
+            break;
+        case StructEnum.SIGNED_BYTE:
+            for (let i = 0; i < len; i++)
+                arr[i] = data.getInt8(p + i);
+            p += len;
+            break;
+        case StructEnum.BOOL:
+            for (let i = 0; i < len; i++)
+                arr[i] = !!data.getUint8(p + i);
+            p += len;
+            break;
+        case StructEnum.SHORT:
+            for (let i = 0; i < len; i++, p += 2)
+                arr[i] = data.getInt16(p, STRUCT_ENDIAN);
+            break;
+        case StructEnum.USHORT:
+            for (let i = 0; i < len; i++, p += 2)
+                arr[i] = data.getUint16(p, STRUCT_ENDIAN);
+            break;
+        case StructEnum.INT:
+            for (let i = 0; i < len; i++, p += 4)
+                arr[i] = data.getInt32(p, STRUCT_ENDIAN);
+            break;
+        case StructEnum.UINT:
+            for (let i = 0; i < len; i++, p += 4)
+                arr[i] = data.getUint32(p, STRUCT_ENDIAN);
+            break;
+        case StructEnum.FLOAT:
+            for (let i = 0; i < len; i++, p += 4)
+                arr[i] = data.getFloat32(p, STRUCT_ENDIAN);
+            break;
+        case StructEnum.DOUBLE:
+            for (let i = 0; i < len; i++, p += 8)
+                arr[i] = data.getFloat64(p, STRUCT_ENDIAN);
+            break;
+        default:
+            return false;
+    }
+    uctx.i = p;
+    return true;
+}
+function packPrimitiveBulk(data, etype, arr, n = arr.length) {
+    switch (etype) {
+        case StructEnum.BYTE:
+            if (data._isBinWriter && n === arr.length) {
+                data.pushBytes(arr);
+            }
+            else {
+                for (let i = 0; i < n; i++)
+                    pack_byte(data, arr[i]);
+            }
+            break;
+        case StructEnum.SIGNED_BYTE:
+            for (let i = 0; i < n; i++)
+                pack_sbyte(data, arr[i]);
+            break;
+        case StructEnum.BOOL:
+            for (let i = 0; i < n; i++)
+                pack_byte(data, arr[i] ? 1 : 0);
+            break;
+        case StructEnum.SHORT:
+            for (let i = 0; i < n; i++)
+                pack_short(data, arr[i]);
+            break;
+        case StructEnum.USHORT:
+            for (let i = 0; i < n; i++)
+                pack_ushort(data, arr[i]);
+            break;
+        case StructEnum.INT:
+            for (let i = 0; i < n; i++)
+                pack_int(data, arr[i]);
+            break;
+        case StructEnum.UINT:
+            for (let i = 0; i < n; i++)
+                pack_uint(data, arr[i]);
+            break;
+        case StructEnum.FLOAT:
+            for (let i = 0; i < n; i++)
+                pack_float(data, arr[i]);
+            break;
+        case StructEnum.DOUBLE:
+            for (let i = 0; i < n; i++)
+                pack_double(data, arr[i]);
+            break;
+        default:
+            return false;
+    }
+    return true;
+}
+/** A bulk-packable value: a plain array or a (non-DataView) typed array. */
+function isBulkArray(val) {
+    return Array.isArray(val) || (ArrayBuffer.isView(val) && !(val instanceof DataView));
+}
+/** Fresh-array unpack of a byte iter/array straight into an owned typed array
+ *  (one bulk copy, no per-element work). Wire bytes are unchanged; the field
+ *  value becomes Uint8Array/Int8Array instead of number[]. Returns null for
+ *  non-byte element types. The pack side accepts typed arrays (isBulkArray),
+ *  so this round-trips. */
+function unpackByteTyped(data, etype, len, uctx) {
+    if (etype !== StructEnum.BYTE && etype !== StructEnum.SIGNED_BYTE) {
+        return null;
+    }
+    const abs = data.byteOffset + uctx.i;
+    const slice = data.buffer.slice(abs, abs + len);
+    uctx.i += len;
+    return etype === StructEnum.BYTE ? new Uint8Array(slice) : new Int8Array(slice);
+}
 function fmt_type(type) {
     return StructFieldTypeMap[type.type].format(type);
 }
@@ -1587,7 +1818,8 @@ class StructTStructField extends StructFieldType {
             const overrideName = manager.onSerializeUnknown(val);
             if (overrideName !== undefined) {
                 const ostt = manager.get_struct(overrideName);
-                packer_debug$1("int " + ostt.id);
+                if (debug)
+                    packer_debug$1("int " + ostt.id);
                 pack_int(data, ostt.id);
                 manager.write_struct(data, val, ostt);
                 return;
@@ -1606,7 +1838,8 @@ class StructTStructField extends StructFieldType {
             console.trace();
             throw new Error("Bad struct " + valCtor[keywords.name] + " passed to write_struct");
         }
-        packer_debug$1("int " + stt.id);
+        if (debug)
+            packer_debug$1("int " + stt.id);
         pack_int(data, stt.id);
         manager.write_struct(data, val, stt);
     }
@@ -1663,7 +1896,8 @@ class StructTStructField extends StructFieldType {
     }
     static unpackInto(manager, data, type, uctx, dest) {
         let id = unpack_int(data, uctx);
-        packer_debug$1("-int " + id);
+        if (debug)
+            packer_debug$1("-int " + id);
         if (!(id in manager.struct_ids)) {
             packer_debug$1("tstruct id: " + id);
             console.trace();
@@ -1672,7 +1906,8 @@ class StructTStructField extends StructFieldType {
             throw new Error("Unknown struct type " + id + ".");
         }
         let cls2 = manager.get_struct_id(id);
-        packer_debug$1("struct name: " + cls2.name);
+        if (debug)
+            packer_debug$1("struct name: " + cls2.name);
         let cls3 = manager.struct_cls[cls2.name];
         // Treat a parse_structs dummy as missing when a hook is installed, so the
         // hook fires for unloaded-addon classes. Pass the numeric id in that case so
@@ -1686,7 +1921,8 @@ class StructTStructField extends StructFieldType {
     }
     static unpack(manager, data, type, uctx) {
         let id = unpack_int(data, uctx);
-        packer_debug$1("-int " + id);
+        if (debug)
+            packer_debug$1("-int " + id);
         if (!(id in manager.struct_ids)) {
             packer_debug$1("tstruct id: " + id);
             console.trace();
@@ -1695,7 +1931,8 @@ class StructTStructField extends StructFieldType {
             throw new Error("Unknown struct type " + id + ".");
         }
         let cls2 = manager.get_struct_id(id);
-        packer_debug$1("struct name: " + cls2.name);
+        if (debug)
+            packer_debug$1("struct name: " + cls2.name);
         let cls3 = manager.struct_cls[cls2.name];
         // Treat a parse_structs dummy as missing when a hook is installed, so the
         // hook fires for unloaded-addon classes. Pass the numeric id in that case so
@@ -1755,10 +1992,14 @@ class StructArrayField extends StructFieldType {
         let d = type.data;
         let itername = d.iname;
         let type2 = d.type;
+        const useEnv = itername !== "" && itername !== undefined && field.get;
+        if (!debug && !useEnv && packPrimitiveBulk(data, type2.type, arr)) {
+            return;
+        }
         let env = _ws_env$1;
         for (let i = 0; i < arr.length; i++) {
             let val2 = arr[i];
-            if (itername !== "" && itername !== undefined && field.get) {
+            if (useEnv) {
                 env[0][0] = itername;
                 env[0][1] = val2;
                 val2 = manager._env_call(field.get, obj, env);
@@ -1834,18 +2075,35 @@ class StructArrayField extends StructFieldType {
     static unpackInto(manager, data, type, uctx, dest) {
         let len = unpack_int(data, uctx);
         const arr = dest;
+        const t2 = type.data.type;
+        if (!debug) {
+            arr.length = len;
+            if (unpackPrimitiveBulk(data, t2.type, len, uctx, arr)) {
+                return arr;
+            }
+        }
         arr.length = 0;
         for (let i = 0; i < len; i++) {
-            arr.push(unpack_field(manager, data, type.data.type, uctx));
+            arr.push(unpack_field(manager, data, t2, uctx));
         }
         return arr;
     }
     static unpack(manager, data, type, uctx) {
         let len = unpack_int(data, uctx);
         packer_debug$1("-int " + len);
+        const t2 = type.data.type;
+        if (!debug) {
+            const typed = unpackByteTyped(data, t2.type, len, uctx);
+            if (typed) {
+                return typed;
+            }
+        }
         let arr = new Array(len);
+        if (!debug && unpackPrimitiveBulk(data, t2.type, len, uctx, arr)) {
+            return arr;
+        }
         for (let i = 0; i < len; i++) {
-            arr[i] = unpack_field(manager, data, type.data.type, uctx);
+            arr[i] = unpack_field(manager, data, t2, uctx);
         }
         return arr;
     }
@@ -1880,17 +2138,33 @@ class StructIterField extends StructFieldType {
                 console.log("");
             }
         }
-        /* save space for length */
-        let starti = data.length;
-        data.length += 4;
         let d = type.data;
         let itername = d.iname;
         let type2 = d.type;
         let env = _ws_env$1;
+        const useEnv = itername !== "" && itername !== undefined && field.get;
+        if (!debug && !useEnv && isBulkArray(val)) {
+            const arr = val;
+            pack_int(data, arr.length);
+            if (packPrimitiveBulk(data, type2.type, arr)) {
+                return;
+            }
+            /* non-primitive elements: undo the length we just wrote */
+            data.length -= 4;
+        }
+        /* save space for length */
+        let starti;
+        if (data._isBinWriter) {
+            starti = data.reserve(4);
+        }
+        else {
+            starti = data.length;
+            data.length += 4;
+        }
         let i = 0;
         forEach(function (val2) {
             let v2 = val2;
-            if (itername !== "" && itername !== undefined && field.get) {
+            if (useEnv) {
                 env[0][0] = itername;
                 env[0][1] = v2;
                 v2 = manager._env_call(field.get, obj, env);
@@ -1902,11 +2176,17 @@ class StructIterField extends StructFieldType {
             i++;
         }, undefined);
         /* write length */
-        temp_dataview.setInt32(0, i, STRUCT_ENDIAN);
-        data[starti++] = uint8_view[0];
-        data[starti++] = uint8_view[1];
-        data[starti++] = uint8_view[2];
-        data[starti++] = uint8_view[3];
+        if (data._isBinWriter) {
+            data.patchI32(starti, i);
+        }
+        else {
+            temp_dataview.setInt32(0, i, STRUCT_ENDIAN);
+            const a = data;
+            a[starti++] = uint8_view[0];
+            a[starti++] = uint8_view[1];
+            a[starti++] = uint8_view[2];
+            a[starti++] = uint8_view[3];
+        }
     }
     static formatJSON(manager, val, obj, field, type, instance, tlvl) {
         return formatArrayJson(manager, val, obj, field, type, type.data.type, instance, tlvl ?? 0, list(val));
@@ -1952,18 +2232,35 @@ class StructIterField extends StructFieldType {
         let len = unpack_int(data, uctx);
         packer_debug$1("-int " + len);
         const arr = dest;
+        const t2 = type.data.type;
+        if (!debug) {
+            arr.length = len;
+            if (unpackPrimitiveBulk(data, t2.type, len, uctx, arr)) {
+                return arr;
+            }
+        }
         arr.length = 0;
         for (let i = 0; i < len; i++) {
-            arr.push(unpack_field(manager, data, type.data.type, uctx));
+            arr.push(unpack_field(manager, data, t2, uctx));
         }
         return arr;
     }
     static unpack(manager, data, type, uctx) {
         let len = unpack_int(data, uctx);
         packer_debug$1("-int " + len);
+        const t2 = type.data.type;
+        if (!debug) {
+            const typed = unpackByteTyped(data, t2.type, len, uctx);
+            if (typed) {
+                return typed;
+            }
+        }
         let arr = new Array(len);
+        if (!debug && unpackPrimitiveBulk(data, t2.type, len, uctx, arr)) {
+            return arr;
+        }
         for (let i = 0; i < len; i++) {
-            arr[i] = unpack_field(manager, data, type.data.type, uctx);
+            arr[i] = unpack_field(manager, data, t2, uctx);
         }
         return arr;
     }
@@ -2138,18 +2435,35 @@ class StructIterKeysField extends StructFieldType {
         let len = unpack_int(data, uctx);
         packer_debug$1("-int " + len);
         const arr = dest;
+        const t2 = type.data.type;
+        if (!debug) {
+            arr.length = len;
+            if (unpackPrimitiveBulk(data, t2.type, len, uctx, arr)) {
+                return arr;
+            }
+        }
         arr.length = 0;
         for (let i = 0; i < len; i++) {
-            arr.push(unpack_field(manager, data, type.data.type, uctx));
+            arr.push(unpack_field(manager, data, t2, uctx));
         }
         return arr;
     }
     static unpack(manager, data, type, uctx) {
         let len = unpack_int(data, uctx);
         packer_debug$1("-int " + len);
+        const t2 = type.data.type;
+        if (!debug) {
+            const typed = unpackByteTyped(data, t2.type, len, uctx);
+            if (typed) {
+                return typed;
+            }
+        }
         let arr = new Array(len);
+        if (!debug && unpackPrimitiveBulk(data, t2.type, len, uctx, arr)) {
+            return arr;
+        }
         for (let i = 0; i < len; i++) {
-            arr[i] = unpack_field(manager, data, type.data.type, uctx);
+            arr[i] = unpack_field(manager, data, t2, uctx);
         }
         return arr;
     }
@@ -2215,10 +2529,17 @@ class StructStaticArrayField extends StructFieldType {
             this.packNull(manager, data, field, type);
             return;
         }
+        const useEnv = itername !== "" && itername !== undefined && field.get;
+        if (!debug &&
+            !useEnv &&
+            arr.length >= d.size &&
+            packPrimitiveBulk(data, d.type.type, arr, d.size)) {
+            return;
+        }
         for (let i = 0; i < d.size; i++) {
             let i2 = Math.min(i, Math.min(arr.length - 1, d.size));
             let val2 = arr[i2];
-            if (itername !== "" && itername !== undefined && field.get) {
+            if (useEnv) {
                 let env = _ws_env$1;
                 env[0][0] = itername;
                 env[0][1] = val2;
@@ -2263,6 +2584,12 @@ class StructStaticArrayField extends StructFieldType {
         const d = type.data;
         packer_debug$1("-size: " + d.size);
         const ret = dest;
+        if (!debug) {
+            ret.length = d.size;
+            if (unpackPrimitiveBulk(data, d.type.type, d.size, uctx, ret)) {
+                return ret;
+            }
+        }
         ret.length = 0;
         for (let i = 0; i < d.size; i++) {
             ret.push(unpack_field(manager, data, d.type, uctx));
@@ -2272,6 +2599,12 @@ class StructStaticArrayField extends StructFieldType {
     static unpack(manager, data, type, uctx) {
         const d = type.data;
         packer_debug$1("-size: " + d.size);
+        if (!debug) {
+            const ret = new Array(d.size);
+            if (unpackPrimitiveBulk(data, d.type.type, d.size, uctx, ret)) {
+                return ret;
+            }
+        }
         let ret = [];
         for (let i = 0; i < d.size; i++) {
             ret.push(unpack_field(manager, data, d.type, uctx));
@@ -3240,10 +3573,6 @@ class STRUCT {
             }
         }
     }
-    /**
-     @param data : array to write data into,
-     @param obj  : structable object
-     */
     write_object(data, obj) {
         const keywords = this.constructor.keywords;
         const cls = obj.constructor[keywords.name];
@@ -3271,10 +3600,6 @@ class STRUCT {
         }
         return this.read_object(data, cls_or_struct_id, uctx);
     }
-    /**
-     @param data array to write data into,
-     @param obj structable object
-     */
     writeObject(data, obj) {
         return this.write_object(data, obj);
     }
@@ -3377,36 +3702,27 @@ class STRUCT {
             uctx = new unpack_context();
             packer_debug("\n\n=Begin reading " + cls[keywords.name] + "=");
         }
-        const thestruct = this;
         const this2 = this;
-        function unpack_field(type) {
-            return StructFieldTypeMap[type.type].unpack(this2, data, type, uctx);
-        }
-        function unpack_into(type, dest) {
-            return StructFieldTypeMap[type.type].unpackInto(this2, data, type, uctx, dest);
-        }
+        const typeMap = StructFieldTypeMap;
         let was_run = false;
-        function makeLoader(stt) {
-            return function load(obj) {
-                if (was_run) {
-                    return;
+        const loader = function load(obj) {
+            if (was_run) {
+                return;
+            }
+            was_run = true;
+            const fields = stt.fields;
+            const flen = fields.length;
+            for (let i = 0; i < flen; i++) {
+                const f = fields[i];
+                if (f.name === "this") {
+                    // load data into obj directly
+                    typeMap[f.type.type].unpackInto(this2, data, f.type, uctx, obj);
                 }
-                was_run = true;
-                const fields = stt.fields;
-                const flen = fields.length;
-                for (let i = 0; i < flen; i++) {
-                    const f = fields[i];
-                    if (f.name === "this") {
-                        // load data into obj directly
-                        unpack_into(f.type, obj);
-                    }
-                    else {
-                        obj[f.name] = unpack_field(f.type);
-                    }
+                else {
+                    obj[f.name] = typeMap[f.type.type].unpack(this2, data, f.type, uctx);
                 }
-            };
-        }
-        const loader = makeLoader(stt);
+            }
+        };
         if (cls.prototype[keywords.load] !== undefined) {
             let obj = objInstance;
             if (!obj && cls[keywords.new] !== undefined) {
@@ -3910,7 +4226,7 @@ class FileHelper {
     write(blocks) {
         this.struct = exports.manager;
         this.blocks = blocks;
-        const data = [];
+        const data = new BinWriter();
         pack_static_string(data, this.magic, 4);
         pack_short(data, this.version.major);
         pack_byte(data, this.version.minor & 255);
@@ -3932,15 +4248,15 @@ class FileHelper {
             if (structNameVal === undefined || !(structNameVal in struct.structs)) {
                 throw new Error("Non-STRUCTable object " + block.data);
             }
-            const data2 = [];
+            const data2 = new BinWriter();
             const stt = struct.structs[structNameVal];
             struct.write_object(data2, block.data);
             pack_static_string(data, block.type, 4);
             pack_int(data, data2.length);
             pack_int(data, stt.id);
-            pack_bytes(data, data2);
+            data.pushBytes(data2.finish());
         }
-        return new DataView(new Uint8Array(data).buffer);
+        return new DataView(data.toBytes().buffer);
     }
     writeBase64(blocks) {
         const dataview = this.write(blocks);
@@ -10173,9 +10489,6 @@ function inherit(child, parent, structName = child.name) {
 function readObject(data, cls, __uctx) {
     return exports.manager.readObject(data, cls, __uctx);
 }
-/**
- @param data : Array instance to write bytes to
- */
 function writeObject(data, obj) {
     return exports.manager.writeObject(data, obj);
 }
@@ -10195,6 +10508,7 @@ function useTinyEval() {
     });
 }
 
+exports.BinWriter = BinWriter;
 exports.JSONError = JSONError;
 exports.STRUCT = STRUCT;
 exports._truncateDollarSign = _truncateDollarSign;

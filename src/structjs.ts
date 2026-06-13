@@ -6,7 +6,9 @@ import * as struct_filehelper from "./struct_filehelper.js";
 import * as struct_intern from "./struct_intern.js";
 import * as struct_eval from "./struct_eval.js";
 
-export { unpack_context } from "./struct_binpack.js";
+export { unpack_context, BinWriter } from "./struct_binpack.js";
+export type { PackBuffer } from "./struct_binpack.js";
+import type { PackBuffer as PackBufferType } from "./struct_binpack.js";
 import { STRUCT, manager, setTruncateDollarSign } from "./struct_intern.js";
 import type { StructableClass, NStructInterface } from "./types.js";
 export type { StructableClass, NStructInterface, StructableInstance, StructReader } from "./types.js";
@@ -119,10 +121,12 @@ export function readObject<T = unknown>(
 }
 
 /**
- @param data : Array instance to write bytes to
+ @param data : Array or BinWriter instance to write bytes to
  */
-export function writeObject<T = unknown>(data: number[], obj: T): number[] {
-  return manager.writeObject(data, obj);
+export function writeObject<T = unknown>(data: number[], obj: T): number[];
+export function writeObject<B extends PackBufferType, T = unknown>(data: B, obj: T): B;
+export function writeObject(data: PackBufferType, obj: unknown): unknown {
+  return manager.writeObject(data as number[], obj);
 }
 
 export function writeJSON<T = unknown>(obj: T): Record<string, unknown> {
