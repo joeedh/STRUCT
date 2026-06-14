@@ -5,6 +5,8 @@ cd "$(dirname "$0")/.."
 
 VERSION=`cat package.json | grep version | sed 's/[" :,]//g' | sed 's/version//'`
 
+npm login
+
 git commit -a
 echo $?
 git pull
@@ -13,11 +15,7 @@ git push
 echo $?
 
 echo Publishing $VERSION
-echo $?
-bash tools/build.sh
-echo $?
 
-#bash build_docs.sh && \
 bash tools/build_package.sh
 echo $?
 
@@ -38,4 +36,4 @@ cd ..
 git tag -a $VERSION -m "Release $VERSION"
 git push --tags
 
-rm -rf package
+#rm -rf package
