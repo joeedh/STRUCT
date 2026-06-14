@@ -315,6 +315,15 @@ class lexer {
         this.peeked_tokens.push(tok);
         return tok;
     }
+    peek_i(i) {
+        while (this.peeked_tokens.length <= i) {
+            const tok = this.peek();
+            if (tok === undefined) {
+                return undefined;
+            }
+        }
+        return this.peeked_tokens[i];
+    }
     peeknext() {
         if (this.peeked_tokens.length > 0) {
             return this.peeked_tokens[0];
@@ -430,6 +439,12 @@ class parser {
             tok.parser = this;
         return tok;
     }
+    peek_i(i) {
+        const tok = this.lexer.peek_i(i);
+        if (tok !== undefined)
+            tok.parser = this;
+        return tok;
+    }
     peeknext() {
         const tok = this.lexer.peeknext();
         if (tok !== undefined)
@@ -500,6 +515,7 @@ const StructEnum = {
     STATIC_ARRAY: 19,
     SIGNED_BYTE: 20,
     OPTIONAL: 21,
+    ARRAYBUFFER: 22,
 };
 
 class NStruct {
@@ -604,6 +620,9 @@ function stripComments(buf) {
 }
 function StructParser() {
     const basic_types = new Set(["int", "float", "double", "string", "short", "byte", "sbyte", "bool", "uint", "ushort"]);
+    // Numeric element types valid inside arraybuffer(...) — no string/bool, which
+    // have no fixed-width little-endian representation.
+    const arraybuffer_types = new Set(["int", "uint", "short", "ushort", "byte", "sbyte", "float", "double"]);
     const reserved_tokens = new Set([
         "int",
         "float",
@@ -706,6 +725,31 @@ function StructParser() {
         p.expect("SCLOSE");
         return { type: StructEnum.STATIC_STRING, data: { maxlength: num } };
     }
+    function p_ArrayBuffer(p) {
+        // 'arraybuffer' is not a reserved token, so only treat it as the arraybuffer
+        // type when it's spelled `arraybuffer(...)`. Anything else (e.g. a struct
+        // named "arraybuffer") falls through to the normal ID path below.
+        const tok1 = p.peek_i(0);
+        const tok2 = p.peek_i(1);
+        if (!tok1 || !tok2) {
+            return undefined;
+        }
+        if (tok1.type !== "ID" || tok1.value !== "arraybuffer" || tok2.type !== "LPARAM") {
+            return undefined;
+        }
+        p.next(); // arraybuffer
+        p.next(); // (
+        const type = p.next();
+        if (type === undefined) {
+            return p.error(undefined, "Expected type for arraybuffer");
+        }
+        const tname = type.value.toLowerCase();
+        if (!arraybuffer_types.has(tname)) {
+            p.error(type, "Expected a numeric element type for arraybuffer, got '" + type.value + "'");
+        }
+        p.expect("RPARAM");
+        return { type: StructEnum.ARRAYBUFFER, data: { type: tname } };
+    }
     function p_Array(p) {
         p.expect("ARRAY");
         p.expect("LPARAM");
@@ -790,7 +834,11 @@ function StructParser() {
         if (!tok) {
             p.error(undefined, "Unexpected end of input");
         }
-        if (tok.type === "ID") {
+        const pbuffer = p_ArrayBuffer(p);
+        if (pbuffer) {
+            return pbuffer;
+        }
+        else if (tok.type === "ID") {
             p.next();
             return { type: StructEnum.STRUCT, data: tok.value };
         }
@@ -2658,6 +2706,128 @@ class StructOptionalField extends StructFieldType {
     }
 }
 StructFieldType.register(StructOptionalField);
+const arrayBufferElemTypes = {
+    byte: { ctor: Uint8Array, size: 1 },
+    sbyte: { ctor: Int8Array, size: 1 },
+    short: { ctor: Int16Array, size: 2 },
+    ushort: { ctor: Uint16Array, size: 2 },
+    int: { ctor: Int32Array, size: 4 },
+    uint: { ctor: Uint32Array, size: 4 },
+    float: { ctor: Float32Array, size: 4 },
+    double: { ctor: Float64Array, size: 8 },
+};
+const PLATFORM_LITTLE_ENDIAN = new Uint8Array(Uint32Array.of(1).buffer)[0] === 1;
+function arrayBufferElem(type) {
+    const name = type.data.type;
+    const elem = arrayBufferElemTypes[name];
+    if (!elem) {
+        throw new Error("invalid arraybuffer element type " + name);
+    }
+    return elem;
+}
+/** In-place big/little endian swap of each `elemSize`-wide element. */
+function byteswapElems(bytes, elemSize) {
+    if (elemSize <= 1) {
+        return;
+    }
+    for (let i = 0; i < bytes.length; i += elemSize) {
+        for (let a = i, b = i + elemSize - 1; a < b; a++, b--) {
+            const t = bytes[a];
+            bytes[a] = bytes[b];
+            bytes[b] = t;
+        }
+    }
+}
+/** Normalize any accepted value (ArrayBuffer / typed array / DataView / number[])
+ *  to a typed array of the field's element type. number[] entries are coerced. */
+function toElemTyped(val, elem) {
+    if (val instanceof elem.ctor) {
+        return val;
+    }
+    if (val instanceof ArrayBuffer) {
+        return new elem.ctor(val, 0, (val.byteLength / elem.size) | 0);
+    }
+    if (ArrayBuffer.isView(val)) {
+        const v = val;
+        return new elem.ctor(v.buffer, v.byteOffset, (v.byteLength / elem.size) | 0);
+    }
+    if (Array.isArray(val)) {
+        const ta = new elem.ctor(val.length);
+        ta.set(val);
+        return ta;
+    }
+    throw new Error("arraybuffer field expects an ArrayBuffer, typed array, DataView, or number[]");
+}
+class StructArrayBufferField extends StructFieldType {
+    static pack(manager, data, val, obj, field, type) {
+        const elem = arrayBufferElem(type);
+        if (val === undefined || val === null) {
+            pack_int(data, 0);
+            return;
+        }
+        const view = toElemTyped(val, elem);
+        let bytes = new Uint8Array(view.buffer, view.byteOffset, view.byteLength);
+        pack_int(data, bytes.byteLength);
+        if (elem.size > 1 && STRUCT_ENDIAN !== PLATFORM_LITTLE_ENDIAN) {
+            bytes = bytes.slice();
+            byteswapElems(bytes, elem.size);
+        }
+        pack_bytes(data, bytes);
+    }
+    static packNull(manager, data, field, type) {
+        pack_int(data, 0);
+    }
+    static unpack(manager, data, type, uctx) {
+        const elem = arrayBufferElem(type);
+        const byteLength = unpack_int(data, uctx);
+        packer_debug$1("-arraybuffer bytes " + byteLength);
+        const abs = data.byteOffset + uctx.i;
+        const slice = data.buffer.slice(abs, abs + byteLength);
+        uctx.i += byteLength;
+        if (elem.size > 1 && STRUCT_ENDIAN !== PLATFORM_LITTLE_ENDIAN) {
+            byteswapElems(new Uint8Array(slice), elem.size);
+        }
+        return new elem.ctor(slice, 0, (byteLength / elem.size) | 0);
+    }
+    static toJSON(manager, val, obj, field, type) {
+        if (val === undefined || val === null) {
+            return [];
+        }
+        return Array.from(toElemTyped(val, arrayBufferElem(type)));
+    }
+    static fromJSON(manager, val, obj, field, type, instance) {
+        const elem = arrayBufferElem(type);
+        const arr = (val || []);
+        const ta = new elem.ctor(arr.length);
+        ta.set(arr);
+        return ta;
+    }
+    static formatJSON(manager, val, obj, field, type, instance, tlvl) {
+        const arr = Array.isArray(val) ? val : Array.from(toElemTyped(val, arrayBufferElem(type)));
+        return JSON.stringify(arr);
+    }
+    static validateJSON(manager, val, obj, field, type, instance, _abstractKey) {
+        if (!Array.isArray(val)) {
+            return "not an array: " + val;
+        }
+        for (let i = 0; i < val.length; i++) {
+            if (typeof val[i] !== "number") {
+                return "non-numeric arraybuffer element: " + val[i];
+            }
+        }
+        return true;
+    }
+    static format(type) {
+        return "arraybuffer(" + type.data.type + ")";
+    }
+    static define() {
+        return {
+            type: StructEnum.ARRAYBUFFER,
+            name: "arraybuffer",
+        };
+    }
+}
+StructFieldType.register(StructArrayBufferField);
 
 var _sintern2 = /*#__PURE__*/Object.freeze({
     __proto__: null,

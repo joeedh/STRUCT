@@ -2291,3 +2291,197 @@ class StructOptionalField extends StructFieldType {
 }
 
 StructFieldType.register(StructOptionalField as unknown as StructFieldTypeClass);
+
+/* ArrayBuffer/typed-array field: the element bytes are stored verbatim (one bulk
+   copy) rather than element-by-element. The wire format is byteLength (int32)
+   followed by the raw bytes in STRUCT_ENDIAN order; multi-byte elements are
+   byteswapped when the host endianness differs from STRUCT_ENDIAN. */
+
+interface ArrayBufferElemType {
+  ctor: {
+    new (length: number): { buffer: ArrayBuffer; byteOffset: number; byteLength: number; set(a: ArrayLike<number>): void };
+    new (buffer: ArrayBuffer, byteOffset: number, length: number): unknown;
+    BYTES_PER_ELEMENT: number;
+  };
+  size: number;
+}
+
+const arrayBufferElemTypes: Record<string, ArrayBufferElemType> = {
+  byte  : { ctor: Uint8Array as unknown as ArrayBufferElemType["ctor"], size: 1 },
+  sbyte : { ctor: Int8Array as unknown as ArrayBufferElemType["ctor"], size: 1 },
+  short : { ctor: Int16Array as unknown as ArrayBufferElemType["ctor"], size: 2 },
+  ushort: { ctor: Uint16Array as unknown as ArrayBufferElemType["ctor"], size: 2 },
+  int   : { ctor: Int32Array as unknown as ArrayBufferElemType["ctor"], size: 4 },
+  uint  : { ctor: Uint32Array as unknown as ArrayBufferElemType["ctor"], size: 4 },
+  float : { ctor: Float32Array as unknown as ArrayBufferElemType["ctor"], size: 4 },
+  double: { ctor: Float64Array as unknown as ArrayBufferElemType["ctor"], size: 8 },
+};
+
+const PLATFORM_LITTLE_ENDIAN = new Uint8Array(Uint32Array.of(1).buffer)[0] === 1;
+
+function arrayBufferElem(type: TypeDescriptor): ArrayBufferElemType {
+  const name = (type.data as { type: string }).type;
+  const elem = arrayBufferElemTypes[name];
+  if (!elem) {
+    throw new Error("invalid arraybuffer element type " + name);
+  }
+  return elem;
+}
+
+/** In-place big/little endian swap of each `elemSize`-wide element. */
+function byteswapElems(bytes: Uint8Array, elemSize: number): void {
+  if (elemSize <= 1) {
+    return;
+  }
+  for (let i = 0; i < bytes.length; i += elemSize) {
+    for (let a = i, b = i + elemSize - 1; a < b; a++, b--) {
+      const t = bytes[a];
+      bytes[a] = bytes[b];
+      bytes[b] = t;
+    }
+  }
+}
+
+/** Normalize any accepted value (ArrayBuffer / typed array / DataView / number[])
+ *  to a typed array of the field's element type. number[] entries are coerced. */
+function toElemTyped(val: unknown, elem: ArrayBufferElemType): { buffer: ArrayBuffer; byteOffset: number; byteLength: number } {
+  if (val instanceof elem.ctor) {
+    return val as unknown as { buffer: ArrayBuffer; byteOffset: number; byteLength: number };
+  }
+  if (val instanceof ArrayBuffer) {
+    return new elem.ctor(val, 0, (val.byteLength / elem.size) | 0) as { buffer: ArrayBuffer; byteOffset: number; byteLength: number };
+  }
+  if (ArrayBuffer.isView(val)) {
+    const v = val as ArrayBufferView;
+    return new elem.ctor(v.buffer as ArrayBuffer, v.byteOffset, (v.byteLength / elem.size) | 0) as {
+      buffer: ArrayBuffer;
+      byteOffset: number;
+      byteLength: number;
+    };
+  }
+  if (Array.isArray(val)) {
+    const ta = new elem.ctor(val.length);
+    ta.set(val);
+    return ta as { buffer: ArrayBuffer; byteOffset: number; byteLength: number };
+  }
+  throw new Error("arraybuffer field expects an ArrayBuffer, typed array, DataView, or number[]");
+}
+
+class StructArrayBufferField extends StructFieldType {
+  static pack(
+    manager: StructManager,
+    data: PackBuffer,
+    val: unknown,
+    obj: unknown,
+    field: StructField,
+    type: TypeDescriptor
+  ): void {
+    const elem = arrayBufferElem(type);
+
+    if (val === undefined || val === null) {
+      pack_int(data, 0);
+      return;
+    }
+
+    const view = toElemTyped(val, elem);
+    let bytes = new Uint8Array(view.buffer as ArrayBuffer, view.byteOffset, view.byteLength);
+
+    pack_int(data, bytes.byteLength);
+
+    if (elem.size > 1 && STRUCT_ENDIAN !== PLATFORM_LITTLE_ENDIAN) {
+      bytes = bytes.slice();
+      byteswapElems(bytes, elem.size);
+    }
+
+    pack_bytes(data, bytes);
+  }
+
+  static packNull(manager: StructManager, data: PackBuffer, field: StructField, type: TypeDescriptor): void {
+    pack_int(data, 0);
+  }
+
+  static unpack(manager: StructManager, data: DataView, type: TypeDescriptor, uctx: UnpackContext): unknown {
+    const elem = arrayBufferElem(type);
+    const byteLength = unpack_int(data, uctx);
+
+    packer_debug("-arraybuffer bytes " + byteLength);
+
+    const abs = data.byteOffset + uctx.i;
+    const slice = (data.buffer as ArrayBuffer).slice(abs, abs + byteLength);
+    uctx.i += byteLength;
+
+    if (elem.size > 1 && STRUCT_ENDIAN !== PLATFORM_LITTLE_ENDIAN) {
+      byteswapElems(new Uint8Array(slice), elem.size);
+    }
+
+    return new elem.ctor(slice, 0, (byteLength / elem.size) | 0);
+  }
+
+  static toJSON(manager: StructManager, val: unknown, obj: unknown, field: StructField, type: TypeDescriptor): unknown {
+    if (val === undefined || val === null) {
+      return [];
+    }
+    return Array.from(toElemTyped(val, arrayBufferElem(type)) as unknown as ArrayLike<number>);
+  }
+
+  static fromJSON(
+    manager: StructManager,
+    val: unknown,
+    obj: unknown,
+    field: StructField,
+    type: TypeDescriptor,
+    instance: unknown
+  ): unknown {
+    const elem = arrayBufferElem(type);
+    const arr = (val || []) as number[];
+    const ta = new elem.ctor(arr.length);
+    ta.set(arr);
+    return ta;
+  }
+
+  static formatJSON(
+    manager: StructManager,
+    val: unknown,
+    obj: unknown,
+    field: StructField,
+    type: TypeDescriptor,
+    instance: unknown,
+    tlvl?: number
+  ): string {
+    const arr = Array.isArray(val) ? val : Array.from(toElemTyped(val, arrayBufferElem(type)) as unknown as ArrayLike<number>);
+    return JSON.stringify(arr);
+  }
+
+  static validateJSON(
+    manager: StructManager,
+    val: unknown,
+    obj: unknown,
+    field: StructField,
+    type: TypeDescriptor,
+    instance: unknown,
+    _abstractKey?: string
+  ): true | string {
+    if (!Array.isArray(val)) {
+      return "not an array: " + val;
+    }
+    for (let i = 0; i < val.length; i++) {
+      if (typeof val[i] !== "number") {
+        return "non-numeric arraybuffer element: " + val[i];
+      }
+    }
+    return true;
+  }
+
+  static format(type: TypeDescriptor): string {
+    return "arraybuffer(" + (type.data as { type: string }).type + ")";
+  }
+
+  static define(): FieldTypeDefinition {
+    return {
+      type: StructEnum.ARRAYBUFFER,
+      name: "arraybuffer",
+    };
+  }
+}
+
+StructFieldType.register(StructArrayBufferField as unknown as StructFieldTypeClass);

@@ -18,6 +18,7 @@ export declare const StructEnum: {
     readonly STATIC_ARRAY: 19;
     readonly SIGNED_BYTE: 20;
     readonly OPTIONAL: 21;
+    readonly ARRAYBUFFER: 22;
 };
 export type StructEnumValue = (typeof StructEnum)[keyof typeof StructEnum];
 export interface ArrayTypeData {
@@ -87,6 +88,11 @@ export type TypeDescriptor = {
 } | {
     type: typeof StructEnum.OPTIONAL;
     data: TypeDescriptor;
+} | {
+    type: typeof StructEnum.ARRAYBUFFER;
+    data: {
+        type: string;
+    };
 };
 export interface StructField {
     name: string;

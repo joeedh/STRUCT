@@ -19,6 +19,7 @@ export const StructEnum = {
   STATIC_ARRAY : 19,
   SIGNED_BYTE  : 20,
   OPTIONAL     : 21,
+  ARRAYBUFFER  : 22,
 } as const;
 
 export type StructEnumValue = (typeof StructEnum)[keyof typeof StructEnum];
@@ -56,7 +57,8 @@ export type TypeDescriptor =
   | { type: typeof StructEnum.ITER; data: ArrayTypeData }
   | { type: typeof StructEnum.ITERKEYS; data: ArrayTypeData }
   | { type: typeof StructEnum.STATIC_ARRAY; data: StaticArrayTypeData }
-  | { type: typeof StructEnum.OPTIONAL; data: TypeDescriptor };
+  | { type: typeof StructEnum.OPTIONAL; data: TypeDescriptor }
+  | { type: typeof StructEnum.ARRAYBUFFER; data: {type: string} };
 
 export interface StructField {
   name: string;

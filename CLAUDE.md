@@ -86,7 +86,8 @@ namespace.ClassName {
 ```
 
 Supported types: `int`, `uint`, `float`, `double`, `string`, `static_string[N]`, `byte`, `short`,
-`ushort`, `bool`, `array(T)`, `iter(T)`, `iterkeys(T)`, `static_array[T, N]`, `optional(T)`, and
+`ushort`, `bool`, `array(T)`, `iter(T)`, `iterkeys(T)`, `static_array[T, N]`, `optional(T)`,
+`arraybuffer(T)` (bulk typed-array/`ArrayBuffer` block, numeric `T` only), and
 struct references by name. See `documentation/Specification.md`.
 
 ## Common tasks

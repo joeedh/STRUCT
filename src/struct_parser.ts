@@ -130,6 +130,10 @@ export function stripComments(buf: string): string {
 function StructParser(): struct_parseutil.parser {
   const basic_types = new Set(["int", "float", "double", "string", "short", "byte", "sbyte", "bool", "uint", "ushort"]);
 
+  // Numeric element types valid inside arraybuffer(...) — no string/bool, which
+  // have no fixed-width little-endian representation.
+  const arraybuffer_types = new Set(["int", "uint", "short", "ushort", "byte", "sbyte", "float", "double"]);
+
   const reserved_tokens = new Set([
     "int",
     "float",
@@ -264,6 +268,38 @@ function StructParser(): struct_parseutil.parser {
     return { type: StructEnum.STATIC_STRING, data: { maxlength: num } };
   }
 
+  function p_ArrayBuffer(p: struct_parseutil.parser): TypeDescriptor | undefined {
+    // 'arraybuffer' is not a reserved token, so only treat it as the arraybuffer
+    // type when it's spelled `arraybuffer(...)`. Anything else (e.g. a struct
+    // named "arraybuffer") falls through to the normal ID path below.
+    const tok1 = p.peek_i(0);
+    const tok2 = p.peek_i(1);
+
+    if (!tok1 || !tok2) {
+      return undefined;
+    }
+    if (tok1.type !== "ID" || tok1.value !== "arraybuffer" || tok2.type !== "LPARAM") {
+      return undefined;
+    }
+
+    p.next(); // arraybuffer
+    p.next(); // (
+
+    const type = p.next();
+    if (type === undefined) {
+      return p.error(undefined, "Expected type for arraybuffer");
+    }
+
+    const tname = type.value.toLowerCase();
+    if (!arraybuffer_types.has(tname)) {
+      p.error(type, "Expected a numeric element type for arraybuffer, got '" + type.value + "'");
+    }
+
+    p.expect("RPARAM");
+
+    return { type: StructEnum.ARRAYBUFFER, data: { type: tname } };
+  }
+
   function p_Array(p: struct_parseutil.parser): TypeDescriptor {
     p.expect("ARRAY");
     p.expect("LPARAM");
@@ -374,7 +410,10 @@ function StructParser(): struct_parseutil.parser {
       p.error(undefined, "Unexpected end of input");
     }
 
-    if (tok.type === "ID") {
+    const pbuffer = p_ArrayBuffer(p);
+    if (pbuffer) {
+      return pbuffer
+    } else if (tok.type === "ID") {
       p.next();
       return { type: StructEnum.STRUCT, data: tok.value };
     } else if (basic_types.has(tok.type.toLowerCase())) {

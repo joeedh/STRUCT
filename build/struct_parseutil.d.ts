@@ -46,6 +46,7 @@ export declare class lexer {
     input(str: string): void;
     error(): void;
     peek(): token | undefined;
+    peek_i(i: number): token | undefined;
     peeknext(): token | undefined;
     at_end(): boolean;
     next(ignore_peek?: boolean): token | undefined;
@@ -60,6 +61,7 @@ export declare class parser {
     input(data: string): void;
     error(tokenObj: token | undefined, msg?: string): never;
     peek(): token | undefined;
+    peek_i(i: number): token | undefined;
     peeknext(): token | undefined;
     next(): token | undefined;
     optional(type: string): boolean;

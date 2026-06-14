@@ -26,6 +26,7 @@
             iter(TYPE)
             iter(ITERNAME, TYPE)
             iterkeys(ITERNAME, TYPE)
+            arraybuffer(TYPE)
 
     field => ID : TYPE
              ID : TYPE | JSCODE
@@ -130,3 +131,21 @@ takes an optional iter-key argument.
 Example:
 
     object : iterkeys(e, Something) | this.object[e].getSomething();
+
+## ArrayBuffer
+
+`arraybuffer(TYPE)` stores a block of fixed-width numeric elements (`byte`, `sbyte`, `short`,
+`ushort`, `int`, `uint`, `float`, `double` — no `bool`/`string`) as one bulk copy rather than
+element-by-element. The field value may be an `ArrayBuffer`, a typed array, a `DataView`, or a plain
+`number[]`; it is read back as the typed array matching `TYPE` (e.g. `arraybuffer(float)` →
+`Float32Array`).
+
+### Semantics
+
+To write an arraybuffer:
+
+1. Write a 32-bit signed integer representing the byte length.
+2. Write the raw element bytes in the configured byte order (see [Endianness](#endianness)).
+
+When the host's native byte order differs from the configured order, each multi-byte element is
+byteswapped on write and on read, so the values round-trip on any platform.

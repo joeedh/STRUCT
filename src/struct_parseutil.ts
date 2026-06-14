@@ -236,6 +236,16 @@ export class lexer {
     return tok;
   }
 
+  peek_i(i: number): token | undefined {
+    while (this.peeked_tokens.length <= i) {
+      const tok = this.peek();
+      if (tok === undefined) {
+        return undefined;
+      }
+    }
+    return this.peeked_tokens[i];
+  }
+
   peeknext(): token | undefined {
     if (this.peeked_tokens.length > 0) {
       return this.peeked_tokens[0];
@@ -374,6 +384,12 @@ export class parser {
 
   peek(): token | undefined {
     const tok = this.lexer.peek();
+    if (tok !== undefined) tok.parser = this;
+    return tok;
+  }
+
+  peek_i(i: number): token | undefined {
+    const tok = this.lexer.peek_i(i);
     if (tok !== undefined) tok.parser = this;
     return tok;
   }
