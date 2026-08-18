@@ -2,6 +2,24 @@ import { StructField, StructKeywords, StructableClass, StructableInstance, NStru
 import type { PackBuffer } from "./struct_binpack.js";
 export declare let truncateDollarSign: boolean;
 export declare let manager: STRUCT;
+/**
+ * Lowest id `stableStructId` will hand out. Registration-order ids (everything
+ * written before the stable-id scheme) are dense and start at zero, so keeping
+ * stable ids above this bound means a legacy id and a stable id can never
+ * collide inside one id space.
+ */
+export declare const STABLE_ID_BASE = 1048576;
+/** One past the highest stable id; ids are packed as a signed 32-bit int. */
+export declare const STABLE_ID_LIMIT = 2147483647;
+/**
+ * Struct id derived from the struct's name, so a file's ids no longer depend on
+ * the order its build happened to register classes in. FNV-1a, folded into
+ * `[STABLE_ID_BASE, STABLE_ID_LIMIT)`.
+ *
+ * Changing this function changes every id in every newly written file, so it is
+ * part of the format: see the app's `APP_VERSION` history.
+ */
+export declare function stableStructId(name: string): number;
 export declare class JSONError extends Error {
 }
 export declare function setTruncateDollarSign(v: unknown): void;
@@ -11,6 +29,19 @@ export declare function setDebugMode(t: unknown): void;
 export declare class STRUCT {
     idgen: number;
     allowOverriding: boolean;
+    /**
+     * Derive struct ids from struct names instead of registration order. On by
+     * default: registration-order ids silently change meaning when the set of
+     * registered classes changes, which makes bytes preserved from one build
+     * unreadable by another.
+     */
+    stableIds: boolean;
+    /**
+     * structName -> id, for the rare case where two names hash to the same
+     * stable id. Renaming a struct would break existing files; pinning one of the
+     * pair here does not.
+     */
+    stableIdOverrides: Record<string, number>;
     structs: Record<string, NStructInterface>;
     struct_cls: Record<string, StructableClass>;
     struct_ids: Record<number, NStructInterface>;
@@ -51,6 +82,12 @@ export declare class STRUCT {
     static formatStruct(stt: NStructInterface, internal_only?: boolean, no_helper_js?: boolean): string;
     static fmt_struct(stt: NStructInterface, internal_only?: boolean, no_helper_js?: boolean, addComments?: boolean, excludeId?: boolean): string;
     static setClassKeyword(keyword: string, nameKeyword?: string): void;
+    /**
+     * Assigns stt.id, either from the struct's name (the default) or from the
+     * registration counter. Throws on a stable-id collision rather than letting
+     * two structs share an id: an id collision is silent data corruption.
+     */
+    assignStructId(stt: NStructInterface): number;
     define_null_native(name: string, cls: StructableClass): void;
     validateStructs(onerror?: (msg: string, stt: NStructInterface, field: StructField) => void): void;
     forEach(func: (stt: NStructInterface) => void, thisvar?: unknown): void;

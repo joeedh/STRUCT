@@ -35,6 +35,42 @@ let warninglvl = 2;
 export let truncateDollarSign = true;
 export let manager: STRUCT;
 
+/**
+ * Lowest id `stableStructId` will hand out. Registration-order ids (everything
+ * written before the stable-id scheme) are dense and start at zero, so keeping
+ * stable ids above this bound means a legacy id and a stable id can never
+ * collide inside one id space.
+ */
+export const STABLE_ID_BASE = 0x100000;
+
+/** One past the highest stable id; ids are packed as a signed 32-bit int. */
+export const STABLE_ID_LIMIT = 0x7fffffff;
+
+/**
+ * Struct id derived from the struct's name, so a file's ids no longer depend on
+ * the order its build happened to register classes in. FNV-1a, folded into
+ * `[STABLE_ID_BASE, STABLE_ID_LIMIT)`.
+ *
+ * Changing this function changes every id in every newly written file, so it is
+ * part of the format: see the app's `APP_VERSION` history.
+ */
+export function stableStructId(name: string): number {
+  let hash = 0x811c9dc5;
+
+  for (let i = 0; i < name.length; i++) {
+    hash ^= name.charCodeAt(i) & 0xff;
+    hash = Math.imul(hash, 0x01000193) >>> 0;
+
+    const hi = name.charCodeAt(i) >> 8;
+    if (hi !== 0) {
+      hash ^= hi;
+      hash = Math.imul(hash, 0x01000193) >>> 0;
+    }
+  }
+
+  return STABLE_ID_BASE + (hash % (STABLE_ID_LIMIT - STABLE_ID_BASE));
+}
+
 export class JSONError extends Error {}
 
 function printCodeLines(code: string): string {
@@ -163,11 +199,30 @@ function define_empty_class(scls: { keywords: StructKeywords }, name: string): S
   return cls;
 }
 
+// Everything between this marker and $KEYWORD_CONFIG_END is spliced into a
+// template literal by tools/rollup_configurable.config.js, so a backtick in
+// here (comments included) breaks that build. Use plain quotes.
 //$KEYWORD_CONFIG_START
 
 export class STRUCT {
   idgen: number;
   allowOverriding: boolean;
+
+  /**
+   * Derive struct ids from struct names instead of registration order. On by
+   * default: registration-order ids silently change meaning when the set of
+   * registered classes changes, which makes bytes preserved from one build
+   * unreadable by another.
+   */
+  stableIds: boolean;
+
+  /**
+   * structName -> id, for the rare case where two names hash to the same
+   * stable id. Renaming a struct would break existing files; pinning one of the
+   * pair here does not.
+   */
+  stableIdOverrides: Record<string, number>;
+
   structs: Record<string, NStructInterface>;
   struct_cls: Record<string, StructableClass>;
   struct_ids: Record<number, NStructInterface>;
@@ -205,6 +260,8 @@ export class STRUCT {
   constructor() {
     this.idgen = 0;
     this.allowOverriding = true;
+    this.stableIds = true;
+    this.stableIdOverrides = {};
 
     this.structs = {};
     this.struct_cls = {};
@@ -367,13 +424,43 @@ export class STRUCT {
     };
   }
 
+  /**
+   * Assigns stt.id, either from the struct's name (the default) or from the
+   * registration counter. Throws on a stable-id collision rather than letting
+   * two structs share an id: an id collision is silent data corruption.
+   */
+  assignStructId(stt: NStructInterface): number {
+    if (!this.stableIds) {
+      stt.id = this.idgen++;
+      return stt.id;
+    }
+
+    const id = this.stableIdOverrides[stt.name] ?? stableStructId(stt.name);
+    const clash = this.struct_ids[id];
+
+    if (clash !== undefined && clash.name !== stt.name) {
+      throw new Error(
+        "nstructjs: stable struct id collision between " +
+          clash.name +
+          " and " +
+          stt.name +
+          " (both " +
+          id +
+          "). Pin one of them through STRUCT.stableIdOverrides."
+      );
+    }
+
+    stt.id = id;
+    return id;
+  }
+
   define_null_native(name: string, cls: StructableClass): void {
     const keywords = (this.constructor as typeof STRUCT).keywords;
     const obj = define_empty_class(this.constructor as typeof STRUCT, name);
 
     const stt = struct_parse.parse((obj as any)[keywords.script] as string) as NStruct;
 
-    stt.id = this.idgen++;
+    this.assignStructId(stt);
 
     this.structs[name] = stt;
     this.struct_cls[name] = cls;
@@ -741,7 +828,9 @@ export class STRUCT {
       return;
     }
 
-    if (stt.id === -1) stt.id = this.idgen++;
+    // Always reassign in stable mode: an id parsed out of the class's own script
+    // came from whatever build wrote that script, and is meaningless here.
+    if (stt.id === -1 || this.stableIds) this.assignStructId(stt);
 
     this.structs[(cls as any)[keywords.name] as string] = stt;
     this.struct_cls[(cls as any)[keywords.name] as string] = cls;
