@@ -233,13 +233,7 @@ let fakeFields = new cachering<FakeFieldEntry>(() => {
  bytes to the per-element path, minus the per-element dispatch. Both helpers
  return false for non-primitive element types (caller falls back).
 */
-function unpackPrimitiveBulk(
-  data: DataView,
-  etype: number,
-  len: number,
-  uctx: UnpackContext,
-  arr: unknown[]
-): boolean {
+function unpackPrimitiveBulk(data: DataView, etype: number, len: number, uctx: UnpackContext, arr: unknown[]): boolean {
   let p = uctx.i;
 
   switch (etype) {
@@ -331,7 +325,12 @@ function isBulkArray(val: unknown): boolean {
  *  value becomes Uint8Array/Int8Array instead of number[]. Returns null for
  *  non-byte element types. The pack side accepts typed arrays (isBulkArray),
  *  so this round-trips. */
-function unpackByteTyped(data: DataView, etype: number, len: number, uctx: UnpackContext): Uint8Array | Int8Array | null {
+function unpackByteTyped(
+  data: DataView,
+  etype: number,
+  len: number,
+  uctx: UnpackContext
+): Uint8Array | Int8Array | null {
   if (etype !== StructEnum.BYTE && etype !== StructEnum.SIGNED_BYTE) {
     return null;
   }
@@ -1004,8 +1003,7 @@ class StructTStructField extends StructFieldType {
     // Treat a parse_structs dummy as missing when a hook is installed, so the
     // hook fires for unloaded-addon classes. Pass the numeric id in that case so
     // read_object's onUnknownClass hook can produce a placeholder. See plan §4.
-    const missing =
-      cls3 === undefined || (!!manager.onUnknownClass && util.isParseStructsDummy(cls3));
+    const missing = cls3 === undefined || (!!manager.onUnknownClass && util.isParseStructsDummy(cls3));
     const instance = manager.read_object(data, missing ? id : cls3, uctx, dest);
     if (missing && instance && typeof instance === "object") {
       (instance as Record<string, unknown>)._origClsname = cls2.name;
@@ -1033,8 +1031,7 @@ class StructTStructField extends StructFieldType {
     // Treat a parse_structs dummy as missing when a hook is installed, so the
     // hook fires for unloaded-addon classes. Pass the numeric id in that case so
     // read_object's onUnknownClass hook can produce a placeholder. See plan §4.
-    const missing =
-      cls3 === undefined || (!!manager.onUnknownClass && util.isParseStructsDummy(cls3));
+    const missing = cls3 === undefined || (!!manager.onUnknownClass && util.isParseStructsDummy(cls3));
     const instance = manager.read_object(data, missing ? id : cls3, uctx);
     if (missing && instance && typeof instance === "object") {
       (instance as Record<string, unknown>)._origClsname = cls2.name;
@@ -2299,7 +2296,12 @@ StructFieldType.register(StructOptionalField as unknown as StructFieldTypeClass)
 
 interface ArrayBufferElemType {
   ctor: {
-    new (length: number): { buffer: ArrayBuffer; byteOffset: number; byteLength: number; set(a: ArrayLike<number>): void };
+    new (length: number): {
+      buffer: ArrayBuffer;
+      byteOffset: number;
+      byteLength: number;
+      set(a: ArrayLike<number>): void;
+    };
     new (buffer: ArrayBuffer, byteOffset: number, length: number): unknown;
     BYTES_PER_ELEMENT: number;
   };
@@ -2344,12 +2346,19 @@ function byteswapElems(bytes: Uint8Array, elemSize: number): void {
 
 /** Normalize any accepted value (ArrayBuffer / typed array / DataView / number[])
  *  to a typed array of the field's element type. number[] entries are coerced. */
-function toElemTyped(val: unknown, elem: ArrayBufferElemType): { buffer: ArrayBuffer; byteOffset: number; byteLength: number } {
+function toElemTyped(
+  val: unknown,
+  elem: ArrayBufferElemType
+): { buffer: ArrayBuffer; byteOffset: number; byteLength: number } {
   if (val instanceof elem.ctor) {
     return val as unknown as { buffer: ArrayBuffer; byteOffset: number; byteLength: number };
   }
   if (val instanceof ArrayBuffer) {
-    return new elem.ctor(val, 0, (val.byteLength / elem.size) | 0) as { buffer: ArrayBuffer; byteOffset: number; byteLength: number };
+    return new elem.ctor(val, 0, (val.byteLength / elem.size) | 0) as {
+      buffer: ArrayBuffer;
+      byteOffset: number;
+      byteLength: number;
+    };
   }
   if (ArrayBuffer.isView(val)) {
     const v = val as ArrayBufferView;
@@ -2448,7 +2457,9 @@ class StructArrayBufferField extends StructFieldType {
     instance: unknown,
     tlvl?: number
   ): string {
-    const arr = Array.isArray(val) ? val : Array.from(toElemTyped(val, arrayBufferElem(type)) as unknown as ArrayLike<number>);
+    const arr = Array.isArray(val)
+      ? val
+      : Array.from(toElemTyped(val, arrayBufferElem(type)) as unknown as ArrayLike<number>);
     return JSON.stringify(arr);
   }
 
