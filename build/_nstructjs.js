@@ -1783,7 +1783,22 @@ class StructStaticStringField extends StructFieldType {
 StructFieldType.register(StructStaticStringField);
 class StructStructField extends StructFieldType {
     static pack(manager, data, val, obj, field, type) {
-        let stt = manager.get_struct(type.data);
+        // Host-supplied placeholder for an unloaded class: write the schema it was
+        // read under, not the declared one. A concrete struct field carries no
+        // struct id in the stream, so unlike StructTStructField only the schema is
+        // substituted. Consulted *before* get_struct because the declared class is
+        // itself typically unregistered in this case, and get_struct throws.
+        // The hook is undefined by default, so ordinary values are unaffected.
+        let stt;
+        if (manager.onSerializeUnknown) {
+            const overrideName = manager.onSerializeUnknown(val);
+            if (overrideName !== undefined) {
+                stt = manager.get_struct(overrideName);
+            }
+        }
+        if (stt === undefined) {
+            stt = manager.get_struct(type.data);
+        }
         packer_debug$1("struct", stt.name);
         manager.write_struct(data, val, stt);
     }
@@ -2807,7 +2822,9 @@ class StructArrayBufferField extends StructFieldType {
         return ta;
     }
     static formatJSON(manager, val, obj, field, type, instance, tlvl) {
-        const arr = Array.isArray(val) ? val : Array.from(toElemTyped(val, arrayBufferElem(type)));
+        const arr = Array.isArray(val)
+            ? val
+            : Array.from(toElemTyped(val, arrayBufferElem(type)));
         return JSON.stringify(arr);
     }
     static validateJSON(manager, val, obj, field, type, instance, _abstractKey) {

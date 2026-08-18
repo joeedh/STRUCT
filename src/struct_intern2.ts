@@ -731,7 +731,24 @@ class StructStructField extends StructFieldType {
     field: StructField,
     type: TypeDescriptor
   ): void {
-    let stt = manager.get_struct(type.data as string);
+    // Host-supplied placeholder for an unloaded class: write the schema it was
+    // read under, not the declared one. A concrete struct field carries no
+    // struct id in the stream, so unlike StructTStructField only the schema is
+    // substituted. Consulted *before* get_struct because the declared class is
+    // itself typically unregistered in this case, and get_struct throws.
+    // The hook is undefined by default, so ordinary values are unaffected.
+    let stt: ReturnType<StructManager["get_struct"]> | undefined;
+
+    if (manager.onSerializeUnknown) {
+      const overrideName = manager.onSerializeUnknown(val);
+      if (overrideName !== undefined) {
+        stt = manager.get_struct(overrideName);
+      }
+    }
+
+    if (stt === undefined) {
+      stt = manager.get_struct(type.data as string);
+    }
 
     packer_debug("struct", stt.name);
 
