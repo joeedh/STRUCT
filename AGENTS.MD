@@ -72,12 +72,18 @@ Supported types: `int`, `uint`, `float`, `double`, `string`, `static_string[N]`,
 
 ## Build System
 
-- **Bundler:** Rollup with multiple config files for different output formats.
-- **Build script:** `tools/build.sh` generates all variants into `build/`.
+- **Bundler:** esbuild, driven from `tools/build.js` through its JS API. One `BUNDLES` table
+  defines every output; per-bundle source transforms run in an `onLoad` plugin.
+- **Build script:** `pnpm build` (`node tools/build.js`) generates all variants into `build/`,
+  then runs `tsc -p tsconfig.json` for the `.d.ts` files. Pass bundle names to build a subset,
+  `--no-types` to skip the declaration pass.
+- **Packaging:** `pnpm build:package` assembles `package/`; `pnpm release` publishes and tags.
+  Both take `--dry-run` (`build:package:dry`, `release:dry`).
 - **Output formats:**
-  - `nstructjs.js` — standard bundle
+  - `nstructjs.js` — CommonJS bundle wrapped in `tools/start.frag` / `tools/end.frag`
   - `nstructjs_es6.js` — ES6 module
-  - `nstructjs_tinyeval.js` — no-eval variant
+  - `nstructjs_tinyeval.js` — CommonJS bundle including tinyeval
+  - `tinyeval.js` — tinyeval on its own
   - `nstructjs_configurable.js` — with configurable code generation
   - `nstructjs_configurable_noeval.js` — configurable, no eval
 

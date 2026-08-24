@@ -15,13 +15,36 @@ dynamic code generation for performance — no intermediate representation, no g
 
 ## Commands
 
-- `pnpm build` — build all bundles into `build/` (runs `tools/build.sh` → Rollup).
+- `pnpm build` — build all bundles into `build/` (runs `tools/build.js` → esbuild, then `tsc`
+  for the `.d.ts` files). Pass bundle names to build a subset, `--no-types` to skip `tsc`.
 - `pnpm test` — run the Vitest suite (`tests/*.test.ts`).
 - `pnpm run typecheck` — `tsc --noEmit`.
 - `pnpm docs` — generate the API reference into `docs/` with TypeDoc (config in `typedoc.json`).
 - `pnpm format` / `pnpm format:check` — Prettier.
+- `pnpm build:package` — assemble the publishable tree in `package/`; `build:package:dry` reports
+  what it would copy and writes nothing.
+- `pnpm release` — build, publish to npm, and tag; `release:dry` runs the same steps with
+  `npm publish --dry-run` and no commit, tag, push, or upload.
 
 Always run `pnpm test` and `pnpm run typecheck` before committing.
+
+### Build system
+
+`tools/build.js` defines every bundle in one `BUNDLES` table and drives esbuild through the JS
+API. Per-bundle source transforms run in an `onLoad` plugin against the TypeScript source before
+esbuild sees it:
+
+- `stripTinyeval` cuts the `//$BUILD_TINYEVAL_START` … `//$BUILD_TINYEVAL_END` block out of
+  `structjs.ts` and leaves no-op `tinyeval` / `useTinyEval` exports in its place.
+- `inlineKeywords` rewrites `[keywords.script]` and friends into direct property accesses.
+- `templatizeStruct` transpiles the `//$KEYWORD_CONFIG_START` … `//$KEYWORD_CONFIG_END` region on
+  its own and splices it into a template literal.
+
+The `nstructjs.js` and `nstructjs_tinyeval.js` bundles are CommonJS wrapped in `tools/start.frag`
+and `tools/end.frag`, injected as esbuild's `banner` and `footer`.
+
+`build/nstructjs_configurable.js` is an unfinished artifact: nothing evaluates the class source it
+embeds, so importing it throws. It predates this refactor and is built for parity only.
 
 ## Architecture (`src/`)
 

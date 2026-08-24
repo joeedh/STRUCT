@@ -21,7 +21,8 @@ import {
   StructEnum,
 } from "./types.js";
 
-// needed to avoid a rollup bug in configurable mode
+// Aliased through locals so the configurable build's spliced class body binds
+// them by a name the bundler does not rewrite.
 const sintern2 = _sintern2;
 const struct_eval = _struct_eval;
 
@@ -199,9 +200,9 @@ function define_empty_class(scls: { keywords: StructKeywords }, name: string): S
   return cls;
 }
 
-// Everything between this marker and $KEYWORD_CONFIG_END is spliced into a
-// template literal by tools/rollup_configurable.config.js, so a backtick in
-// here (comments included) breaks that build. Use plain quotes.
+// Everything between this marker and $KEYWORD_CONFIG_END is transpiled on its
+// own and spliced into a template literal by tools/build.js, so it has to stand
+// alone as a single class declaration.
 //$KEYWORD_CONFIG_START
 
 export class STRUCT {
