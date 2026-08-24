@@ -54,12 +54,15 @@ camelCase functions; snake_case manager methods (`write_object`, `read_object`) 
 backward compatibility.
 
 ## Documentation
-- **Prose docs should follow the comment prose style rules
+- Prose docs follow the [comment prose style rules](#comments) below.
 - **Prose docs are in [`documentation/`](documentation/index.md)** — this is the canonical, edited
   source. Edit those Markdown files, not the wiki.
 - **`pnpm docs` runs TypeDoc** (`typedoc.json`) and writes the API site to `docs/`. The
   `documentation/*.md` pages are folded into the generated site via TypeDoc's `projectDocuments`,
-  and `documentation/index.md` is the readme/landing page.
+  and `documentation/index.md` is the readme/landing page. A new page has to be added to
+  `projectDocuments` in `typedoc.json` and linked from `index.md`, or nothing reaches the site.
+  `npx typedoc` prints broken cross-page anchors as warnings; the run should end at 0 errors and the
+  7 long-standing "referenced … but not included in the documentation" warnings.
 - **The old GitHub wiki** (`wiki/`, a separate `STRUCT.wiki.git` repo) is **deprecated**; every page
   carries a banner pointing to `documentation/`. Don't add new content there.
 - **esdoc has been removed** (no more `.esdoc.json` / `nstructjs_esdoc.cjs` / `build_docs.sh`).
@@ -73,30 +76,44 @@ backward compatibility.
   JSON data model, type mappings, polymorphism, and validation — read it before touching the
   `toJSON`/`fromJSON`/`validateJSON`/`formatJSON` handlers in `struct_intern2.ts` or
   `struct_json.ts`.
+- **[`documentation/HelperScripts.md`](documentation/HelperScripts.md)** covers the `| jscode`
+  field suffix — write-side only, one per field, the per-item container form, and the `this` field
+  name.
+- **[`documentation/UnknownClasses.md`](documentation/UnknownClasses.md)** covers the
+  `onUnknownClass` / `onSerializeUnknown` hooks and `parse_structs` dummies.
+- **[`documentation/Configuration.md`](documentation/Configuration.md)** covers `deriveStructManager`,
+  struct ids, registration (`setAllowOverriding`, `isRegistered`, `unregister`, `validateStructs`),
+  diagnostics (`setDebugMode`, `setWarningMode`, `truncateDollarSign`), `useTinyEval`, and byte order.
+  Its `###` headings are deliberately un-backticked so TypeDoc's slugs resolve — leave them that way.
 
 ## STRUCT DSL
 
 ```
 namespace.ClassName {
-  fieldName    : int;
-  optionalField: optional(int);
-  nestedArray  : array(array(float));
-  reference    : ClassName2;
+  fieldName     : int;
+  optionalField : optional(int);
+  shorthandOpt ?: int;
+  nestedArray   : array(array(float));
+  reference     : ClassName2;
+  derived       : int | obj.reference.uuid;
 }
 ```
 
-Supported types: `int`, `uint`, `float`, `double`, `string`, `static_string[N]`, `byte`, `short`,
-`ushort`, `bool`, `array(T)`, `iter(T)`, `iterkeys(T)`, `static_array[T, N]`, `optional(T)`,
-`arraybuffer(T)` (bulk typed-array/`ArrayBuffer` block, numeric `T` only), and
-struct references by name. See `documentation/Specification.md`.
+Supported types: `int`, `uint`, `float`, `double`, `string`, `static_string[N]`, `byte`, `sbyte`,
+`short`, `ushort`, `bool`, `array(T)`, `iter(T)`, `iterkeys(T)`, `static_array[T, N]`, `optional(T)`,
+`abstract(T[, jsonKeyword])`, `arraybuffer(T)` (bulk typed-array/`ArrayBuffer` block, numeric `T`
+only), and struct references by name. `field ?: T` is shorthand for `optional(T)`. A field may carry
+one `| jscode` helper script. See `documentation/Specification.md`.
 
 ## Common tasks
 
 - **Add a primitive type:** add to `StructEnum` (`types.ts`), add a `StructFieldTypeClass` subclass
   with `packCode()`/`unpackCode()` in `struct_intern2.ts`, register it in the handler map, extend the
-  parser in `struct_parser.ts` if needed, and add roundtrip tests in `tests/`.
+  parser in `struct_parser.ts` if needed, add roundtrip tests in `tests/`, and add the type to the
+  grammar and a semantics section in `documentation/Specification.md`.
 - **Modify the DSL parser:** hand-written recursive descent in `struct_parser.ts` over the lexer in
-  `struct_parseutil.ts`.
+  `struct_parseutil.ts`. Grammar changes go into `documentation/Specification.md` (user-facing) and
+  `documentation/parsing.md` (the rule-by-rule walkthrough).
 - **Debug serialization:** enable `DEBUG` in `struct_global.ts`; the codegen in `struct_intern2.ts`
   emits readable JS — log the generated source.
 
