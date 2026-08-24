@@ -42,20 +42,38 @@ correct name/signature.
 - **`uint` / `ushort`** primitive types were missing from the grammar/type list in
   `Specification.md`; added.
 
-## Known-incomplete / deferred (prose does not yet cover)
+## Previously deferred, now written
 
-These are real public exports (`src/structjs.ts`) that the prose docs still treat lightly or not at
-all. They are covered by the generated TypeDoc API reference, but could use narrative docs later:
+Each bullet below was a gap in the earlier audit. All five are covered as of this pass.
 
-- `deriveStructManager(keywords?)` — custom-keyword managers (only mentioned in passing).
-- `onUnknownClass` / `onSerializeUnknown` hooks (added in commits `c6b6753` / `bb6fadb`) — only
-  listed in `index.md`, no worked example.
+- `deriveStructManager(keywords?)` — [Configuration](Configuration.md#derivestructmanagerkeywords).
+  The audit's earlier wording, and the example in `Reading-And-Writing.md`, both treated it as
+  returning a manager *instance*; it returns a `STRUCT` subclass (`struct_intern.ts:1539`). The
+  example now uses `new nstructjs.STRUCT()`.
+- `onUnknownClass` / `onSerializeUnknown` — [Unknown Classes](UnknownClasses.md), with a worked
+  placeholder round-trip matching `tests/unknown_struct_field.test.ts`.
 - `truncateDollarSign`, `setAllowOverriding`, `isRegistered`, `validateStructs`, `setDebugMode`,
-  `setWarningMode`, `useTinyEval` — listed in `index.md` but not given dedicated sections.
-- The `array(item, Type) | helper` per-item map form and the `obj.field.uuid` helper-script
-  mechanism could use a dedicated reference page (currently only shown by example in the intro).
-- `static_array[T, N]` and `optional(T)` types appear in `AGENTS.MD`'s type list and the source but
-  are not in `Specification.md`'s grammar — verify against `struct_parser.ts` and add if supported.
+  `setWarningMode`, `useTinyEval` — [Configuration](Configuration.md), one section each.
+- The helper-script mechanism, including the `array(item, Type) | helper` per-item map form and the
+  `this` field name — [Helper Scripts](HelperScripts.md).
+- `static_array[T, N]` and `optional(T)` — verified supported (`struct_parser.ts:334` / `:394`) and
+  added to `Specification.md`'s grammar and semantics, along with `sbyte`, the `field ?: T` shorthand
+  for `optional`, and the `iterkeys(TYPE)` no-iterator form.
+
+## Known-incomplete / deferred
+
+- **`truncateDollarSign` does not truncate.** `_truncateDollarSign` (`struct_intern.ts:108`) finds
+  the `$` with `String.prototype.search`, which coerces its argument to a regular expression; `/$/`
+  matches the end of the string, so the function returns its input unchanged in every case. The flag
+  is documented with that caveat rather than as working. Fixing it changes registered struct names in
+  any build that relies on the default, so it is a behavior change, not a pure bug fix.
+- **`isRegistered` ignores custom keywords.** It gates on
+  `cls.hasOwnProperty("structName")` (`struct_intern.ts:843`) before consulting the keyword table, so
+  it always reports `false` for a manager derived with a renamed `name` keyword.
+- **`deriveStructManager` omits the `after` keyword.** `STRUCT.setClassKeyword` builds an `after`
+  entry; `deriveStructManager` does not, so a derived manager's keyword set is missing it.
+- **The field-level `set` script is dead.** `struct_parser.ts:486` parses a second `| …` into
+  `field.set`, and nothing in the read path reads it.
 
 ## Removed sources
 

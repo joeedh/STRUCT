@@ -30,14 +30,15 @@ the STRUCT scripts used to generate a given file *inside that file*. You generat
 `abstract` keyword will not work.
 
 To save space, the `abstract` keyword does not store the full type of an object; instead it stores
-an integer ID referencing that object's type within the nstructjs system. These IDs are assigned by
-a simple incrementer; thus, any change to the *order* of struct registrations will change existing
-IDs.
+an integer ID referencing that object's type within the nstructjs system. IDs are derived from the
+struct's name by default, so they no longer move when the order or the set of struct registrations
+changes — see [Struct ids](Configuration.md#struct-ids). Under the older registration-counter scheme
+(`manager.stableIds = false`) any change to registration order changed existing IDs.
 
-This is where `nstructjs.write_scripts()` comes in. If you look at its output, you'll see entries
-like this:
+Either way the IDs a file was written with belong in the file, which is what
+`nstructjs.write_scripts()` produces. Its output carries an ID on every struct:
 
-    mymodule.SomeClass id=1 {
+    mymodule.SomeClass id=965353570 {
     }
 
 ## File writing example
@@ -60,12 +61,14 @@ nstructjs.writeObject(data, anObject);
 ## Reading saved STRUCT scripts
 
 Continuing the example above, to load a file with the STRUCT scripts saved inside it we create our
-own instance of the manager class. Use `nstructjs.deriveStructManager()` (or `new nstructjs.STRUCT()`
-directly):
+own instance of the manager class:
 
 ```js
-const load_manager = nstructjs.deriveStructManager();
+const load_manager = new nstructjs.STRUCT();
 ```
+
+(`nstructjs.deriveStructManager()` returns a manager *class* with renamed DSL keywords, not an
+instance — see [deriveStructManager](Configuration.md#derivestructmanagerkeywords).)
 
 Then get a `DataView` over the saved bytes:
 
@@ -97,3 +100,8 @@ resumes at the right offset):
 ```js
 const anObject2 = load_manager.readObject(view, anObject.constructor, uctx);
 ```
+
+`parse_structs` creates a throwaway dummy class for any struct in the file that has no counterpart in
+the class list, and reading into a dummy discards the data. Install the
+[unknown-class hooks](UnknownClasses.md) on `load_manager` to read those structs into placeholders
+instead, and to write them back out unchanged.

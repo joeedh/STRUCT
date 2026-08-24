@@ -13,6 +13,7 @@
             float
             bool
             byte
+            sbyte
             double
             short
             ushort
@@ -25,18 +26,33 @@
             array(ITERNAME, TYPE)
             iter(TYPE)
             iter(ITERNAME, TYPE)
+            iterkeys(TYPE)
             iterkeys(ITERNAME, TYPE)
+            static_array [ TYPE , NUMBER ]
+            static_array [ TYPE , NUMBER , ITERNAME ]
+            optional(TYPE)
             arraybuffer(TYPE)
 
     field => ID : TYPE
              ID : TYPE | JSCODE
+             ID : TYPE | JSCODE | JSCODE
+             ID ?: TYPE
 
     fieldlist => field ;
                  fieldlist field ;
 
     STRUCT => header fieldlist }
 
+A field name may also be a number, and a `//` comment after the terminating `;` is retained as the
+field's comment and reproduced by `formatJSON`.
+
 # Semantics
+
+## Helper scripts
+
+`JSCODE` is a single line of JavaScript, terminated by a newline or a `//` comment, that computes the
+value written for a field. It runs on the write side only. The second `JSCODE` form is parsed and
+stored but never executed. See [Helper Scripts](HelperScripts.md).
 
 ## Endianness
 
@@ -58,6 +74,10 @@ The `uint` type is an unsigned 32-bit integer.
 ### byte
 
 The `byte` type is an unsigned 8-bit integer.
+
+### sbyte
+
+The `sbyte` type is a signed 8-bit integer.
 
 ### bool
 
@@ -131,6 +151,42 @@ takes an optional iter-key argument.
 Example:
 
     object : iterkeys(e, Something) | this.object[e].getSomething();
+
+## StaticArray
+
+`static_array[TYPE, NUMBER]` stores exactly `NUMBER` elements and writes no length prefix, so the
+field occupies a fixed number of bytes. An optional third argument names a per-item iterator variable
+for a [helper script](HelperScripts.md#per-item-scripts-on-container-types):
+
+    coords : static_array[float, 3];
+    verts  : static_array[int, 4, item] | item.index;
+
+### Semantics
+
+To write a static_array:
+
+1. Write exactly `NUMBER` elements according to the STRUCT type rules. No length is written.
+
+A source array longer than `NUMBER` is truncated. A shorter one is padded by repeating its last
+element. An empty or absent value writes `NUMBER` null elements — the zero value for the element
+type. It is read back as a plain array of length `NUMBER`.
+
+## Optional
+
+`optional(TYPE)` stores a value that may be absent. `field ?: TYPE` is equivalent shorthand:
+
+    parent  : optional(SomeClass);
+    parent ?: SomeClass;
+
+### Semantics
+
+To write an optional:
+
+1. Write a 32-bit signed integer: 1 when the value is present, 0 when it is `undefined` or `null`.
+2. When present, write the value according to the STRUCT type rules.
+
+An absent value reads back as `undefined` in binary mode. In JSON it is written as `null` and read
+back as `undefined`.
 
 ## ArrayBuffer
 

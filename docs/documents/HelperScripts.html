@@ -1,0 +1,66 @@
+<!DOCTYPE html><html class="default" lang="en" data-base="../"><head><meta charset="utf-8"/><meta http-equiv="x-ua-compatible" content="IE=edge"/><title>HelperScripts | nstructjs - v0.8.7</title><meta name="description" content="Documentation for nstructjs"/><meta name="viewport" content="width=device-width, initial-scale=1"/><link rel="stylesheet" href="../assets/style.css"/><link rel="stylesheet" href="../assets/highlight.css"/><script defer src="../assets/main.js"></script><script async src="../assets/icons.js" id="tsd-icons-script"></script><script async src="../assets/search.js" id="tsd-search-script"></script><script async src="../assets/navigation.js" id="tsd-nav-script"></script><script async src="../assets/hierarchy.js" id="tsd-hierarchy-script"></script></head><body><script>document.documentElement.dataset.theme = localStorage.getItem("tsd-theme") || "os";document.body.style.display="none";setTimeout(() => window.app?app.showPage():document.body.style.removeProperty("display"),500)</script><header class="tsd-page-toolbar"><div class="tsd-toolbar-contents container"><a href="../index.html" class="title">nstructjs - v0.8.7</a><div id="tsd-toolbar-links"></div><button id="tsd-search-trigger" class="tsd-widget" aria-label="Search"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-search"></use></svg></button><dialog id="tsd-search" aria-label="Search"><input role="combobox" id="tsd-search-input" aria-controls="tsd-search-results" aria-autocomplete="list" aria-expanded="true" autocapitalize="off" autocomplete="off" placeholder="Search the docs" maxLength="100"/><ul role="listbox" id="tsd-search-results"></ul><div id="tsd-search-status" aria-live="polite" aria-atomic="true"><div>Preparing search index...</div></div></dialog><a href="#" class="tsd-widget menu" id="tsd-toolbar-menu-trigger" data-toggle="menu" aria-label="Menu"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-menu"></use></svg></a></div></header><div class="container container-main"><div class="col-content"><div class="tsd-page-title"><ul class="tsd-breadcrumb" aria-label="Breadcrumb"><li><a href="" aria-current="page">HelperScripts</a></li></ul></div><div class="tsd-panel tsd-typography"><h1 id="helper-scripts" class="tsd-anchor-link">Helper Scripts<a href="#helper-scripts" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h1>
+<p>A field declaration can carry a <em>helper script</em> — a single line of JavaScript after a <code>|</code> that
+computes the value written for that field, in place of reading the property directly.</p>
+<pre><code>mymodule.SomeClass {
+  c : int | obj.c.uuid;
+}
+</code></pre>
+<p>The script is an expression, not a statement list. nstructjs wraps it as
+<code>function(obj, env) { return &lt;script&gt; }</code> and calls it with the instance as both <code>this</code> and <code>obj</code>, so
+<code>obj.c.uuid</code> and <code>this.c.uuid</code> are equivalent. The wrapped function is compiled once per distinct
+script text and cached on the manager.</p>
+<p>A <code>//</code> comment ends the script, and so does a newline. The <code>;</code> that terminates the field declaration
+comes after the script:</p>
+<pre><code>c : int | obj.c.uuid; // stores an id in place of the reference
+</code></pre>
+<h2 id="the-script-runs-only-on-the-write-side" class="tsd-anchor-link">The script runs only on the write side<a href="#the-script-runs-only-on-the-write-side" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h2>
+<p>There is no read-side counterpart. The unpacked value is assigned straight to <code>obj[fieldName]</code>, so a
+field that writes a transformed value has to undo the transform in <code>loadSTRUCT</code>:</p>
+<pre><code class="js"><span class="hl-7">loadSTRUCT</span><span class="hl-1">(</span><span class="hl-3">reader</span><span class="hl-1">) {</span><br/><span class="hl-1">  </span><span class="hl-7">reader</span><span class="hl-1">(</span><span class="hl-2">this</span><span class="hl-1">);</span><br/><span class="hl-1">  </span><span class="hl-2">this</span><span class="hl-1">.</span><span class="hl-3">c</span><span class="hl-1"> = </span><span class="hl-7">lookup_object_from_uuid</span><span class="hl-1">(</span><span class="hl-2">this</span><span class="hl-1">.</span><span class="hl-3">c</span><span class="hl-1">);</span><br/><span class="hl-1">}</span>
+</code><button type="button">Copy</button></pre>
+
+<p>The grammar accepts a second <code>| …</code> after the first, which the parser stores as the field's <code>set</code>
+script. Nothing in the read path consults it. Treat a second script as unimplemented rather than as a
+read-side hook.</p>
+<h2 id="per-item-scripts-on-container-types" class="tsd-anchor-link">Per-item scripts on container types<a href="#per-item-scripts-on-container-types" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h2>
+<p><code>array</code>, <code>iter</code>, <code>iterkeys</code>, and <code>static_array</code> accept an iterator-variable name before the element
+type. Naming one changes when the script runs: once per element, with that name bound to the current
+element.</p>
+<pre><code>// once per element, `item` is the element
+verts : array(item, int) | item.index;
+
+// once for the whole field, `obj` is the instance
+verts : array(int) | obj.verts.map(v =&gt; v.index);
+</code></pre>
+<p>The iterator name is bound through the same <code>env</code> mechanism the compiled script sees, so <code>obj</code> and
+<code>this</code> still refer to the containing instance inside a per-item script.</p>
+<p><code>iterkeys</code> iterates an object's own keys with <code>for-in</code>, and its iterator variable is the key rather
+than the value:</p>
+<pre><code>object : iterkeys(e, Something) | this.object[e].getSomething();
+</code></pre>
+<p>The per-item form disables the bulk primitive fast path (<code>array(float)</code> over a plain number array is
+otherwise copied in one block), so prefer the whole-field form when the transform can be expressed
+over the array as a whole.</p>
+<h2 id="as-a-field-name" class="tsd-anchor-link"><code>this</code> as a field name<a href="#as-a-field-name" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h2>
+<p>A field named <code>this</code> unpacks into the instance itself instead of into a property of it. It is how a
+class that <em>is</em> a container — a subclass of <code>Array</code>, or a typed-array wrapper — gets its elements
+filled without an intermediate property:</p>
+<pre><code>mymodule.IndexBuffer {
+  this : array(int);
+}
+</code></pre>
+<p><code>validateStructs()</code> rejects <code>this</code> on a value type (<code>int</code>, <code>string</code>, and the rest), because there is
+nothing to unpack <em>into</em>. In JSON output the field is written inline rather than under a <code>&quot;this&quot;</code>
+key.</p>
+<h2 id="helper-scripts-and" class="tsd-anchor-link">Helper scripts and <code>write_scripts</code><a href="#helper-scripts-and" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h2>
+<p><code>write_scripts()</code> strips helper scripts by default, since the scripts describe how a particular build
+reaches its data and mean nothing to a reader that only has the file. Pass <code>includeCode = true</code> to
+keep them:</p>
+<pre><code class="js"><span class="hl-3">nstructjs</span><span class="hl-1">.</span><span class="hl-7">write_scripts</span><span class="hl-1">(</span><span class="hl-3">nstructjs</span><span class="hl-1">.</span><span class="hl-3">manager</span><span class="hl-1">, </span><span class="hl-2">true</span><span class="hl-1">);</span>
+</code><button type="button">Copy</button></pre>
+
+<h2 id="evaluation-and" class="tsd-anchor-link">Evaluation and <code>useTinyEval</code><a href="#evaluation-and" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h2>
+<p>Scripts are compiled with the same evaluator used for the generated pack/unpack code — <code>eval</code> by
+default, or the bundled sandboxed interpreter after a call to <code>useTinyEval()</code>. See
+<a href="Configuration.html#usetinyeval">Configuration</a>.</p>
+</div></div><div class="col-sidebar"><div class="page-menu"><div class="tsd-navigation settings"><details class="tsd-accordion"><summary class="tsd-accordion-summary"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-chevronDown"></use></svg><h3>Settings</h3></summary><div class="tsd-accordion-details"><div class="tsd-filter-visibility"><span class="settings-label">Member Visibility</span><ul id="tsd-filter-options"><li class="tsd-filter-item"><label class="tsd-filter-input"><input type="checkbox" id="tsd-filter-protected" name="protected"/><svg width="32" height="32" viewBox="0 0 32 32" aria-hidden="true"><rect class="tsd-checkbox-background" width="30" height="30" x="1" y="1" rx="6" fill="none"></rect><path class="tsd-checkbox-checkmark" d="M8.35422 16.8214L13.2143 21.75L24.6458 10.25" stroke="none" stroke-width="3.5" stroke-linejoin="round" fill="none"></path></svg><span>Protected</span></label></li><li class="tsd-filter-item"><label class="tsd-filter-input"><input type="checkbox" id="tsd-filter-inherited" name="inherited" checked/><svg width="32" height="32" viewBox="0 0 32 32" aria-hidden="true"><rect class="tsd-checkbox-background" width="30" height="30" x="1" y="1" rx="6" fill="none"></rect><path class="tsd-checkbox-checkmark" d="M8.35422 16.8214L13.2143 21.75L24.6458 10.25" stroke="none" stroke-width="3.5" stroke-linejoin="round" fill="none"></path></svg><span>Inherited</span></label></li><li class="tsd-filter-item"><label class="tsd-filter-input"><input type="checkbox" id="tsd-filter-external" name="external"/><svg width="32" height="32" viewBox="0 0 32 32" aria-hidden="true"><rect class="tsd-checkbox-background" width="30" height="30" x="1" y="1" rx="6" fill="none"></rect><path class="tsd-checkbox-checkmark" d="M8.35422 16.8214L13.2143 21.75L24.6458 10.25" stroke="none" stroke-width="3.5" stroke-linejoin="round" fill="none"></path></svg><span>External</span></label></li></ul></div><div class="tsd-theme-toggle"><label class="settings-label" for="tsd-theme">Theme</label><select id="tsd-theme"><option value="os">OS</option><option value="light">Light</option><option value="dark">Dark</option></select></div></div></details></div><details open class="tsd-accordion tsd-page-navigation"><summary class="tsd-accordion-summary"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-chevronDown"></use></svg><h3>On This Page</h3></summary><div class="tsd-accordion-details"><a href="#helper-scripts"><span>Helper <wbr/>Scripts</span></a><ul><li><a href="#the-script-runs-only-on-the-write-side"><span>The script runs only on the write side</span></a></li><li><a href="#per-item-scripts-on-container-types"><span>Per-<wbr/>item scripts on container types</span></a></li><li><a href="#as-a-field-name"><span> as a field name</span></a></li><li><a href="#helper-scripts-and"><span>Helper scripts and </span></a></li><li><a href="#evaluation-and"><span>Evaluation and </span></a></li></ul></div></details></div><div class="site-menu"><nav class="tsd-navigation"><a href="../modules.html">nstructjs - v0.8.7</a><ul class="tsd-small-nested-navigation" id="tsd-nav-container"><li>Loading...</li></ul></nav></div></div></div><footer><p class="tsd-generator">Generated using <a href="https://typedoc.org/" target="_blank">TypeDoc</a></p></footer><div class="overlay"></div></body></html>

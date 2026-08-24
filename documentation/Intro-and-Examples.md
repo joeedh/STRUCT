@@ -107,6 +107,9 @@ helper code to be executed only once (for the whole array), simply omit the firs
 
     some_array : array(SomeType) | [do something with obj.some_array];
 
+See [Helper Scripts](HelperScripts.md) for the full mechanism — what the script can reference, why
+there is no read-side counterpart, and how the `this` field name works.
+
 # Abstract Classes
 
 What if you don't know the exact class of a property? In that case, you use the `abstract` keyword:
@@ -118,4 +121,6 @@ designed to be very compact, objects are normally saved without any sort of type
 `abstract` keyword simply tells nstructjs to write a type ID before `some_property`.
 
 See [Reading and Writing](Reading-And-Writing.md) for how to keep those type IDs stable across
-schema changes, and [JSON](JSON.md) for the JSON form of abstract types.
+schema changes, [JSON](JSON.md) for the JSON form of abstract types, and
+[Unknown Classes](UnknownClasses.md) for reading a file that references a subclass this build does
+not have.

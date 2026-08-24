@@ -17,6 +17,12 @@ deprecated and now just points here.)
 - [JSON](JSON.md) — the JSON serialization API.
 - [JSON Guide](jsonGuide.md) — deep-dive on the JSON data model, type mappings, polymorphism, and
   validation.
+- [Helper Scripts](HelperScripts.md) — the `| jscode` mechanism, per-item array maps, and the `this`
+  field.
+- [Unknown Classes](UnknownClasses.md) — reading and rewriting structs whose JS class this build
+  doesn't have, via `onUnknownClass` / `onSerializeUnknown`.
+- [Configuration](Configuration.md) — custom-keyword managers, struct ids, registration options,
+  diagnostics, and `useTinyEval`.
 - [Specification](Specification.md) — the STRUCT DSL grammar and the binary format spec.
 - [Documentation Audit](AUDIT.md) — record of how this documentation was reconciled against the
   source code.
@@ -63,8 +69,10 @@ Registration:
 - `register(cls, structName?)` — register a class that has a static `STRUCT` script.
 - `inlineRegister(cls, structScript)` — register inline; returns the script for assignment to a
   static `STRUCT` field. Handles inheritance automatically.
-- `unregister(cls)`, `isRegistered(cls)`, `setAllowOverriding(t)`.
-- `deriveStructManager(keywords?)` — create a `STRUCT` manager with custom keywords.
+- `unregister(cls)`, `isRegistered(cls)`, `setAllowOverriding(t)` — see
+  [Configuration](Configuration.md#registration).
+- `deriveStructManager(keywords?)` — create a `STRUCT` manager *class* with custom keywords; see
+  [Configuration](Configuration.md#derivestructmanagerkeywords).
 - `inherit(child, parent, structName?)` — **deprecated**; use `inlineRegister` instead.
 
 Binary serialization:
@@ -86,19 +94,22 @@ Schema / file compatibility:
 
 - `write_scripts(manager?, includeCode?)` — produce ID-stamped STRUCT scripts to embed in a file
   so the `abstract` keyword survives registration-order changes.
-- `validateStructs(onerror?)` — validate all registered structs.
+- `validateStructs(onerror?)` — validate all registered structs; see
+  [Configuration](Configuration.md#validatestructsonerror).
 
-Configuration:
+Configuration ([details](Configuration.md)):
 
 - `setEndian(littleEndian)` / `getEndian()` — control binary byte order (default little-endian).
-- `truncateDollarSign(value?)` — strip webpack-mangled suffixes (e.g. `Mesh$1` → `Mesh`).
+- `truncateDollarSign(value?)` — intended to strip bundler-mangled suffixes (e.g. `Mesh$1` →
+  `Mesh`); currently a no-op, see [Configuration](Configuration.md#truncatedollarsignvalue).
 - `setDebugMode(level)` / `setWarningMode(level)`.
 - `useTinyEval()` — use the bundled sandboxed evaluator instead of `eval()`.
 
-Hooks (set on the `manager` / a derived `STRUCT`):
+Hooks (set on the `manager` / a derived `STRUCT`) — see [Unknown Classes](UnknownClasses.md):
 
-- `onUnknownClass(clsname, schema)` — supply a constructor when an `abstract(...)` field
-  references a struct whose JS class isn't currently registered.
-- `onSerializeUnknown(...)` — companion hook for serializing unknown classes.
+- `onUnknownClass(clsname, schema)` — supply a constructor when a field references a struct whose JS
+  class isn't currently registered.
+- `onSerializeUnknown(obj)` — companion hook that names the struct such a placeholder is written
+  back under.
 
 Submodules re-exported from the package: `binpack`, `parser`, `parseutil`, `filehelper`.
