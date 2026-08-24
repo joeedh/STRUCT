@@ -35,7 +35,6 @@
 
     field => ID : TYPE
              ID : TYPE | JSCODE
-             ID : TYPE | JSCODE | JSCODE
              ID ?: TYPE
 
     fieldlist => field ;
@@ -51,8 +50,8 @@ field's comment and reproduced by `formatJSON`.
 ## Helper scripts
 
 `JSCODE` is a single line of JavaScript, terminated by a newline or a `//` comment, that computes the
-value written for a field. It runs on the write side only. The second `JSCODE` form is parsed and
-stored but never executed. See [Helper Scripts](HelperScripts.md).
+value written for a field. A field takes one, and it runs on the write side only. See
+[Helper Scripts](HelperScripts.md).
 
 ## Endianness
 

@@ -33,7 +33,6 @@ type =&gt; int
 
 field =&gt; ID : TYPE
          ID : TYPE | JSCODE
-         ID : TYPE | JSCODE | JSCODE
          ID ?: TYPE
 
 fieldlist =&gt; field ;
@@ -46,8 +45,8 @@ field's comment and reproduced by <code>formatJSON</code>.</p>
 <h1 id="semantics" class="tsd-anchor-link">Semantics<a href="#semantics" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h1>
 <h2 id="helper-scripts" class="tsd-anchor-link">Helper scripts<a href="#helper-scripts" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h2>
 <p><code>JSCODE</code> is a single line of JavaScript, terminated by a newline or a <code>//</code> comment, that computes the
-value written for a field. It runs on the write side only. The second <code>JSCODE</code> form is parsed and
-stored but never executed. See <a href="HelperScripts.html">Helper Scripts</a>.</p>
+value written for a field. A field takes one, and it runs on the write side only. See
+<a href="HelperScripts.html">Helper Scripts</a>.</p>
 <h2 id="endianness" class="tsd-anchor-link">Endianness<a href="#endianness" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h2>
 <p>The byte order is configurable via <code>nstructjs.setEndian(littleEndian)</code> / <code>nstructjs.getEndian()</code>.
 <strong>The default is little-endian.</strong> Set it once, consistently, for both writing and reading a given

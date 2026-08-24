@@ -52,8 +52,8 @@ A small, generic, PLY-inspired regex lexer.
 
 - **`JSCRIPT` (`|`)** — `struct_parser.ts:191`. A `|` begins an inline JS snippet that runs to
   end-of-line (or to a `//` comment). It is consumed by reading raw characters directly off the
-  lexer (`lex.lexpos`), not by regex, and trailing `;` are stripped. These become a field's `get`
-  and `set` expressions (read transform / write transform).
+  lexer (`lex.lexpos`), not by regex, and trailing `;` are stripped. This becomes the field's `get`
+  expression, which runs on the write side.
 - **`OPT_COLON` (`?:`)** — the shorthand that marks a field optional (equivalent to wrapping the
   type in `optional(...)`).
 - **`COMMENT` (`//…`)** — kept as a token (not skipped) so a trailing comment can be attached to a
@@ -84,7 +84,7 @@ The grammar entry point is `p_Struct`, assigned to `parserInst.start` (`struct_p
 | Rule | Source | Produces |
 |------|--------|----------|
 | `p_Struct` | `:467` | `NStruct` — name, optional `id = NUM`, then `{ field* }` |
-| `p_Field` | `:418` | `StructField` — name, `:`/`?:`, type, optional `|get` `|set`, `;`, optional comment |
+| `p_Field` | `:418` | `StructField` — name, `:`/`?:`, type, optional `|get`, `;`, optional comment |
 | `p_Type` | `:372` | `TypeDescriptor` — dispatches on the next token |
 | `p_Array` / `p_Iter` / `p_IterKeys` | `:269` / `:284` / `:324` | container `TypeDescriptor` |
 | `p_StaticArray` | `:300` | `static_array[T, N]` |
@@ -105,7 +105,8 @@ explicit id has `id === -1`.
    *after* `p_Type` returns (`:431`). So `x ?: int` and `x : optional(int)` produce the same
    descriptor.
 3. `p_Type`.
-4. Up to two `JSCRIPT` (`|…`) snippets: the first is `get`, the second is `set`.
+4. An optional `JSCRIPT` (`|…`) snippet, stored as `get`. The token runs to end-of-line, so there is
+   never more than one per field.
 5. `;` terminator.
 6. An optional trailing `COMMENT` token, stored on `field.comment`.
 
@@ -140,7 +141,7 @@ The parser's product is defined in `src/types.ts`:
   `STRUCT` carries the referenced name (string); `TSTRUCT` (abstract) carries the name plus a
   `jsonKeyword`; containers carry `{ type, iname }` (or `{ type, size, iname }` for static arrays);
   `OPTIONAL` carries the wrapped `TypeDescriptor` in `data`.
-- `StructField` (`types.ts:59`) — `{ name, type, get, set, comment }`.
+- `StructField` (`types.ts:59`) — `{ name, type, get, comment }`.
 - `NStruct` (`struct_parser.ts:9`, implements `NStructInterface`) — `{ name, id, fields }`.
 
 ## The shared `struct_parse` instance
@@ -179,7 +180,7 @@ Grammar rules can therefore call `p.error(...)` in an `else` branch without need
   "Common tasks".)
 - **Add a new container/wrapper keyword:** add it to `reserved_tokens`, write a `p_Xxx` rule that
   `expect`s the keyword and recurses via `p_Type`, and add a branch to `p_Type`'s dispatch.
-- **Change field syntax:** edit `p_Field`. Remember the two-`JSCRIPT` get/set convention and the
+- **Change field syntax:** edit `p_Field`. Remember the optional `JSCRIPT` snippet and the
   trailing-comment token.
 - **Debug a parse:** set `lexer.printTokens = true` on `struct_parse.lexer` to log every token, or
   inspect the returned `NStruct.fields`. Codegen output can be logged via the `DEBUG` flag in

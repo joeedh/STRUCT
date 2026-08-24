@@ -29,9 +29,9 @@ loadSTRUCT(reader) {
 }
 ```
 
-The grammar accepts a second `| …` after the first, which the parser stores as the field's `set`
-script. Nothing in the read path consults it. Treat a second script as unimplemented rather than as a
-read-side hook.
+A field takes one script. The `|` opens a snippet that runs to the end of the line, so a further `|`
+on the same line is read as part of that JavaScript expression — a bitwise or — not as a second
+script.
 
 ## Per-item scripts on container types
 

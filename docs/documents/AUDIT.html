@@ -114,8 +114,6 @@ any build that relies on the default, so it is a behavior change, not a pure bug
 it always reports <code>false</code> for a manager derived with a renamed <code>name</code> keyword.</li>
 <li><strong><code>deriveStructManager</code> omits the <code>after</code> keyword.</strong> <code>STRUCT.setClassKeyword</code> builds an <code>after</code>
 entry; <code>deriveStructManager</code> does not, so a derived manager's keyword set is missing it.</li>
-<li><strong>The field-level <code>set</code> script is dead.</strong> <code>struct_parser.ts:486</code> parses a second <code>| …</code> into
-<code>field.set</code>, and nothing in the read path reads it.</li>
 </ul>
 <h2 id="removed-sources" class="tsd-anchor-link">Removed sources<a href="#removed-sources" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h2>
 <ul>

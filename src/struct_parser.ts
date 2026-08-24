@@ -473,18 +473,11 @@ function StructParser(): struct_parseutil.parser {
     }
 
     let get: string | undefined = undefined;
-    let set: string | undefined = undefined;
 
     let tok = p.peeknext();
 
     if (tok && tok.type === "JSCRIPT") {
       get = tok.value;
-      p.next();
-      tok = p.peeknext();
-    }
-
-    if (tok && tok.type === "JSCRIPT") {
-      set = tok.value;
       p.next();
     }
 
@@ -498,7 +491,7 @@ function StructParser(): struct_parseutil.parser {
       p.next();
     }
 
-    return { name, type, get, set, comment };
+    return { name, type, get, comment };
   }
 
   function p_Struct(p: struct_parseutil.parser): NStruct {

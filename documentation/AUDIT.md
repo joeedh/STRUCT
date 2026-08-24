@@ -72,8 +72,6 @@ Each bullet below was a gap in the earlier audit. All five are covered as of thi
   it always reports `false` for a manager derived with a renamed `name` keyword.
 - **`deriveStructManager` omits the `after` keyword.** `STRUCT.setClassKeyword` builds an `after`
   entry; `deriveStructManager` does not, so a derived manager's keyword set is missing it.
-- **The field-level `set` script is dead.** `struct_parser.ts:486` parses a second `| …` into
-  `field.set`, and nothing in the read path reads it.
 
 ## Removed sources
 

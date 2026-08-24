@@ -74,7 +74,6 @@ export function _get_pack_debug(): {
 interface FakeFieldEntry {
   type: TypeDescriptor | undefined;
   get: string | undefined;
-  set: string | undefined;
 }
 
 class cachering<T> extends Array<T> {
@@ -225,7 +224,7 @@ function unpack_field(manager: StructManager, data: DataView, type: TypeDescript
 }
 
 let fakeFields = new cachering<FakeFieldEntry>(() => {
-  return { type: undefined, get: undefined, set: undefined };
+  return { type: undefined, get: undefined };
 }, 256);
 
 /*
@@ -1769,7 +1768,7 @@ class StructIterKeysField extends StructFieldType {
         val2 = valObj[key]; //fetch value
       }
 
-      let f2: StructField = { type: type2, get: undefined, set: undefined, name: "", comment: "" };
+      let f2: StructField = { type: type2, get: undefined, name: "", comment: "" };
       do_pack(manager, data, val2, obj, f2, type2);
 
       i++;
