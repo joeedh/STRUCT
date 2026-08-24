@@ -928,15 +928,9 @@ function StructParser() {
             };
         }
         let get = undefined;
-        let set = undefined;
         let tok = p.peeknext();
         if (tok && tok.type === "JSCRIPT") {
             get = tok.value;
-            p.next();
-            tok = p.peeknext();
-        }
-        if (tok && tok.type === "JSCRIPT") {
-            set = tok.value;
             p.next();
         }
         p.expect("SEMI");
@@ -946,7 +940,7 @@ function StructParser() {
             comment = tok.value;
             p.next();
         }
-        return { name, type, get, set, comment };
+        return { name, type, get, comment };
     }
     function p_Struct(p) {
         const name = p.expect("ID", "struct name");
@@ -1470,7 +1464,7 @@ function unpack_field(manager, data, type, uctx) {
     return ret;
 }
 let fakeFields = new cachering(() => {
-    return { type: undefined, get: undefined, set: undefined };
+    return { type: undefined, get: undefined };
 }, 256);
 /*
  Bulk fast paths for arrays/iters of fixed-width primitives: identical wire
@@ -2449,7 +2443,7 @@ class StructIterKeysField extends StructFieldType {
             else {
                 val2 = valObj[key]; //fetch value
             }
-            let f2 = { type: type2, get: undefined, set: undefined, name: "", comment: "" };
+            let f2 = { type: type2, get: undefined, name: "", comment: "" };
             do_pack(manager, data, val2, obj, f2, type2);
             i++;
         }

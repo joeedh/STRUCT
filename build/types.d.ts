@@ -98,7 +98,6 @@ export interface StructField {
     name: string;
     type: TypeDescriptor;
     get: string | undefined;
-    set: string | undefined;
     comment: string;
 }
 export interface StructKeywords {
