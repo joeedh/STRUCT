@@ -122,6 +122,12 @@ const startFrag = read("tools/start.frag");
 const endFrag = read("tools/end.frag");
 
 const BUNDLES = {
+  "nstructjs-jest.js": {
+    entry     : "src/structjs.ts",
+    format    : "cjs",
+    transforms: [stripTinyeval],
+    wrap      : false,
+  },
   "nstructjs.js": {
     entry     : "src/structjs.ts",
     format    : "cjs",

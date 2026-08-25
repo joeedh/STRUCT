@@ -1,24 +1,3 @@
-let nexports = (function () {
-  if (typeof window === "undefined" && typeof global != "undefined") {
-    global._nGlobal = global;
-  } else if (typeof self !== "undefined") {
-    self._nGlobal = self;
-  } else {
-    window._nGlobal = window;
-  }
-  
-  let exports;
-  let module = {};
-
-  //nodejs?
-  if (typeof window === "undefined" && typeof global !== "undefined") {
-    //console.log("Nodejs!");
-  } else {
-    exports = {};
-    _nGlobal.module = {exports : exports};
-  }
-  
-
 "use strict";
 var __defProp = Object.defineProperty;
 var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
@@ -4476,24 +4455,3 @@ function useTinyEval() {
   writeObject,
   write_scripts
 });
-  {
-    let glob = !((typeof window === "undefined" && typeof self === "undefined") && typeof global !== "undefined");
-
-    //try to detect nodejs in es6 module mode
-    glob = glob || (typeof global !== "undefined" && typeof global.require === "undefined");
-
-
-    if (glob) {
-        //not nodejs?
-        _nGlobal.nstructjs = module.exports;
-        _nGlobal.module = undefined;
-    }
-  }
-  
-  return module.exports;
-})();
-
-if (typeof window === "undefined" && typeof global !== "undefined" && typeof module !== "undefined") {
-  module.exports = exports = nexports;
-}
-

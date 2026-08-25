@@ -12,7 +12,7 @@ let nexports = (function () {
 
   //nodejs?
   if (typeof window === "undefined" && typeof global !== "undefined") {
-    console.log("Nodejs!");
+    //console.log("Nodejs!");
   } else {
     exports = {};
     _nGlobal.module = {exports : exports};
@@ -10107,7 +10107,6 @@ function useTinyEval() {
 })();
 
 if (typeof window === "undefined" && typeof global !== "undefined" && typeof module !== "undefined") {
-  console.log("Nodejs!", nexports);
   module.exports = exports = nexports;
 }
 
