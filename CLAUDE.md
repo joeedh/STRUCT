@@ -1,5 +1,8 @@
 # CLAUDE.md
 
+## Renames
+- build/_nstructjs.js is now build/nstructjs-jest.js
+
 Guidance for Claude Code (and other AI agents) working in this repository. A longer companion lives
 in `AGENTS.MD`; this file is the quick operational reference plus the doc workflow.
 
