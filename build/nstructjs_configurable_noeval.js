@@ -3246,7 +3246,6 @@ var STRUCT = class _STRUCT {
       name: nameKeyword,
       load: "load" + keyword,
       new: "new" + keyword,
-      after: "after" + keyword,
       from: "from" + keyword
     };
   }
@@ -3565,7 +3564,7 @@ var STRUCT = class _STRUCT {
   }
   isRegistered(cls) {
     const keywords = this.constructor.keywords;
-    if (!cls.hasOwnProperty("structName")) {
+    if (!cls.hasOwnProperty(keywords.name)) {
       return false;
     }
     return cls === this.struct_cls[cls[keywords.name]];

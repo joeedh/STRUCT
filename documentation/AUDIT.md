@@ -67,11 +67,11 @@ Each bullet below was a gap in the earlier audit. All five are covered as of thi
   matches the end of the string, so the function returns its input unchanged in every case. The flag
   is documented with that caveat rather than as working. Fixing it changes registered struct names in
   any build that relies on the default, so it is a behavior change, not a pure bug fix.
-- **`isRegistered` ignores custom keywords.** It gates on
-  `cls.hasOwnProperty("structName")` (`struct_intern.ts:843`) before consulting the keyword table, so
-  it always reports `false` for a manager derived with a renamed `name` keyword.
-- **`deriveStructManager` omits the `after` keyword.** `STRUCT.setClassKeyword` builds an `after`
-  entry; `deriveStructManager` does not, so a derived manager's keyword set is missing it.
+Two entries that were listed here have since been fixed. `isRegistered` gated on
+`cls.hasOwnProperty("structName")` before consulting the keyword table, so it always reported
+`false` under a renamed `name` keyword; it now reads the name from the table. `setClassKeyword`
+built an `after` keyword that `deriveStructManager` did not, and nothing ever read either one; the
+keyword is gone from `StructKeywords` and from `setClassKeyword`.
 
 ## Removed sources
 

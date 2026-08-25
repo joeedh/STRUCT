@@ -72,7 +72,6 @@ export interface StructKeywords {
   name: string;
   load: string;
   new: string;
-  after: string;
   from: string;
 }
 

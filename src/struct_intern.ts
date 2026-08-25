@@ -420,7 +420,6 @@ export class STRUCT {
       name  : nameKeyword,
       load  : "load" + keyword,
       new   : "new" + keyword,
-      after : "after" + keyword,
       from  : "from" + keyword,
     };
   }
@@ -841,7 +840,9 @@ export class STRUCT {
   isRegistered(cls: StructableClass): boolean {
     const keywords = (this.constructor as typeof STRUCT).keywords;
 
-    if (!cls.hasOwnProperty("structName")) {
+    // An own property, so a subclass inheriting a registered parent's name
+    // does not report as registered itself.
+    if (!cls.hasOwnProperty(keywords.name)) {
       return false;
     }
 

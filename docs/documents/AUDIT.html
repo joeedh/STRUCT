@@ -108,12 +108,12 @@ for <code>optional</code>, and the <code>iterkeys(TYPE)</code> no-iterator form.
 the <code>$</code> with <code>String.prototype.search</code>, which coerces its argument to a regular expression; <code>/$/</code>
 matches the end of the string, so the function returns its input unchanged in every case. The flag
 is documented with that caveat rather than as working. Fixing it changes registered struct names in
-any build that relies on the default, so it is a behavior change, not a pure bug fix.</li>
-<li><strong><code>isRegistered</code> ignores custom keywords.</strong> It gates on
-<code>cls.hasOwnProperty(&quot;structName&quot;)</code> (<code>struct_intern.ts:843</code>) before consulting the keyword table, so
-it always reports <code>false</code> for a manager derived with a renamed <code>name</code> keyword.</li>
-<li><strong><code>deriveStructManager</code> omits the <code>after</code> keyword.</strong> <code>STRUCT.setClassKeyword</code> builds an <code>after</code>
-entry; <code>deriveStructManager</code> does not, so a derived manager's keyword set is missing it.</li>
+any build that relies on the default, so it is a behavior change, not a pure bug fix.
+Two entries that were listed here have since been fixed. <code>isRegistered</code> gated on
+<code>cls.hasOwnProperty(&quot;structName&quot;)</code> before consulting the keyword table, so it always reported
+<code>false</code> under a renamed <code>name</code> keyword; it now reads the name from the table. <code>setClassKeyword</code>
+built an <code>after</code> keyword that <code>deriveStructManager</code> did not, and nothing ever read either one; the
+keyword is gone from <code>StructKeywords</code> and from <code>setClassKeyword</code>.</li>
 </ul>
 <h2 id="removed-sources" class="tsd-anchor-link">Removed sources<a href="#removed-sources" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h2>
 <ul>

@@ -93,14 +93,7 @@ describe("custom keywords", () => {
   });
 
   it("falls back to the default keywords with no argument", () => {
-    const base = keywordsOf(STRUCT);
-    const derived = keywordsOf(nstructjs.deriveStructManager());
-
-    // `after` is the one entry deriveStructManager never builds; it has its own
-    // test below.
-    for (const key of ["script", "name", "load", "new", "from"] as const) {
-      expect(derived[key]).toBe(base[key]);
-    }
+    expect(keywordsOf(nstructjs.deriveStructManager())).toEqual(keywordsOf(STRUCT));
   });
 
   it("reads the script off the renamed static field", () => {
@@ -223,23 +216,28 @@ describe("custom keywords", () => {
     expect(() => alt.register(Point as unknown as StructableClass)).toThrow(/no SCHEMA script/);
   });
 
-  it("builds no after keyword, unlike setClassKeyword", () => {
-    // Documented in Configuration.md as a caveat rather than a bug; this pins
-    // the difference so a fix has to update the docs with it.
-    expect(keywordsOf(nstructjs.deriveStructManager({ script: "SCHEMA" })).after).toBeUndefined();
-    expect(keywordsOf(STRUCT).after).toBe("afterSTRUCT");
+  it("reports isRegistered under a renamed name keyword", () => {
+    const Alt = nstructjs.deriveStructManager({ script: "SCHEMA", name: "$id" });
+    const alt = new Alt();
+    const { Point, Line } = schemaClasses();
+
+    expect(alt.isRegistered(Point as unknown as StructableClass)).toBe(false);
+
+    alt.register(Point as unknown as StructableClass);
+
+    expect(alt.isRegistered(Point as unknown as StructableClass)).toBe(true);
+    expect(alt.isRegistered(Line as unknown as StructableClass)).toBe(false);
   });
 
-  it("reports isRegistered false for a renamed name keyword", () => {
-    // Also a documented caveat: isRegistered gates on a literal `structName`
-    // own property before it consults the keyword table.
+  it("reports isRegistered false for a subclass inheriting a registered name", () => {
     const Alt = nstructjs.deriveStructManager({ script: "SCHEMA" });
     const alt = new Alt();
     const { Point } = schemaClasses();
 
     alt.register(Point as unknown as StructableClass);
 
-    expect(alt.isRegistered(Point as unknown as StructableClass)).toBe(false);
-    expect(alt.struct_cls.Point).toBe(Point);
+    class Sub extends Point {}
+
+    expect(alt.isRegistered(Sub as unknown as StructableClass)).toBe(false);
   });
 });

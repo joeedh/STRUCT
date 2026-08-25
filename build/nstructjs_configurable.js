@@ -3022,7 +3022,6 @@ var code2 = `StructClass = class StructClass2 {
       name: nameKeyword,
       load: "load" + keyword,
       new: "new" + keyword,
-      after: "after" + keyword,
       from: "from" + keyword
     };
   }
@@ -3341,7 +3340,7 @@ var code2 = `StructClass = class StructClass2 {
   }
   isRegistered(cls) {
     const keywords = this.constructor.keywords;
-    if (!cls.hasOwnProperty("structName")) {
+    if (!cls.hasOwnProperty(keywords.name)) {
       return false;
     }
     return cls === this.struct_cls[cls[keywords.name]];

@@ -53,15 +53,7 @@ same application. It returns a class, so instantiate it before use:</p>
 </tr>
 </tbody>
 </table>
-<p>Two caveats:</p>
-<ul>
-<li>The keyword set built by <code>deriveStructManager</code> has no <code>after</code> entry, unlike the one
-<code>STRUCT.setClassKeyword</code> builds. Do not rely on an <code>afterSTRUCT</code>-style keyword on a derived
-manager.</li>
-<li><code>isRegistered</code> checks for an own property literally named <code>structName</code> before consulting the
-keyword table, so it reports <code>false</code> for classes registered with a renamed <code>name</code> keyword. Check
-<code>manager.struct_cls[name]</code> directly on a derived manager.</li>
-</ul>
+<p>A renamed keyword set is honored everywhere the default one is, <code>isRegistered</code> included.</p>
 <p><code>new nstructjs.STRUCT()</code> is the same thing with the default keywords.</p>
 <h2 id="struct-ids" class="tsd-anchor-link">Struct ids<a href="#struct-ids" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h2>
 <p>Struct ids identify a struct inside a file — <code>abstract(...)</code> fields write one, and
@@ -91,7 +83,9 @@ registration throws. Either way a warning is logged when the warning level is ab
 earlier one&quot; switch.</p>
 <h3 id="isregisteredcls" class="tsd-anchor-link">isRegistered(cls)<a href="#isregisteredcls" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <p>True when <code>cls</code> is the class currently registered under its own struct name. A class that merely
-carries a <code>STRUCT</code> script, or one whose name was later claimed by a different class, reports <code>false</code>.</p>
+carries a <code>STRUCT</code> script, one whose name was later claimed by a different class, or a subclass
+inheriting a registered parent's struct name, all report <code>false</code>. The name is read through the
+manager's keyword table, so a derived manager reports on the keyword it was given.</p>
 <h3 id="unregistercls" class="tsd-anchor-link">unregister(cls)<a href="#unregistercls" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <p>Removes a class from the manager. Registering a replacement afterward is what actually swaps a
 definition, since <code>register</code> alone leaves the first one in place.</p>

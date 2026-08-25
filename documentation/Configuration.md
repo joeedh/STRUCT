@@ -45,14 +45,7 @@ alt.register(Point);
 | `new` | `"new" + script` | The static allocator. |
 | `from` | `"from" + script` | The deprecated `fromSTRUCT` allocator. |
 
-Two caveats:
-
-- The keyword set built by `deriveStructManager` has no `after` entry, unlike the one
-  `STRUCT.setClassKeyword` builds. Do not rely on an `afterSTRUCT`-style keyword on a derived
-  manager.
-- `isRegistered` checks for an own property literally named `structName` before consulting the
-  keyword table, so it reports `false` for classes registered with a renamed `name` keyword. Check
-  `manager.struct_cls[name]` directly on a derived manager.
+A renamed keyword set is honored everywhere the default one is, `isRegistered` included.
 
 `new nstructjs.STRUCT()` is the same thing with the default keywords.
 
@@ -93,7 +86,9 @@ earlier one" switch.
 ### isRegistered(cls)
 
 True when `cls` is the class currently registered under its own struct name. A class that merely
-carries a `STRUCT` script, or one whose name was later claimed by a different class, reports `false`.
+carries a `STRUCT` script, one whose name was later claimed by a different class, or a subclass
+inheriting a registered parent's struct name, all report `false`. The name is read through the
+manager's keyword table, so a derived manager reports on the keyword it was given.
 
 ### unregister(cls)
 
