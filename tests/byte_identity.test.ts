@@ -49,7 +49,7 @@ class BulkTypes {
       obj.bytes_.push(i & 255);
       obj.sbytes.push((i % 256) - 128);
       obj.bools.push((i & 1) === 0);
-      obj.shorts.push((i * 7919) % 65536 | 0 - 32768);
+      obj.shorts.push((i * 7919) % 65536 | (0 - 32768));
       obj.ushorts.push((i * 104729) % 65536);
       obj.ints.push((i * 2147483647) % 4294967296 | 0);
       obj.uints.push((i * 40503) % 4294967296 >>> 0);

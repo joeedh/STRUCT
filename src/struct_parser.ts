@@ -412,7 +412,7 @@ function StructParser(): struct_parseutil.parser {
 
     const pbuffer = p_ArrayBuffer(p);
     if (pbuffer) {
-      return pbuffer
+      return pbuffer;
     } else if (tok.type === "ID") {
       p.next();
       return { type: StructEnum.STRUCT, data: tok.value };

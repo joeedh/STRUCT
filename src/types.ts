@@ -58,7 +58,7 @@ export type TypeDescriptor =
   | { type: typeof StructEnum.ITERKEYS; data: ArrayTypeData }
   | { type: typeof StructEnum.STATIC_ARRAY; data: StaticArrayTypeData }
   | { type: typeof StructEnum.OPTIONAL; data: TypeDescriptor }
-  | { type: typeof StructEnum.ARRAYBUFFER; data: {type: string} };
+  | { type: typeof StructEnum.ARRAYBUFFER; data: { type: string } };
 
 export interface StructField {
   name: string;
