@@ -16,6 +16,5 @@
 })();
 
 if (typeof window === "undefined" && typeof global !== "undefined" && typeof module !== "undefined") {
-  console.log("Nodejs!", nexports);
   module.exports = exports = nexports;
 }

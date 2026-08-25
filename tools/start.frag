@@ -12,7 +12,7 @@ let nexports = (function () {
 
   //nodejs?
   if (typeof window === "undefined" && typeof global !== "undefined") {
-    console.log("Nodejs!");
+    //console.log("Nodejs!");
   } else {
     exports = {};
     _nGlobal.module = {exports : exports};
