@@ -21,11 +21,13 @@ function publish() {
   const { version } = JSON.parse(readFileSync(path.join(root, "package.json"), "utf8"));
   console.log((dry ? "Dry run for " : "Publishing ") + version);
 
+  buildPackage(false);
+
   if (!skipGit) {
     // A release script that opens an editor cannot run unattended, so an
     // unclean tree is an error rather than something to commit here.
     if (capture(["git", "status", "--porcelain"]) !== "") {
-      throw new Error("working tree is dirty; commit or stash before publishing");
+      throw new Error("\nERROR: working tree is dirty; commit or stash before publishing\n");
     }
 
     run(dry, ["git", "pull", "--ff-only"]);
@@ -34,8 +36,6 @@ function publish() {
   if (!skipLogin) {
     run(false, [npm, "login"], { shell: true });
   }
-
-  buildPackage(false);
 
   run(false, [npm, "publish", "--access", "public", ...(dry ? ["--dry-run"] : [])], {
     cwd  : path.join(root, "package"),
