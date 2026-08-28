@@ -21,7 +21,7 @@ Invoked when the reader resolves a struct — by name or by the id stored in an 
 field — and finds no registered class for it. `clsname` is the struct name from the file, and
 `schema` is the parsed `NStructInterface` the file's embedded scripts described.
 
-Return a class to construct in place of the missing one. The reader still walks the *file's* schema,
+Return a class to construct in place of the missing one. The reader still walks the _file's_ schema,
 so every field the original class declared lands on the instance as a plain property under its
 original name. Return `undefined` to fall through to the default error.
 

@@ -1,6 +1,6 @@
 # Helper Scripts
 
-A field declaration can carry a *helper script* — a single line of JavaScript after a `|` that
+A field declaration can carry a _helper script_ — a single line of JavaScript after a `|` that
 computes the value written for that field, in place of reading the property directly.
 
     mymodule.SomeClass {
@@ -60,7 +60,7 @@ over the array as a whole.
 ## `this` as a field name
 
 A field named `this` unpacks into the instance itself instead of into a property of it. It is how a
-class that *is* a container — a subclass of `Array`, or a typed-array wrapper — gets its elements
+class that _is_ a container — a subclass of `Array`, or a typed-array wrapper — gets its elements
 filled without an intermediate property:
 
     mymodule.IndexBuffer {
@@ -68,7 +68,7 @@ filled without an intermediate property:
     }
 
 `validateStructs()` rejects `this` on a value type (`int`, `string`, and the rest), because there is
-nothing to unpack *into*. In JSON output the field is written inline rather than under a `"this"`
+nothing to unpack _into_. In JSON output the field is written inline rather than under a `"this"`
 key.
 
 ## Helper scripts and `write_scripts`

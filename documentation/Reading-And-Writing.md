@@ -24,7 +24,7 @@ const anObject2 = nstructjs.readObject(view, anObject.constructor);
 # Handling data structure changes
 
 nstructjs has facilities to handle changes in data structures. The basic idea is to save a copy of
-the STRUCT scripts used to generate a given file *inside that file*. You generate this copy with
+the STRUCT scripts used to generate a given file _inside that file_. You generate this copy with
 `nstructjs.write_scripts()`, which you save before the file contents with
 `nstructjs.binpack.pack_string`. Note that **you must use `nstructjs.write_scripts()`**, or else the
 `abstract` keyword will not work.
@@ -67,7 +67,7 @@ own instance of the manager class:
 const load_manager = new nstructjs.STRUCT();
 ```
 
-(`nstructjs.deriveStructManager()` returns a manager *class* with renamed DSL keywords, not an
+(`nstructjs.deriveStructManager()` returns a manager _class_ with renamed DSL keywords, not an
 instance — see [deriveStructManager](Configuration.md#derivestructmanagerkeywords).)
 
 Then get a `DataView` over the saved bytes:

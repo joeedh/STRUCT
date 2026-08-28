@@ -16,12 +16,12 @@ speaks JSON.
 
 ## API at a glance
 
-| Function | Purpose |
-|----------|---------|
-| `nstructjs.writeJSON(obj)` | Serialize a registered instance to a **plain JS object** (not a string). |
-| `nstructjs.readJSON(json, classOrStructId)` | Reconstruct an instance from a parsed JSON object. |
-| `nstructjs.formatJSON(json, cls, addComments?, validate?)` | Pretty-print JSON with optional field comments and validation. |
-| `nstructjs.validateJSON(json, cls, useInternalParser?, printColors?, logger?)` | Validate a JSON payload against a struct, with rich error context. |
+| Function                                                                       | Purpose                                                                  |
+| ------------------------------------------------------------------------------ | ------------------------------------------------------------------------ |
+| `nstructjs.writeJSON(obj)`                                                     | Serialize a registered instance to a **plain JS object** (not a string). |
+| `nstructjs.readJSON(json, classOrStructId)`                                    | Reconstruct an instance from a parsed JSON object.                       |
+| `nstructjs.formatJSON(json, cls, addComments?, validate?)`                     | Pretty-print JSON with optional field comments and validation.           |
+| `nstructjs.validateJSON(json, cls, useInternalParser?, printColors?, logger?)` | Validate a JSON payload against a struct, with rich error context.       |
 
 All four are thin wrappers (`src/structjs.ts`) over methods on the global `manager` singleton
 (`src/struct_intern.ts`).
@@ -44,19 +44,22 @@ class Point {
   }
 }
 
-Point.STRUCT = nstructjs.inlineRegister(Point, `
+Point.STRUCT = nstructjs.inlineRegister(
+  Point,
+  `
   Point {
     x : float;
     y : float;
   }
-`);
+`
+);
 
 const p = new Point();
 p.x = 1.5;
 p.y = -2.0;
 
-const json = nstructjs.writeJSON(p);     // { x: 1.5, y: -2 }
-const text = JSON.stringify(json);        // store / transmit this
+const json = nstructjs.writeJSON(p); // { x: 1.5, y: -2 }
+const text = JSON.stringify(json); // store / transmit this
 const p2 = nstructjs.readJSON(JSON.parse(text), Point); // a real Point instance
 ```
 
@@ -86,18 +89,18 @@ the loader assigns `obj[field.name] = fromJSON(...)` for each field.
 
 How each STRUCT DSL type appears in JSON:
 
-| DSL type | JSON representation | Notes |
-|----------|--------------------|-------|
-| `int`, `uint`, `short`, `ushort`, `byte` | number | Validated as integers (`val === Math.floor(val)`). |
-| `float`, `double` | number | Plain JS numbers; `float` is **not** rounded to 32-bit in JSON (unlike binary). |
-| `bool` | `true` / `false` | |
-| `string` | string | |
-| `static_string[N]` | string | Length cap applies on the binary side; JSON stores the string as-is. |
-| `array(T)`, `iter(T)`, `iterkeys(T)` | JSON array | Each element recursively converted via `T`'s handler. |
-| `static_array[T, N]` | JSON array | |
-| a struct reference (e.g. `Point`) | nested JSON object | Recurses through that struct's fields. |
-| `abstract(Base)` / `abstract(Base, "key")` | nested object **plus a type tag** | See [Polymorphism](#polymorphism-abstract-types). |
-| `optional(T)` | the value, or `null` when absent | See [Optional fields](#optional-fields). |
+| DSL type                                   | JSON representation               | Notes                                                                           |
+| ------------------------------------------ | --------------------------------- | ------------------------------------------------------------------------------- |
+| `int`, `uint`, `short`, `ushort`, `byte`   | number                            | Validated as integers (`val === Math.floor(val)`).                              |
+| `float`, `double`                          | number                            | Plain JS numbers; `float` is **not** rounded to 32-bit in JSON (unlike binary). |
+| `bool`                                     | `true` / `false`                  |                                                                                 |
+| `string`                                   | string                            |                                                                                 |
+| `static_string[N]`                         | string                            | Length cap applies on the binary side; JSON stores the string as-is.            |
+| `array(T)`, `iter(T)`, `iterkeys(T)`       | JSON array                        | Each element recursively converted via `T`'s handler.                           |
+| `static_array[T, N]`                       | JSON array                        |                                                                                 |
+| a struct reference (e.g. `Point`)          | nested JSON object                | Recurses through that struct's fields.                                          |
+| `abstract(Base)` / `abstract(Base, "key")` | nested object **plus a type tag** | See [Polymorphism](#polymorphism-abstract-types).                               |
+| `optional(T)`                              | the value, or `null` when absent  | See [Optional fields](#optional-fields).                                        |
 
 ### Numbers and precision
 
@@ -114,14 +117,19 @@ A field that references another registered struct serializes as a nested object.
 class Line {
   a = new Point();
   b = new Point();
-  loadSTRUCT(reader) { reader(this); }
+  loadSTRUCT(reader) {
+    reader(this);
+  }
 }
-Line.STRUCT = nstructjs.inlineRegister(Line, `
+Line.STRUCT = nstructjs.inlineRegister(
+  Line,
+  `
   Line {
     a : Point;
     b : Point;
   }
-`);
+`
+);
 ```
 
 `writeJSON(new Line())` yields:
@@ -148,14 +156,20 @@ json.JWithArray {
 ```
 
 ```json
-{ "numbers": [1, 2, 3], "points": [{ "x": 1, "y": 2 }, { "x": 3, "y": 4 }] }
+{
+  "numbers": [1, 2, 3],
+  "points": [
+    { "x": 1, "y": 2 },
+    { "x": 3, "y": 4 }
+  ]
+}
 ```
 
 ## Polymorphism: `abstract` types
 
 `abstract(Base)` lets a field hold any subclass of `Base`. In JSON, the concrete type must be
 recorded so `readJSON` knows which class to instantiate. nstructjs writes that type as a string field
-**inside the object** — the *type discriminator*.
+**inside the object** — the _type discriminator_.
 
 By default the discriminator key is `_structName`. You can pick a different key by passing a second
 argument to `abstract`:
@@ -172,8 +186,8 @@ Serializing a `Holder` whose `item` is a `JDerived` instance produces:
 ```json
 {
   "item": {
-    "baseVal": 10,
-    "derivedVal": 777,
+    "baseVal"    : 10,
+    "derivedVal" : 777,
     "_structName": "json.JDerived"
   }
 }
@@ -267,7 +281,7 @@ nstructjs.formatJSON(nstructjs.writeJSON(obj), MyClass);
 
 ```jsonc
 {
-  count: 5, /* number of items */
+  "count": 5 /* number of items */,
 }
 ```
 
@@ -282,21 +296,21 @@ for humans/logs — round-trip with `writeJSON`/`readJSON`, not by parsing `form
 file whose schema you've loaded:
 
 ```js
-nstructjs.readJSON(json, structId);          // by numeric id
-nstructjs.readJSON(json, MyClass);           // by class (typical)
+nstructjs.readJSON(json, structId); // by numeric id
+nstructjs.readJSON(json, MyClass); // by class (typical)
 ```
 
 ## JSON vs binary: what differs
 
-| Aspect | JSON | Binary |
-|--------|------|--------|
-| Output | plain JS object (stringify yourself) | `number[]` of bytes |
-| `float` precision | full JS-number precision | truncated to 32-bit |
-| Abstract type tag | struct **name** string inside the object | numeric struct **id** |
-| Optional absence | `null` | presence flag byte |
-| Readability / diffing | yes | no |
-| Embedded schema (`write_scripts`) | not used | used for forward/backward compat |
-| `onUnknownClass`/`onSerializeUnknown` hooks | n/a (JSON resolves by name) | supported |
+| Aspect                                      | JSON                                     | Binary                           |
+| ------------------------------------------- | ---------------------------------------- | -------------------------------- |
+| Output                                      | plain JS object (stringify yourself)     | `number[]` of bytes              |
+| `float` precision                           | full JS-number precision                 | truncated to 32-bit              |
+| Abstract type tag                           | struct **name** string inside the object | numeric struct **id**            |
+| Optional absence                            | `null`                                   | presence flag byte               |
+| Readability / diffing                       | yes                                      | no                               |
+| Embedded schema (`write_scripts`)           | not used                                 | used for forward/backward compat |
+| `onUnknownClass`/`onSerializeUnknown` hooks | n/a (JSON resolves by name)              | supported                        |
 
 Both paths reconstruct real class instances via `loadSTRUCT`/`newSTRUCT`, share the same field
 descriptors, and respect inheritance registered through `inlineRegister`.

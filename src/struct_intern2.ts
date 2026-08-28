@@ -10,6 +10,8 @@ import {
   StructManager,
   UnpackContext,
   FieldTypeDefinition,
+  getTokInfo,
+  TokSymbolRet,
 } from "./types.js";
 
 import {
@@ -45,6 +47,7 @@ import {
   BinWriter,
 } from "./struct_binpack.js";
 import type { PackBuffer } from "./struct_binpack.js";
+import { TokInfo } from "./struct_json.js";
 
 let warninglvl = 2;
 let debug = 0;
@@ -202,7 +205,7 @@ export function validateJSON(
   type: TypeDescriptor,
   instance: unknown,
   _abstractKey?: string
-): true | string {
+): TokSymbolRet {
   return StructFieldTypeMap[type.type].validateJSON(manager, val, obj, field, type, instance, _abstractKey);
 }
 
@@ -377,7 +380,7 @@ export function do_pack(
   return ret;
 }
 
-let _ws_env: [string | undefined, unknown][] = [[undefined, undefined]];
+let _ws_env: [string, unknown][] = [["", undefined]];
 
 export class StructFieldType {
   static pack(
@@ -436,8 +439,8 @@ export class StructFieldType {
     type: TypeDescriptor,
     instance: unknown,
     _abstractKey?: string
-  ): true | string {
-    return true;
+  ): TokSymbolRet {
+    return { ok: true };
   }
 
   /**
@@ -515,12 +518,12 @@ class StructIntField extends StructFieldType {
     type: TypeDescriptor,
     instance: unknown,
     _abstractKey?: string
-  ): true | string {
+  ): TokSymbolRet {
     if (typeof val !== "number" || val !== Math.floor(val)) {
-      return "" + val + " is not an integer";
+      return { ok: "" + val + " is not an integer", tokInfo: getTokInfo(obj) };
     }
 
-    return true;
+    return { ok: true };
   }
 
   static define(): FieldTypeDefinition {
@@ -557,12 +560,12 @@ class StructFloatField extends StructFieldType {
     type: TypeDescriptor,
     instance: unknown,
     _abstractKey?: string
-  ): true | string {
+  ): TokSymbolRet {
     if (typeof val !== "number") {
-      return "Not a float: " + val;
+      return { ok: "Not a float: " + val, tokInfo: getTokInfo(obj) };
     }
 
-    return true;
+    return { ok: true };
   }
 
   static define(): FieldTypeDefinition {
@@ -599,12 +602,12 @@ class StructDoubleField extends StructFieldType {
     type: TypeDescriptor,
     instance: unknown,
     _abstractKey?: string
-  ): true | string {
+  ): TokSymbolRet {
     if (typeof val !== "number") {
-      return "Not a double: " + val;
+      return { ok: "Not a double: " + val, tokInfo: getTokInfo(obj) };
     }
 
-    return true;
+    return { ok: true };
   }
 
   static define(): FieldTypeDefinition {
@@ -639,12 +642,12 @@ class StructStringField extends StructFieldType {
     type: TypeDescriptor,
     instance: unknown,
     _abstractKey?: string
-  ): true | string {
+  ): TokSymbolRet {
     if (typeof val !== "string") {
-      return "Not a string: " + val;
+      return { ok: "Not a string: " + val, tokInfo: getTokInfo(obj) };
     }
 
-    return true;
+    return { ok: true };
   }
 
   static packNull(manager: StructManager, data: PackBuffer, field: StructField, type: TypeDescriptor): void {
@@ -687,16 +690,19 @@ class StructStaticStringField extends StructFieldType {
     type: TypeDescriptor,
     instance: unknown,
     _abstractKey?: string
-  ): true | string {
+  ): TokSymbolRet {
     if (typeof val !== "string") {
-      return "Not a string: " + val;
+      return { ok: "Not a string: " + val, tokInfo: getTokInfo(obj) };
     }
 
     if (val.length > (type.data as { maxlength: number }).maxlength) {
-      return "String is too big; limit is " + (type.data as { maxlength: number }).maxlength + "; string:" + val;
+      return {
+        ok     : "String is too big; limit is " + (type.data as { maxlength: number }).maxlength + "; string:" + val,
+        tokInfo: getTokInfo(obj),
+      };
     }
 
-    return true;
+    return { ok: true };
   }
 
   static format(type: TypeDescriptor): string {
@@ -762,14 +768,14 @@ class StructStructField extends StructFieldType {
     type: TypeDescriptor,
     instance: unknown,
     _abstractKey?: string
-  ): true | string {
+  ): TokSymbolRet {
     let stt = manager.get_struct(type.data as string);
 
     if (!val) {
-      return "Expected " + stt.name + " object";
+      return { ok: "Expected " + stt.name + " object", tokInfo: getTokInfo(obj) };
     }
 
-    return manager.validateJSONIntern(val as Record<string, unknown>, stt, _abstractKey) as true | string;
+    return manager.validateJSONIntern(val as Record<string, unknown>, stt, _abstractKey);
   }
 
   static format(type: TypeDescriptor): string {
@@ -904,11 +910,11 @@ class StructTStructField extends StructFieldType {
     type: TypeDescriptor,
     instance: unknown,
     _abstractKey?: string
-  ): true | string {
+  ): TokSymbolRet {
     let key = (type as { jsonKeyword: string }).jsonKeyword;
 
     if (typeof val !== "object") {
-      return typeof val + " is not an object";
+      return { ok: typeof val + " is not an object", tokInfo: getTokInfo(obj) };
     }
 
     const valObj = val as Record<string, unknown>;
@@ -928,10 +934,10 @@ class StructTStructField extends StructFieldType {
     } while (cls && (cls as unknown) !== Object);
 
     if (!ok) {
-      return stt.name + " is not a child class off " + type.data;
+      return { ok: stt.name + " is not a child class off " + type.data, tokInfo: getTokInfo(obj) };
     }
 
-    return manager.validateJSONIntern(valObj, stt, (type as { jsonKeyword: string }).jsonKeyword) as true | string;
+    return manager.validateJSONIntern(valObj, stt, (type as { jsonKeyword: string }).jsonKeyword);
   }
 
   static fromJSON(
@@ -1022,7 +1028,7 @@ class StructTStructField extends StructFieldType {
     const missing = cls3 === undefined || (!!manager.onUnknownClass && util.isParseStructsDummy(cls3));
     const instance = manager.read_object(data, missing ? id : cls3, uctx, dest);
     if (missing && instance && typeof instance === "object") {
-      (instance as Record<string, unknown>)._origClsname = cls2.name;
+      (instance as any)._origClsname = cls2.name;
     }
     return instance;
   }
@@ -1050,7 +1056,7 @@ class StructTStructField extends StructFieldType {
     const missing = cls3 === undefined || (!!manager.onUnknownClass && util.isParseStructsDummy(cls3));
     const instance = manager.read_object(data, missing ? id : cls3, uctx);
     if (missing && instance && typeof instance === "object") {
-      (instance as Record<string, unknown>)._origClsname = cls2.name;
+      (instance as any)._origClsname = cls2.name;
     }
     return instance;
   }
@@ -1181,9 +1187,9 @@ class StructArrayField extends StructFieldType {
     type: TypeDescriptor,
     instance: unknown,
     _abstractKey?: string
-  ): true | string {
+  ): TokSymbolRet {
     if (!val) {
-      return "not an array: " + val;
+      return { ok: "not an array: " + val, tokInfo: getTokInfo(obj) };
     }
 
     const arr = val as unknown[];
@@ -1198,12 +1204,12 @@ class StructArrayField extends StructFieldType {
         _abstractKey
       );
 
-      if (typeof ret === "string" || !ret) {
+      if (typeof ret.ok === "string" || !ret.ok) {
         return ret;
       }
     }
 
-    return true;
+    return { ok: true };
   }
 
   static fromJSON(
@@ -1457,7 +1463,7 @@ class StructIterField extends StructFieldType {
     type: TypeDescriptor,
     instance: unknown,
     _abstractKey?: string
-  ): true | string {
+  ): TokSymbolRet {
     return StructArrayField.validateJSON(manager, val, obj, field, type, instance, _abstractKey);
   }
 
@@ -1678,12 +1684,12 @@ class StructBoolField extends StructFieldType {
     type: TypeDescriptor,
     instance: unknown,
     _abstractKey?: string
-  ): true | string {
+  ): TokSymbolRet {
     if (val === 0 || val === 1 || val === true || val === false || val === "true" || val === "false") {
-      return true;
+      return { ok: true };
     }
 
-    return "" + val + " is not a bool";
+    return { ok: "" + val + " is not a bool", tokInfo: getTokInfo(obj) };
   }
 
   static fromJSON(
@@ -1768,7 +1774,7 @@ class StructIterKeysField extends StructFieldType {
         val2 = valObj[key]; //fetch value
       }
 
-      let f2: StructField = { type: type2, get: undefined, name: "", comment: "" };
+      let f2: StructField = { type: type2, get: undefined, name: "", comment: "", loc: { line: 0, column: 0 } };
       do_pack(manager, data, val2, obj, f2, type2);
 
       i++;
@@ -1783,7 +1789,7 @@ class StructIterKeysField extends StructFieldType {
     type: TypeDescriptor,
     instance: unknown,
     _abstractKey?: string
-  ): true | string {
+  ): TokSymbolRet {
     return StructArrayField.validateJSON(manager, val, obj, field, type, instance, _abstractKey);
   }
 
@@ -1948,12 +1954,12 @@ class StructUintField extends StructFieldType {
     type: TypeDescriptor,
     instance: unknown,
     _abstractKey?: string
-  ): true | string {
+  ): TokSymbolRet {
     if (typeof val !== "number" || val !== Math.floor(val)) {
-      return "" + val + " is not an integer";
+      return { ok: "" + val + " is not an integer", tokInfo: getTokInfo(obj) };
     }
 
-    return true;
+    return { ok: true };
   }
 
   static define(): FieldTypeDefinition {
@@ -1990,12 +1996,12 @@ class StructUshortField extends StructFieldType {
     type: TypeDescriptor,
     instance: unknown,
     _abstractKey?: string
-  ): true | string {
+  ): TokSymbolRet {
     if (typeof val !== "number" || val !== Math.floor(val)) {
-      return "" + val + " is not an integer";
+      return { ok: "" + val + " is not an integer", tokInfo: getTokInfo(obj) };
     }
 
-    return true;
+    return { ok: true };
   }
 
   static define(): FieldTypeDefinition {
@@ -2068,7 +2074,7 @@ class StructStaticArrayField extends StructFieldType {
     type: TypeDescriptor,
     instance: unknown,
     _abstractKey?: string
-  ): true | string {
+  ): TokSymbolRet {
     return StructArrayField.validateJSON(manager, val, obj, field, type, instance, _abstractKey);
   }
 
@@ -2217,11 +2223,11 @@ class StructOptionalField extends StructFieldType {
     type: TypeDescriptor,
     instance: unknown,
     _abstractKey?: string
-  ): true | string {
+  ): TokSymbolRet {
     const fakeField = this.fakeField(field, type);
     return val !== undefined && val !== null
       ? validateJSON(manager, val, obj, fakeField, type.data as TypeDescriptor, undefined, _abstractKey)
-      : true;
+      : { ok: true };
   }
 
   static fromJSON(
@@ -2487,16 +2493,16 @@ class StructArrayBufferField extends StructFieldType {
     type: TypeDescriptor,
     instance: unknown,
     _abstractKey?: string
-  ): true | string {
+  ): TokSymbolRet {
     if (!Array.isArray(val)) {
-      return "not an array: " + val;
+      return { ok: "not an array: " + val, tokInfo: getTokInfo(obj) };
     }
     for (let i = 0; i < val.length; i++) {
       if (typeof val[i] !== "number") {
-        return "non-numeric arraybuffer element: " + val[i];
+        return { ok: "non-numeric arraybuffer element: " + val[i], tokInfo: getTokInfo(obj) };
       }
     }
-    return true;
+    return { ok: true };
   }
 
   static format(type: TypeDescriptor): string {

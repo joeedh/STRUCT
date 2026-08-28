@@ -1,27 +1,13 @@
 import { tokdef, parser, lexer, token } from "./struct_parseutil.js";
 import { termColor } from "./struct_util.js";
 import { PUTIL_ParseError } from "./struct_parseutil.js";
-
-export const TokSymbol: unique symbol = Symbol("token-info");
+import { getTokInfo, setTokInfo } from "./types.js";
 
 export interface TokInfo {
   lexpos: number;
   lineno: number;
   col: number;
   fields: Record<string | number, TokInfo>;
-}
-
-// TokSymbol is attached to plain objects and arrays at runtime.
-// We use helper functions to access it safely.
-function setTokInfo(obj: unknown, info: TokInfo): void {
-  (obj as Record<symbol, TokInfo>)[TokSymbol] = info;
-}
-
-export function getTokInfo(obj: unknown): TokInfo | undefined {
-  if (obj && typeof obj === "object") {
-    return (obj as Record<symbol, TokInfo | undefined>)[TokSymbol];
-  }
-  return undefined;
 }
 
 export function buildJSONParser(): parser {
@@ -224,8 +210,8 @@ export function printContext(buf: string, tokinfo: TokInfo | undefined, printCol
   const lineno = tokinfo.lineno;
   const col = tokinfo.col;
 
-  const istart = Math.max(lineno - 50, 0);
-  const iend = Math.min(lineno + 2, lines.length - 1);
+  const istart = Math.max(lineno - 25, 0);
+  const iend = Math.min(lineno + 50, lines.length - 1);
 
   let s = "";
 
@@ -259,5 +245,6 @@ export function printContext(buf: string, tokinfo: TokInfo | undefined, printCol
     }
   }
 
+  s += `\n    at line ${tokinfo.lineno}:${tokinfo.col}`;
   return s;
 }

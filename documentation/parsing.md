@@ -32,7 +32,7 @@ A small, generic, PLY-inspired regex lexer.
 
 - **Token definitions** (`tokdef`) pair a name with a `RegExp` and an optional transform `func`. The
   STRUCT token list is built in `StructParser()` in `struct_parser.ts:164`.
-- **Longest match wins.** `lexer.next()` (`struct_parseutil.ts:249`) runs *every* token regex at the
+- **Longest match wins.** `lexer.next()` (`struct_parseutil.ts:249`) runs _every_ token regex at the
   current position (anchored at index 0 of the remaining slice) and keeps the match with the longest
   matched string — not the first one that matches. This is why `int` lexes as the `INT` keyword and
   not as a prefix of an `ID`.
@@ -44,7 +44,7 @@ A small, generic, PLY-inspired regex lexer.
   (`struct_parser.ts:168`). Each reserved word also gets a bare (regex-less) `tokdef` so
   `parser.expect("INT")` etc. has a named type to compare against (`struct_parser.ts:244`).
 - **Peeking.** `peek()`/`peeknext()` buffer tokens in `peeked_tokens`; `next()` drains that buffer
-  first. `at_end()` is true only when both the input is exhausted *and* the peek buffer is empty.
+  first. `at_end()` is true only when both the input is exhausted _and_ the peek buffer is empty.
 - **Line/column maps** are precomputed in `input()` for error messages; `error()` prints a few
   surrounding source lines with a caret.
 
@@ -57,7 +57,7 @@ A small, generic, PLY-inspired regex lexer.
 - **`OPT_COLON` (`?:`)** — the shorthand that marks a field optional (equivalent to wrapping the
   type in `optional(...)`).
 - **`COMMENT` (`//…`)** — kept as a token (not skipped) so a trailing comment can be attached to a
-  field. Note there are *two* comment mechanisms: this token, plus the standalone `stripComments()`
+  field. Note there are _two_ comment mechanisms: this token, plus the standalone `stripComments()`
   function (below).
 - **`STRLIT`** — single- or double-quoted; the surrounding quotes are sliced off in the transform.
 
@@ -81,16 +81,16 @@ The grammar entry point is `p_Struct`, assigned to `parserInst.start` (`struct_p
 
 ### Grammar rules
 
-| Rule | Source | Produces |
-|------|--------|----------|
-| `p_Struct` | `:467` | `NStruct` — name, optional `id = NUM`, then `{ field* }` |
-| `p_Field` | `:418` | `StructField` — name, `:`/`?:`, type, optional `|get`, `;`, optional comment |
-| `p_Type` | `:372` | `TypeDescriptor` — dispatches on the next token |
-| `p_Array` / `p_Iter` / `p_IterKeys` | `:269` / `:284` / `:324` | container `TypeDescriptor` |
-| `p_StaticArray` | `:300` | `static_array[T, N]` |
-| `p_Static_String` | `:261` | `static_string[N]` |
-| `p_Abstract` | `:340` | `abstract(StructName[, jsonKeyword])` → `TSTRUCT` |
-| `p_Optional` | `:360` | `optional(T)` |
+| Rule                                | Source                   | Produces                                                 |
+| ----------------------------------- | ------------------------ | -------------------------------------------------------- | --------------------------- |
+| `p_Struct`                          | `:467`                   | `NStruct` — name, optional `id = NUM`, then `{ field* }` |
+| `p_Field`                           | `:418`                   | `StructField` — name, `:`/`?:`, type, optional `         | get`, `;`, optional comment |
+| `p_Type`                            | `:372`                   | `TypeDescriptor` — dispatches on the next token          |
+| `p_Array` / `p_Iter` / `p_IterKeys` | `:269` / `:284` / `:324` | container `TypeDescriptor`                               |
+| `p_StaticArray`                     | `:300`                   | `static_array[T, N]`                                     |
+| `p_Static_String`                   | `:261`                   | `static_string[N]`                                       |
+| `p_Abstract`                        | `:340`                   | `abstract(StructName[, jsonKeyword])` → `TSTRUCT`        |
+| `p_Optional`                        | `:360`                   | `optional(T)`                                            |
 
 #### `p_Struct`
 
@@ -102,7 +102,7 @@ explicit id has `id === -1`.
 
 1. Field name via `p_ID_or_num` — a numeric field name is allowed (`:407`).
 2. Either `:` or `?:`. `?:` sets `is_opt`, which wraps the parsed type in an `OPTIONAL` descriptor
-   *after* `p_Type` returns (`:431`). So `x ?: int` and `x : optional(int)` produce the same
+   _after_ `p_Type` returns (`:431`). So `x ?: int` and `x : optional(int)` produce the same
    descriptor.
 3. `p_Type`.
 4. An optional `JSCRIPT` (`|…`) snippet, stored as `get`. The token runs to end-of-line, so there is
@@ -128,7 +128,7 @@ Container rules recurse back into `p_Type`, so types nest arbitrarily, e.g. `arr
 
 `array`, `iter`, and `iterkeys` accept an optional **first** argument that becomes `iname`:
 `array("vertices", Vertex)`. The rule parses the first type, and if a `COMMA` follows, treats the
-already-parsed value's `data` as the iterator name and parses the *real* element type after the comma
+already-parsed value's `data` as the iterator name and parses the _real_ element type after the comma
 (`struct_parser.ts:274`). `static_array[T, N, iname?]` puts `iname` last instead.
 
 ## Output: `TypeDescriptor` and `StructField`
@@ -158,7 +158,7 @@ parse. Call sites in `struct_intern.ts`:
 - `struct_parse.parse(scriptString)` — parse one struct; used by `register` / `inlineRegister`
   (`struct_intern.ts:231`, `:375`, `:509`, `:707`).
 - `struct_parse.input(buf)` then a `while (!struct_parse.at_end())` loop calling
-  `parse(undefined, false)` — to parse a *file* containing many concatenated structs
+  `parse(undefined, false)` — to parse a _file_ containing many concatenated structs
   (`struct_intern.ts:519`). The `false` disables the "did not consume entire input" check so the
   loop can continue to the next struct.
 

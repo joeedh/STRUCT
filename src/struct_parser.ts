@@ -1,5 +1,5 @@
 import * as struct_parseutil from "./struct_parseutil.js";
-import type { StructField, TypeDescriptor, StructEnumValue, NStructInterface } from "./types.js";
+import type { StructField, TypeDescriptor, StructEnumValue, NStructInterface, SrcLoc } from "./types.js";
 import { StructEnum } from "./types.js";
 
 export { StructEnum } from "./types.js";
@@ -8,11 +8,13 @@ export class NStruct implements NStructInterface {
   fields: StructField[];
   id: number;
   name: string;
+  loc: SrcLoc;
 
-  constructor(name: string) {
+  constructor(name: string, loc: SrcLoc) {
     this.fields = [];
     this.id = -1;
     this.name = name;
+    this.loc = loc;
   }
 }
 
@@ -454,6 +456,7 @@ function StructParser(): struct_parseutil.parser {
 
   function p_Field(p: struct_parseutil.parser): StructField {
     const name = p_ID_or_num(p);
+    const loc = getLoc(p);
     let is_opt = false;
 
     const next = p.peeknext();
@@ -491,13 +494,20 @@ function StructParser(): struct_parseutil.parser {
       p.next();
     }
 
-    return { name, type, get, comment };
+    return { name, type, get, comment, loc };
   }
+
+  const getLoc = (p: struct_parseutil.parser) => {
+    return {
+      line  : p.lexer.lineno,
+      column: p.lexer.colmap![p.lexer.lexpos],
+    };
+  };
 
   function p_Struct(p: struct_parseutil.parser): NStruct {
     const name = p.expect("ID", "struct name");
 
-    const st = new NStruct(name);
+    const st = new NStruct(name, getLoc(p));
 
     let tok = p.peeknext();
 

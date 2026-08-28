@@ -2,7 +2,7 @@ import * as struct_binpack from "./struct_binpack.js";
 import * as struct_parser from "./struct_parser.js";
 import * as _sintern2 from "./struct_intern2.js";
 import * as _struct_eval from "./struct_eval.js";
-import jsonParser, { printContext, TokSymbol } from "./struct_json.js";
+import jsonParser, { printContext, TokInfo } from "./struct_json.js";
 import * as util from "./struct_util.js";
 
 import {
@@ -24,6 +24,7 @@ import {
   StaticArrayTypeDescriptor,
   IterKeysTypeDescriptor,
   MigrateOptions,
+  TokSymbol,
 } from "./types.js";
 
 // Aliased through locals so the configurable build's spliced class body binds
@@ -1346,8 +1347,10 @@ export class STRUCT {
       }
 
       if (!(sname in this.structs)) {
-        reporter("Struct " + sname + " not found, migration may be incomplete");
-        reporter("Use nstructjs.addStructNameMigration() to fix this");
+        if (warnMissing) {
+          reporter("Struct " + sname + " not found, migration may be incomplete");
+          reporter("Use nstructjs.addStructNameMigration() to fix this");
+        }
         return undefined;
       }
       return this.structs[sname];
@@ -1357,6 +1360,7 @@ export class STRUCT {
       switch (type) {
         case StructEnum.ARRAY:
         case StructEnum.ITER:
+        case StructEnum.ITERKEYS:
         case StructEnum.STATIC_ARRAY:
         case StructEnum.TSTRUCT:
         case StructEnum.STRUCT:
@@ -1386,16 +1390,21 @@ export class STRUCT {
       }
 
       const version2 = getVersion(version, stt.name, data);
-      for (const field of stt.fields) {
-        if (isPossibleType(field.type.type)) {
-          dispatch(version2, field.type, (data as any)[field.name]);
+
+      const finish = (excludeFields?: string[]) => {
+        for (const field of stt.fields) {
+          if (isPossibleType(field.type.type) && !excludeFields?.includes(field.name)) {
+            dispatch(version2, field.type, (data as any)[field.name]);
+          }
         }
-      }
+      };
 
       // primary migration callback other then struct type renaming.
       const cls = this.get_struct_cls(sname)! as any;
       if (cls[keywords.migrate] !== undefined) {
-        cls[keywords.migrate](version2, data);
+        cls[keywords.migrate](version2, data, finish);
+      } else {
+        finish();
       }
     };
 
@@ -1429,7 +1438,7 @@ export class STRUCT {
           break;
         }
         case StructEnum.OPTIONAL:
-          if (data !== undefined) {
+          if (data !== undefined && data !== null) {
             dispatch(version, type.data, data);
           }
           break;
@@ -1487,7 +1496,7 @@ export class STRUCT {
     json: Record<string, unknown>,
     cls_or_struct_id: StructableClass | NStructInterface | number,
     _abstractKey: string = "_structName"
-  ): boolean {
+  ): { ok: boolean | string; tokInfo?: TokInfo } {
     const keywords = (this.constructor as typeof STRUCT).keywords;
 
     let cls: StructableClass;
@@ -1562,15 +1571,13 @@ export class STRUCT {
 
       const instance = f.name === "this" ? val : json;
 
-      const ret = sintern2.validateJSON(this, val, json, f, f.type, instance, _abstractKey);
+      const { ok, tokInfo: tokinfo2 } = sintern2.validateJSON(this, val, json, f, f.type, instance, _abstractKey);
 
-      if (!ret || typeof ret === "string") {
-        const msg = typeof ret === "string" ? ": " + ret : "";
+      if (!ok || typeof ok === "string") {
+        const msg = typeof ok === "string" ? ": " + ok : "";
 
-        if (tokinfo) {
-          this.jsonLogger(
-            printContext(this.jsonBuf, tokinfo as import("./struct_json.js").TokInfo | undefined, this.jsonUseColors)
-          );
+        if (tokinfo2) {
+          this.jsonLogger(printContext(this.jsonBuf, tokinfo2 as TokInfo | undefined, this.jsonUseColors));
         }
 
         if (val === undefined) {
@@ -1578,8 +1585,6 @@ export class STRUCT {
         } else {
           throw new JSONError(stt.name + ": Invalid json field " + f.name + msg);
         }
-
-        return false;
       }
     }
 
@@ -1592,11 +1597,10 @@ export class STRUCT {
       if (!keys.has(k)) {
         this.jsonLogger((cls as any)[keywords.script] as string);
         throw new JSONError(stt.name + ": Unknown json field " + k);
-        return false;
       }
     }
 
-    return true;
+    return { ok: true };
   }
 
   /**
@@ -1662,7 +1666,7 @@ export class STRUCT {
             val = (json as any)[f.name];
           }
 
-          if (val === undefined) {
+          if ((val === undefined || val === null) && f.type.type !== StructEnum.OPTIONAL) {
             if (warninglvl > 1) {
               console.warn("nstructjs.readJSON: Missing field " + f.name + " in struct " + stt.name);
             }

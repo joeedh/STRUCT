@@ -15,21 +15,21 @@ nstructjs works directly with class instances without intermediate representatio
 
 ### Core Modules (in `src/`)
 
-| Module | Purpose |
-|--------|---------|
-| `structjs.ts` | Public API entry point; re-exports all public functions |
-| `types.ts` | TypeScript interfaces and type definitions |
-| `struct_intern.ts` | `STRUCT` manager class — registration, read/write dispatch |
-| `struct_intern2.ts` | Type packing/unpacking handlers and code generation |
-| `struct_parser.ts` | Parses the STRUCT DSL into field descriptors |
-| `struct_parseutil.ts` | Lexer and parser utilities used by the DSL parser |
-| `struct_binpack.ts` | Low-level binary encoding/decoding (int, float, UTF-8) |
-| `struct_json.ts` | JSON serialization path and validation |
-| `struct_filehelper.ts` | File I/O helpers and struct versioning |
-| `struct_util.ts` | General utilities (color formatting, etc.) |
-| `struct_eval.ts` | Wrapper around `eval()` for generated pack/unpack code |
-| `struct_global.ts` | Global state and DEBUG flag |
-| `polyfill.ts` | Array/String polyfills |
+| Module                 | Purpose                                                    |
+| ---------------------- | ---------------------------------------------------------- |
+| `structjs.ts`          | Public API entry point; re-exports all public functions    |
+| `types.ts`             | TypeScript interfaces and type definitions                 |
+| `struct_intern.ts`     | `STRUCT` manager class — registration, read/write dispatch |
+| `struct_intern2.ts`    | Type packing/unpacking handlers and code generation        |
+| `struct_parser.ts`     | Parses the STRUCT DSL into field descriptors               |
+| `struct_parseutil.ts`  | Lexer and parser utilities used by the DSL parser          |
+| `struct_binpack.ts`    | Low-level binary encoding/decoding (int, float, UTF-8)     |
+| `struct_json.ts`       | JSON serialization path and validation                     |
+| `struct_filehelper.ts` | File I/O helpers and struct versioning                     |
+| `struct_util.ts`       | General utilities (color formatting, etc.)                 |
+| `struct_eval.ts`       | Wrapper around `eval()` for generated pack/unpack code     |
+| `struct_global.ts`     | Global state and DEBUG flag                                |
+| `polyfill.ts`          | Array/String polyfills                                     |
 
 ### Key Abstractions
 
@@ -112,6 +112,7 @@ All 33 tests should pass. Always run both `npm test` and `npm run typecheck` bef
 ## Common Tasks
 
 ### Adding a new primitive type
+
 1. Add the type to `StructEnum` in `types.ts`.
 2. Create a new `StructFieldTypeClass` subclass in `struct_intern2.ts` with
    `packCode()` and `unpackCode()` methods.
@@ -120,10 +121,12 @@ All 33 tests should pass. Always run both `npm test` and `npm run typecheck` bef
 5. Add roundtrip tests in `tests/`.
 
 ### Modifying the DSL parser
+
 The parser lives in `struct_parser.ts` and uses a hand-written recursive descent
 parser built on the lexer in `struct_parseutil.ts`. Token definitions are at the
 top of `struct_parseutil.ts`.
 
 ### Debugging serialization issues
+
 Enable `DEBUG` in `struct_global.ts`. The code generation step in `struct_intern2.ts`
 produces readable JavaScript — log the generated source to inspect pack/unpack logic.

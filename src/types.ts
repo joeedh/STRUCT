@@ -1,4 +1,5 @@
 import type { PackBuffer } from "./struct_binpack.js";
+import type { TokInfo } from "./struct_json.js";
 
 export const StructEnum = {
   INT          : 0,
@@ -156,11 +157,17 @@ export type TypeDescriptor =
   | OptionalTypeDescriptor
   | ArrayBufferTypeDescriptor;
 
+export interface SrcLoc {
+  line: number;
+  column: number;
+}
+
 export interface StructField {
   name: string;
   type: TypeDescriptor;
   get: string | undefined;
   comment: string;
+  loc: SrcLoc;
 }
 
 export interface StructKeywords {
@@ -181,6 +188,7 @@ export interface FieldTypeDefinition {
 }
 
 export type StructReader<T = any> = (obj: T) => void;
+export type StructMigrateFinisher = (excludeProps?: string[]) => void;
 
 /** Interface for user-registered classes. Uses unknown index signature instead of any. */
 export interface StructableClass<T extends StructableInstance | unknown = StructableInstance> {
@@ -193,9 +201,9 @@ export interface StructableClass<T extends StructableInstance | unknown = Struct
   fromSTRUCT?: (reader: StructReader<this>) => unknown;
 
   /** Optional callback to migrate both classes and json, e.g. migrateSTRUCT. */
-  migrateSTRUCT?: (dataOrJSON: any) => void;
+  migrateSTRUCT?: (version: number, dataOrJSON: any, migrateFields: StructMigrateFinisher) => void;
   /** Optional callback to fetch schema version from both classes and json, e.g. getVersionSTRUCT. */
-  getVersionSTRUCT?: () => number;
+  getVersionSTRUCT?: (dataOrJSON: any) => number;
 }
 export interface StructableInstance {
   loadSTRUCT: (reader: StructReader<this>) => unknown;
@@ -241,7 +249,7 @@ export interface StructFieldTypeClass {
     type: TypeDescriptor,
     instance: unknown,
     _abstractKey?: string
-  ): true | string;
+  ): { ok: true | string; tokInfo?: TokInfo };
   useHelperJS(field: StructField): boolean;
   define(): FieldTypeDefinition;
   unpackInto?(
@@ -271,61 +279,9 @@ export interface FormatCtx {
   validate?: boolean;
 }
 
-/** Forward reference to the STRUCT manager to avoid circular imports */
-export interface StructManager {
-  onSerializeUnknown?: (val: unknown) => string | undefined;
-  onUnknownClass?: (clsname: string, schema: NStructInterface) => StructableClass<unknown> | undefined;
-  idgen: number;
-  allowOverriding: boolean;
-  structs: Record<string, NStructInterface>;
-  struct_cls: Record<string, StructableClass>;
-  struct_ids: Record<number, NStructInterface>;
-  compiled_code: Record<string, (this: unknown, obj: unknown, env: unknown) => unknown>;
-  null_natives: Record<string, number>;
-  jsonUseColors: boolean;
-  jsonBuf: string;
-  jsonLogger: (...args: unknown[]) => void;
-  formatCtx: FormatCtx;
-
-  get_struct(name: string): NStructInterface;
-  get_struct_cls(name: string): StructableClass;
-  get_struct_id(id: number): NStructInterface;
-  write_struct(data: PackBuffer, obj: unknown, stt: NStructInterface): void;
-  write_object(data: PackBuffer | undefined, obj: unknown): PackBuffer;
-  read_object(
-    data: DataView,
-    cls_or_struct_id: StructableClass | number,
-    uctx?: UnpackContext,
-    objInstance?: unknown
-  ): unknown;
-  readObject(
-    data: DataView | Uint8Array | number[],
-    cls_or_struct_id: StructableClass | number,
-    uctx?: UnpackContext
-  ): unknown;
-  writeJSON(obj: unknown, stt?: NStructInterface): Record<string, unknown>;
-  readJSON(
-    json: unknown,
-    cls_or_struct_id: StructableClass | NStructInterface | number,
-    objInstance?: unknown
-  ): unknown;
-  validateJSON(
-    json: unknown,
-    cls_or_struct_id: StructableClass | NStructInterface | number,
-    useInternalParser?: boolean,
-    useColors?: boolean,
-    consoleLogger?: (...args: unknown[]) => void,
-    _abstractKey?: string
-  ): boolean;
-  validateJSONIntern(
-    json: Record<string, unknown>,
-    cls_or_struct_id: StructableClass | NStructInterface | number,
-    _abstractKey?: string
-  ): boolean;
-  formatJSON(json: unknown, cls: StructableClass, addComments?: boolean, validate?: boolean): string;
-  formatJSON_intern(json: Record<string, unknown>, stt: NStructInterface, field?: StructField, tlvl?: number): string;
-  _env_call(code: string, obj: unknown, env?: [string, unknown][] | [string | undefined, unknown][]): unknown;
-}
+// deleted old StructManager interface
+export type { STRUCT as StructManager } from "./struct_intern.js";
+import type { STRUCT as StructManager } from "./struct_intern.js";
 
 export interface StructManagerStatic {
   keywords: StructKeywords;
@@ -346,4 +302,20 @@ export interface MigrateOptions {
   version: number /** Note: clients are responsible for storing version. */;
   warnMissing?: boolean /** Defaults to true. */;
   reporter?: (s: string) => void /** Defaults to console prints. */;
+}
+
+export const TokSymbol: unique symbol = Symbol("token-info");
+export type TokSymbolRet = { ok: boolean | string; tokInfo?: TokInfo };
+
+// TokSymbol is attached to plain objects and arrays at runtime.
+// We use helper functions to access it safely.
+export function setTokInfo(obj: unknown, info: TokInfo): void {
+  (obj as Record<symbol, TokInfo>)[TokSymbol] = info;
+}
+
+export function getTokInfo(obj: unknown): TokInfo | undefined {
+  if (obj && typeof obj === "object") {
+    return (obj as Record<symbol, TokInfo | undefined>)[TokSymbol];
+  }
+  return undefined;
 }

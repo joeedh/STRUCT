@@ -27,11 +27,14 @@ class AbstractClass {
     reader(this);
   }
 }
-AbstractClass.STRUCT = nstructjs.inlineRegister(AbstractClass, `
+AbstractClass.STRUCT = nstructjs.inlineRegister(
+  AbstractClass,
+  `
   AbstractClass {
     value : int;
   }
-`);
+`
+);
 
 // Subclasses inherit the parent's fields automatically with inlineRegister —
 // no need to repeat them or call the deprecated nstructjs.inherit.
@@ -53,11 +56,14 @@ class Test {
     reader(this);
   }
 }
-Test.STRUCT = nstructjs.inlineRegister(Test, `
+Test.STRUCT = nstructjs.inlineRegister(
+  Test,
+  `
   Test {
     test : abstract(AbstractClass, "type");
   }
-`);
+`
+);
 ```
 
 Note the `"type"` parameter in the `abstract` keyword — it controls which field in the JSON object
@@ -76,7 +82,7 @@ It produces:
 {
   "test": {
     "value": 1,
-    "type": "C"
+    "type" : "C"
   }
 }
 ```

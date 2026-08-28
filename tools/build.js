@@ -60,6 +60,8 @@ function inlineKeywords(source) {
     ["[keywords.load]", ".loadSTRUCT"],
     ["[keywords.new]", ".newSTRUCT"],
     ["[keywords.from]", ".fromSTRUCT"],
+    ["[keywords.migrate]", ".migrateSTRUCT"],
+    ["[keywords.getVersion]", ".getVersionSTRUCT"],
     ["[keywords.name]", ".structName"],
   ];
 
@@ -89,9 +91,9 @@ function templatizeStruct(source, file) {
 
   const cls = body.replace("export class STRUCT", "StructClass = class StructClass");
   const js = esbuild.transformSync(cls, {
-    loader      : "ts",
-    target      : "es2022",
-    tsconfigRaw : { compilerOptions: { useDefineForClassFields: false } },
+    loader     : "ts",
+    target     : "es2022",
+    tsconfigRaw: { compilerOptions: { useDefineForClassFields: false } },
   }).code;
 
   return pre + "export let STRUCT;\nconst code = `" + escapeTemplate(js) + "`;\nhaveCodeGen = true;\n" + post;

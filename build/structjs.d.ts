@@ -7,7 +7,13 @@ export { unpack_context, BinWriter } from "./struct_binpack.js";
 export type { PackBuffer } from "./struct_binpack.js";
 import type { PackBuffer as PackBufferType } from "./struct_binpack.js";
 import type { StructableClass, NStructInterface, MigrateOptions } from "./types.js";
-export type { StructableClass, NStructInterface, StructableInstance, StructReader } from "./types.js";
+export type {
+  StructableClass,
+  NStructInterface,
+  StructableInstance,
+  StructReader,
+  StructMigrateFinisher,
+} from "./types.js";
 export * from "./struct_intern.js";
 /** truncate webpack mangled names. defaults to true
  *  so Mesh$1 turns into Mesh */
@@ -28,7 +34,13 @@ export declare function consoleLogger(...args: unknown[]): void;
  * @param logger
  * @returns {*}
  */
-export declare function validateJSON(json: unknown, cls: StructableClass | NStructInterface | number, useInternalParser?: boolean, printColors?: boolean, logger?: (...args: unknown[]) => void): boolean;
+export declare function validateJSON(
+  json: unknown,
+  cls: StructableClass | NStructInterface | number,
+  useInternalParser?: boolean,
+  printColors?: boolean,
+  logger?: (...args: unknown[]) => void
+): boolean;
 export declare function getEndian(): boolean;
 export declare function setAllowOverriding(t: unknown): boolean;
 export declare function isRegistered(cls: any): boolean;
@@ -63,23 +75,41 @@ export declare function inherit(child: any, parent: any, structName?: string): s
    the way JSON does (readJSON -> migrateJSON); migration happens in-place
    as each struct finishes loading.
  */
-export declare function readObject<T = unknown>(data: DataView | Uint8Array | number[], cls: StructableClass<T> | number, __uctx?: import("./types.js").UnpackContext, version?: number): T;
+export declare function readObject<T = unknown>(
+  data: DataView | Uint8Array | number[],
+  cls: StructableClass<T> | number,
+  __uctx?: import("./types.js").UnpackContext,
+  version?: number
+): T;
 /**
  @param data : Array or BinWriter instance to write bytes to
  */
 export declare function writeObject<T = unknown>(data: number[], obj: T): number[];
 export declare function writeObject<B extends PackBufferType, T = unknown>(data: B, obj: T): B;
 export declare function writeJSON<T = unknown>(obj: T): Record<string, unknown>;
-export declare function formatJSON(json: unknown, cls: StructableClass, addComments?: boolean, validate?: boolean): string;
+export declare function formatJSON(
+  json: unknown,
+  cls: StructableClass,
+  addComments?: boolean,
+  validate?: boolean
+): string;
 /** Apply migrations in-place to a json object. */
-export declare function migrateJSON<T = unknown>(json: unknown, class_or_struct_id: StructableClass<T> | NStructInterface | number, migrateOptions: MigrateOptions): unknown;
+export declare function migrateJSON<T = unknown>(
+  json: unknown,
+  class_or_struct_id: StructableClass<T> | NStructInterface | number,
+  migrateOptions: MigrateOptions
+): unknown;
 /**
  * Deserialize from json.
  * If migrate is not undefined, migration will be applied in-place
  * prior to deserialization; note this is different from binary which
  * happens in-place during deserialization.
  */
-export declare function readJSON<T = unknown>(json: unknown, class_or_struct_id: StructableClass<T> | NStructInterface | number, migrate?: MigrateOptions): T;
+export declare function readJSON<T = unknown>(
+  json: unknown,
+  class_or_struct_id: StructableClass<T> | NStructInterface | number,
+  migrate?: MigrateOptions
+): T;
 export { setDebugMode } from "./struct_intern.js";
 export { setWarningMode } from "./struct_intern.js";
 export declare const tinyeval: any;

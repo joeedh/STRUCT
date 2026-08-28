@@ -4,36 +4,36 @@ export declare function setBinaryEndian(mode: boolean): void;
 export declare const temp_dataview: DataView;
 export declare const uint8_view: Uint8Array;
 export declare class unpack_context implements UnpackContextType {
-    i: number;
-    version: number;
-    constructor(version?: number);
+  i: number;
+  version: number;
+  constructor(version?: number);
 }
 /**
  Growable byte buffer for the pack path; a drop-in alternative to the legacy
  `number[]` sink that avoids per-byte push() and the final whole-buffer copy.
  */
 export declare class BinWriter {
-    readonly _isBinWriter = true;
-    buf: Uint8Array;
-    view: DataView;
-    length: number;
-    constructor(initialCapacity?: number);
-    ensure(n: number): void;
-    push(v: number): void;
-    pushBytes(bytes: ArrayLike<number>): void;
-    i16(v: number): void;
-    u16(v: number): void;
-    i32(v: number): void;
-    u32(v: number): void;
-    f32(v: number): void;
-    f64(v: number): void;
-    /** Reserve n bytes (zero-filled) and return their offset, for back-patching. */
-    reserve(n: number): number;
-    patchI32(offset: number, v: number): void;
-    /** Used bytes as a view over the internal buffer (no copy). */
-    finish(): Uint8Array;
-    /** Used bytes as an exact-size copy (safe to grab .buffer of). */
-    toBytes(): Uint8Array;
+  readonly _isBinWriter = true;
+  buf: Uint8Array;
+  view: DataView;
+  length: number;
+  constructor(initialCapacity?: number);
+  ensure(n: number): void;
+  push(v: number): void;
+  pushBytes(bytes: ArrayLike<number>): void;
+  i16(v: number): void;
+  u16(v: number): void;
+  i32(v: number): void;
+  u32(v: number): void;
+  f32(v: number): void;
+  f64(v: number): void;
+  /** Reserve n bytes (zero-filled) and return their offset, for back-patching. */
+  reserve(n: number): number;
+  patchI32(offset: number, v: number): void;
+  /** Used bytes as a view over the internal buffer (no copy). */
+  finish(): Uint8Array;
+  /** Used bytes as an exact-size copy (safe to grab .buffer of). */
+  toBytes(): Uint8Array;
 }
 /** Sink accepted by the pack_* functions: legacy number[] or a BinWriter. */
 export type PackBuffer = number[] | BinWriter;

@@ -1,10 +1,10 @@
 import * as nstructjs from "../build/nstructjs_configurable.js";
 
 let structclass = nstructjs.deriveStructManager({
-  script: "JSON"
+  script: "JSON",
 });
 
-let manager = new structclass;
+let manager = new structclass();
 
 class Point {
   constructor(co) {
@@ -64,19 +64,28 @@ Mesh.JSON = `
 Mesh {
   polygons : array(abstract(Polygon, "type"));
 }
-`
+`;
 manager.register(Mesh);
 manager.validateStructs();
 
 let mesh = new Mesh();
 mesh.addPolygon([
-  [0, 0], [0, 1], [1, 2], [3, 4]
+  [0, 0],
+  [0, 1],
+  [1, 2],
+  [3, 4],
 ]);
 mesh.addPolygon([
-  [1, 0], [10, 1], [10, 2], [3, 44]
+  [1, 0],
+  [10, 1],
+  [10, 2],
+  [3, 44],
 ]);
 mesh.addPolygon([
-  [0, 1], [20, 1], [11, 2], [33, 4]
+  [0, 1],
+  [20, 1],
+  [11, 2],
+  [33, 4],
 ]);
 
 let json = manager.writeJSON(mesh);
@@ -86,9 +95,7 @@ json = manager.writeJSON(mesh2);
 
 console.log(JSON.stringify(json, undefined, 2));
 
-class Mat {
-
-}
+class Mat {}
 Mat.JSON = `
 mat4 {
   mat      : array(float) | this.getAsArray();

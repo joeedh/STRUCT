@@ -11,7 +11,13 @@ export type { PackBuffer } from "./struct_binpack.js";
 import type { PackBuffer as PackBufferType } from "./struct_binpack.js";
 import { STRUCT, manager, setTruncateDollarSign } from "./struct_intern.js";
 import type { StructableClass, NStructInterface, MigrateOptions } from "./types.js";
-export type { StructableClass, NStructInterface, StructableInstance, StructReader } from "./types.js";
+export type {
+  StructableClass,
+  NStructInterface,
+  StructableInstance,
+  StructReader,
+  StructMigrateFinisher,
+} from "./types.js";
 
 export * from "./struct_intern.js";
 

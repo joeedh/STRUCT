@@ -13,18 +13,18 @@ correct name/signature.
 
 ## Corrections applied to the migrated docs
 
-| Old (wiki) | Corrected | Notes |
-|---|---|---|
-| `nstructjs.manager.add_class(SomeClass)` | `nstructjs.register(SomeClass)` | `add_class` still exists as a method on `STRUCT` (`struct_intern.ts:670`) but `register` is the public idiom. |
-| `nstructjs.manager.write_object(data, obj)` | `nstructjs.writeObject(data, obj)` | Snake_case method still exists (`struct_intern.ts:857`, backward-compatible); top-level camelCase is the documented API. |
-| `nstructjs.manager.read_object(data, cls)` | `nstructjs.readObject(view, cls)` | Same as above (`struct_intern.ts:972`). |
-| `nstructjs.manager.write_object(anObject)` (missing `data` arg) | `nstructjs.writeObject(data, anObject)` | Plain bug in the wiki example — the first arg is the output array. |
-| `nstructjs.binpack.write_string` | `nstructjs.binpack.pack_string` | No `write_string` export; the function is `pack_string` (`struct_binpack.ts:198`). |
-| `new nstructjs.binpack.unpack_ctx()` | `new nstructjs.binpack.unpack_context()` | The exported class is `unpack_context` (`struct_binpack.ts:14`), also re-exported at top level. |
-| `new nstructjs.STRUCT()` | `nstructjs.deriveStructManager()` (with `new nstructjs.STRUCT()` noted as equivalent) | `STRUCT` is exported; `deriveStructManager` is the friendlier factory (`struct_intern.ts`). |
-| `nstructjs.inherit(...)` in JSON example | `nstructjs.inlineRegister(...)` | `inherit` is marked `@deprecated` in `structjs.ts:105`; `inlineRegister` handles inheritance automatically. |
-| Endianness: "network (big) byte order" | "configurable, default little-endian" | `STRUCT_ENDIAN = true` (little-endian) by default in `struct_binpack.ts:5`; controlled by `setEndian`/`getEndian`. |
-| `@STRUCT` esdoc manual link, wiki-style `[Page](Page)` links | relative `Page.md` links | esdoc-specific link syntax removed. |
+| Old (wiki)                                                      | Corrected                                                                             | Notes                                                                                                                    |
+| --------------------------------------------------------------- | ------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------ |
+| `nstructjs.manager.add_class(SomeClass)`                        | `nstructjs.register(SomeClass)`                                                       | `add_class` still exists as a method on `STRUCT` (`struct_intern.ts:670`) but `register` is the public idiom.            |
+| `nstructjs.manager.write_object(data, obj)`                     | `nstructjs.writeObject(data, obj)`                                                    | Snake_case method still exists (`struct_intern.ts:857`, backward-compatible); top-level camelCase is the documented API. |
+| `nstructjs.manager.read_object(data, cls)`                      | `nstructjs.readObject(view, cls)`                                                     | Same as above (`struct_intern.ts:972`).                                                                                  |
+| `nstructjs.manager.write_object(anObject)` (missing `data` arg) | `nstructjs.writeObject(data, anObject)`                                               | Plain bug in the wiki example — the first arg is the output array.                                                       |
+| `nstructjs.binpack.write_string`                                | `nstructjs.binpack.pack_string`                                                       | No `write_string` export; the function is `pack_string` (`struct_binpack.ts:198`).                                       |
+| `new nstructjs.binpack.unpack_ctx()`                            | `new nstructjs.binpack.unpack_context()`                                              | The exported class is `unpack_context` (`struct_binpack.ts:14`), also re-exported at top level.                          |
+| `new nstructjs.STRUCT()`                                        | `nstructjs.deriveStructManager()` (with `new nstructjs.STRUCT()` noted as equivalent) | `STRUCT` is exported; `deriveStructManager` is the friendlier factory (`struct_intern.ts`).                              |
+| `nstructjs.inherit(...)` in JSON example                        | `nstructjs.inlineRegister(...)`                                                       | `inherit` is marked `@deprecated` in `structjs.ts:105`; `inlineRegister` handles inheritance automatically.              |
+| Endianness: "network (big) byte order"                          | "configurable, default little-endian"                                                 | `STRUCT_ENDIAN = true` (little-endian) by default in `struct_binpack.ts:5`; controlled by `setEndian`/`getEndian`.       |
+| `@STRUCT` esdoc manual link, wiki-style `[Page](Page)` links    | relative `Page.md` links                                                              | esdoc-specific link syntax removed.                                                                                      |
 
 ## Verified still-correct (no change needed)
 
@@ -63,7 +63,7 @@ Each bullet below was a gap in the earlier audit. All five are covered as of thi
 
 - `deriveStructManager(keywords?)` — [Configuration](Configuration.md#derivestructmanagerkeywords).
   The audit's earlier wording, and the example in `Reading-And-Writing.md`, both treated it as
-  returning a manager *instance*; it returns a `STRUCT` subclass (`struct_intern.ts:1539`). The
+  returning a manager _instance_; it returns a `STRUCT` subclass (`struct_intern.ts:1539`). The
   example now uses `new nstructjs.STRUCT()`.
 - `onUnknownClass` / `onSerializeUnknown` — [Unknown Classes](UnknownClasses.md), with a worked
   placeholder round-trip matching `tests/unknown_struct_field.test.ts`.
@@ -82,11 +82,11 @@ Each bullet below was a gap in the earlier audit. All five are covered as of thi
   matches the end of the string, so the function returns its input unchanged in every case. The flag
   is documented with that caveat rather than as working. Fixing it changes registered struct names in
   any build that relies on the default, so it is a behavior change, not a pure bug fix.
-Two entries that were listed here have since been fixed. `isRegistered` gated on
-`cls.hasOwnProperty("structName")` before consulting the keyword table, so it always reported
-`false` under a renamed `name` keyword; it now reads the name from the table. `setClassKeyword`
-built an `after` keyword that `deriveStructManager` did not, and nothing ever read either one; the
-keyword is gone from `StructKeywords` and from `setClassKeyword`.
+  Two entries that were listed here have since been fixed. `isRegistered` gated on
+  `cls.hasOwnProperty("structName")` before consulting the keyword table, so it always reported
+  `false` under a renamed `name` keyword; it now reads the name from the table. `setClassKeyword`
+  built an `after` keyword that `deriveStructManager` did not, and nothing ever read either one; the
+  keyword is gone from `StructKeywords` and from `setClassKeyword`.
 
 ## Removed sources
 

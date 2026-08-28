@@ -14,7 +14,7 @@ via `getVersionSTRUCT`) — nstructjs does not track versions on its own. See
 
 ## What's already handled without migration
 
-A struct's *shape* — which fields exist, their order, their types — does not need `migrateSTRUCT`
+A struct's _shape_ — which fields exist, their order, their types — does not need `migrateSTRUCT`
 to survive a schema change, but the two serialization formats get there differently:
 
 - **Binary** reads against the schema embedded in the file itself (see
@@ -22,7 +22,7 @@ to survive a schema change, but the two serialization formats get there differen
   class's. A field the current class dropped is read and discarded; a field the current class added
   is simply never set, left at whatever the constructor initialized it to. No migration code runs
   for this.
-- **JSON** has no embedded schema — `readJSON` always reads against the *current* registered
+- **JSON** has no embedded schema — `readJSON` always reads against the _current_ registered
   struct, matching JSON object keys to current field names. A field renamed since the JSON was
   written won't match anything and is silently skipped, so a field rename on the JSON path does
   need `migrateSTRUCT` to copy the old key's value into the new one before the read runs.
@@ -47,12 +47,15 @@ class Person {
     reader(this);
   }
 
-  static STRUCT = nstructjs.inlineRegister(Person, `
+  static STRUCT = nstructjs.inlineRegister(
+    Person,
+    `
     Person {
       firstName : string;
       lastName  : string;
     }
-  `);
+  `
+  );
 
   // Called with the resolved version and the loaded data (a class instance
   // for binary, a plain object for JSON) once loading finishes.
@@ -95,7 +98,7 @@ match this particular struct's own history.
 
 ## JSON
 
-Migration on the JSON path is a separate pass, run *before* the read: `migrateJSON` walks the raw
+Migration on the JSON path is a separate pass, run _before_ the read: `migrateJSON` walks the raw
 JSON tree, mutating it in place, and only once that's done does the normal `readJSON` field-by-field
 read run against the (now-current-shaped) data.
 
@@ -195,9 +198,8 @@ further matches.
 ### Name reuse
 
 A name freed by one rename can legitimately become another struct's old name later —
-`a`&nbsp;→&nbsp;`b` at version 2, then a *different* struct renamed `e`&nbsp;→&nbsp;`a` at version
-5. `addStructNameMigration` allows this: the guard against duplicate registrations only rejects
-registering the same old name twice *at the same version*, which would otherwise silently overwrite
+`a`&nbsp;→&nbsp;`b` at version 2, then a _different_ struct renamed `e`&nbsp;→&nbsp;`a` at version 5. `addStructNameMigration` allows this: the guard against duplicate registrations only rejects
+registering the same old name twice _at the same version_, which would otherwise silently overwrite
 one target with another.
 
 Reused names can chain back on themselves — resolving `a` might reach `e`, and resolving `e` might
@@ -226,12 +228,15 @@ class Thing {
     reader(this);
   }
 
-  static STRUCT = nstructjs.inlineRegister(Thing, `
+  static STRUCT = nstructjs.inlineRegister(
+    Thing,
+    `
     app.Thing {
       firstName : string;
       lastName  : string;
     }
-  `);
+  `
+  );
 
   static migrateSTRUCT(version, data) {
     if (version < 2) {

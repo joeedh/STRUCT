@@ -1,7 +1,8 @@
 # CLAUDE.md
 
 ## Renames
-- build/_nstructjs.js is now build/nstructjs-jest.js
+
+- build/\_nstructjs.js is now build/nstructjs-jest.js
 
 Guidance for Claude Code (and other AI agents) working in this repository. A longer companion lives
 in `AGENTS.MD`; this file is the quick operational reference plus the doc workflow.
@@ -51,20 +52,20 @@ embeds, so importing it throws. It predates this refactor and is built for parit
 
 ## Architecture (`src/`)
 
-| Module | Purpose |
-|--------|---------|
-| `structjs.ts` | Public API entry point; re-exports all public functions and submodules. |
-| `types.ts` | TypeScript interfaces and type definitions (`StructableClass`, `StructEnum`, …). |
-| `struct_intern.ts` | `STRUCT` manager — registration, read/write dispatch, JSON paths, hooks. |
-| `struct_intern2.ts` | Field-type packing/unpacking handlers and code generation. |
-| `struct_parser.ts` | Parses the STRUCT DSL into field descriptors. |
-| `struct_parseutil.ts` | Lexer/parser utilities used by the DSL parser. |
-| `struct_binpack.ts` | Low-level binary encode/decode (int, float, UTF-8); `unpack_context`. |
-| `struct_json.ts` | JSON serialization path and validation. |
-| `struct_filehelper.ts` | File I/O helpers and struct versioning. |
-| `struct_eval.ts` | Wrapper around `eval()` for generated pack/unpack code. |
-| `struct_global.ts` | Global state and DEBUG flags. |
-| `struct_util.ts`, `polyfill.ts` | Utilities and polyfills. |
+| Module                          | Purpose                                                                          |
+| ------------------------------- | -------------------------------------------------------------------------------- |
+| `structjs.ts`                   | Public API entry point; re-exports all public functions and submodules.          |
+| `types.ts`                      | TypeScript interfaces and type definitions (`StructableClass`, `StructEnum`, …). |
+| `struct_intern.ts`              | `STRUCT` manager — registration, read/write dispatch, JSON paths, hooks.         |
+| `struct_intern2.ts`             | Field-type packing/unpacking handlers and code generation.                       |
+| `struct_parser.ts`              | Parses the STRUCT DSL into field descriptors.                                    |
+| `struct_parseutil.ts`           | Lexer/parser utilities used by the DSL parser.                                   |
+| `struct_binpack.ts`             | Low-level binary encode/decode (int, float, UTF-8); `unpack_context`.            |
+| `struct_json.ts`                | JSON serialization path and validation.                                          |
+| `struct_filehelper.ts`          | File I/O helpers and struct versioning.                                          |
+| `struct_eval.ts`                | Wrapper around `eval()` for generated pack/unpack code.                          |
+| `struct_global.ts`              | Global state and DEBUG flags.                                                    |
+| `struct_util.ts`, `polyfill.ts` | Utilities and polyfills.                                                         |
 
 ### How serialization works
 
@@ -80,6 +81,7 @@ camelCase functions; snake_case manager methods (`write_object`, `read_object`) 
 backward compatibility.
 
 ## Documentation
+
 - Prose docs follow the [comment prose style rules](#comments) below.
 - **Prose docs are in [`documentation/`](documentation/index.md)** — this is the canonical, edited
   source. Edit those Markdown files, not the wiki.
@@ -148,7 +150,6 @@ one `| jscode` helper script. See `documentation/Specification.md`.
 - TypeScript strict mode; single global `manager` singleton; field handlers rooted at
   `StructFieldTypeClass`; generated code cached by struct ID (avoid needless cache invalidation).
 - Use `inlineRegister()` for the common inline-STRUCT pattern; `nstructjs.inherit` is deprecated.
-
 
 ### Comments
 
@@ -239,4 +240,3 @@ one `| jscode` helper script. See `documentation/Specification.md`.
 - **Temporary comments are marked `CLAUDENOTE:`.** Any scratch/working comment Claude
   writes gets that prefix, and all of them must be removed before the final commit of a
   plan (or at the end of the plan, whichever comes first).
-

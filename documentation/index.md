@@ -43,12 +43,15 @@ class Point {
   }
 }
 
-Point.STRUCT = nstructjs.inlineRegister(Point, `
+Point.STRUCT = nstructjs.inlineRegister(
+  Point,
+  `
   Point {
     x : float;
     y : float;
   }
-`);
+`
+);
 
 const p = new Point();
 p.x = 1.5;
@@ -73,7 +76,7 @@ Registration:
   static `STRUCT` field. Handles inheritance automatically.
 - `unregister(cls)`, `isRegistered(cls)`, `setAllowOverriding(t)` — see
   [Configuration](Configuration.md#registration).
-- `deriveStructManager(keywords?)` — create a `STRUCT` manager *class* with custom keywords; see
+- `deriveStructManager(keywords?)` — create a `STRUCT` manager _class_ with custom keywords; see
   [Configuration](Configuration.md#derivestructmanagerkeywords).
 - `inherit(child, parent, structName?)` — **deprecated**; use `inlineRegister` instead.
 

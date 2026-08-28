@@ -37,13 +37,13 @@ alt.register(Point);
 
 `keywords.script` is the only required field; the rest default from it:
 
-| Keyword | Default | Names |
-|---|---|---|
-| `script` | `"STRUCT"` | The static field holding the DSL script. |
-| `name` | `script.toLowerCase() + "Name"` | The static field the resolved struct name is written to. |
-| `load` | `"load" + script` | The instance method that receives the reader continuation. |
-| `new` | `"new" + script` | The static allocator. |
-| `from` | `"from" + script` | The deprecated `fromSTRUCT` allocator. |
+| Keyword  | Default                         | Names                                                      |
+| -------- | ------------------------------- | ---------------------------------------------------------- |
+| `script` | `"STRUCT"`                      | The static field holding the DSL script.                   |
+| `name`   | `script.toLowerCase() + "Name"` | The static field the resolved struct name is written to.   |
+| `load`   | `"load" + script`               | The instance method that receives the reader continuation. |
+| `new`    | `"new" + script`                | The static allocator.                                      |
+| `from`   | `"from" + script`               | The deprecated `fromSTRUCT` allocator.                     |
 
 A renamed keyword set is honored everywhere the default one is, `isRegistered` included.
 
@@ -80,7 +80,7 @@ Turn it off in a build where a duplicate name means a real mistake:
 nstructjs.setAllowOverriding(false);
 ```
 
-Note that the *first* registration wins in both modes — this is not a "last definition replaces the
+Note that the _first_ registration wins in both modes — this is not a "last definition replaces the
 earlier one" switch.
 
 ### isRegistered(cls)
@@ -133,11 +133,11 @@ nstructjs.setDebugMode(1);
 
 Sets the verbosity of nstructjs's own warnings. It throws on a non-number argument.
 
-| Level | Effect |
-|---|---|
-| `0` | Silent. |
-| `1` | Duplicate-registration warnings, missing structs during `parse_structs`, deprecation notices for `Super` and `chain_fromSTRUCT`. |
-| `2` (default) | Also the `fromSTRUCT`-is-deprecated notice. |
+| Level         | Effect                                                                                                                           |
+| ------------- | -------------------------------------------------------------------------------------------------------------------------------- |
+| `0`           | Silent.                                                                                                                          |
+| `1`           | Duplicate-registration warnings, missing structs during `parse_structs`, deprecation notices for `Super` and `chain_fromSTRUCT`. |
+| `2` (default) | Also the `fromSTRUCT`-is-deprecated notice.                                                                                      |
 
 Level `0` is the setting for a production build that has already validated its schema.
 
