@@ -3143,6 +3143,8 @@ function define_empty_class(scls, name) {
   };
   return cls;
 }
+var binaryMigrateFinisher = () => {
+};
 var STRUCT = class _STRUCT {
   constructor() {
     // always sorted
@@ -3847,7 +3849,7 @@ var STRUCT = class _STRUCT {
     const anyCls = cls;
     if (anyCls[keywords.migrate] !== void 0) {
       const version = anyCls[keywords.getVersion] !== void 0 ? anyCls[keywords.getVersion](obj) : uctx.version;
-      anyCls[keywords.migrate](version, obj);
+      anyCls[keywords.migrate](version, obj, binaryMigrateFinisher);
     }
     return obj;
   }
