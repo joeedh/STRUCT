@@ -5,7 +5,8 @@ export declare const temp_dataview: DataView;
 export declare const uint8_view: Uint8Array;
 export declare class unpack_context implements UnpackContextType {
     i: number;
-    constructor();
+    version: number;
+    constructor(version?: number);
 }
 /**
  Growable byte buffer for the pack path; a drop-in alternative to the legacy

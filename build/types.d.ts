@@ -33,67 +33,86 @@ export interface StaticArrayTypeData {
 export interface StaticStringTypeData {
     maxlength: number;
 }
-export type TypeDescriptor = {
+export interface IntTypeDescriptor {
     type: typeof StructEnum.INT;
     data?: undefined;
-} | {
+}
+export interface FloatTypeDescriptor {
     type: typeof StructEnum.FLOAT;
     data?: undefined;
-} | {
+}
+export interface DoubleTypeDescriptor {
     type: typeof StructEnum.DOUBLE;
     data?: undefined;
-} | {
+}
+export interface StringTypeDescriptor {
     type: typeof StructEnum.STRING;
     data?: undefined;
-} | {
+}
+export interface ShortTypeDescriptor {
     type: typeof StructEnum.SHORT;
     data?: undefined;
-} | {
+}
+export interface ByteTypeDescriptor {
     type: typeof StructEnum.BYTE;
     data?: undefined;
-} | {
+}
+export interface BoolTypeDescriptor {
     type: typeof StructEnum.BOOL;
     data?: undefined;
-} | {
+}
+export interface UintTypeDescriptor {
     type: typeof StructEnum.UINT;
     data?: undefined;
-} | {
+}
+export interface UshortTypeDescriptor {
     type: typeof StructEnum.USHORT;
     data?: undefined;
-} | {
+}
+export interface SignedByteTypeDescriptor {
     type: typeof StructEnum.SIGNED_BYTE;
     data?: undefined;
-} | {
+}
+export interface StaticStringTypeDescriptor {
     type: typeof StructEnum.STATIC_STRING;
     data: StaticStringTypeData;
-} | {
+}
+export interface StructTypeDescriptor {
     type: typeof StructEnum.STRUCT;
     data: string;
-} | {
+}
+export interface TStructTypeDescriptor {
     type: typeof StructEnum.TSTRUCT;
     data: string;
     jsonKeyword: string;
-} | {
+}
+export interface ArrayTypeDescriptor {
     type: typeof StructEnum.ARRAY;
     data: ArrayTypeData;
-} | {
+}
+export interface IterTypeDescriptor {
     type: typeof StructEnum.ITER;
     data: ArrayTypeData;
-} | {
+}
+export interface IterKeysTypeDescriptor {
     type: typeof StructEnum.ITERKEYS;
     data: ArrayTypeData;
-} | {
+}
+export interface StaticArrayTypeDescriptor {
     type: typeof StructEnum.STATIC_ARRAY;
     data: StaticArrayTypeData;
-} | {
+}
+export interface OptionalTypeDescriptor {
     type: typeof StructEnum.OPTIONAL;
     data: TypeDescriptor;
-} | {
+}
+export interface ArrayBufferTypeDescriptor {
     type: typeof StructEnum.ARRAYBUFFER;
     data: {
         type: string;
     };
-};
+}
+export type TypeDescriptor = IntTypeDescriptor | FloatTypeDescriptor | DoubleTypeDescriptor | StringTypeDescriptor | ShortTypeDescriptor | ByteTypeDescriptor | BoolTypeDescriptor | UintTypeDescriptor | UshortTypeDescriptor | SignedByteTypeDescriptor | StaticStringTypeDescriptor | StructTypeDescriptor | TStructTypeDescriptor | ArrayTypeDescriptor | IterTypeDescriptor | IterKeysTypeDescriptor | StaticArrayTypeDescriptor | OptionalTypeDescriptor | ArrayBufferTypeDescriptor;
 export interface StructField {
     name: string;
     type: TypeDescriptor;
@@ -106,6 +125,10 @@ export interface StructKeywords {
     load: string;
     new: string;
     from: string;
+    /** Optional callback to migrate both classes and json, e.g. migrateSTRUCT. */
+    migrate: string;
+    /** Optional callback to fetch schema version from both classes and json, e.g. getVersionSTRUCT. */
+    getVersion: string;
 }
 export interface FieldTypeDefinition {
     type: StructEnumValue;
@@ -118,6 +141,10 @@ export interface StructableClass<T extends StructableInstance | unknown = Struct
     name?: string;
     structName?: string;
     fromSTRUCT?: (reader: StructReader<this>) => unknown;
+    /** Optional callback to migrate both classes and json, e.g. migrateSTRUCT. */
+    migrateSTRUCT?: (dataOrJSON: any) => void;
+    /** Optional callback to fetch schema version from both classes and json, e.g. getVersionSTRUCT. */
+    getVersionSTRUCT?: () => number;
 }
 export interface StructableInstance {
     loadSTRUCT: (reader: StructReader<this>) => unknown;
@@ -139,6 +166,8 @@ export interface StructFieldTypeClass {
 }
 export interface UnpackContext {
     i: number;
+    /** Current struct-migration version, threaded down through nested reads. */
+    version: number;
 }
 export interface NStructInterface {
     fields: StructField[];
@@ -191,4 +220,9 @@ export interface Version {
     major: number;
     minor: number;
     micro: number;
+}
+export interface MigrateOptions {
+    version: number /** Note: clients are responsible for storing version. */;
+    warnMissing?: boolean /** Defaults to true. */;
+    reporter?: (s: string) => void /** Defaults to console prints. */;
 }

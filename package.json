@@ -1,7 +1,7 @@
 {
   "name": "nstructjs",
   "author": "Joseph Eagar",
-  "version": "0.8.10",
+  "version": "0.8.11",
   "main": "build/nstructjs_es6.js",
   "index": "build/nstructjs_es6.js",
   "types": "build/structjs.d.ts",
@@ -36,7 +36,7 @@
     "build": "node tools/build.js",
     "build:package": "node tools/build_package.js",
     "build:package:dry": "node tools/build_package.js --dry-run",
-    "release": "node tools/publish.js",
+    "release": "pnpm build && git commit -a && node tools/publish.js",
     "release:dry": "node tools/publish.js --dry-run",
     "test": "vitest run",
     "typecheck": "tsc --noEmit",

@@ -968,8 +968,9 @@ function setBinaryEndian(mode) {
 var temp_dataview = new DataView(new ArrayBuffer(16));
 var uint8_view = new Uint8Array(temp_dataview.buffer);
 var unpack_context = class {
-  constructor() {
+  constructor(version = 0) {
     this.i = 0;
+    this.version = version;
   }
 };
 var BinWriter = class {
@@ -3131,6 +3132,8 @@ function define_empty_class(scls, name) {
 }
 var STRUCT = class _STRUCT {
   constructor() {
+    // always sorted
+    this.struct_names_migrations = [];
     this.idgen = 0;
     this.allowOverriding = true;
     this.stableIds = true;
@@ -3246,7 +3249,9 @@ var STRUCT = class _STRUCT {
       name: nameKeyword,
       load: "load" + keyword,
       new: "new" + keyword,
-      from: "from" + keyword
+      from: "from" + keyword,
+      migrate: "migrate" + keyword,
+      getVersion: "getVersion" + keyword
     };
   }
   /**
@@ -3351,11 +3356,12 @@ var STRUCT = class _STRUCT {
     }
   }
   // defaults to structjs.manager
-  parse_structs(buf, defined_classes) {
+  parse_structs(buf, defined_classes, version = 0) {
     const keywords = this.constructor.keywords;
     if (defined_classes === void 0) {
       defined_classes = manager;
     }
+    const migrationSource = defined_classes instanceof _STRUCT ? defined_classes : this;
     if (defined_classes instanceof _STRUCT) {
       const struct2 = defined_classes;
       const arr = [];
@@ -3386,7 +3392,8 @@ var STRUCT = class _STRUCT {
     struct_parse.input(buf);
     while (!struct_parse.at_end()) {
       const stt = struct_parse.parse(void 0, false);
-      if (!(stt.name in clsmap)) {
+      const migratedName = migrationSource.structNameMigration(version, stt.name);
+      if (!(migratedName in clsmap)) {
         if (!(stt.name in this.null_natives)) {
           if (warninglvl2 > 0) console.log("WARNING: struct " + stt.name + " is missing from class list.");
         }
@@ -3399,7 +3406,7 @@ var STRUCT = class _STRUCT {
         this.structs[dummy[keywords.name]] = stt;
         if (stt.id !== -1) this.struct_ids[stt.id] = stt;
       } else {
-        this.struct_cls[stt.name] = clsmap[stt.name];
+        this.struct_cls[stt.name] = clsmap[migratedName];
         this.structs[stt.name] = stt;
         if (stt.id !== -1) this.struct_ids[stt.id] = stt;
       }
@@ -3668,15 +3675,19 @@ var STRUCT = class _STRUCT {
      @param data : DataView or Uint8Array instance
      @param cls_or_struct_id : Structable class
      @param uctx : internal parameter
+     @param version : starting version passed to migrateSTRUCT/getVersionSTRUCT
+       during the read; unlike migrateJSON, binary has no separate migration
+       pass ahead of the read, so migration happens in-place as each struct
+       finishes loading. Defaults to 0.
      @return Instance of cls_or_struct_id
      */
-  readObject(data, cls_or_struct_id, uctx) {
+  readObject(data, cls_or_struct_id, uctx, version) {
     if (data instanceof Uint8Array || data instanceof Uint8ClampedArray) {
       data = new DataView(data.buffer);
     } else if (data instanceof Array) {
       data = new DataView(new Uint8Array(data).buffer);
     }
-    return this.read_object(data, cls_or_struct_id, uctx);
+    return this.read_object(data, cls_or_struct_id, uctx, void 0, version);
   }
   writeObject(data, obj) {
     return this.write_object(data, obj);
@@ -3737,7 +3748,7 @@ var STRUCT = class _STRUCT {
    @param cls_or_struct_id : Structable class
    @param uctx : internal parameter
    */
-  read_object(data, cls_or_struct_id, uctx, objInstance) {
+  read_object(data, cls_or_struct_id, uctx, objInstance, rootVersion) {
     const keywords = this.constructor.keywords;
     let cls;
     let stt;
@@ -3748,11 +3759,11 @@ var STRUCT = class _STRUCT {
     if (typeof cls_or_struct_id === "number") {
       const fileSchema = this.struct_ids[cls_or_struct_id];
       cls = this.struct_cls[fileSchema.name];
+      unknownClassSchema = fileSchema;
       if ((cls === void 0 || isParseStructsDummy(cls)) && this.onUnknownClass) {
         const hookResult = this.onUnknownClass(fileSchema.name, fileSchema);
         if (hookResult !== void 0) {
           cls = hookResult;
-          unknownClassSchema = fileSchema;
         }
       }
     } else {
@@ -3763,13 +3774,13 @@ var STRUCT = class _STRUCT {
     }
     stt = unknownClassSchema ?? this.structs[cls[keywords.name]];
     if (uctx === void 0) {
-      uctx = new unpack_context();
+      uctx = new unpack_context(rootVersion ?? 0);
       packer_debug2("\n\n=Begin reading " + cls[keywords.name] + "=");
     }
     const this2 = this;
     const typeMap = StructFieldTypeMap;
     let was_run = false;
-    const loader = function load(obj) {
+    const loader = function load(obj2) {
       if (was_run) {
         return;
       }
@@ -3779,14 +3790,15 @@ var STRUCT = class _STRUCT {
       for (let i = 0; i < flen; i++) {
         const f = fields[i];
         if (f.name === "this") {
-          typeMap[f.type.type].unpackInto(this2, data, f.type, uctx, obj);
+          typeMap[f.type.type].unpackInto(this2, data, f.type, uctx, obj2);
         } else {
-          obj[f.name] = typeMap[f.type.type].unpack(this2, data, f.type, uctx);
+          obj2[f.name] = typeMap[f.type.type].unpack(this2, data, f.type, uctx);
         }
       }
     };
+    let obj;
     if (cls.prototype[keywords.load] !== void 0) {
-      let obj = objInstance;
+      obj = objInstance;
       if (!obj && cls[keywords.new] !== void 0) {
         obj = cls[keywords.new].call(
           cls,
@@ -3803,17 +3815,16 @@ var STRUCT = class _STRUCT {
         );
         loader(obj);
       }
-      return obj;
     } else if (cls[keywords.from] !== void 0) {
       if (warninglvl2 > 1) {
         console.warn(
           "Warning: class " + unmangle(cls.name) + " is using deprecated fromSTRUCT interface; use newSTRUCT/loadSTRUCT instead"
         );
       }
-      const anyCls = cls;
-      return anyCls[keywords.from](loader);
+      const anyCls2 = cls;
+      obj = anyCls2[keywords.from](loader);
     } else {
-      let obj = objInstance;
+      obj = objInstance;
       if (!obj && cls[keywords.new] !== void 0) {
         obj = cls[keywords.new].call(
           cls,
@@ -3823,8 +3834,172 @@ var STRUCT = class _STRUCT {
         obj = new cls();
       }
       loader(obj);
-      return obj;
     }
+    const anyCls = cls;
+    if (anyCls[keywords.migrate] !== void 0) {
+      const version = anyCls[keywords.getVersion] !== void 0 ? anyCls[keywords.getVersion](obj) : uctx.version;
+      anyCls[keywords.migrate](version, obj);
+    }
+    return obj;
+  }
+  addStructNameMigration(version, oldName, newName) {
+    let item = this.struct_names_migrations.find((i) => i.version === version);
+    if (item === void 0) {
+      item = { version, map: /* @__PURE__ */ new Map() };
+      this.struct_names_migrations.push(item);
+      this.struct_names_migrations.sort((a, b) => a.version - b.version);
+    } else if (item.map.has(oldName)) {
+      throw new Error("Struct name migration already exists for " + oldName + " at version " + version);
+    }
+    item.map.set(oldName, newName);
+    return this;
+  }
+  /**
+   * `addStructNameMigration(V, oldName, newName)` means "renamed as of
+   * version V": data older than V (version < V) still has `oldName` and
+   * needs translating; data at V or newer already has `newName`. Each call
+   * registers one historical step, and this chases the whole chain --
+   * `Widget@v2 -> Gadget`, `Gadget@v3 -> Thing` resolves `Widget` all the
+   * way to `Thing` -- rather than requiring every old name to be registered
+   * straight to whatever the current name happens to be.
+   *
+   * A name reused more than once (`a@V1 -> b`, `e@V2 -> a`, `a@V3 -> e`) can
+   * make a later hop chase back to a name already visited in this same
+   * lookup; that's a dead end; not a loop, so resolution stops there and
+   * returns the last name reached rather than cycling forever.
+   */
+  structNameMigration(version, name) {
+    const seen = /* @__PURE__ */ new Set([name]);
+    for (; ; ) {
+      let next;
+      for (let i = 0; i < this.struct_names_migrations.length; i++) {
+        const item = this.struct_names_migrations[i];
+        if (version < item.version && item.map.has(name)) {
+          next = item.map.get(name);
+          break;
+        }
+      }
+      if (next === void 0 || seen.has(next)) {
+        return name;
+      }
+      name = next;
+      seen.add(name);
+    }
+  }
+  migrateJSON(json, cls_or_struct_id, options, stt) {
+    const warnMissing = options.warnMissing ?? true;
+    const keywords = this.constructor.keywords;
+    options.reporter = options.reporter ?? ((s) => console.log(s));
+    const reporter = options.reporter;
+    let cls;
+    if (typeof cls_or_struct_id === "number") {
+      cls = this.struct_cls[this.struct_ids[cls_or_struct_id].name];
+    } else if (cls_or_struct_id instanceof NStruct) {
+      cls = this.get_struct_cls(cls_or_struct_id.name);
+    } else {
+      cls = cls_or_struct_id;
+    }
+    if (cls === void 0) {
+      throw new Error("bad cls_or_struct_id " + cls_or_struct_id);
+    }
+    if (stt === void 0) {
+      stt = this.get_struct(cls[keywords.name]);
+    }
+    const getVersion = (parentVersion, presentStructName, data) => {
+      const cls2 = this.get_struct_cls(presentStructName);
+      if (cls2 === void 0) {
+        if (warnMissing) {
+          reporter("Struct " + presentStructName + " not found, migration may be incomplete");
+          reporter("Use nstructjs.addStructNameMigration() to fix this.");
+        }
+        return parentVersion;
+      }
+      if (cls2[keywords.getVersion] !== void 0) {
+        return cls2[keywords.getVersion](data);
+      }
+      return parentVersion;
+    };
+    const getStruct = (version, sname, doVersion = true) => {
+      if (doVersion) {
+        sname = this.structNameMigration(version, sname);
+      }
+      if (!(sname in this.structs)) {
+        reporter("Struct " + sname + " not found, migration may be incomplete");
+        reporter("Use nstructjs.addStructNameMigration() to fix this");
+        return void 0;
+      }
+      return this.structs[sname];
+    };
+    const isPossibleType = (type) => {
+      switch (type) {
+        case StructEnum.ARRAY:
+        case StructEnum.ITER:
+        case StructEnum.STATIC_ARRAY:
+        case StructEnum.TSTRUCT:
+        case StructEnum.STRUCT:
+        case StructEnum.OPTIONAL:
+          return true;
+      }
+      return false;
+    };
+    const walkArray = (version, arrayType, data) => {
+      if (!isPossibleType(arrayType.type)) {
+        return;
+      }
+      for (const item of data) {
+        dispatch(version, arrayType.data.type, item);
+      }
+    };
+    const walkStruct = (version, sname, data, doVersion) => {
+      const stt2 = getStruct(version, sname, doVersion);
+      if (!stt2) {
+        return;
+      }
+      const version2 = getVersion(version, stt2.name, data);
+      for (const field of stt2.fields) {
+        if (isPossibleType(field.type.type)) {
+          dispatch(version2, field.type, data[field.name]);
+        }
+      }
+      const cls2 = this.get_struct_cls(sname);
+      if (cls2[keywords.migrate] !== void 0) {
+        cls2[keywords.migrate](version2, data);
+      }
+    };
+    const walkIterKeys = (version, type, data) => {
+      for (const key of Object.keys(data)) {
+        dispatch(version, type.data.type, data[key]);
+      }
+    };
+    const this2 = this;
+    function dispatch(version, type, data) {
+      switch (type.type) {
+        case StructEnum.ARRAY:
+        case StructEnum.ITER:
+        case StructEnum.STATIC_ARRAY:
+          walkArray(version, type, data);
+          break;
+        case StructEnum.STRUCT:
+          walkStruct(version, type.data, data);
+          break;
+        case StructEnum.ITERKEYS:
+          walkIterKeys(version, type, data);
+          break;
+        case StructEnum.TSTRUCT: {
+          const dataAny = data;
+          dataAny[type.jsonKeyword] = this2.structNameMigration(version, dataAny[type.jsonKeyword]);
+          const name = data[type.jsonKeyword];
+          walkStruct(getVersion(version, name, data), name, data, false);
+          break;
+        }
+        case StructEnum.OPTIONAL:
+          if (data !== void 0) {
+            dispatch(version, type.data, data);
+          }
+          break;
+      }
+    }
+    return walkStruct(options.version, stt.name, json, true);
   }
   validateJSON(json, cls_or_struct_id, useInternalParser = true, useColors = true, consoleLogger2 = function(...args) {
     console.log(...args);
@@ -3933,7 +4108,16 @@ var STRUCT = class _STRUCT {
     }
     return true;
   }
-  readJSON(json, cls_or_struct_id, objInstance) {
+  /**
+   * Deserialize from json.
+   * If migrate is not undefined, migration will be applied in-place
+   * prior to deserialization; note this is different from binary which
+   * happens in-place during deserialization.
+   */
+  readJSON(json, cls_or_struct_id, objInstance, migrate) {
+    if (migrate) {
+      this.migrateJSON(json, cls_or_struct_id, migrate);
+    }
     const keywords = this.constructor.keywords;
     let cls;
     let stt;
@@ -4066,7 +4250,9 @@ function deriveStructManager(keywords = {
   name: void 0,
   load: void 0,
   new: void 0,
-  from: void 0
+  from: void 0,
+  migrate: void 0,
+  getVersion: void 0
 }) {
   if (!keywords.name) {
     keywords.name = keywords.script.toLowerCase() + "Name";
@@ -4079,6 +4265,12 @@ function deriveStructManager(keywords = {
   }
   if (!keywords.from) {
     keywords.from = "from" + keywords.script;
+  }
+  if (!keywords.migrate) {
+    keywords.migrate = "migrate" + keywords.script;
+  }
+  if (!keywords.getVersion) {
+    keywords.getVersion = "getVersion" + keywords.script;
   }
   class NewSTRUCT extends STRUCT {
   }
@@ -4217,8 +4409,9 @@ var FileHelper = class {
     this.version.minor = unpack_byte(dataview, this.unpack_ctx);
     this.version.micro = unpack_byte(dataview, this.unpack_ctx);
     const struct = this.struct = new STRUCT();
+    const fileVersion = versionToInt(this.version);
     const scripts = unpack_string(dataview, this.unpack_ctx);
-    this.struct.parse_structs(scripts, manager);
+    this.struct.parse_structs(scripts, manager, fileVersion);
     const blocks = [];
     const dviewlen = dataview.buffer.byteLength;
     while (this.unpack_ctx.i < dviewlen) {
@@ -4230,7 +4423,7 @@ var FileHelper = class {
         bdata = unpack_static_string(dataview, this.unpack_ctx, datalen);
       } else {
         const rawData = unpack_bytes(dataview, this.unpack_ctx, datalen);
-        bdata = struct.read_object(rawData, bstruct, new unpack_context());
+        bdata = struct.read_object(rawData, bstruct, new unpack_context(fileVersion));
       }
       const block = new Block();
       block.type = type;
@@ -4339,8 +4532,8 @@ function unregister(cls) {
 function inherit(child, parent, structName = child.name) {
   return STRUCT.inherit(child, parent, structName);
 }
-function readObject(data, cls, __uctx) {
-  return manager.readObject(data, cls, __uctx);
+function readObject(data, cls, __uctx, version) {
+  return manager.readObject(data, cls, __uctx, version);
 }
 function writeObject(data, obj) {
   return manager.writeObject(data, obj);
@@ -4351,8 +4544,11 @@ function writeJSON(obj) {
 function formatJSON2(json, cls, addComments = true, validate = true) {
   return manager.formatJSON(json, cls, addComments, validate);
 }
-function readJSON(json, class_or_struct_id) {
-  return manager.readJSON(json, class_or_struct_id);
+function migrateJSON(json, class_or_struct_id, migrateOptions) {
+  return manager.migrateJSON(json, class_or_struct_id, migrateOptions);
+}
+function readJSON(json, class_or_struct_id, migrate) {
+  return manager.readJSON(json, class_or_struct_id, void 0, migrate);
 }
 var tinyeval = void 0;
 function useTinyEval() {
@@ -4374,6 +4570,7 @@ export {
   inlineRegister,
   isRegistered,
   manager,
+  migrateJSON,
   struct_parser_exports as parser,
   struct_parseutil_exports as parseutil,
   readJSON,

@@ -1,4 +1,4 @@
-import { StructField, StructKeywords, StructableClass, StructableInstance, NStructInterface, UnpackContext, FormatCtx } from "./types.js";
+import { StructField, StructKeywords, StructableClass, StructableInstance, NStructInterface, UnpackContext, FormatCtx, MigrateOptions } from "./types.js";
 import type { PackBuffer } from "./struct_binpack.js";
 export declare let truncateDollarSign: boolean;
 export declare let manager: STRUCT;
@@ -42,6 +42,10 @@ export declare class STRUCT {
      * pair here does not.
      */
     stableIdOverrides: Record<string, number>;
+    struct_names_migrations: {
+        version: number;
+        map: Map<string, string>;
+    }[];
     structs: Record<string, NStructInterface>;
     struct_cls: Record<string, StructableClass>;
     struct_ids: Record<number, NStructInterface>;
@@ -91,7 +95,7 @@ export declare class STRUCT {
     define_null_native(name: string, cls: StructableClass): void;
     validateStructs(onerror?: (msg: string, stt: NStructInterface, field: StructField) => void): void;
     forEach(func: (stt: NStructInterface) => void, thisvar?: unknown): void;
-    parse_structs(buf: string, defined_classes?: StructableClass[] | STRUCT): void;
+    parse_structs(buf: string, defined_classes?: StructableClass[] | STRUCT, version?: number): void;
     /** adds all structs referenced by cls inside of srcSTRUCT
      *  to this */
     registerGraph(srcSTRUCT: STRUCT, cls: StructableClass): void;
@@ -118,9 +122,13 @@ export declare class STRUCT {
      @param data : DataView or Uint8Array instance
      @param cls_or_struct_id : Structable class
      @param uctx : internal parameter
+     @param version : starting version passed to migrateSTRUCT/getVersionSTRUCT
+       during the read; unlike migrateJSON, binary has no separate migration
+       pass ahead of the read, so migration happens in-place as each struct
+       finishes loading. Defaults to 0.
      @return Instance of cls_or_struct_id
      */
-    readObject<T = unknown>(data: DataView | Uint8Array | Uint8ClampedArray | number[], cls_or_struct_id: StructableClass<T> | number, uctx?: UnpackContext): T;
+    readObject<T = unknown>(data: DataView | Uint8Array | Uint8ClampedArray | number[], cls_or_struct_id: StructableClass<T> | number, uctx?: UnpackContext, version?: number): T;
     /**
      @param data array to write data into,
      @param obj structable object
@@ -133,10 +141,33 @@ export declare class STRUCT {
      @param cls_or_struct_id : Structable class
      @param uctx : internal parameter
      */
-    read_object<T = unknown>(data: DataView, cls_or_struct_id: StructableClass<T> | number, uctx?: UnpackContext, objInstance?: unknown): T;
+    read_object<T = unknown>(data: DataView, cls_or_struct_id: StructableClass<T> | number, uctx?: UnpackContext, objInstance?: unknown, rootVersion?: number): T;
+    addStructNameMigration(version: number, oldName: string, newName: string): this;
+    /**
+     * `addStructNameMigration(V, oldName, newName)` means "renamed as of
+     * version V": data older than V (version < V) still has `oldName` and
+     * needs translating; data at V or newer already has `newName`. Each call
+     * registers one historical step, and this chases the whole chain --
+     * `Widget@v2 -> Gadget`, `Gadget@v3 -> Thing` resolves `Widget` all the
+     * way to `Thing` -- rather than requiring every old name to be registered
+     * straight to whatever the current name happens to be.
+     *
+     * A name reused more than once (`a@V1 -> b`, `e@V2 -> a`, `a@V3 -> e`) can
+     * make a later hop chase back to a name already visited in this same
+     * lookup; that's a dead end; not a loop, so resolution stops there and
+     * returns the last name reached rather than cycling forever.
+     */
+    structNameMigration(version: number, name: string): string;
+    migrateJSON<T = unknown>(json: unknown, cls_or_struct_id: StructableClass<T> | NStructInterface | number, options: MigrateOptions, stt?: NStructInterface): unknown;
     validateJSON(json: unknown, cls_or_struct_id: StructableClass | NStructInterface | number, useInternalParser?: boolean, useColors?: boolean, consoleLogger?: (...args: unknown[]) => void, _abstractKey?: string): boolean;
     validateJSONIntern(json: Record<string, unknown>, cls_or_struct_id: StructableClass | NStructInterface | number, _abstractKey?: string): boolean;
-    readJSON<T = unknown>(json: unknown, cls_or_struct_id: StructableClass<T> | NStructInterface | number, objInstance?: unknown): T;
+    /**
+     * Deserialize from json.
+     * If migrate is not undefined, migration will be applied in-place
+     * prior to deserialization; note this is different from binary which
+     * happens in-place during deserialization.
+     */
+    readJSON<T = unknown>(json: unknown, cls_or_struct_id: StructableClass<T> | NStructInterface | number, objInstance?: unknown, migrate?: MigrateOptions): T;
     formatJSON_intern(json: Record<string, unknown>, stt: NStructInterface, field?: StructField, tlvl?: number): string;
     formatJSON(json: unknown, cls: StructableClass, addComments?: boolean, validate?: boolean): string;
 }
@@ -146,6 +177,8 @@ export declare function deriveStructManager(keywords?: {
     load?: string;
     new?: string;
     from?: string;
+    migrate?: string;
+    getVersion?: string;
 }): typeof STRUCT;
 /**
  * Write all defined structs out to a string.
