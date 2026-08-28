@@ -6,7 +6,7 @@
  * *file's own* field layout to know how many bytes to consume, so there is no
  * raw-data stage to migrate ahead of time. Instead `read_object` walks the
  * file's embedded schema (via `parse_structs`, exactly like `FileHelper` does)
- * and calls `migrateSTRUCT(version, obj)` post-order, right after each
+ * and calls `migrateSTRUCT(version, obj, migrate)` post-order, right after each
  * struct's own fields -- and any nested structs, already migrated by their
  * own `read_object` calls -- have finished loading. Structural drift (a field
  * renamed/added/removed) is already handled for free by reading the file's
@@ -19,7 +19,11 @@
  * successive `if (version < N)` guards -- the same pattern a real app uses to
  * carry many versions' worth of fixups in one place. `Item` covers a struct
  * that self-reports its own version via `getVersionSTRUCT`, overriding
- * whatever version the caller passed in.
+ * whatever version the caller passed in. `Widget` covers the third
+ * (finisher) argument, which is always a callable function here -- since
+ * nested structs are already migrated depth-first by the time it's called,
+ * calling it does nothing, but its presence lets a `migrateSTRUCT` shared
+ * with the JSON path call it unconditionally.
  */
 
 import { describe, it, expect, beforeAll } from "vitest";
@@ -206,5 +210,41 @@ describe("binary migration: getVersionSTRUCT overrides the caller's guess", () =
 
     expect(migrateCalls).toEqual([2]);
     expect(result.qty).toBe(5);
+  });
+});
+
+describe("binary migration: migrateSTRUCT's third argument matches the JSON path's finisher shape", () => {
+  // Nested struct fields are already fully read -- and already migrated, by
+  // their own read_object calls -- before a struct's own migrateSTRUCT runs,
+  // so calling the finisher here has nothing left to do. It exists purely so
+  // a migrateSTRUCT shared with the JSON path can call `migrate()`
+  // unconditionally instead of guarding with `migrate?.()`.
+  class Widget {
+    label = "";
+
+    loadSTRUCT(reader: (obj: Widget) => void): void {
+      reader(this);
+    }
+
+    static structName = "migtest.Widget";
+    static STRUCT = `migtest.Widget {
+      label : string;
+    }`;
+
+    static migrateSTRUCT(version: number, obj: any, migrate: (excludeFields?: string[]) => void): void {
+      expect(version).toBe(1);
+      expect(obj.label).toBe("gizmo");
+      expect(typeof migrate).toBe("function");
+      expect(() => migrate()).not.toThrow();
+      expect(() => migrate(["label"])).not.toThrow();
+    }
+  }
+
+  it("passes a callable finisher without throwing", () => {
+    const { scripts, bytes } = writeVersion("migtest.Widget", Widget.STRUCT, { label: "gizmo" });
+
+    const result = readVersion(scripts, 1, bytes, Widget as unknown as StructableClass<Widget>);
+
+    expect(result.label).toBe("gizmo");
   });
 });

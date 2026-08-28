@@ -59,8 +59,8 @@ class Person {
 
   // Called with the resolved version and the loaded data (a class instance
   // for binary, a plain object for JSON) once loading finishes. A third
-  // argument is also available on the JSON path -- see "Continuing the walk"
-  // under JSON below.
+  // argument, the finisher, is also always passed -- see "Continuing the
+  // walk" under JSON below, and "Binary's finisher is a no-op" under Binary.
   static migrateSTRUCT(version, data) {
     if (version < 2) {
       // v1 stored a single "name" field.
@@ -197,19 +197,13 @@ class Widget extends Shape {
 }
 ```
 
-#### Binary doesn't pass a finisher yet
+#### Binary's finisher is a no-op
 
-Binary's `read_object` currently calls `migrateSTRUCT` with just `(version, obj)` — the third
-argument is `undefined` there. This is provisional, not a permanent difference between the two
-paths: binary's implementation of the finisher isn't finished, and it's expected to gain one that
-matches the JSON side. For now, each nested struct field already runs its own `read_object` (and its
-own `migrateSTRUCT`) before the struct containing it finishes loading and runs its own, so the walk
-into nested structs already happens depth-first, without needing a finisher to drive it.
-
-Until that lands, a `migrateSTRUCT` shared between both paths (registered on a class that's read both
-ways) can't call the finisher unconditionally — `migrate()` throws when `migrate` is `undefined`.
-Either guard the call (`migrate?.(...)`), or, if the class is only ever read as JSON, call it
-unconditionally as above.
+Binary's `read_object` also passes a third argument, so `migrateSTRUCT` doesn't need to guard the
+call with `migrate?.(...)` to be shared safely between both paths — but calling it on the binary
+path does nothing. See [below](#binary) for why: by the time a struct's own `migrateSTRUCT` runs,
+its struct-typed fields are already fully read and already migrated, depth-first, by their own
+`read_object` calls, so there's no walk left for the finisher to drive.
 
 ## Binary
 

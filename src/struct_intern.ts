@@ -25,6 +25,7 @@ import {
   IterKeysTypeDescriptor,
   MigrateOptions,
   TokSymbol,
+  StructMigrateFinisher,
 } from "./types.js";
 
 // Aliased through locals so the configurable build's spliced class body binds
@@ -205,6 +206,13 @@ function define_empty_class(scls: { keywords: StructKeywords }, name: string): S
 
   return cls;
 }
+
+// Passed as the third argument to migrateSTRUCT on the binary path. By the
+// time a struct's own migrateSTRUCT runs, its struct-typed fields have
+// already been read (and migrated) depth-first, so there is no walk left to
+// drive -- this exists only so a migrateSTRUCT shared with the JSON path
+// doesn't have to guard the call with migrate?.(...).
+const binaryMigrateFinisher: StructMigrateFinisher = () => {};
 
 // Everything between this marker and $KEYWORD_CONFIG_END is transpiled on its
 // own and spliced into a template literal by tools/build.js, so it has to stand
@@ -1231,7 +1239,7 @@ export class STRUCT {
     if (anyCls[keywords.migrate] !== undefined) {
       const version =
         anyCls[keywords.getVersion] !== undefined ? (anyCls[keywords.getVersion](obj) as number) : uctx.version;
-      anyCls[keywords.migrate](version, obj);
+      anyCls[keywords.migrate](version, obj, binaryMigrateFinisher);
     }
 
     return obj as T;
