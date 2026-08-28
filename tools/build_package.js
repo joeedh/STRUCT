@@ -60,7 +60,7 @@ export function capture(argv) {
 
 export function buildPackage(dry, { build = true } = {}) {
   if (build) {
-    run(dry, [process.execPath, path.join(root, "tools", "build.js")]);
+    run(dry, ["pnpm", "build"]);
   }
 
   for (const [from, to] of CONTENTS) {
