@@ -163,8 +163,14 @@ export class FileHelper {
 
     const struct = (this.struct = new struct_intern.STRUCT());
 
+    // The file's own version gates both struct-name migrations (a struct
+    // renamed since this file was written still appears under its old name
+    // in `scripts`) and the migrateSTRUCT/getVersionSTRUCT chain each block
+    // runs through as it's read below.
+    const fileVersion = versionToInt(this.version);
+
     const scripts = struct_binpack.unpack_string(dataview, this.unpack_ctx);
-    this.struct.parse_structs(scripts, struct_intern.manager);
+    this.struct.parse_structs(scripts, struct_intern.manager, fileVersion);
 
     const blocks: Block[] = [];
     const dviewlen = dataview.buffer.byteLength;
@@ -180,7 +186,7 @@ export class FileHelper {
         bdata = struct_binpack.unpack_static_string(dataview, this.unpack_ctx, datalen);
       } else {
         const rawData = struct_binpack.unpack_bytes(dataview, this.unpack_ctx, datalen);
-        bdata = struct.read_object(rawData, bstruct, new struct_binpack.unpack_context());
+        bdata = struct.read_object(rawData, bstruct, new struct_binpack.unpack_context(fileVersion));
       }
 
       const block = new Block();

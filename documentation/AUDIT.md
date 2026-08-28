@@ -42,6 +42,21 @@ correct name/signature.
 - **`uint` / `ushort`** primitive types were missing from the grammar/type list in
   `Specification.md`; added.
 
+## Migration API added
+
+`migrateSTRUCT`/`getVersionSTRUCT`, `addStructNameMigration`/`structNameMigration`, `migrateJSON`,
+and `readJSON`'s/`readObject`'s `migrate`/`version` parameters are new public API, documented in
+[Migration](migrationGuide.md) and linked from `index.md`, `JSON.md`, and `Reading-And-Writing.md`.
+Two bugs surfaced while verifying the API end to end before writing the guide, both now covered by
+`tests/json_migration.test.ts`:
+
+- The top-level `readJSON(json, cls, migrate)` wrapper in `structjs.ts` called
+  `manager.readJSON(json, cls, migrate)` — three arguments — but `STRUCT.readJSON`'s signature is
+  `(json, cls, objInstance?, migrate?)`, so `migrate` landed in the `objInstance` slot and no
+  migration ever ran through the top-level function.
+- `manager.migrateJSON` threw when called without an explicit `stt` argument (exactly how `readJSON`
+  calls it) because `stt` was never derived from `cls` in that case.
+
 ## Previously deferred, now written
 
 Each bullet below was a gap in the earlier audit. All five are covered as of this pass.

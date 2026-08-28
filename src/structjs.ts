@@ -10,7 +10,7 @@ export { unpack_context, BinWriter } from "./struct_binpack.js";
 export type { PackBuffer } from "./struct_binpack.js";
 import type { PackBuffer as PackBufferType } from "./struct_binpack.js";
 import { STRUCT, manager, setTruncateDollarSign } from "./struct_intern.js";
-import type { StructableClass, NStructInterface } from "./types.js";
+import type { StructableClass, NStructInterface, MigrateOptions } from "./types.js";
 export type { StructableClass, NStructInterface, StructableInstance, StructReader } from "./types.js";
 
 export * from "./struct_intern.js";
@@ -111,13 +111,18 @@ export function inherit(child: any, parent: any, structName: string = child.name
 
 /**
  @param data : DataView
+ @param version : starting version passed to migrateSTRUCT/getVersionSTRUCT
+   during the read. Binary has no separate migration pass ahead of the read
+   the way JSON does (readJSON -> migrateJSON); migration happens in-place
+   as each struct finishes loading.
  */
 export function readObject<T = unknown>(
   data: DataView | Uint8Array | number[],
   cls: StructableClass<T> | number,
-  __uctx?: import("./types.js").UnpackContext
+  __uctx?: import("./types.js").UnpackContext,
+  version?: number
 ): T {
-  return manager.readObject(data, cls, __uctx);
+  return manager.readObject(data, cls, __uctx, version);
 }
 
 /**
@@ -142,11 +147,27 @@ export function formatJSON(
   return manager.formatJSON(json, cls, addComments, validate);
 }
 
+/** Apply migrations in-place to a json object. */
+export function migrateJSON<T = unknown>(
+  json: unknown,
+  class_or_struct_id: StructableClass<T> | NStructInterface | number,
+  migrateOptions: MigrateOptions
+) {
+  return manager.migrateJSON(json, class_or_struct_id, migrateOptions);
+}
+
+/**
+ * Deserialize from json.
+ * If migrate is not undefined, migration will be applied in-place
+ * prior to deserialization; note this is different from binary which
+ * happens in-place during deserialization.
+ */
 export function readJSON<T = unknown>(
   json: unknown,
-  class_or_struct_id: StructableClass<T> | NStructInterface | number
+  class_or_struct_id: StructableClass<T> | NStructInterface | number,
+  migrate?: MigrateOptions
 ): T {
-  return manager.readJSON(json, class_or_struct_id);
+  return manager.readJSON(json, class_or_struct_id, undefined, migrate);
 }
 
 export { setDebugMode } from "./struct_intern.js";

@@ -11,9 +11,11 @@ export const uint8_view: Uint8Array = new Uint8Array(temp_dataview.buffer);
 
 export class unpack_context implements UnpackContextType {
   i: number;
+  version: number;
 
-  constructor() {
+  constructor(version: number = 0) {
     this.i = 0;
+    this.version = version;
   }
 }
 

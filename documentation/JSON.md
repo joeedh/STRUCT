@@ -6,7 +6,9 @@ STRUCT scripts are used for both.
 ## API
 
 - `nstructjs.writeJSON(obj)` — serialize an object to a plain JSON-compatible object.
-- `nstructjs.readJSON(json, classOrStructId)` — read an instance back from JSON.
+- `nstructjs.readJSON(json, classOrStructId, migrate?)` — read an instance back from JSON. With a
+  `migrate` option (`{ version, warnMissing?, reporter? }`), runs `migrateJSON` on `json` in place
+  before reading; see [Migration](migrationGuide.md).
 - `nstructjs.formatJSON(json, cls, addComments?, validate?)` — pretty-print JSON, optionally with
   field comments and validation.
 - `nstructjs.validateJSON(json, cls, useInternalParser?, printColors?, logger?)` — validate a JSON
@@ -84,3 +86,10 @@ To read it back, use `nstructjs.readJSON` with the target class (or its struct i
 ```js
 const test = nstructjs.readJSON(json, Test);
 ```
+
+## Migration
+
+A struct or field renamed since the JSON was written needs `migrateSTRUCT` to reshape the data
+before `readJSON` matches JSON keys against the current schema — see [Migration](migrationGuide.md)
+for `migrateSTRUCT`, `readJSON`'s `migrate` option, and struct-rename resolution for `abstract(...)`
+fields.

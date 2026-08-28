@@ -19,6 +19,11 @@ import {
   StructEnumValue,
   Version,
   StructEnum,
+  ArrayTypeDescriptor,
+  IterTypeDescriptor,
+  StaticArrayTypeDescriptor,
+  IterKeysTypeDescriptor,
+  MigrateOptions,
 } from "./types.js";
 
 // Aliased through locals so the configurable build's spliced class body binds
@@ -224,6 +229,9 @@ export class STRUCT {
    */
   stableIdOverrides: Record<string, number>;
 
+  // always sorted
+  struct_names_migrations: { version: number; map: Map<string, string> }[] = [];
+
   structs: Record<string, NStructInterface>;
   struct_cls: Record<string, StructableClass>;
   struct_ids: Record<number, NStructInterface>;
@@ -416,11 +424,13 @@ export class STRUCT {
     }
 
     this.keywords = {
-      script: keyword,
-      name  : nameKeyword,
-      load  : "load" + keyword,
-      new   : "new" + keyword,
-      from  : "from" + keyword,
+      script    : keyword,
+      name      : nameKeyword,
+      load      : "load" + keyword,
+      new       : "new" + keyword,
+      from      : "from" + keyword,
+      migrate   : "migrate" + keyword,
+      getVersion: "getVersion" + keyword,
     };
   }
 
@@ -558,12 +568,18 @@ export class STRUCT {
   }
 
   // defaults to structjs.manager
-  parse_structs(buf: string, defined_classes?: StructableClass[] | STRUCT): void {
+  parse_structs(buf: string, defined_classes?: StructableClass[] | STRUCT, version: number = 0): void {
     const keywords = (this.constructor as typeof STRUCT).keywords;
 
     if (defined_classes === undefined) {
       defined_classes = manager;
     }
+
+    // Struct-name migrations (addStructNameMigration) live on whichever STRUCT
+    // instance the caller's registered classes came from -- normally the
+    // global manager, the same place JSON migration reads them from -- not on
+    // `this`, the fresh per-file instance parse_structs builds.
+    const migrationSource: STRUCT = defined_classes instanceof STRUCT ? defined_classes : this;
 
     if (defined_classes instanceof STRUCT) {
       const struct2 = defined_classes;
@@ -607,7 +623,11 @@ export class STRUCT {
     while (!struct_parse.at_end()) {
       const stt = struct_parse.parse(undefined, false) as NStruct;
 
-      if (!(stt.name in clsmap)) {
+      // A struct renamed since this file was written still appears under its
+      // old name here; resolve it to whatever class currently owns that name.
+      const migratedName = migrationSource.structNameMigration(version, stt.name);
+
+      if (!(migratedName in clsmap)) {
         if (!(stt.name in this.null_natives))
           if (warninglvl > 0) console.log("WARNING: struct " + stt.name + " is missing from class list.");
 
@@ -627,7 +647,10 @@ export class STRUCT {
 
         if (stt.id !== -1) this.struct_ids[stt.id] = stt;
       } else {
-        this.struct_cls[stt.name] = clsmap[stt.name];
+        // Keep the struct dictionary keyed by the file's own (possibly old)
+        // name, since field type descriptors elsewhere still reference it;
+        // only the class binding follows the rename.
+        this.struct_cls[stt.name] = clsmap[migratedName];
         this.structs[stt.name] = stt;
 
         if (stt.id !== -1) this.struct_ids[stt.id] = stt;
@@ -970,12 +993,17 @@ export class STRUCT {
    @param data : DataView or Uint8Array instance
    @param cls_or_struct_id : Structable class
    @param uctx : internal parameter
+   @param version : starting version passed to migrateSTRUCT/getVersionSTRUCT
+     during the read; unlike migrateJSON, binary has no separate migration
+     pass ahead of the read, so migration happens in-place as each struct
+     finishes loading. Defaults to 0.
    @return Instance of cls_or_struct_id
    */
   readObject<T = unknown>(
     data: DataView | Uint8Array | Uint8ClampedArray | number[],
     cls_or_struct_id: StructableClass<T> | number,
-    uctx?: UnpackContext
+    uctx?: UnpackContext,
+    version?: number
   ): T {
     if (data instanceof Uint8Array || data instanceof Uint8ClampedArray) {
       data = new DataView(data.buffer);
@@ -983,7 +1011,7 @@ export class STRUCT {
       data = new DataView(new Uint8Array(data).buffer);
     }
 
-    return this.read_object(data as DataView, cls_or_struct_id, uctx);
+    return this.read_object(data as DataView, cls_or_struct_id, uctx, undefined, version);
   }
 
   /**
@@ -1071,7 +1099,8 @@ export class STRUCT {
     data: DataView,
     cls_or_struct_id: StructableClass<T> | number,
     uctx?: UnpackContext,
-    objInstance?: unknown
+    objInstance?: unknown,
+    rootVersion?: number
   ): T {
     const keywords = (this.constructor as typeof STRUCT).keywords;
     let cls: StructableClass<T>;
@@ -1090,6 +1119,12 @@ export class STRUCT {
     if (typeof cls_or_struct_id === "number") {
       const fileSchema = this.struct_ids[cls_or_struct_id];
       cls = this.struct_cls[fileSchema.name] as StructableClass<T>;
+      // The numeric id already names the file's own schema directly, which
+      // may be keyed under a name a struct-name migration has since moved
+      // `cls` away from (see parse_structs) -- always walk the file's
+      // schema here rather than re-deriving it from cls's current name.
+      unknownClassSchema = fileSchema;
+
       // A parse_structs dummy stands in for an unloaded class — route it through
       // the hook (when installed) just like a genuinely-absent class, so the
       // host placeholder is used instead of the throwaway dummy.
@@ -1097,7 +1132,6 @@ export class STRUCT {
         const hookResult = this.onUnknownClass(fileSchema.name, fileSchema);
         if (hookResult !== undefined) {
           cls = hookResult as StructableClass<T>;
-          unknownClassSchema = fileSchema;
         }
       }
     } else {
@@ -1111,7 +1145,7 @@ export class STRUCT {
     stt = unknownClassSchema ?? this.structs[(cls as any)[keywords.name] as string];
 
     if (uctx === undefined) {
-      uctx = new struct_binpack.unpack_context();
+      uctx = new struct_binpack.unpack_context(rootVersion ?? 0);
 
       packer_debug("\n\n=Begin reading " + (cls as any)[keywords.name] + "=");
     }
@@ -1142,8 +1176,10 @@ export class STRUCT {
       }
     };
 
+    let obj: StructableInstance | undefined;
+
     if (cls.prototype[keywords.load] !== undefined) {
-      let obj = objInstance as StructableInstance | undefined;
+      obj = objInstance as StructableInstance | undefined;
 
       if (!obj && (cls as any)[keywords.new] !== undefined) {
         obj = ((cls as any)[keywords.new] as (load: (obj: StructableInstance) => void) => StructableInstance).call(
@@ -1163,8 +1199,6 @@ export class STRUCT {
         );
         loader(obj!);
       }
-
-      return obj as T;
     } else if ((cls as any)[keywords.from] !== undefined) {
       if (warninglvl > 1) {
         console.warn(
@@ -1175,10 +1209,10 @@ export class STRUCT {
       }
 
       const anyCls = cls as any;
-      return anyCls[keywords.from](loader) as T;
+      obj = anyCls[keywords.from](loader) as StructableInstance;
     } else {
       // default case, make new instance and then call load() on it
-      let obj = objInstance as StructableInstance | undefined;
+      obj = objInstance as StructableInstance | undefined;
 
       if (!obj && (cls as any)[keywords.new] !== undefined) {
         obj = ((cls as any)[keywords.new] as (load: (obj: StructableInstance) => void) => StructableInstance).call(
@@ -1190,9 +1224,219 @@ export class STRUCT {
       }
 
       loader(obj!);
-
-      return obj as T;
     }
+
+    // Binary has no separate migration pass ahead of the read the way JSON
+    // does (readJSON -> migrateJSON), so migrateSTRUCT/getVersionSTRUCT run
+    // here, post-order, right after this struct's own fields (and any nested
+    // structs, migrated by their own read_object calls) have finished loading.
+    const anyCls = cls as any;
+    if (anyCls[keywords.migrate] !== undefined) {
+      const version =
+        anyCls[keywords.getVersion] !== undefined ? (anyCls[keywords.getVersion](obj) as number) : uctx.version;
+      anyCls[keywords.migrate](version, obj);
+    }
+
+    return obj as T;
+  }
+
+  addStructNameMigration(version: number, oldName: string, newName: string) {
+    let item = this.struct_names_migrations.find((i) => i.version === version);
+    if (item === undefined) {
+      item = { version, map: new Map() };
+      this.struct_names_migrations.push(item);
+      this.struct_names_migrations.sort((a, b) => a.version - b.version);
+    } else if (item.map.has(oldName)) {
+      // Only a duplicate registration *at this exact version* is an error --
+      // a name can legitimately be an old name more than once across
+      // different versions (a -> b, then later a different struct e -> a,
+      // then later still a -> e), each resolved by its own version.
+      throw new Error("Struct name migration already exists for " + oldName + " at version " + version);
+    }
+    item.map.set(oldName, newName);
+    return this;
+  }
+
+  /**
+   * `addStructNameMigration(V, oldName, newName)` means "renamed as of
+   * version V": data older than V (version < V) still has `oldName` and
+   * needs translating; data at V or newer already has `newName`. Each call
+   * registers one historical step, and this chases the whole chain --
+   * `Widget@v2 -> Gadget`, `Gadget@v3 -> Thing` resolves `Widget` all the
+   * way to `Thing` -- rather than requiring every old name to be registered
+   * straight to whatever the current name happens to be.
+   *
+   * A name reused more than once (`a@V1 -> b`, `e@V2 -> a`, `a@V3 -> e`) can
+   * make a later hop chase back to a name already visited in this same
+   * lookup; that's a dead end; not a loop, so resolution stops there and
+   * returns the last name reached rather than cycling forever.
+   */
+  structNameMigration(version: number, name: string): string {
+    const seen = new Set<string>([name]);
+
+    for (;;) {
+      let next: string | undefined;
+
+      for (let i = 0; i < this.struct_names_migrations.length; i++) {
+        const item = this.struct_names_migrations[i];
+        if (version < item.version && item.map.has(name)) {
+          next = item.map.get(name)!;
+          break;
+        }
+      }
+
+      if (next === undefined || seen.has(next)) {
+        return name;
+      }
+
+      name = next;
+      seen.add(name);
+    }
+  }
+
+  migrateJSON<T = unknown>(
+    json: unknown,
+    cls_or_struct_id: StructableClass<T> | NStructInterface | number,
+    options: MigrateOptions,
+    stt?: NStructInterface
+  ): unknown {
+    const warnMissing = options.warnMissing ?? true;
+    const keywords = (this.constructor as typeof STRUCT).keywords;
+
+    options.reporter = options.reporter ?? ((s: string) => console.log(s));
+    const reporter = options.reporter;
+
+    let cls: StructableClass;
+
+    if (typeof cls_or_struct_id === "number") {
+      cls = this.struct_cls[this.struct_ids[cls_or_struct_id].name];
+    } else if (cls_or_struct_id instanceof NStruct) {
+      cls = this.get_struct_cls(cls_or_struct_id.name);
+    } else {
+      cls = cls_or_struct_id as StructableClass;
+    }
+
+    if (cls === undefined) {
+      throw new Error("bad cls_or_struct_id " + cls_or_struct_id);
+    }
+
+    if (stt === undefined) {
+      stt = this.get_struct((cls as any)[keywords.name] as string);
+    }
+
+    const getVersion = (parentVersion: number, presentStructName: string, data: unknown) => {
+      const cls = this.get_struct_cls(presentStructName);
+      if (cls === undefined) {
+        if (warnMissing) {
+          reporter("Struct " + presentStructName + " not found, migration may be incomplete");
+          reporter("Use nstructjs.addStructNameMigration() to fix this.");
+        }
+        return parentVersion;
+      }
+
+      if ((cls as any)[keywords.getVersion] !== undefined) {
+        return (cls as any)[keywords.getVersion](data) as number;
+      }
+      return parentVersion;
+    };
+
+    const getStruct = (version: number, sname: string, doVersion = true) => {
+      if (doVersion) {
+        sname = this.structNameMigration(version, sname);
+      }
+
+      if (!(sname in this.structs)) {
+        reporter("Struct " + sname + " not found, migration may be incomplete");
+        reporter("Use nstructjs.addStructNameMigration() to fix this");
+        return undefined;
+      }
+      return this.structs[sname];
+    };
+
+    const isPossibleType = (type: number) => {
+      switch (type) {
+        case StructEnum.ARRAY:
+        case StructEnum.ITER:
+        case StructEnum.STATIC_ARRAY:
+        case StructEnum.TSTRUCT:
+        case StructEnum.STRUCT:
+        case StructEnum.OPTIONAL:
+          return true;
+      }
+      return false;
+    };
+
+    const walkArray = (
+      version: number,
+      arrayType: ArrayTypeDescriptor | IterTypeDescriptor | StaticArrayTypeDescriptor,
+      data: unknown[]
+    ) => {
+      if (!isPossibleType(arrayType.type)) {
+        return;
+      }
+      for (const item of data) {
+        dispatch(version, arrayType.data.type, item);
+      }
+    };
+
+    const walkStruct = (version: number, sname: string, data: unknown, doVersion?: boolean) => {
+      const stt = getStruct(version, sname, doVersion);
+      if (!stt) {
+        return;
+      }
+
+      const version2 = getVersion(version, stt.name, data);
+      for (const field of stt.fields) {
+        if (isPossibleType(field.type.type)) {
+          dispatch(version2, field.type, (data as any)[field.name]);
+        }
+      }
+
+      // primary migration callback other then struct type renaming.
+      const cls = this.get_struct_cls(sname)! as any;
+      if (cls[keywords.migrate] !== undefined) {
+        cls[keywords.migrate](version2, data);
+      }
+    };
+
+    const walkIterKeys = (version: number, type: IterKeysTypeDescriptor, data: unknown) => {
+      for (const key of Object.keys(data as any)) {
+        dispatch(version, type.data.type, (data as any)[key]);
+      }
+    };
+
+    // need the hoisting behaviour here.
+    const this2 = this;
+    function dispatch(version: number, type: TypeDescriptor, data: unknown) {
+      switch (type.type) {
+        case StructEnum.ARRAY:
+        case StructEnum.ITER:
+        case StructEnum.STATIC_ARRAY:
+          walkArray(version, type, data as unknown[]);
+          break;
+        case StructEnum.STRUCT:
+          walkStruct(version, type.data as string, data);
+          break;
+        case StructEnum.ITERKEYS:
+          walkIterKeys(version, type, data);
+          break;
+        case StructEnum.TSTRUCT: {
+          const dataAny = data as any;
+          dataAny[type.jsonKeyword] = this2.structNameMigration(version, dataAny[type.jsonKeyword]);
+          const name = (data as any)[type.jsonKeyword];
+
+          walkStruct(getVersion(version, name, data), name, data, false);
+          break;
+        }
+        case StructEnum.OPTIONAL:
+          if (data !== undefined) {
+            dispatch(version, type.data, data);
+          }
+          break;
+      }
+    }
+
+    return walkStruct(options.version, stt!.name, json, true);
   }
 
   validateJSON(
@@ -1355,11 +1599,22 @@ export class STRUCT {
     return true;
   }
 
+  /**
+   * Deserialize from json.
+   * If migrate is not undefined, migration will be applied in-place
+   * prior to deserialization; note this is different from binary which
+   * happens in-place during deserialization.
+   */
   readJSON<T = unknown>(
     json: unknown,
     cls_or_struct_id: StructableClass<T> | NStructInterface | number,
-    objInstance?: unknown
+    objInstance?: unknown,
+    migrate?: MigrateOptions
   ): T {
+    if (migrate) {
+      this.migrateJSON(json, cls_or_struct_id, migrate);
+    }
+
     const keywords = (this.constructor as typeof STRUCT).keywords;
 
     let cls: StructableClass;
@@ -1545,12 +1800,16 @@ export function deriveStructManager(
     load?: string;
     new?: string;
     from?: string;
+    migrate?: string;
+    getVersion?: string;
   } = {
-    script: "STRUCT",
-    name  : undefined,
-    load  : undefined,
-    new   : undefined,
-    from  : undefined,
+    script    : "STRUCT",
+    name      : undefined,
+    load      : undefined,
+    new       : undefined,
+    from      : undefined,
+    migrate   : undefined,
+    getVersion: undefined,
   }
 ): typeof STRUCT {
   if (!keywords.name) {
@@ -1567,6 +1826,14 @@ export function deriveStructManager(
 
   if (!keywords.from) {
     keywords.from = "from" + keywords.script;
+  }
+
+  if (!keywords.migrate) {
+    keywords.migrate = "migrate" + keywords.script;
+  }
+
+  if (!keywords.getVersion) {
+    keywords.getVersion = "getVersion" + keywords.script;
   }
 
   class NewSTRUCT extends STRUCT {}

@@ -17,6 +17,8 @@ deprecated and now just points here.)
 - [JSON](JSON.md) — the JSON serialization API.
 - [JSON Guide](jsonGuide.md) — deep-dive on the JSON data model, type mappings, polymorphism, and
   validation.
+- [Migration](migrationGuide.md) — `migrateSTRUCT`/`getVersionSTRUCT`, `addStructNameMigration`, and
+  how a changed schema or a renamed struct is handled on the binary and JSON paths.
 - [Helper Scripts](HelperScripts.md) — the `| jscode` mechanism, per-item array maps, and the `this`
   field.
 - [Unknown Classes](UnknownClasses.md) — reading and rewriting structs whose JS class this build
@@ -79,13 +81,15 @@ Binary serialization:
 
 - `writeObject(data, obj)` — append the serialized bytes of `obj` to the array `data`; returns
   `data`.
-- `readObject(data, cls, uctx?)` — read an instance of `cls` from a `DataView` / `Uint8Array` /
-  `number[]`.
+- `readObject(data, cls, uctx?, version?)` — read an instance of `cls` from a `DataView` /
+  `Uint8Array` / `number[]`; `version` seeds `migrateSTRUCT`/`getVersionSTRUCT`, see
+  [Migration](migrationGuide.md#binary).
 
 JSON serialization:
 
 - `writeJSON(obj)` — serialize to a plain JSON object.
-- `readJSON(json, classOrStructId)` — read an instance back from JSON.
+- `readJSON(json, classOrStructId, migrate?)` — read an instance back from JSON; `migrate` runs
+  `migrateJSON` in place before the read, see [Migration](migrationGuide.md#json).
 - `formatJSON(json, cls, addComments?, validate?)` — pretty-print/validate JSON.
 - `validateJSON(json, cls, useInternalParser?, printColors?, logger?)` — validate JSON against a
   struct.
@@ -96,6 +100,13 @@ Schema / file compatibility:
   so the `abstract` keyword survives registration-order changes.
 - `validateStructs(onerror?)` — validate all registered structs; see
   [Configuration](Configuration.md#validatestructsonerror).
+
+Migration ([details](migrationGuide.md)):
+
+- `migrateJSON(json, cls, options)` — apply `migrateSTRUCT` to a JSON tree in place, ahead of a read.
+- `manager.addStructNameMigration(version, oldName, newName)` /
+  `manager.structNameMigration(version, name)` — register and resolve struct renames, shared by the
+  binary and JSON paths.
 
 Configuration ([details](Configuration.md)):
 

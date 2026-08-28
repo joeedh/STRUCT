@@ -105,3 +105,10 @@ const anObject2 = load_manager.readObject(view, anObject.constructor, uctx);
 the class list, and reading into a dummy discards the data. Install the
 [unknown-class hooks](UnknownClasses.md) on `load_manager` to read those structs into placeholders
 instead, and to write them back out unchanged.
+
+This mechanism — reading against the file's own embedded schema rather than the current class's —
+is what lets added, removed, or reordered fields survive without any migration code. It does not
+cover a struct that was renamed, or a field whose stored value now means something different; see
+[Migration](migrationGuide.md) for `addStructNameMigration` and `migrateSTRUCT`, and for how
+`readObject`'s `version` argument and `FileHelper` thread a migration version through this same
+read.
