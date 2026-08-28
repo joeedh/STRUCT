@@ -58,7 +58,9 @@ class Person {
   );
 
   // Called with the resolved version and the loaded data (a class instance
-  // for binary, a plain object for JSON) once loading finishes.
+  // for binary, a plain object for JSON) once loading finishes. A third
+  // argument is also available on the JSON path -- see "Continuing the walk"
+  // under JSON below.
   static migrateSTRUCT(version, data) {
     if (version < 2) {
       // v1 stored a single "name" field.
@@ -130,6 +132,84 @@ interface MigrateOptions {
 alongside the data (a file format version, a document version field, an app release number).
 `warnMissing` controls whether a struct or field that can't be resolved during the walk logs a
 warning; `reporter` is where that warning (and nothing else) goes.
+
+### Continuing the walk: the finisher argument
+
+`migrateJSON` doesn't stop at one struct — once a struct's own `migrateSTRUCT` has run, the walk
+continues into that struct's own struct-typed fields (a direct struct reference, an `abstract(...)`,
+or an array/`iter`/`optional` of one), migrating each in turn against the current schema. A struct
+with no `migrateSTRUCT` gets this for free.
+
+A struct that _does_ define `migrateSTRUCT` takes over that continuation. It's called with a third
+argument, the finisher:
+
+```ts
+type StructMigrateFinisher = (excludeFields?: string[]) => void;
+```
+
+Calling it resumes the walk into this struct's own struct-typed fields, exactly as if no
+`migrateSTRUCT` had been defined. Not calling it stops the walk here — any nested struct fields are
+left as whatever they already were, but no chain runs on them. So the finisher isn't optional
+cleanup; a `migrateSTRUCT` that forgets to call it silently cuts the walk short at that struct, which
+is a behavior change from having no `migrateSTRUCT` at all.
+
+```js
+static migrateSTRUCT(version, data, migrate) {
+  if (version < 2) {
+    // v1 stored the icon under a struct-typed "iconData"; move it to "icon".
+    data.icon = data.iconData;
+    delete data.iconData;
+  }
+
+  // "icon" was just populated by hand above; the generic walk has nothing
+  // left to do to it, so leave it out.
+  migrate(['icon']);
+}
+```
+
+`excludeFields` names fields to leave out of this call's continuation — typically a field the
+`migrateSTRUCT` body already reshaped directly, so the generic walk doesn't also process it.
+
+#### Chaining up a class hierarchy
+
+A subclass overriding `migrateSTRUCT` chains to its parent's by calling `super.migrateSTRUCT`, passing
+the finisher through. To add its own exclusions on top, wrap it in a closure rather than calling it
+directly, since a bare `migrate` doesn't compose with a second exclusion list of its own:
+
+```js
+class Shape {
+  static migrateSTRUCT(version, data, migrate) {
+    if (version < 2) {
+      data.style = data.style ?? "solid";
+    }
+    migrate();
+  }
+}
+
+class Widget extends Shape {
+  static migrateSTRUCT(version, data, migrate) {
+    if (version < 3) {
+      data.icon = data.iconData;
+      delete data.iconData;
+    }
+    super.migrateSTRUCT(version, data, () => migrate(['icon']));
+  }
+}
+```
+
+#### Binary doesn't pass a finisher yet
+
+Binary's `read_object` currently calls `migrateSTRUCT` with just `(version, obj)` — the third
+argument is `undefined` there. This is provisional, not a permanent difference between the two
+paths: binary's implementation of the finisher isn't finished, and it's expected to gain one that
+matches the JSON side. For now, each nested struct field already runs its own `read_object` (and its
+own `migrateSTRUCT`) before the struct containing it finishes loading and runs its own, so the walk
+into nested structs already happens depth-first, without needing a finisher to drive it.
+
+Until that lands, a `migrateSTRUCT` shared between both paths (registered on a class that's read both
+ways) can't call the finisher unconditionally — `migrate()` throws when `migrate` is `undefined`.
+Either guard the call (`migrate?.(...)`), or, if the class is only ever read as JSON, call it
+unconditionally as above.
 
 ## Binary
 

@@ -886,10 +886,6 @@ export class STRUCT {
   }
 
   get_struct_cls(name: string): StructableClass {
-    if (!(name in this.struct_cls)) {
-      console.trace();
-      throw new Error("Unknown struct " + name);
-    }
     return this.struct_cls[name];
   }
 
@@ -1370,12 +1366,16 @@ export class STRUCT {
       return false;
     };
 
+    // data written before a field existed simply lacks it, which is the case migration is for
+    const walkable = (data: unknown): data is Record<string, unknown> =>
+      typeof data === "object" && data !== null && !Array.isArray(data);
+
     const walkArray = (
       version: number,
       arrayType: ArrayTypeDescriptor | IterTypeDescriptor | StaticArrayTypeDescriptor,
       data: unknown[]
     ) => {
-      if (!isPossibleType(arrayType.type)) {
+      if (!isPossibleType(arrayType.type) || !Array.isArray(data)) {
         return;
       }
       for (const item of data) {
@@ -1384,6 +1384,10 @@ export class STRUCT {
     };
 
     const walkStruct = (version: number, sname: string, data: unknown, doVersion?: boolean) => {
+      if (!walkable(data)) {
+        return;
+      }
+
       const stt = getStruct(version, sname, doVersion);
       if (!stt) {
         return;
@@ -1409,6 +1413,9 @@ export class STRUCT {
     };
 
     const walkIterKeys = (version: number, type: IterKeysTypeDescriptor, data: unknown) => {
+      if (!walkable(data)) {
+        return;
+      }
       for (const key of Object.keys(data as any)) {
         dispatch(version, type.data.type, (data as any)[key]);
       }
@@ -1430,9 +1437,16 @@ export class STRUCT {
           walkIterKeys(version, type, data);
           break;
         case StructEnum.TSTRUCT: {
-          const dataAny = data as any;
-          dataAny[type.jsonKeyword] = this2.structNameMigration(version, dataAny[type.jsonKeyword]);
-          const name = (data as any)[type.jsonKeyword];
+          if (!walkable(data)) {
+            break;
+          }
+
+          const was = data[type.jsonKeyword] as string;
+          const name = this2.structNameMigration(version, was);
+          // assigning unconditionally would add the keyword as an own property holding undefined
+          if (name !== was) {
+            data[type.jsonKeyword] = name;
+          }
 
           walkStruct(getVersion(version, name, data), name, data, false);
           break;

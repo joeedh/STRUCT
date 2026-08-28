@@ -1,9 +1,9 @@
 import { parser } from "./struct_parseutil.js";
 export interface TokInfo {
-  lexpos: number;
-  lineno: number;
-  col: number;
-  fields: Record<string | number, TokInfo>;
+    lexpos: number;
+    lineno: number;
+    col: number;
+    fields: Record<string | number, TokInfo>;
 }
 export declare function buildJSONParser(): parser;
 declare const _defaultParser: parser;

@@ -2,11 +2,11 @@ import * as struct_parseutil from "./struct_parseutil.js";
 import type { StructField, StructEnumValue, NStructInterface, SrcLoc } from "./types.js";
 export { StructEnum } from "./types.js";
 export declare class NStruct implements NStructInterface {
-  fields: StructField[];
-  id: number;
-  name: string;
-  loc: SrcLoc;
-  constructor(name: string, loc: SrcLoc);
+    fields: StructField[];
+    id: number;
+    name: string;
+    loc: SrcLoc;
+    constructor(name: string, loc: SrcLoc);
 }
 export declare const ArrayTypes: Set<StructEnumValue>;
 export declare const ValueTypes: Set<StructEnumValue>;
